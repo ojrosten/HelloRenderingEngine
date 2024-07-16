@@ -1,0 +1,12 @@
+[submodule "dependencies/sequoia"]
+	path = dependencies/sequoia
+	url = https://github.com/ojrosten/sequoia
+[submodule "dependencies/glfw"]
+	path = dependencies/glfw
+	url = https://github.com/glfw/glfw
+[submodule "dependencies/stb"]
+	path = dependencies/stb
+	url = https://github.com/nothings/stb
+[submodule "dependencies/assimp"]
+	path = dependencies/assimp
+	url = https://github.com/assimp/assimp
