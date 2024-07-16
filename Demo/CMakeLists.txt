@@ -1,0 +1,19 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(RenderingEngineDemo LANGUAGES C CXX)
+
+set(BuildSystem ../dependencies/sequoia/build_system)
+set(DemoDir ../Demo)
+
+include(${BuildSystem}/Utilities.cmake)
+
+sequoia_init()
+
+add_executable(Demo DemoMain.cpp)
+
+target_sources(Demo PRIVATE)
+
+target_include_directories(Demo PRIVATE ${DemoDir})
+
+sequoia_finalize_executable(Demo)
+
