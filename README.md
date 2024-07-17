@@ -1,7 +1,7 @@
 # HelloRenderingEngine
 
 HelloRenderingEngine is a teaching project. It aims to explore modern techniques in C++ through building
-a rendering engine which utilizes OpenGL. It is inspired by Joey de Vries excellent site 
+an OpenGL rendering engine. It is inspired by Joey de Vries excellent site 
 [Learn OpenGL](https://learnopengl.com/Getting-started/Hello-Triangle) but with some major differences.
 In particular, the point is to build a robust framework, in which functionality is composable.
 
