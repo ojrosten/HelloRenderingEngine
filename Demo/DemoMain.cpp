@@ -8,58 +8,72 @@
 #include "GLFW/glfw3.h"
 
 #include <iostream>
+#include <format>
 
-// Callback function for handling errors
 void errorCallback(int error, const char* description) {
-    std::cerr << "Error: " << description << std::endl;
+    std::cerr << std::format("Error - {}: {}\n", error, description);
 }
 
-int main()
-{
-    try
-    {
-        // Initialize GLFW
-        if(!glfwInit()) {
-            std::cerr << "Failed to initialize GLFW" << std::endl;
-            return -1;
-        }
-
-        // Set the error callback
+struct glfw_manager {
+    glfw_manager() {
         glfwSetErrorCallback(errorCallback);
 
-        // Set GLFW window creation hints (optional)
+        if(!glfwInit())
+            throw std::runtime_error{"Failed to initialize GLFW\n"};
+    }
+
+    glfw_manager(const glfw_manager&) = delete;
+
+    glfw_manager& operator=(const glfw_manager&) = delete;
+
+    ~glfw_manager() { glfwTerminate(); }
+};
+
+class window {
+    GLFWwindow* m_Window{};
+public:
+    window() {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-        // Create a windowed mode window and its OpenGL context
-        GLFWwindow* window = glfwCreateWindow(800, 600, "Hello GLFW", nullptr, nullptr);
-        if(!window) {
-            std::cerr << "Failed to create GLFW window" << std::endl;
-            glfwTerminate();
-            return -1;
-        }
+        m_Window = glfwCreateWindow(800, 600, "Hello GLFW", nullptr, nullptr);
+        if(!m_Window)
+            throw std::runtime_error{"Failed to create GLFW window"};
 
-        // Make the window's context current
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(m_Window);
+    }
 
-        // Loop until the user closes the window
-        while(!glfwWindowShouldClose(window)) {
+    window(const window&) = delete;
+
+    window& operator=(const window&) = delete;
+
+    ~window() { glfwDestroyWindow(m_Window); }
+
+    GLFWwindow& get() {
+        if(!m_Window) throw std::runtime_error{"No window!"};
+        return *m_Window;
+    }
+};
+
+int main()
+{
+    try
+    {
+        glfw_manager manager{};
+        window w{};
+
+        while(!glfwWindowShouldClose(&w.get())) {
             // Render here (optional)
             //glClear(GL_COLOR_BUFFER_BIT);
 
             // Swap front and back buffers
-            glfwSwapBuffers(window);
+            glfwSwapBuffers(&w.get());
 
             // Poll for and process events
             glfwPollEvents();
         }
-
-        // Clean up and exit
-        glfwDestroyWindow(window);
-        glfwTerminate();
-        return 0;
     }
     catch(const std::exception& e)
     {
