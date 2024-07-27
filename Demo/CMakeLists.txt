@@ -11,7 +11,7 @@ sequoia_init()
 
 add_executable(Demo DemoMain.cpp)
 
-target_sources(Demo PRIVATE)
+target_sources(Demo PRIVATE TestingUtilities/GLFWWrappers.cpp)
 
 target_include_directories(Demo PRIVATE ${DemoDir})
 
