@@ -19,5 +19,9 @@ add_subdirectory(../dependencies/glfw glfw)
 target_link_libraries(Demo PRIVATE glfw)
 target_include_directories(Demo PRIVATE ../dependencies/glfw/include)
 
+add_subdirectory(../dependencies/glad/OpenGL glad)
+target_link_libraries(Demo PRIVATE glad)
+target_include_directories(Demo PRIVATE ../dependencies/glad/OpenGL/include)
+
 sequoia_finalize_executable(Demo)
 

@@ -7,6 +7,7 @@
 
 #include "TestingUtilities/GLFWWrappers.hpp"
 
+#include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
 #include <iostream>
@@ -18,14 +19,14 @@ int main()
         demo::glfw_manager manager{};
         auto w{manager.create_window()};
 
+        if(!gladLoadGL(glfwGetProcAddress))
+            throw std::runtime_error{"Failed to initialize GLAD"};
+
         while(!glfwWindowShouldClose(&w.get())) {
-            // Render here (optional)
-            //glClear(GL_COLOR_BUFFER_BIT);
+            glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
 
-            // Swap front and back buffers
             glfwSwapBuffers(&w.get());
-
-            // Poll for and process events
             glfwPollEvents();
         }
     }
