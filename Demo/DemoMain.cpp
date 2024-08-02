@@ -36,8 +36,8 @@ int main()
             throw std::runtime_error{"Failed to initialize GLAD"};
 
         // build and compile our shader program
-    // ------------------------------------
-    // vertex shader
+        // ------------------------------------
+        // vertex shader
         unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
         glCompileShader(vertexShader);
