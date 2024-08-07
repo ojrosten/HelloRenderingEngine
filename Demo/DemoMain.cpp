@@ -25,6 +25,30 @@ const char *fragmentShaderSource = "#version 330 core\n"
     "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
     "}\n\0";
 
+template<class GetStatus>
+GLint check_status(GLuint shaderID, GLenum status, GetStatus getStatus) {
+    GLint success{};
+    getStatus(shaderID, status, &success);
+    return success;
+}
+
+template<class GetStatus, class GetInfoLog>
+void check_success(GLuint shaderID, std::string_view name, std::string_view buildStage, GLenum status, GetStatus getStatus, GetInfoLog getInfoLog) {
+    if(!check_status(shaderID, status, getStatus)) {
+        GLchar infoLog[512]{};
+        getInfoLog(shaderID, 512, NULL, infoLog);
+        throw std::runtime_error{std::format("ERROR::SHADER::{}::{}_FAILED\n{}\n", name, buildStage, infoLog)};
+    }
+}
+
+void check_compilation_success(GLuint shaderID, std::string_view shaderType) {
+    check_success(shaderID, shaderType, "COMPILATION", GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
+}
+
+void check_linking_success(GLuint shaderID) {
+    check_success(shaderID, "PROGRAM", "LINKING", GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
+}
+
 int main()
 {
     try
@@ -41,37 +65,21 @@ int main()
         unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
         glCompileShader(vertexShader);
-        // check for shader compile errors
-        int success;
-        char infoLog[512];
-        glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-        if(!success)
-        {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
+        check_compilation_success(vertexShader, "VERTEX");
+
         // fragment shader
         unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
         glCompileShader(fragmentShader);
-        // check for shader compile errors
-        glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-        if(!success)
-        {
-            glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-        }
+        check_compilation_success(fragmentShader, "FRAGMENT");
+
         // link shaders
         unsigned int shaderProgram = glCreateProgram();
         glAttachShader(shaderProgram, vertexShader);
         glAttachShader(shaderProgram, fragmentShader);
         glLinkProgram(shaderProgram);
-        // check for linking errors
-        glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-        if(!success) {
-            glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-        }
+        check_linking_success(shaderProgram);
+
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
 
