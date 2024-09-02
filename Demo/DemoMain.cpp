@@ -10,6 +10,7 @@
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 
+#include <format>
 #include <iostream>
 
 const char *vertexShaderSource = "#version 330 core\n"
