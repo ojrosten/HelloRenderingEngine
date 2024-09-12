@@ -23,5 +23,9 @@ add_subdirectory(../dependencies/glad/OpenGL glad)
 target_link_libraries(Demo PRIVATE glad)
 target_include_directories(Demo PRIVATE ../dependencies/glad/OpenGL/include)
 
+add_subdirectory(../Source/avocet avocet)
+target_link_libraries(Demo PRIVATE avocet)
+target_include_directories(Demo PRIVATE ../Source)
+
 sequoia_finalize_executable(Demo)
 
