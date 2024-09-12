@@ -50,6 +50,58 @@ void check_linking_success(GLuint shaderID) {
     check_success(shaderID, "PROGRAM", "LINKING", GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
 }
 
+class resource_handle {
+    GLuint m_Index{};
+public:
+    resource_handle() = default;
+
+    explicit resource_handle(GLuint index) : m_Index{index} {}
+
+    resource_handle(resource_handle&& other) noexcept : m_Index{std::exchange(other.m_Index, 0)} {}
+
+    resource_handle& operator=(resource_handle&& other) noexcept
+    {
+        std::ranges::swap(m_Index, other.m_Index);
+        return *this;
+    }
+
+    [[nodiscard]]
+    GLuint index() const { return m_Index; }
+};
+
+class shader_resource {
+    resource_handle m_Handle{};
+public:
+    shader_resource(GLenum shaderSpecies)
+        : m_Handle{glCreateShader(shaderSpecies)}
+    {}
+
+    shader_resource(shader_resource&&) noexcept = default;
+
+    shader_resource& operator=(shader_resource&&) noexcept = default;
+
+    ~shader_resource() { glDeleteShader(m_Handle.index()); }
+
+    [[nodiscard]]
+    const resource_handle& handle() const { return m_Handle; }
+};
+
+class shader_compiler {
+    shader_resource m_Resource;
+public:
+    shader_compiler(GLenum shaderSpecies, const char* source)
+        : m_Resource{shaderSpecies}
+    {
+        const auto index{m_Resource.handle().index()};
+        glShaderSource(index, 1, &source, NULL);
+        glCompileShader(index);
+        check_compilation_success(index, "TO DO");
+    }
+
+    [[nodiscard]]
+    const shader_resource& resource() const { return m_Resource; }
+};
+
 int main()
 {
     try
@@ -61,28 +113,14 @@ int main()
             throw std::runtime_error{"Failed to initialize GLAD"};
 
         // build and compile our shader program
-        // ------------------------------------
-        // vertex shader
-        unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-        glCompileShader(vertexShader);
-        check_compilation_success(vertexShader, "VERTEX");
-
-        // fragment shader
-        unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-        glCompileShader(fragmentShader);
-        check_compilation_success(fragmentShader, "FRAGMENT");
+        shader_compiler vertexShader{GL_VERTEX_SHADER, vertexShaderSource}, fragmentShader{GL_FRAGMENT_SHADER, fragmentShaderSource};
 
         // link shaders
         unsigned int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
+        glAttachShader(shaderProgram, vertexShader.resource().handle().index());
+        glAttachShader(shaderProgram, fragmentShader.resource().handle().index());
         glLinkProgram(shaderProgram);
         check_linking_success(shaderProgram);
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
