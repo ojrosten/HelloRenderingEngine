@@ -7,15 +7,34 @@
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
+#include <format>
+#include <stdexcept>
+
 namespace avocet::opengl {
   namespace {
-    void check_compilation_success(GLuint shaderID, std::string_view shaderType) {
-      check_success(shaderID, shaderType, "compilation", GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
+    template<class GetStatus>
+    GLint check_status(const resource_handle& handle, GLenum status, GetStatus getStatus) {
+      GLint success{};
+      getStatus(handle.index(), status, &success);
+      return success;
     }
-  }
 
-  void check_linking_success(GLuint shaderID) {
-    check_success(shaderID, "program", "linking", GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
+    template<class GetStatus, class GetInfoLog>
+    void check_success(const resource_handle& handle, std::string_view name, std::string_view buildStage, GLenum status, GetStatus getStatus, GetInfoLog getInfoLog) {
+      if(!check_status(handle, status, getStatus)) {
+        GLchar infoLog[512]{};
+        getInfoLog(handle.index(), 512, nullptr, infoLog);
+        throw std::runtime_error{std::format("error: {} shader - {} failed\n{}\n", name, buildStage, infoLog)};
+      }
+    }
+
+    void check_compilation_success(const shader_resource& resource, std::string_view shaderType) {
+      check_success(resource.handle(), shaderType, "compilation", GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
+    }
+
+    void check_linking_success(const shader_program_resource& resource) {
+      check_success(resource.handle(), "program", "linking", GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
+    }
   }
 
   [[nodiscard]]
@@ -36,7 +55,7 @@ namespace avocet::opengl {
     const auto data{source.data()};
     glShaderSource(index, 1, &data, nullptr);
     glCompileShader(index);
-    check_compilation_success(index, to_string(species));
+    check_compilation_success(m_Resource, to_string(species));
   }
 
   shader_program::shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource) {
@@ -46,6 +65,6 @@ namespace avocet::opengl {
     glAttachShader(index, vertexShader.resource().handle().index());
     glAttachShader(index, fragmentShader.resource().handle().index());
     glLinkProgram(index);
-    check_linking_success(index);
+    check_linking_success(m_Resource);
   }
 }

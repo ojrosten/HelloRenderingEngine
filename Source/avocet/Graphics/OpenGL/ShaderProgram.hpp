@@ -7,9 +7,7 @@
 
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 
-#include <format>
 #include <string>
-#include <stdexcept>
 
 namespace avocet::opengl {
   enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
@@ -78,23 +76,8 @@ namespace avocet::opengl {
 
     [[nodiscard]]
     friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
+
+    [[nodiscard]]
+    const shader_program_resource& resource() const noexcept { return m_Resource; }
   };
-
-  template<class GetStatus>
-  GLint check_status(GLuint shaderID, GLenum status, GetStatus getStatus) {
-    GLint success{};
-    getStatus(shaderID, status, &success);
-    return success;
-  }
-
-  template<class GetStatus, class GetInfoLog>
-  void check_success(GLuint shaderID, std::string_view name, std::string_view buildStage, GLenum status, GetStatus getStatus, GetInfoLog getInfoLog) {
-    if(!check_status(shaderID, status, getStatus)) {
-      GLchar infoLog[512]{};
-      getInfoLog(shaderID, 512, nullptr, infoLog);
-      throw std::runtime_error{std::format("error: {} shader - {} failed\n{}\n", name, buildStage, infoLog)};
-    }
-  }
-
-  void check_linking_success(GLuint shaderID);
 }
