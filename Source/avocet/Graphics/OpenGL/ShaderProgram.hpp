@@ -15,45 +15,42 @@ namespace avocet::opengl {
   [[nodiscard]]
   std::string to_string(shader_species species);
 
-  class shader_resource {
+  template<class Operations>
+  class generic_shader_resource{
     resource_handle m_Handle{};
   public:
-    explicit shader_resource(shader_species species)
-      : m_Handle{glCreateShader(static_cast<GLenum>(species))}
+    template<class... Args>
+    explicit(sizeof...(Args) == 1) generic_shader_resource(const Args&... args)
+      : m_Handle{Operations::create(args...)}
     {}
 
-    shader_resource(shader_resource&&) noexcept = default;
+    generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
-    shader_resource& operator=(shader_resource&&) noexcept = default;
+    generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
-    ~shader_resource() { glDeleteShader(m_Handle.index()); }
+    ~generic_shader_resource() { Operations::destroy(m_Handle); }
 
     [[nodiscard]]
-    friend bool operator==(const shader_resource&, const shader_resource&) noexcept = default;
+    friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
 
     [[nodiscard]]
     const resource_handle& handle() const noexcept { return m_Handle; }
   };
 
-  class shader_program_resource {
-    resource_handle m_Handle{};
-  public:
-    shader_program_resource()
-      : m_Handle{glCreateProgram()}
-    {}
+  struct shader_resource_operations {
+    static resource_handle create(shader_species species) { return resource_handle{glCreateShader(static_cast<GLenum>(species))}; }
 
-    shader_program_resource(shader_program_resource&&) noexcept = default;
-
-    shader_program_resource& operator=(shader_program_resource&&) noexcept = default;
-
-    ~shader_program_resource() { glDeleteProgram(m_Handle.index()); }
-
-    [[nodiscard]]
-    friend bool operator==(const shader_program_resource&, const shader_program_resource&) noexcept = default;
-
-    [[nodiscard]]
-    const resource_handle& handle() const noexcept { return m_Handle; }
+    static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
   };
+
+  struct shader_program_operations {
+    static resource_handle create() { return resource_handle{glCreateProgram()}; }
+
+    static void destroy(const resource_handle& handle) { glDeleteProgram(handle.index()); }
+  };
+
+  using shader_resource = generic_shader_resource<shader_resource_operations>;
+  using shader_program_resource = generic_shader_resource<shader_program_operations>;
 
   class shader_compiler {
     shader_resource m_Resource;
