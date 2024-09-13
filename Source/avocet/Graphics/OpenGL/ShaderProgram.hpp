@@ -15,20 +15,20 @@ namespace avocet::opengl {
   [[nodiscard]]
   std::string to_string(shader_species species);
 
-  template<class Operations>
+  template<class Lifecycle>
   class generic_shader_resource{
     resource_handle m_Handle{};
   public:
     template<class... Args>
     explicit(sizeof...(Args) == 1) generic_shader_resource(const Args&... args)
-      : m_Handle{Operations::create(args...)}
+      : m_Handle{Lifecycle::create(args...)}
     {}
 
     generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
     generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
-    ~generic_shader_resource() { Operations::destroy(m_Handle); }
+    ~generic_shader_resource() { Lifecycle::destroy(m_Handle); }
 
     [[nodiscard]]
     friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
@@ -37,20 +37,20 @@ namespace avocet::opengl {
     const resource_handle& handle() const noexcept { return m_Handle; }
   };
 
-  struct shader_resource_operations {
+  struct shader_resource_lifecycle {
     static resource_handle create(shader_species species) { return resource_handle{glCreateShader(static_cast<GLenum>(species))}; }
 
     static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
   };
 
-  struct shader_program_operations {
+  struct shader_program_lifecycle {
     static resource_handle create() { return resource_handle{glCreateProgram()}; }
 
     static void destroy(const resource_handle& handle) { glDeleteProgram(handle.index()); }
   };
 
-  using shader_resource = generic_shader_resource<shader_resource_operations>;
-  using shader_program_resource = generic_shader_resource<shader_program_operations>;
+  using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
+  using shader_program_resource = generic_shader_resource<shader_program_lifecycle>;
 
   class shader_compiler {
     shader_resource m_Resource;
