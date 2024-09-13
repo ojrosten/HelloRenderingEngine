@@ -29,12 +29,23 @@ namespace avocet::opengl {
     throw std::runtime_error{"shader_species: unexpected value"};
   }
 
-  shader_compiler::shader_compiler(shader_species species, const char* source)
+  shader_compiler::shader_compiler(shader_species species, std::string_view source)
     : m_Resource{species}
   {
     const auto index{m_Resource.handle().index()};
-    glShaderSource(index, 1, &source, nullptr);
+    const auto data{source.data()};
+    glShaderSource(index, 1, &data, nullptr);
     glCompileShader(index);
     check_compilation_success(index, to_string(species));
+  }
+
+  shader_program::shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource) {
+    shader_compiler vertexShader{shader_species::vertex, vertexShaderSource}, fragmentShader{shader_species::fragment, fragmentShaderSource};
+
+    const auto index{m_Resource.handle().index()};
+    glAttachShader(index, vertexShader.resource().handle().index());
+    glAttachShader(index, fragmentShader.resource().handle().index());
+    glLinkProgram(index);
+    check_linking_success(index);
   }
 }

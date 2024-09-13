@@ -37,16 +37,47 @@ namespace avocet::opengl {
     const resource_handle& handle() const noexcept { return m_Handle; }
   };
 
+  class shader_program_resource {
+    resource_handle m_Handle{};
+  public:
+    shader_program_resource()
+      : m_Handle{glCreateProgram()}
+    {}
+
+    shader_program_resource(shader_program_resource&&) noexcept = default;
+
+    shader_program_resource& operator=(shader_program_resource&&) noexcept = default;
+
+    ~shader_program_resource() { glDeleteProgram(m_Handle.index()); }
+
+    [[nodiscard]]
+    friend bool operator==(const shader_program_resource&, const shader_program_resource&) noexcept = default;
+
+    [[nodiscard]]
+    const resource_handle& handle() const noexcept { return m_Handle; }
+  };
+
   class shader_compiler {
     shader_resource m_Resource;
   public:
-    shader_compiler(shader_species species, const char* source);
+    shader_compiler(shader_species species, std::string_view source);
 
     [[nodiscard]]
     friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
 
     [[nodiscard]]
     const shader_resource& resource() const noexcept { return m_Resource; }
+  };
+
+  class shader_program {
+    shader_program_resource m_Resource{};
+  public:
+    shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource);
+
+    void use() { glUseProgram(m_Resource.handle().index()); }
+
+    [[nodiscard]]
+    friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
   };
 
   template<class GetStatus>
