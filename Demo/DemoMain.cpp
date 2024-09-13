@@ -73,7 +73,7 @@ public:
 class shader_resource {
     resource_handle m_Handle{};
 public:
-    shader_resource(GLenum shaderSpecies)
+    explicit shader_resource(GLenum shaderSpecies)
         : m_Handle{glCreateShader(shaderSpecies)}
     {}
 
