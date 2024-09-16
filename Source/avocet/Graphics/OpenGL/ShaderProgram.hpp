@@ -35,7 +35,6 @@ namespace avocet::opengl {
 
   class shader_compiler {
     shader_resource m_Resource;
-
   public:
     shader_compiler(shader_species species, std::string_view source);
 
