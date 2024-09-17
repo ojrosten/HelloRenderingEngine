@@ -15,13 +15,28 @@ namespace avocet::opengl {
   [[nodiscard]]
   std::string to_string(shader_species species);
 
+  template<class T>
+  inline constexpr bool has_destroy{
+    requires (const resource_handle& h) { T::destroy(h); }
+  };
+
+  template<class T>
+  inline constexpr bool has_create{
+    requires (T& t) { { t.create() } -> std::same_as<resource_handle>; }
+  };
+
+  template<class T>
+  inline constexpr bool is_lifecycle_v{has_create<T> && has_destroy<T> };
+
   template<class Lifecycle>
+    requires is_lifecycle_v<Lifecycle>
   class generic_shader_resource{
     resource_handle m_Handle{};
   public:
     template<class... Args>
+      requires std::constructible_from<Lifecycle, Args...>
     explicit(sizeof...(Args) == 1) generic_shader_resource(const Args&... args)
-      : m_Handle{Lifecycle::create(args...)}
+      : m_Handle{Lifecycle{args...}.create()}
     {}
 
     generic_shader_resource(generic_shader_resource&&) noexcept = default;
@@ -37,8 +52,12 @@ namespace avocet::opengl {
     const resource_handle& handle() const noexcept { return m_Handle; }
   };
 
-  struct shader_resource_lifecycle {
-    static resource_handle create(shader_species species) { return resource_handle{glCreateShader(static_cast<GLenum>(species))}; }
+  class shader_resource_lifecycle {
+    shader_species m_Species;
+  public:
+    explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
+
+    resource_handle create() { return resource_handle{glCreateShader(static_cast<GLenum>(m_Species))}; }
 
     static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
   };
