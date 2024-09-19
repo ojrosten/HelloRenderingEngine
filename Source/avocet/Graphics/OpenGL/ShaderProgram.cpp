@@ -34,7 +34,7 @@ namespace avocet::opengl {
     {
         const auto index{m_Resource.handle().index()};
         const auto data{source.data()};
-        glShaderSource(index, 1, &data, NULL);
+        glShaderSource(index, 1, &data, nullptr);
         glCompileShader(index);
         check_compilation_success(index, species);
     }
