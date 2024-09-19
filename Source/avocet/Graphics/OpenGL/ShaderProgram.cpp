@@ -35,17 +35,17 @@ namespace avocet::opengl {
     void check_linking_success(const shader_program_resource& resource) {
       check_success(resource.handle(), "program", "linking", GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
     }
-  }
 
-  [[nodiscard]]
-  std::string to_string(shader_species species) {
-    using enum shader_species;
-    switch(species) {
-    case vertex:   return "vertex";
-    case fragment: return "fragment";
+    [[nodiscard]]
+    std::string to_string(shader_species species) {
+        using enum shader_species;
+        switch(species) {
+        case vertex:   return "vertex";
+        case fragment: return "fragment";
+        }
+
+        throw std::runtime_error{"shader_species: unexpected value"};
     }
-
-    throw std::runtime_error{"shader_species: unexpected value"};
   }
 
   shader_compiler::shader_compiler(shader_species species, std::string_view source)

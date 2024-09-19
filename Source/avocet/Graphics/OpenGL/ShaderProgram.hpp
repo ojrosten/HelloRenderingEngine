@@ -12,9 +12,6 @@
 namespace avocet::opengl {
   enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
 
-  [[nodiscard]]
-  std::string to_string(shader_species species);
-
   template<class T>
   inline constexpr bool has_destroy{
     requires (const resource_handle& h) { T::destroy(h); }
