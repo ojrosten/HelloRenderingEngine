@@ -36,9 +36,6 @@ int main()
         demo::glfw_manager manager{};
         auto w{manager.create_window()};
 
-        if(!gladLoadGL(glfwGetProcAddress))
-            throw std::runtime_error{"Failed to initialize GLAD"};
-
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{vertexShaderSource, fragmentShaderSource};
 

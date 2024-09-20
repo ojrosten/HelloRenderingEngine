@@ -10,87 +10,93 @@
 #include <string>
 
 namespace avocet::opengl {
-  enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
 
-  template<class T>
-  inline constexpr bool has_destroy{
-    requires (const resource_handle& h) { T::destroy(h); }
-  };
-
-  template<class T>
-  inline constexpr bool has_create{
-    requires (T& t) { { t.create() } -> std::same_as<resource_handle>; }
-  };
-
-  template<class T>
-  inline constexpr bool is_lifecycle_v{has_create<T> && has_destroy<T> };
-
-  template<class Lifecycle>
-    requires is_lifecycle_v<Lifecycle>
-  class generic_shader_resource{
-    resource_handle m_Handle{};
-  public:
-    template<class... Args>
-      requires std::constructible_from<Lifecycle, Args...>
-    explicit(sizeof...(Args) == 1) generic_shader_resource(const Args&... args)
-      : m_Handle{Lifecycle{args...}.create()}
-    {}
-
-    generic_shader_resource(generic_shader_resource&&) noexcept = default;
-
-    generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
-
-    ~generic_shader_resource() { Lifecycle::destroy(m_Handle); }
-
+    template<class T>
+        requires std::is_scoped_enum_v<T>&& std::is_same_v<std::underlying_type_t<T>, GLenum>
     [[nodiscard]]
-    friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
+    GLenum to_gl_enum(T species) { return static_cast<GLenum>(species); }
 
-    [[nodiscard]]
-    const resource_handle& handle() const noexcept { return m_Handle; }
-  };
+    enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
 
-  class shader_resource_lifecycle {
-    shader_species m_Species;
-  public:
-    explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
+    template<class T>
+    inline constexpr bool has_destroy{
+      requires (const resource_handle & h) { T::destroy(h); }
+    };
 
-    resource_handle create() { return resource_handle{glCreateShader(static_cast<GLenum>(m_Species))}; }
+    template<class T>
+    inline constexpr bool has_create{
+      requires (T & t) { { t.create() } -> std::same_as<resource_handle>; }
+    };
 
-    static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
-  };
+    template<class T>
+    inline constexpr bool is_lifecycle_v{has_create<T> && has_destroy<T>};
 
-  struct shader_program_lifecycle {
-    static resource_handle create() { return resource_handle{glCreateProgram()}; }
+    template<class Lifecycle>
+        requires is_lifecycle_v<Lifecycle>
+    class generic_shader_resource{
+        resource_handle m_Handle{};
+    public:
+        template<class... Args>
+            requires std::constructible_from<Lifecycle, Args...>
+        explicit(sizeof...(Args) == 1) generic_shader_resource(const Args&... args)
+            : m_Handle{Lifecycle{args...}.create()}
+        {}
 
-    static void destroy(const resource_handle& handle) { glDeleteProgram(handle.index()); }
-  };
+        generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
-  using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
-  using shader_program_resource = generic_shader_resource<shader_program_lifecycle>;
+        generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
-  class shader_compiler {
-    shader_resource m_Resource;
-  public:
-    shader_compiler(shader_species species, std::string_view source);
+        ~generic_shader_resource() { Lifecycle::destroy(m_Handle); }
 
-    [[nodiscard]]
-    friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
+        [[nodiscard]]
+        friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
 
-    [[nodiscard]]
-    const shader_resource& resource() const noexcept { return m_Resource; }
-  };
+        [[nodiscard]]
+        const resource_handle& handle() const noexcept { return m_Handle; }
+    };
 
-  class shader_program {
-    shader_program_resource m_Resource{};
-  public:
-    shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource);
+    class shader_resource_lifecycle {
+        shader_species m_Species;
+    public:
+        explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
-    void use() { glUseProgram(m_Resource.handle().index()); }
+        resource_handle create() { return resource_handle{glCreateShader(to_gl_enum(m_Species))}; }
 
-    [[nodiscard]]
-    friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
+        static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
+    };
 
-    [[nodiscard]]
-    const shader_program_resource& resource() const noexcept { return m_Resource; }
-  };
+    struct shader_program_lifecycle {
+        static resource_handle create() { return resource_handle{glCreateProgram()}; }
+
+        static void destroy(const resource_handle& handle) { glDeleteProgram(handle.index()); }
+    };
+
+    using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
+    using shader_program_resource = generic_shader_resource<shader_program_lifecycle>;
+
+    class shader_compiler {
+        shader_resource m_Resource;
+    public:
+        shader_compiler(shader_species species, std::string_view source);
+
+        [[nodiscard]]
+        friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
+
+        [[nodiscard]]
+        const shader_resource& resource() const noexcept { return m_Resource; }
+    };
+
+    class shader_program {
+        shader_program_resource m_Resource{};
+    public:
+        shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource);
+
+        void use() { glUseProgram(m_Resource.handle().index()); }
+
+        [[nodiscard]]
+        friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
+
+        [[nodiscard]]
+        const shader_program_resource& resource() const noexcept { return m_Resource; }
+    };
 }
