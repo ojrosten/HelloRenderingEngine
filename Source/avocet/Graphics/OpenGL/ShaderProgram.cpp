@@ -8,11 +8,19 @@
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
 #include <format>
+#include <fstream>
 #include <stdexcept>
 #include <vector>
 
 namespace avocet::opengl {
+    namespace fs = std::filesystem;
+
     namespace {
+        enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
+
+        [[nodiscard]]
+        GLenum to_gl_enum(shader_species species) { return static_cast<GLenum>(species); }
+
         [[nodiscard]]
         std::string to_string(shader_species species) {
             using enum shader_species;
@@ -23,6 +31,18 @@ namespace avocet::opengl {
 
             throw std::runtime_error{std::format("shader_species: unexpected value {}", to_gl_enum(species))};
         }
+
+        class shader_resource_lifecycle {
+            shader_species m_Species;
+        public:
+            explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
+
+            resource_handle create() { return resource_handle{glCreateShader(to_gl_enum(m_Species))}; }
+
+            static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
+        };
+
+        using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
 
         [[nodiscard]]
         std::string to_build_stage(const shader_resource&) { return "compile"; }
@@ -44,7 +64,7 @@ namespace avocet::opengl {
 
         template<class T>
         constexpr bool is_resource_v{
-            requires (const T& t) { { t.handle() } -> std::same_as<const resource_handle&>; }
+            requires (const T & t) { { t.handle() } -> std::same_as<const resource_handle&>; }
         };
 
         template<class GetParameter>
@@ -57,7 +77,7 @@ namespace avocet::opengl {
         }
 
         template<class Resource, class GetParameter, class GetInfoLog>
-            requires is_resource_v<Resource> && is_gl_getter_v<GetParameter>&& is_info_log_getter_v<GetInfoLog>
+            requires is_resource_v<Resource>&& is_gl_getter_v<GetParameter>&& is_info_log_getter_v<GetInfoLog>
         void check_success(const Resource& resource, std::string_view name, GetParameter getParameter, GetInfoLog getInfoLog) {
             const auto& handle{resource.handle()};
             if(!get_parameter_value(handle, to_build_status_flag(resource), getParameter)) {
@@ -77,20 +97,39 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
+        std::string file_to_string(const fs::path& file) {
+            if(std::ifstream ifile{file}) {
+                return std::string(std::istreambuf_iterator<char>(ifile), {});
+            }
+
+            throw std::runtime_error{std::format("Unable to open file {}", file.generic_string())};
+        }
+
+        class shader_compiler {
+            shader_resource m_Resource;
+        public:
+            shader_compiler(shader_species species, const std::filesystem::path& source) : m_Resource{species}
+            {
+                const auto index{m_Resource.handle().index()};
+                const auto contents{file_to_string(source)};
+                const auto data{contents.data()};
+                glShaderSource(index, 1, &data, nullptr);
+                glCompileShader(index);
+                check_compilation_success(m_Resource, species);
+            }
+
+            [[nodiscard]]
+            friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
+
+            [[nodiscard]]
+            const shader_resource& resource() const noexcept { return m_Resource; }
+        };
+
+        [[nodiscard]]
         GLuint get_gl_index(const shader_compiler& c) noexcept { return c.resource().handle().index(); }
     }
-
-    shader_compiler::shader_compiler(shader_species species, std::string_view source)
-        : m_Resource{species}
-    {
-        const auto index{m_Resource.handle().index()};
-        const auto data{source.data()};
-        glShaderSource(index, 1, &data, nullptr);
-        glCompileShader(index);
-        check_compilation_success(m_Resource, species);
-    }
-
-    shader_program::shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource) {
+ 
+    shader_program::shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
         shader_compiler vertexShader{shader_species::vertex, vertexShaderSource}, fragmentShader{shader_species::fragment, fragmentShaderSource};
 
         const auto progIndex{m_Resource.handle().index()};

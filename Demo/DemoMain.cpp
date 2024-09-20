@@ -12,7 +12,6 @@
 #include "GLFW/glfw3.h"
 
 #include <filesystem>
-#include <fstream>
 #include <iostream>
 #include <source_location>
 
@@ -32,16 +31,6 @@ fs::path get_shader_directory() {
     throw std::runtime_error{"Relative file paths not supported!"};
 }
 
-[[nodiscard]]
-std::string file_to_string(const fs::path& file) {
-    if(std::ifstream ifile{file}) {
-        return std::string(std::istreambuf_iterator<char>(ifile), {});
-    }
-
-    throw std::runtime_error{std::format("Unable to open file {}", file.generic_string())};
-}
-
-
 int main()
 {
     try
@@ -52,7 +41,7 @@ int main()
         namespace agl = avocet::opengl;
 
         const auto shaderDir{get_shader_directory()};
-        agl::shader_program shaderProgram{file_to_string(shaderDir / "Identity.vs"), file_to_string(shaderDir / "Monochrome.fs")};
+        agl::shader_program shaderProgram{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------

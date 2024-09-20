@@ -7,17 +7,10 @@
 
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 
+#include <filesystem>
 #include <string>
 
 namespace avocet::opengl {
-
-    template<class T>
-        requires std::is_scoped_enum_v<T>&& std::is_same_v<std::underlying_type_t<T>, GLenum>
-    [[nodiscard]]
-    GLenum to_gl_enum(T species) { return static_cast<GLenum>(species); }
-
-    enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
-
     template<class T>
     inline constexpr bool has_destroy{
       requires (const resource_handle & h) { T::destroy(h); }
@@ -55,41 +48,18 @@ namespace avocet::opengl {
         const resource_handle& handle() const noexcept { return m_Handle; }
     };
 
-    class shader_resource_lifecycle {
-        shader_species m_Species;
-    public:
-        explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
-
-        resource_handle create() { return resource_handle{glCreateShader(to_gl_enum(m_Species))}; }
-
-        static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
-    };
-
     struct shader_program_lifecycle {
         static resource_handle create() { return resource_handle{glCreateProgram()}; }
 
         static void destroy(const resource_handle& handle) { glDeleteProgram(handle.index()); }
     };
 
-    using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
     using shader_program_resource = generic_shader_resource<shader_program_lifecycle>;
-
-    class shader_compiler {
-        shader_resource m_Resource;
-    public:
-        shader_compiler(shader_species species, std::string_view source);
-
-        [[nodiscard]]
-        friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
-
-        [[nodiscard]]
-        const shader_resource& resource() const noexcept { return m_Resource; }
-    };
 
     class shader_program {
         shader_program_resource m_Resource{};
     public:
-        shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource);
+        shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         void use() { glUseProgram(m_Resource.handle().index()); }
 
