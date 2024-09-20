@@ -82,9 +82,9 @@ namespace avocet::opengl {
             const auto& handle{resource.handle()};
             if(!get_parameter_value(handle, to_build_status_flag(resource), getParameter)) {
                 const GLint logLength{get_parameter_value(handle, GL_INFO_LOG_LENGTH, getParameter)};
-                std::vector<GLchar> infoLog(logLength);
+                std::string infoLog(logLength, ' ');
                 getInfoLog(handle.index(), logLength, nullptr, infoLog.data());
-                throw std::runtime_error{std::format("error: {} {} failed\n{}\n", name, to_build_stage(resource), infoLog.data())};
+                throw std::runtime_error{std::format("error: {} {} failed\n{}\n", name, to_build_stage(resource), infoLog)};
             }
         }
 
