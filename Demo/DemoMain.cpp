@@ -11,22 +11,35 @@
 
 #include "GLFW/glfw3.h"
 
-#include <format>
+#include <filesystem>
+#include <fstream>
 #include <iostream>
-#include <utility>
+#include <source_location>
 
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
+namespace fs = std::filesystem;
+
+[[nodiscard]]
+fs::path get_shader_directory() {
+    if(fs::path file{std::source_location::current().file_name()}; file.is_absolute()) {
+        if(fs::path dir{file.parent_path() / "Shaders"}; fs::exists(dir)) {
+            return dir;
+        }
+        else {
+            throw std::runtime_error{std::format("Unable to find shader directory: {}", dir.generic_string())};
+        }
+    }
+
+    throw std::runtime_error{"Relative file paths not supported!"};
+}
+
+[[nodiscard]]
+std::string file_to_string(const fs::path& file) {
+    if(std::ifstream ifile{file}) {
+        return std::string(std::istreambuf_iterator<char>(ifile), {});
+    }
+
+    throw std::runtime_error{std::format("Unable to open file {}", file.generic_string())};
+}
 
 
 int main()
@@ -37,7 +50,9 @@ int main()
         auto w{manager.create_window()};
 
         namespace agl = avocet::opengl;
-        agl::shader_program shaderProgram{vertexShaderSource, fragmentShaderSource};
+
+        const auto shaderDir{get_shader_directory()};
+        agl::shader_program shaderProgram{file_to_string(shaderDir / "Identity.vs"), file_to_string(shaderDir / "Monochrome.fs")};
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
