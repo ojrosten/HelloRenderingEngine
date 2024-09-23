@@ -44,18 +44,6 @@ namespace avocet::opengl {
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
 
-        [[nodiscard]]
-        std::string to_build_stage(const shader_resource&) { return "compile"; }
-
-        [[nodiscard]]
-        std::string to_build_stage(const shader_program_resource&) { return "link"; }
-
-        [[nodiscard]]
-        GLenum to_build_status_flag(const shader_resource&) { return GL_COMPILE_STATUS; }
-
-        [[nodiscard]]
-        GLenum to_build_status_flag(const shader_program_resource&) { return GL_LINK_STATUS; }
-
         using param_getter    = void(*)(GLuint, GLenum, GLint*);
         using info_log_getter = void(*)(GLuint, GLsizei, GLsizei*, GLchar*);
 
