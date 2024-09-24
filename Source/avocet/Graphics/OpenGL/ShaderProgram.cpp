@@ -125,11 +125,6 @@ namespace avocet::opengl {
             std::string name() const { return "program"; }
         };
 
-
-        void check_compilation_success(const shader_resource& resource, shader_species species) { shader_resource_checker(resource, species).check(); }
-
-        void check_linking_success(const shader_program_resource& resource) { shader_program_resource_checker{resource}.check(); }
-
         [[nodiscard]]
         std::string file_to_string(const fs::path& file) {
             if(std::ifstream ifile{file}) {
@@ -149,7 +144,7 @@ namespace avocet::opengl {
                 const auto data{contents.data()};
                 glShaderSource(index, 1, &data, nullptr);
                 glCompileShader(index);
-                check_compilation_success(m_Resource, species);
+                shader_resource_checker{m_Resource, species}.check();
             }
 
             [[nodiscard]]
@@ -170,6 +165,6 @@ namespace avocet::opengl {
         glAttachShader(progIndex, get_gl_index(vertexShader));
         glAttachShader(progIndex, get_gl_index(fragmentShader));
         glLinkProgram(progIndex);
-        check_linking_success(m_Resource);
+        shader_program_resource_checker{m_Resource}.check();
     }
 }
