@@ -52,19 +52,20 @@ namespace avocet::opengl {
             requires (const T & t) { { t.handle() } -> std::same_as<const resource_handle&>; }
         };
 
-        template<class T>
-            requires is_resource_v<T>
+        template<class Resource>
+            requires is_resource_v<Resource>
         struct resoure_attributes_base {
             [[nodiscard]]
             const resource_handle& handle() const noexcept{ return resource.handle(); }
 
-            const T& resource;
+            const Resource& resource;
         };
 
         struct shader_resource_attributes : resoure_attributes_base<shader_resource> {
             constexpr static std::string_view build_stage{"compilation"};
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
+            [[nodiscard]]
             std::string name() const { return to_string(species) + "shader"; }
 
             shader_species species;
@@ -76,6 +77,7 @@ namespace avocet::opengl {
             constexpr static std::string_view build_stage{"linking"};
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
+            [[nodiscard]]
             std::string name() const { return "program"; }
 
             param_getter paramGetter{glGetProgramiv};
