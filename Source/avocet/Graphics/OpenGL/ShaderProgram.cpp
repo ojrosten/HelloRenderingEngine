@@ -44,85 +44,101 @@ namespace avocet::opengl {
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
 
-        using param_getter    = void(*)(GLuint, GLenum, GLint*);
-        using info_log_getter = void(*)(GLuint, GLsizei, GLsizei*, GLchar*);
+        using gl_param_getter    = void(*)(GLuint, GLenum, GLint*);
+        using gl_info_log_getter = void(*)(GLuint, GLsizei, GLsizei*, GLchar*);
 
         template<class T>
         constexpr bool is_resource_v{
             requires (const T & t) { { t.handle() } -> std::same_as<const resource_handle&>; }
         };
 
-        template<class Resource>
-            requires is_resource_v<Resource>
-        struct resoure_attributes_base {
-            [[nodiscard]]
-            const resource_handle& handle() const noexcept{ return resource.handle(); }
+        class resource_attributes {
+            const resource_handle& m_Handle;
+            gl_param_getter m_ParamGetter;
+            gl_info_log_getter m_LogGetter;
 
-            const Resource& resource;
+            static gl_param_getter validate(gl_param_getter g)       { return g ? g : throw std::runtime_error{"gl_param_getter: null function pointer"}; }
+            static gl_info_log_getter validate(gl_info_log_getter g) { return g ? g : throw std::runtime_error{"gl_info_log_getter: null function pointer"}; }
+
+        public:
+            resource_attributes(const resource_handle& handle, gl_param_getter paramGetter, gl_info_log_getter logGetter)
+                : m_Handle{handle}
+                , m_ParamGetter{validate(paramGetter)}
+                , m_LogGetter{validate(logGetter)}
+            {}
+
+            [[nodiscard]]
+            GLint get_parameter_value(GLenum paramName) const {
+                GLint parameter{};
+                m_ParamGetter(m_Handle.index(), paramName, &parameter);
+                return parameter;
+            }
+
+            [[nodiscard]]
+            std::string get_log() const {
+                const GLint logLength{get_parameter_value(GL_INFO_LOG_LENGTH)};
+                std::string infoLog(logLength, ' ');
+                m_LogGetter(m_Handle.index(), logLength, nullptr, infoLog.data());
+                return infoLog;
+            }
         };
 
-        struct shader_resource_attributes : resoure_attributes_base<shader_resource> {
+        class shader_resource_attributes : public resource_attributes {
+            shader_species m_Species;
+        public:
             constexpr static std::string_view build_stage{"compilation"};
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
-            [[nodiscard]]
-            std::string name() const { return to_string(species) + "shader"; }
+            shader_resource_attributes(const shader_resource& resource, shader_species species)
+                : resource_attributes{resource.handle(), glGetShaderiv, glGetShaderInfoLog}
+                , m_Species{species}
+            {}
 
-            shader_species species;
-            param_getter paramGetter{glGetShaderiv};
-            info_log_getter logGetter{glGetShaderInfoLog};
+            [[nodiscard]]
+            std::string name() const { return to_string(m_Species) + " shader"; }
+
         };
 
-        struct shader_program_resource_attributes : resoure_attributes_base<shader_program_resource> {
+        class shader_program_resource_attributes : public resource_attributes {
+        public:
             constexpr static std::string_view build_stage{"linking"};
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
+            shader_program_resource_attributes(const shader_program_resource& resource)
+                : resource_attributes{resource.handle(), glGetProgramiv, glGetProgramInfoLog}
+            {}
+
             [[nodiscard]]
             std::string name() const { return "program"; }
-
-            param_getter paramGetter{glGetProgramiv};
-            info_log_getter logGetter{glGetProgramInfoLog};
         };
 
         template<class T>
         inline constexpr bool has_resource_attributes_v{
-            is_resource_v<T> && 
             requires (const T& t) {
-                { T::build_stage } -> std::convertible_to<std::string_view>;
-                { T::status_flag } -> std::convertible_to<GLenum>;
-                { t.name() }       -> std::convertible_to<std::string>;
-                { t.paramGetter }  -> std::convertible_to<param_getter>;
-                { t.logGetter }    -> std::convertible_to<info_log_getter>;
+                { T::build_stage }   -> std::convertible_to<std::string_view>;
+                { T::status_flag }   -> std::convertible_to<GLenum>;
+                { t.name() }         -> std::convertible_to<std::string>;
+                //{ t.param_getter() } -> std::convertible_to<gl_param_getter>;
+                //{ t.log_getter() }   -> std::convertible_to<gl_info_log_getter>;
             }
         };
 
         static_assert(has_resource_attributes_v<shader_resource_attributes>);
+        static_assert(has_resource_attributes_v<shader_program_resource_attributes>);
 
         template<class T>
-        constexpr bool is_gl_getter_v{std::is_invocable_v<T, GLuint, GLenum, GLint*>};
-
-        template<class GetParameter>
-            requires is_gl_getter_v<GetParameter>
-        [[nodiscard]]
-        GLint get_parameter_value(const resource_handle& handle, GLenum paramName, GetParameter getParameter) {
-            GLint parameter{};
-            getParameter(handle.index(), paramName, &parameter);
-            return parameter;
-        }
+        constexpr bool is_param_getter_v{std::is_invocable_v<T, GLuint, GLenum, GLint*>};
 
         template<class ResourceAttributes>
             requires has_resource_attributes_v<ResourceAttributes>
         void check_success(const ResourceAttributes& attributes) {
-            const auto& handle{attributes.handle()};
-            if(!get_parameter_value(handle, attributes.status_flag, attributes.paramGetter)) {
-                const GLint logLength{get_parameter_value(handle, GL_INFO_LOG_LENGTH, attributes.paramGetter)};
-                std::string infoLog(logLength, ' ');
-                attributes.logGetter(handle.index(), logLength, nullptr, infoLog.data());
+            if(!attributes.get_parameter_value(attributes.status_flag)) {
+                const auto infoLog{attributes.get_log()};
                 throw std::runtime_error{std::format("error: {} {} failed\n{}\n", attributes.name(), attributes.build_stage, infoLog)};
             }
         }
 
-        void check_compilation_success(const shader_resource& resource, shader_species species) { check_success(shader_resource_attributes({resource}, species)); }
+        void check_compilation_success(const shader_resource& resource, shader_species species) { check_success(shader_resource_attributes(resource, species)); }
 
         void check_linking_success(const shader_program_resource& resource) { check_success(shader_program_resource_attributes{resource}); }
 
