@@ -44,21 +44,19 @@ namespace avocet::opengl {
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
 
-        using gl_param_getter    = void(*)(GLuint, GLenum, GLint*);
-        using gl_info_log_getter = void(*)(GLuint, GLsizei, GLsizei*, GLchar*);
-
         template<class T>
         inline constexpr bool has_resource_checker_v{
             requires (const T & t) {
                 { T::build_stage }   -> std::convertible_to<std::string_view>;
                 { T::status_flag }   -> std::convertible_to<GLenum>;
                 { t.name() }         -> std::convertible_to<std::string>;
-                //{ t.param_getter() } -> std::convertible_to<gl_param_getter>;
-                //{ t.log_getter() }   -> std::convertible_to<gl_info_log_getter>;
             }
         };
 
         class resource_checker {
+            using gl_param_getter    = void(*)(GLuint, GLenum, GLint*);
+            using gl_info_log_getter = void(*)(GLuint, GLsizei, GLsizei*, GLchar*);
+
             const resource_handle& m_Handle;
             gl_param_getter m_ParamGetter;
             gl_info_log_getter m_LogGetter;
