@@ -40,15 +40,7 @@ int main()
 
         namespace agl = avocet::opengl;
 
-        // build and compile our shader program
-        agl::shader_compiler vertexShader{agl::shader_species::vertex, vertexShaderSource}, fragmentShader{agl::shader_species::fragment, fragmentShaderSource};
-
-        // link shaders
-        unsigned int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader.resource().handle().index());
-        glAttachShader(shaderProgram, fragmentShader.resource().handle().index());
-        glLinkProgram(shaderProgram);
-        agl::check_linking_success(shaderProgram);
+        agl::shader_program shaderProgram{vertexShaderSource, fragmentShaderSource};
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
@@ -82,8 +74,8 @@ int main()
             glClear(GL_COLOR_BUFFER_BIT);
 
             // draw our first triangle
-            glUseProgram(shaderProgram);
-            glBindVertexArray(VAO); // seeing as we only have a single VAO there's no need to bind it every time, but we'll do so to keep things a bit more organized
+            shaderProgram.use();
+            glBindVertexArray(VAO);
             glDrawArrays(GL_TRIANGLES, 0, 3);
 
             glfwSwapBuffers(&w.get());
@@ -93,7 +85,6 @@ int main()
         // de-allocate all resources once they've outlived their purpose:
         glDeleteVertexArrays(1, &VAO);
         glDeleteBuffers(1, &VBO);
-        glDeleteProgram(shaderProgram);
     }
     catch(const std::exception& e)
     {
