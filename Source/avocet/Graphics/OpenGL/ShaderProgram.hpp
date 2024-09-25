@@ -12,7 +12,7 @@
 
 namespace avocet::opengl {
     template<class T>
-    inline constexpr bool has_life_events_v{
+    inline constexpr bool has_lifecycle_v{
         requires (T& t, const resource_handle& h) {
             { t.create() } -> std::same_as<resource_handle>;
             t.destroy(h);
@@ -20,7 +20,7 @@ namespace avocet::opengl {
     };
 
     template<class LifeEvents>
-        requires has_life_events_v<LifeEvents>
+        requires has_lifecycle_v<LifeEvents>
     class generic_shader_resource {
         resource_handle m_Handle;
     public:
