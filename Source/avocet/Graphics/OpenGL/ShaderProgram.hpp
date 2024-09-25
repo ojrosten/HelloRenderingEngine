@@ -12,25 +12,25 @@
 
 namespace avocet::opengl {
     template<class T>
-    inline constexpr bool is_lifecycle_v{
+    inline constexpr bool has_life_events_v{
         requires (T& t, const resource_handle& h) {
             { t.create() } -> std::same_as<resource_handle>;
             t.destroy(h);
         }
     };
 
-    template<class Lifecycle>
-        requires is_lifecycle_v<Lifecycle>
+    template<class LifeEvents>
+        requires has_life_events_v<LifeEvents>
     class generic_shader_resource {
         resource_handle m_Handle;
     public:
         template<class... Args>
-            requires std::is_constructible_v<Lifecycle, Args...>
+            requires std::is_constructible_v<LifeEvents, Args...>
         explicit(sizeof...(Args) == 1) generic_shader_resource(const Args&... args)
-            : m_Handle{Lifecycle{args...}.create()}
+            : m_Handle{LifeEvents{args...}.create()}
         {}
 
-        ~generic_shader_resource() { Lifecycle::destroy(m_Handle); }
+        ~generic_shader_resource() { LifeEvents::destroy(m_Handle); }
 
         generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
