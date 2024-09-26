@@ -11,56 +11,58 @@
 #include <stdexcept>
 
 namespace avocet::opengl {
-    enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
-
-    template<class GetStatus>
-    GLint check_status(GLuint shaderID, GLenum status, GetStatus getStatus) {
-        GLint success{};
-        getStatus(shaderID, status, &success);
-        return success;
-    }
-
-    template<class GetStatus, class GetInfoLog>
-    void check_success(GLuint shaderID, std::string_view name, std::string_view buildStage, GLenum status, GetStatus getStatus, GetInfoLog getInfoLog) {
-        if(!check_status(shaderID, status, getStatus)) {
-            GLchar infoLog[512]{};
-            getInfoLog(shaderID, 512, nullptr, infoLog);
-            throw std::runtime_error{std::format("ERROR::SHADER::{}::{}_FAILED\n{}\n", name, buildStage, infoLog)};
+    template<class T>
+    inline constexpr bool has_lifecycle_events_v{
+        requires (T& t, const resource_handle& h) {
+            { t.create() } -> std::same_as<resource_handle>;
+            t.destroy(h);
         }
-    }
+    };
 
-    void check_linking_success(GLuint programID);
-
-    class shader_resource {
-        resource_handle m_Handle{};
+    template<class Lifecycle>
+        requires has_lifecycle_events_v<Lifecycle>
+    class generic_shader_resource {
+        resource_handle m_Handle;
     public:
-        explicit shader_resource(shader_species species)
-            : m_Handle{glCreateShader(static_cast<GLenum>(species))}
+        template<class... Args>
+            requires std::is_constructible_v<Lifecycle, Args...>
+        explicit(sizeof...(Args) == 1) generic_shader_resource(const Args&... args)
+            : m_Handle{Lifecycle{args...}.create()}
         {}
 
-        shader_resource(shader_resource&&) noexcept = default;
+        ~generic_shader_resource() { Lifecycle::destroy(m_Handle); }
 
-        shader_resource& operator=(shader_resource&&) noexcept = default;
+        generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
-        ~shader_resource() { glDeleteShader(m_Handle.index()); }
+        generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
         const resource_handle& handle() const noexcept { return m_Handle; }
 
         [[nodiscard]]
-        friend bool operator==(const shader_resource&, const shader_resource&) noexcept = default;
+        friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
     };
 
-    class shader_compiler {
-        shader_resource m_Resource;
+    struct shader_program_resource_lifecycle {
+        [[nodiscard]]
+        static resource_handle create() { return resource_handle{glCreateProgram()}; }
+
+        static void destroy(const resource_handle& h) { glDeleteProgram(h.index()); }
+    };
+
+    using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
+
+    class shader_program {
+        shader_program_resource m_Resource;
     public:
-        shader_compiler(shader_species species, std::string_view source);
+        shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource);
 
         [[nodiscard]]
-        const shader_resource& resource() const noexcept { return m_Resource; }
+        const shader_program_resource& resource() const noexcept { return m_Resource; }
+
+        void use() { glUseProgram(m_Resource.handle().index()); }
 
         [[nodiscard]]
-        friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
+        friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     };
-
 }
