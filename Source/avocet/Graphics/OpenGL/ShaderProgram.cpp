@@ -90,7 +90,7 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("Unable to open file {}", file.generic_string())};
         }
 
-        using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
+        using shader_resource = resource<shader_resource_lifecycle>;
 
         class shader_compiler_checker : public shader_checker {
             shader_species m_Species;

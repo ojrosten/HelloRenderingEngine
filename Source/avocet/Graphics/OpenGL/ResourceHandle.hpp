@@ -32,4 +32,36 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const resource_handle&, const resource_handle&) noexcept = default;
     };
+
+    template<class T>
+    inline constexpr bool has_lifecycle_events_v{
+        requires(T & t, const resource_handle & handle) {
+            { t.create() } -> std::same_as<resource_handle>;
+            t.destroy(handle);
+        }
+    };
+
+    template<class LifeEvents>
+        requires has_lifecycle_events_v<LifeEvents>
+    class resource {
+        resource_handle m_Handle;
+    public:
+        template<class... Args>
+            requires std::is_constructible_v<LifeEvents, Args...>
+        explicit(sizeof...(Args) == 1) resource(const Args&... args)
+            : m_Handle{LifeEvents{args...}.create()}
+        {}
+
+        ~resource() { LifeEvents::destroy(m_Handle); }
+
+        resource(resource&&) noexcept = default;
+
+        resource& operator=(resource&&) noexcept = default;
+
+        [[nodiscard]]
+        const resource_handle& handle() const noexcept { return m_Handle; }
+
+        [[nodiscard]]
+        friend bool operator==(const resource&, const resource&) noexcept = default;
+    };
 }
