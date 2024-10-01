@@ -7,7 +7,12 @@
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
+#include <fstream>
+#include <functional>
+
 namespace avocet::opengl {
+    namespace fs = std::filesystem;
+
     namespace {
         enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
 
@@ -22,29 +27,48 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("shader_species - unexpected value: {}", static_cast<GLenum>(species))};
         }
 
-        template<class GetStatus>
-        GLint check_status(GLuint shaderID, GLenum status, GetStatus getStatus) {
-            GLint success{};
-            getStatus(shaderID, status, &success);
-            return success;
-        }
+        class shader_checker {
+            using gl_param_getter = std::function<void(GLuint, GLenum, GLint*)>;
+            using gl_info_getter  = std::function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
 
-        template<class GetStatus, class GetInfoLog>
-        void check_success(GLuint shaderID, std::string_view name, std::string_view buildStage, GLenum status, GetStatus getStatus, GetInfoLog getInfoLog) {
-            if(!check_status(shaderID, status, getStatus)) {
-                GLchar infoLog[512]{};
-                getInfoLog(shaderID, 512, nullptr, infoLog);
-                throw std::runtime_error{std::format("ERROR::SHADER::{}::{}_FAILED\n{}\n", name, buildStage, infoLog)};
+            const resource_handle& m_Handle;
+            gl_param_getter m_ParamGetter;
+            gl_info_getter m_InfoGetter;
+
+            static gl_param_getter validate(gl_param_getter g) { return g ? g : throw std::runtime_error{"gl_param_getter is null"}; }
+            static gl_info_getter  validate(gl_info_getter g)  { return g ? g : throw std::runtime_error{"gl_info_getter is null"}; }
+
+            [[nodiscard]]
+            GLint get_parameter_value(GLenum paramName) const {
+                GLint param{};
+                m_ParamGetter(m_Handle.index(), paramName, &param);
+                return param;
             }
-        }
 
-        void check_linking_success(GLuint programID) {
-            check_success(programID, "PROGRAM", "LINKING", GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
-        }
+            [[nodiscard]]
+            std::string get_log() const {
+                const GLint logLength{get_parameter_value(GL_INFO_LOG_LENGTH)};
+                std::string info(logLength, ' ');
+                m_InfoGetter(m_Handle.index(), logLength, nullptr, info.data());
+                return info;
+            }
+        protected:
+            ~shader_checker() = default;
+        public:
+            shader_checker(const resource_handle& h, gl_param_getter paramGetter, gl_info_getter infoGetter)
+                : m_Handle{h}
+                , m_ParamGetter{validate(paramGetter)}
+                , m_InfoGetter{validate(infoGetter)}
+            {}
 
-        void check_compilation_success(GLuint shaderID, shader_species species) {
-            check_success(shaderID, to_string(species), "COMPILATION", GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
-        }
+            template<class Self>
+            void check(this Self&& self) {
+                if(!self.get_parameter_value(self.status_flag)) {
+                    const auto infoLog{self.get_log()};
+                    throw std::runtime_error{std::format("error: {} {} failed\n{}\n", self.name(), self.build_stage, infoLog)};
+                }
+            }
+        };
 
         class shader_resource_lifecycle {
             shader_species m_Species;
@@ -57,19 +81,57 @@ namespace avocet::opengl {
             static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
         };
 
+        [[nodiscard]]
+        std::string read_to_string(const fs::path& file) {
+            if(std::ifstream ifile{file}) {
+                return std::string(std::istreambuf_iterator<char>{ifile}, {});
+            }
+
+            throw std::runtime_error{std::format("Unable to open file {}", file.generic_string())};
+        }
+
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
+
+        class shader_compiler_checker : public shader_checker {
+            shader_species m_Species;
+        public:
+            constexpr static std::string_view build_stage{"compilation"};
+            constexpr static GLenum status_flag{GL_COMPILE_STATUS};
+
+            shader_compiler_checker(const shader_resource& resource, shader_species species)
+                : shader_checker{resource.handle(), glGetShaderiv, glGetShaderInfoLog}
+                , m_Species{species}
+            {}
+
+            [[nodiscard]]
+            std::string name() const { return to_string(m_Species) + " shader"; }
+        };
+
+        class shader_program_checker : public shader_checker {
+        public:
+            constexpr static std::string_view build_stage{"linking"};
+            constexpr static GLenum status_flag{GL_LINK_STATUS};
+
+            explicit shader_program_checker(const shader_program_resource& resource)
+                : shader_checker{resource.handle(), glGetProgramiv, glGetProgramInfoLog}
+            {}
+
+            [[nodiscard]]
+            std::string name() const { return "program"; }
+        };
 
         class shader_compiler {
             shader_resource m_Resource;
         public:
-            shader_compiler(shader_species species, std::string_view source)
+            shader_compiler(shader_species species, const fs::path& sourceFile)
                 : m_Resource{species}
             {
                 const auto index{m_Resource.handle().index()};
+                const auto source{read_to_string(sourceFile)};
                 const auto data{source.data()};
                 glShaderSource(index, 1, &data, nullptr);
                 glCompileShader(index);
-                check_compilation_success(index, species);
+                shader_compiler_checker{m_Resource, species}.check();
             }
 
             [[nodiscard]]
@@ -96,7 +158,7 @@ namespace avocet::opengl {
         static_assert(has_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
-    shader_program::shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource) {
+    shader_program::shader_program(const fs::path& vertexShaderSource, const fs::path& fragmentShaderSource) {
         shader_compiler
             vertexShader{shader_species::vertex, vertexShaderSource},
             fragmentShader{shader_species::fragment, fragmentShaderSource};
@@ -108,6 +170,6 @@ namespace avocet::opengl {
             glLinkProgram(progIndex);
         }
 
-        check_linking_success(progIndex);
+        shader_program_checker{m_Resource}.check();
     }
 }

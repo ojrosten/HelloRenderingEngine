@@ -28,8 +28,6 @@ namespace {
         if(!win)
             throw std::runtime_error{"Failed to create GLFW window"};
 
-        glfwMakeContextCurrent(win);
-
         return *win;
     }
 }
@@ -46,7 +44,14 @@ namespace demo {
 
     window glfw_manager::create_window() { return window{}; }
 
-    window::window() : m_Window{make_window()} {}
+    window_resource::window_resource() : m_Window{make_window()} {}
 
-    window::~window() { glfwDestroyWindow(&m_Window); }
+    window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
+
+    window::window() {
+        glfwMakeContextCurrent(&m_Window.get());
+
+        if(!gladLoadGL(glfwGetProcAddress))
+            throw std::runtime_error{"Failed to initialize GLAD"};
+    }
 }
