@@ -27,6 +27,15 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("shader_species - unexpected value: {}", static_cast<GLenum>(species))};
         }
 
+        template<class T>
+        inline constexpr bool has_checker_attributes_v{
+            requires(const T & t) {
+                { T::build_stage } -> std::convertible_to<std::string_view>;
+                { T::status_flag } -> std::convertible_to<GLenum>;
+                { t.name() }       -> std::convertible_to<std::string>;
+            }
+        };
+
         class shader_checker {
             using gl_param_getter = std::function<void(GLuint, GLenum, GLint*)>;
             using gl_info_getter  = std::function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
@@ -62,6 +71,7 @@ namespace avocet::opengl {
             {}
 
             template<class Self>
+                requires has_checker_attributes_v<Self>
             void check(this Self&& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
                     const auto infoLog{self.get_log()};
