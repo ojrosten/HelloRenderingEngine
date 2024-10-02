@@ -65,14 +65,11 @@ namespace avocet::opengl {
         friend bool operator==(const shader_resource&, const shader_resource&) noexcept = default;
     };
 
-    struct resource_count {
-        GLuint number{};
-    };
 
     template<std::size_t I>
     struct resource_index { constexpr static auto index{I}; };
 
-    template<GLuint N>
+    template<std::size_t N>
     using gl_index_array = std::array<GLuint, N>;
 
     template<std::size_t N>
@@ -88,35 +85,39 @@ namespace avocet::opengl {
         return[&] <std::size_t... Is> (std::index_sequence<Is...>){ return gl_index_array<N>{handles[Is].index()...}; }(std::make_index_sequence<N>{});
     }
 
-    template<std::size_t N, class LifeEvents>
+    struct num_resources { std::size_t value{}; };
+
+    template<num_resources NumResources, class LifeEvents>
     struct generated_resource_lifecycle {
+        constexpr static auto N{NumResources.value};
+
         [[nodiscard]]
         static gl_handle_array<N> generate() {
             gl_index_array<N> indices{};
-            LifeEvents::generate(indices);
-            return to_handle_array(indices);
+            LifeEvents::generate<N>(indices);
+            return to_handle_array<N>(indices);
         }
 
         static void destroy(const gl_handle_array<N>& handles) {
-            const auto indices{to_index_array(handles)};
-            LifeEvents::destroy(indices);
+            const auto indices{to_index_array<N>(handles)};
+            LifeEvents::destroy<N>(indices);
         }
     };
 
-    template<std::size_t N, class T>
+    template<num_resources N, class T>
     inline constexpr bool has_lifecycle_events_v{
-        requires(T& t, gl_index_array<N>& indices) {
+        requires(T& t, gl_index_array<N.value>& indices) {
             t.generate(indices);
             t.destroy(indices);
         }
     };
 
-    template<std::size_t N, class LifeEvents>
+    template<num_resources N, class LifeEvents>
         requires has_lifecycle_events_v<N, LifeEvents>
     class resource {
     public:
         using lifecycle_type = generated_resource_lifecycle<N, LifeEvents>;
-        constexpr static auto num_objects{N};
+        constexpr static auto resource_count{N};
 
         resource() : m_Handles{lifecycle_type::generate()} {}
 
@@ -127,15 +128,15 @@ namespace avocet::opengl {
         resource& operator=(resource&&) noexcept = default;
 
         template<std::size_t I>
-            requires (I < N)
+            requires (I < N.value)
         [[nodiscard]]
         const resource_handle& handle(resource_index<I>) const noexcept { return m_Handles[I]; }
 
-        const resource_handle& handle() const noexcept requires (N==1) { return m_Handles[0]; }
+        const resource_handle& handle() const noexcept requires (N.value==1) { return m_Handles[0]; }
 
         [[nodiscard]]
         friend bool operator==(const resource&, const resource&) noexcept = default;
     private:
-        gl_handle_array<N> m_Handles;
+        gl_handle_array<N.value> m_Handles;
     };
 }

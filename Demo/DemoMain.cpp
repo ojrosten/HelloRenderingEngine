@@ -50,8 +50,8 @@ namespace avocet::opengl {
         static void destroy(const gl_index_array<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
     };
 
-    using vbo_resource = resource<1, vbo_lifecycle_events>;
-    using vao_resource = resource<1, vao_lifecycle_events>;
+    using vbo_resource = resource<num_resources{1}, vbo_lifecycle_events>;
+    using vao_resource = resource<num_resources{1}, vao_lifecycle_events>;
 
     class triangle {
         std::array<float, 9> m_Vertices{
