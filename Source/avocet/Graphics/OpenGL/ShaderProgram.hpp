@@ -7,8 +7,7 @@
 
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 
-#include <format>
-#include <stdexcept>
+#include <filesystem>
 
 namespace avocet::opengl {
     template<class T>
@@ -55,7 +54,7 @@ namespace avocet::opengl {
     class shader_program {
         shader_program_resource m_Resource;
     public:
-        shader_program(std::string_view vertexShaderSource, std::string_view fragmentShaderSource);
+        shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         [[nodiscard]]
         const shader_program_resource& resource() const noexcept { return m_Resource; }

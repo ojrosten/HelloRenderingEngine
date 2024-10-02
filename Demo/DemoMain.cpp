@@ -13,20 +13,25 @@
 
 #include <format>
 #include <iostream>
+#include <source_location>
 #include <utility>
 
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\n\0";
+namespace {
+    namespace fs = std::filesystem;
+
+    [[nodiscard]]
+    fs::path get_shader_dir() {
+        if(const fs::path file{std::source_location::current().file_name()}; file.is_absolute()) {
+            if(const auto dir{file.parent_path() / "Shaders"}; fs::exists(dir)) {
+                return dir;
+            }
+            else
+                throw std::runtime_error{std::format("Unable to find shader directory {}", dir.generic_string())};
+        }
+
+        throw std::runtime_error{"Relative paths not supported"};
+    }
+}
 
 int main()
 {
@@ -40,7 +45,7 @@ int main()
 
         namespace agl = avocet::opengl;
 
-        agl::shader_program shaderProgram{vertexShaderSource, fragmentShaderSource};
+        agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
