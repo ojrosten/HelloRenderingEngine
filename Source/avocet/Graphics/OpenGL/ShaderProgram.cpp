@@ -27,30 +27,19 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("shader_species - unexpected value: {}", static_cast<GLenum>(species))};
         }
 
-        template<class GetStatus>
-        GLint check_status(GLuint shaderID, GLenum status, GetStatus getStatus) {
-            GLint success{};
-            getStatus(shaderID, status, &success);
-            return success;
-        }
-
-        template<class GetStatus, class GetInfoLog>
-        void check_success(GLuint shaderID, std::string_view name, std::string_view buildStage, GLenum status, GetStatus getStatus, GetInfoLog getInfoLog) {
-            if(!check_status(shaderID, status, getStatus)) {
-                GLchar infoLog[512]{};
-                getInfoLog(shaderID, 512, nullptr, infoLog);
-                throw std::runtime_error{std::format("ERROR::SHADER::{}::{}_FAILED\n{}\n", name, buildStage, infoLog)};
+        template<class T>
+        inline constexpr bool has_checker_attributes_v{
+            requires(const T & t) {
+                { T::build_stage } -> std::convertible_to<std::string_view>;
+                { T::status_flag } -> std::convertible_to<GLenum>;
+                { t.name() }       -> std::convertible_to<std::string>;
             }
-        }
+        };
 
-        void check_linking_success(GLuint programID) {
-            check_success(programID, "PROGRAM", "LINKING", GL_LINK_STATUS, glGetProgramiv, glGetProgramInfoLog);
-        }
-
-        void check_compilation_success(GLuint shaderID, shader_species species) {
-            check_success(shaderID, to_string(species), "COMPILATION", GL_COMPILE_STATUS, glGetShaderiv, glGetShaderInfoLog);
-        }
-
+        template<class T>
+        inline constexpr bool castable_to_bool_v{
+            requires (T& t) { static_cast<bool>(t); }
+        };
 
         class shader_checker {
             using gl_param_getter    = std::function<void(GLuint, GLenum, GLint*)>;
@@ -60,11 +49,10 @@ namespace avocet::opengl {
             gl_param_getter m_ParamGetter;
             gl_info_log_getter m_InfoLogGetter;
 
+            template<class T>
+                requires castable_to_bool_v<T>
             [[nodiscard]]
-            gl_param_getter validate(gl_param_getter g) { return g ? g : throw std::runtime_error{"gl_param_getter is null!"}; }
-
-            [[nodiscard]]
-            gl_info_log_getter validate(gl_info_log_getter g) { return g ? g : throw std::runtime_error{"gl_info_getter is null!"}; }
+            static T validate(std::string_view prefix, T t) { return t ? t : throw std::runtime_error{std::format("{} is null!", prefix)}; }
 
             [[nodiscard]]
             GLint get_parameter_value(GLenum paramName) const {
@@ -85,11 +73,12 @@ namespace avocet::opengl {
         public:
             shader_checker(const resource_handle& h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
                 : m_Handle{h}
-                , m_ParamGetter{validate(paramGetter)}
-                , m_InfoLogGetter{validate(logGetter)}
+                , m_ParamGetter{validate("gl_param_getter", paramGetter)}
+                , m_InfoLogGetter{validate("gl_info_log_getter", logGetter)}
             {}
 
             template<class Self>
+                requires has_checker_attributes_v<Self>
             void check(this Self&& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
                     throw std::runtime_error{std::format("error {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
@@ -123,6 +112,19 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             std::string name() const { return to_string(m_Species) + " shader"; }
+        };
+
+        class shader_program_checker : public shader_checker {
+        public:
+            constexpr static std::string_view build_stage{"linking"};
+            constexpr static GLenum status_flag{GL_LINK_STATUS};
+
+            explicit shader_program_checker(const shader_program_resource& r)
+                : shader_checker{r.handle(), glGetProgramiv, glGetProgramInfoLog}
+            {}
+
+            [[nodiscard]]
+            std::string name() const { return "program"; }
         };
 
         [[nodiscard]]
@@ -184,6 +186,6 @@ namespace avocet::opengl {
             glLinkProgram(progIndex);
         }
 
-        check_linking_success(progIndex);
+        shader_program_checker{m_Resource}.check();
     }
 }
