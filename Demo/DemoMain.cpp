@@ -32,33 +32,26 @@ fs::path shader_directory() {
 
 namespace avocet::opengl {
 
-    template<class GeneratedLifeEvents>
-    struct generated_resource_lifecycle {
-        [[nodiscard]]
-        static resource_handle create() {
-            GLuint index{};
-            GeneratedLifeEvents::generate(index);
-            return resource_handle{index};
-        }
-
-        static void destroy(const resource_handle& h) {
-            const auto index{h.index()};
-            GeneratedLifeEvents::destroy(index);
-        }
-    };
 
     struct vbo_lifecycle_events {
-        static void generate(GLuint& index)      { glGenBuffers(1, &index); }
-        static void destroy(const GLuint& index) { glDeleteBuffers(1, &index); }
+        template<std::size_t N>
+        static void generate(gl_index_array<N>& indices)      { glGenBuffers(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const gl_index_array<N>& indices) { glDeleteBuffers(N, indices.data()); }
     };
+
 
     struct vao_lifecycle_events {
-        static void generate(GLuint& index)      { glGenVertexArrays(1, &index); }
-        static void destroy(const GLuint& index) { glDeleteVertexArrays(1, &index); }
+        template<std::size_t N>
+        static void generate(gl_index_array<N>& indices)      { glGenVertexArrays(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const gl_index_array<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
     };
 
-    using vbo_resource = resource<generated_resource_lifecycle<vbo_lifecycle_events>>;
-    using vao_resource = resource<generated_resource_lifecycle<vao_lifecycle_events>>;
+    using vbo_resource = resource<1, vbo_lifecycle_events>;
+    using vao_resource = resource<1, vao_lifecycle_events>;
 
     class triangle {
         std::array<float, 9> m_Vertices{

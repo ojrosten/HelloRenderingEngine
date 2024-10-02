@@ -100,7 +100,7 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("Unable to open file {}", file.generic_string())};
         }
 
-        using shader_resource = resource<shader_resource_lifecycle>;
+        using shader_resource = shader_resource<shader_resource_lifecycle>;
 
         class shader_compiler_checker : public shader_checker {
             shader_species m_Species;
@@ -108,8 +108,8 @@ namespace avocet::opengl {
             constexpr static std::string_view build_stage{"compilation"};
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
-            shader_compiler_checker(const shader_resource& resource, shader_species species)
-                : shader_checker{resource.handle(), glGetShaderiv, glGetShaderInfoLog}
+            shader_compiler_checker(const shader_resource& shader_resource, shader_species species)
+                : shader_checker{shader_resource.handle(), glGetShaderiv, glGetShaderInfoLog}
                 , m_Species{species}
             {}
 
@@ -122,8 +122,8 @@ namespace avocet::opengl {
             constexpr static std::string_view build_stage{"linking"};
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
-            explicit shader_program_checker(const shader_program_resource& resource)
-                : shader_checker{resource.handle(), glGetProgramiv, glGetProgramInfoLog}
+            explicit shader_program_checker(const shader_program_resource& shader_resource)
+                : shader_checker{shader_resource.handle(), glGetProgramiv, glGetProgramInfoLog}
             {}
 
             [[nodiscard]]
@@ -145,7 +145,7 @@ namespace avocet::opengl {
             }
 
             [[nodiscard]]
-            const shader_resource& resource() const noexcept { return m_Resource; }
+            const shader_resource& shader_resource() const noexcept { return m_Resource; }
 
             [[nodiscard]]
             friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
@@ -155,8 +155,8 @@ namespace avocet::opengl {
             GLuint m_ProgIndex{}, m_ShaderIndex{};
         public:
             shader_attacher(const shader_program& program, const shader_compiler& shader)
-                : m_ProgIndex{program.resource().handle().index()}
-                , m_ShaderIndex{shader.resource().handle().index()}
+                : m_ProgIndex{program.shader_resource().handle().index()}
+                , m_ShaderIndex{shader.shader_resource().handle().index()}
             {
                 glAttachShader(m_ProgIndex, m_ShaderIndex);
             }
@@ -164,8 +164,8 @@ namespace avocet::opengl {
             ~shader_attacher() { glDetachShader(m_ProgIndex, m_ShaderIndex); }
         };
 
-        static_assert(has_lifecycle_events_v<shader_resource_lifecycle>);
-        static_assert(has_lifecycle_events_v<shader_program_resource_lifecycle>);
+        static_assert(has_shader_lifecycle_events_v<shader_resource_lifecycle>);
+        static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
     shader_program::shader_program(const fs::path& vertexShaderSource, const fs::path& fragmentShaderSource) {

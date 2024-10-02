@@ -17,7 +17,7 @@ namespace avocet::opengl {
         static void destroy(const resource_handle& handle) { glDeleteProgram(handle.index()); }
     };
 
-    using shader_program_resource = resource<shader_program_resource_lifecycle>;
+    using shader_program_resource = shader_resource<shader_program_resource_lifecycle>;
 
     class shader_program {
         shader_program_resource m_Resource;
@@ -25,7 +25,7 @@ namespace avocet::opengl {
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         [[nodiscard]]
-        const shader_program_resource& resource() const noexcept { return m_Resource; }
+        const shader_program_resource& shader_resource() const noexcept { return m_Resource; }
 
         void use() { glUseProgram(m_Resource.handle().index()); }
 
