@@ -44,7 +44,10 @@ namespace avocet::opengl {
             gl_param_getter m_ParamGetter;
             gl_info_getter m_InfoGetter;
 
+            [[nodiscard]]
             static gl_param_getter validate(gl_param_getter g) { return g ? g : throw std::runtime_error{"gl_param_getter is null"}; }
+
+            [[nodiscard]]
             static gl_info_getter  validate(gl_info_getter g)  { return g ? g : throw std::runtime_error{"gl_info_getter is null"}; }
 
             [[nodiscard]]
