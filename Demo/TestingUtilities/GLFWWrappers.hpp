@@ -22,10 +22,27 @@ namespace demo {
         window create_window();
     };
 
+    class [[nodiscard]] window_resource {
+        friend window;
+
+        GLFWwindow& m_Window;
+
+        window_resource();
+    public:
+
+        window_resource(const window_resource&) = delete;
+
+        window_resource& operator=(const window_resource&) = delete;
+
+        ~window_resource();
+
+        [[nodiscard]] GLFWwindow& get() { return m_Window; }
+    };
+
     class [[nodiscard]] window {
         friend glfw_manager;
 
-        GLFWwindow& m_Window;
+        window_resource m_Window;
 
         window();
     public:
@@ -34,8 +51,8 @@ namespace demo {
 
         window& operator=(const window&) = delete;
 
-        ~window();
+        ~window() = default;
 
-        [[nodiscard]] GLFWwindow& get() { return m_Window; }
+        [[nodiscard]] GLFWwindow& get() { return m_Window.get(); }
     };
 }

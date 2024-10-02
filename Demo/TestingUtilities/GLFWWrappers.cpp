@@ -25,12 +25,7 @@ namespace {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
         auto win{glfwCreateWindow(800, 600, "Hello GLFW", nullptr, nullptr)};
-        if(!win)
-            throw std::runtime_error{"Failed to create GLFW window"};
-
-        glfwMakeContextCurrent(win);
-
-        return *win;
+        return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
     }
 }
 
@@ -46,7 +41,14 @@ namespace demo {
 
     window glfw_manager::create_window() { return window{}; }
 
-    window::window() : m_Window{make_window()} {}
+    window_resource::window_resource() : m_Window{make_window()} {}
 
-    window::~window() { glfwDestroyWindow(&m_Window); }
+    window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
+
+    window::window() {
+        glfwMakeContextCurrent(&m_Window.get());
+
+        if(!gladLoadGL(glfwGetProcAddress))
+            throw std::runtime_error{"Failed to initialize GLAD"};
+    }
 }
