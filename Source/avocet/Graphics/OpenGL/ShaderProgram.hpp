@@ -5,11 +5,45 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 
 #include <filesystem>
 
 namespace avocet::opengl {
+    template<class T>
+    inline constexpr bool has_shader_lifecycle_events_v{
+        requires(T & t, const resource_handle & handle) {
+            { t.create() } -> std::same_as<resource_handle>;
+            t.destroy(handle);
+        }
+    };
+
+    template<class LifeEvents>
+        requires has_shader_lifecycle_events_v<LifeEvents>
+    class shader_resource {
+        resource_handle m_Handle;
+    public:
+        template<class... Args>
+            requires std::is_constructible_v<LifeEvents, Args...>
+        explicit(sizeof...(Args) == 1) shader_resource(const Args&... args)
+            : m_Handle{LifeEvents{args...}.create()}
+        {}
+
+        ~shader_resource() { LifeEvents::destroy(m_Handle); }
+
+        shader_resource(shader_resource&&) noexcept = default;
+
+        shader_resource& operator=(shader_resource&&) noexcept = default;
+
+        [[nodiscard]]
+        const resource_handle& handle() const noexcept { return m_Handle; }
+
+        [[nodiscard]]
+        friend bool operator==(const shader_resource&, const shader_resource&) noexcept = default;
+    };
+
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
         static resource_handle create() { return resource_handle{glCreateProgram()}; }

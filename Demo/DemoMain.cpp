@@ -7,6 +7,7 @@
 
 #include "TestingUtilities/GLFWWrappers.hpp"
 
+#include "avocet/Graphics/OpenGL/Buffers.hpp"
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
 #include "GLFW/glfw3.h"
