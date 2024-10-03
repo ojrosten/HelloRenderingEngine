@@ -8,13 +8,13 @@
 #include "TestingUtilities/GLFWWrappers.hpp"
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
+#include "avocet/Geometry/OpenGL/Triangle.hpp"
 
 #include "GLFW/glfw3.h"
 
 #include <format>
 #include <iostream>
 #include <source_location>
-#include <utility>
 
 namespace {
     namespace fs = std::filesystem;
