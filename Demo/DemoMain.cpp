@@ -17,19 +17,23 @@
 #include <iostream>
 #include <source_location>
 
-namespace fs = std::filesystem;
+namespace {
+    namespace fs = std::filesystem;
 
-[[nodiscard]]
-fs::path shader_directory() {
-    if(const fs::path file{std::source_location::current().file_name()}; file.is_absolute()) {
-        if(const auto dir{file.parent_path() / "Shaders"}; fs::exists(dir))
-            return dir;
-        else
-            throw std::runtime_error{std::format("Unable to find shader directory {}", dir.generic_string())};
+    [[nodiscard]]
+    fs::path shader_directory() {
+        if(const fs::path file{std::source_location::current().file_name()}; file.is_absolute()) {
+            if(const auto dir{file.parent_path() / "Shaders"}; fs::exists(dir))
+                return dir;
+            else
+                throw std::runtime_error{std::format("Unable to find shader directory {}", dir.generic_string())};
+        }
+
+        throw std::runtime_error{"Relative file paths are not supported!"};
     }
 
-    throw std::runtime_error{"Relative file paths are not supported!"};
 }
+
 int main()
 {
     try
