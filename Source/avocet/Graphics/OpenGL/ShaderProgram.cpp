@@ -36,6 +36,11 @@ namespace avocet::opengl {
             }
         };
 
+        template<class T>
+        inline constexpr bool castable_to_bool_v{
+            requires (T & t) { static_cast<bool>(t); }
+        };
+
         class shader_checker {
             using gl_param_getter = std::function<void(GLuint, GLenum, GLint*)>;
             using gl_info_getter  = std::function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
@@ -44,8 +49,10 @@ namespace avocet::opengl {
             gl_param_getter m_ParamGetter;
             gl_info_getter m_InfoGetter;
 
-            static gl_param_getter validate(gl_param_getter g) { return g ? g : throw std::runtime_error{"gl_param_getter is null"}; }
-            static gl_info_getter  validate(gl_info_getter g)  { return g ? g : throw std::runtime_error{"gl_info_getter is null"}; }
+            template<class T>
+                requires castable_to_bool_v<T>
+            [[nodiscard]]
+            static T validate(std::string_view prefix, T t) { return t ? t : throw std::runtime_error{std::format("{} is null!", prefix)}; }
 
             [[nodiscard]]
             GLint get_parameter_value(GLenum paramName) const {
@@ -66,16 +73,15 @@ namespace avocet::opengl {
         public:
             shader_checker(const resource_handle& h, gl_param_getter paramGetter, gl_info_getter infoGetter)
                 : m_Handle{h}
-                , m_ParamGetter{validate(paramGetter)}
-                , m_InfoGetter{validate(infoGetter)}
+                , m_ParamGetter{validate("gl_param_getter", paramGetter)}
+                , m_InfoGetter{validate("gl_info_log_getter", infoGetter)}
             {}
 
             template<class Self>
                 requires has_checker_attributes_v<Self>
-            void check(this Self&& self) {
+            void check(this const Self& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
-                    const auto infoLog{self.get_log()};
-                    throw std::runtime_error{std::format("error: {} {} failed\n{}\n", self.name(), self.build_stage, infoLog)};
+                    throw std::runtime_error{std::format("error: {} {} failed\n{}\n", self.name(), self.build_stage, self.get_log())};
                 }
             }
         };
