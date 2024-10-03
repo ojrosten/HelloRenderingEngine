@@ -63,7 +63,7 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             std::string get_info_log() const {
-                const auto logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
+                const GLint logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
                 std::string info(logLen, ' ');
                 m_InfoLogGetter(m_Handle.index(), logLen, nullptr, info.data());
                 return info;
