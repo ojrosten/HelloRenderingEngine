@@ -76,6 +76,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         const resource_handle& handle(resource_index<I>) const noexcept { return m_Handles[I]; }
 
+        [[nodiscard]]
         const resource_handle& handle() const noexcept requires (N.value==1) { return m_Handles[0]; }
 
         [[nodiscard]]
@@ -83,4 +84,24 @@ namespace avocet::opengl {
     private:
         gl_handle_array<N.value> m_Handles;
     };
+
+    struct vbo_lifecycle_events {
+        template<std::size_t N>
+        static void generate(gl_index_array<N>& indices)      { glGenBuffers(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const gl_index_array<N>& indices) { glDeleteBuffers(N, indices.data()); }
+    };
+
+
+    struct vao_lifecycle_events {
+        template<std::size_t N>
+        static void generate(gl_index_array<N>& indices)      { glGenVertexArrays(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const gl_index_array<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
+    };
+
+    using vbo_resource = resource < num_resources{1}, vbo_lifecycle_events > ;
+    using vao_resource = resource < num_resources{1}, vao_lifecycle_events > ;
 }

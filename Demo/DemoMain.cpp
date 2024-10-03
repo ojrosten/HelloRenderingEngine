@@ -9,10 +9,10 @@
 
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
+#include "avocet/Geometry/OpenGL/Triangle.hpp"
 
 #include "GLFW/glfw3.h"
 
-#include <array>
 #include <format>
 #include <iostream>
 #include <source_location>
@@ -30,57 +30,6 @@ fs::path shader_directory() {
 
     throw std::runtime_error{"Relative file paths are not supported!"};
 }
-
-namespace avocet::opengl {
-
-
-    struct vbo_lifecycle_events {
-        template<std::size_t N>
-        static void generate(gl_index_array<N>& indices)      { glGenBuffers(N, indices.data()); }
-
-        template<std::size_t N>
-        static void destroy(const gl_index_array<N>& indices) { glDeleteBuffers(N, indices.data()); }
-    };
-
-
-    struct vao_lifecycle_events {
-        template<std::size_t N>
-        static void generate(gl_index_array<N>& indices)      { glGenVertexArrays(N, indices.data()); }
-
-        template<std::size_t N>
-        static void destroy(const gl_index_array<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
-    };
-
-    using vbo_resource = resource<num_resources{1}, vbo_lifecycle_events>;
-    using vao_resource = resource<num_resources{1}, vao_lifecycle_events>;
-
-    class triangle {
-        std::array<float, 9> m_Vertices{
-            -0.5f, -0.5f, 0.0f, // left  
-             0.5f, -0.5f, 0.0f, // right 
-             0.0f,  0.5f, 0.0f  // top   
-        };
-
-        vao_resource m_VAO;
-        vbo_resource m_VBO;
-    public:
-        triangle() {
-            glBindVertexArray(m_VAO.handle().index());
-
-            glBindBuffer(GL_ARRAY_BUFFER, m_VBO.handle().index());
-            glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices.data(), GL_STATIC_DRAW);
-
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-            glEnableVertexAttribArray(0);
-        }
-
-        void draw() {
-            glBindVertexArray(m_VAO.handle().index());
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-        }
-    };
-}
-
 int main()
 {
     try
