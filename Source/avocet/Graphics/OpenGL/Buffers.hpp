@@ -38,13 +38,13 @@ namespace avocet::opengl {
         [[nodiscard]]
         static gl_handle_array<N> generate() {
             gl_index_array<N> indices{};
-            LifeEvents::generate<N>(indices);
-            return to_handle_array<N>(indices);
+            LifeEvents::generate(indices);
+            return to_handle_array(indices);
         }
 
         static void destroy(const gl_handle_array<N>& handles) {
-            const auto indices{to_index_array<N>(handles)};
-            LifeEvents::destroy<N>(indices);
+            const auto indices{to_index_array(handles)};
+            LifeEvents::destroy(indices);
         }
     };
 
