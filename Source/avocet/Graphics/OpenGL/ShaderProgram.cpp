@@ -62,7 +62,7 @@ namespace avocet::opengl {
             }
 
             [[nodiscard]]
-            std::string get_info_log() {
+            std::string get_info_log() const {
                 const auto logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
                 std::string info(logLen, ' ');
                 m_InfoLogGetter(m_Handle.index(), logLen, nullptr, info.data());
@@ -79,7 +79,7 @@ namespace avocet::opengl {
 
             template<class Self>
                 requires has_checker_attributes_v<Self>
-            void check(this Self&& self) {
+            void check(this const Self& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
                     throw std::runtime_error{std::format("error {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
                 }
