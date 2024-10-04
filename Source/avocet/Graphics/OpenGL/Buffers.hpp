@@ -14,19 +14,27 @@ namespace avocet::opengl {
     struct resource_index { constexpr static auto index{I}; };
 
     template<std::size_t N>
-    using gl_index_array = std::array<GLuint, N>;
+    using raw_indices = std::array<GLuint, N>;
 
     template<std::size_t N>
-    using gl_handle_array = std::array<resource_handle, N>;
+    using handles = std::array<resource_handle, N>;
 
     template<std::size_t N>
-    gl_handle_array<N> to_handle_array(const gl_index_array<N>& indices) {
-        return[&] <std::size_t... Is> (std::index_sequence<Is...>){ return gl_handle_array<N>{resource_handle{indices[Is]}...}; }(std::make_index_sequence<N>{});
+    [[nodiscard]]
+    handles<N> to_handle_array(const raw_indices<N>& indices) {
+        return
+            [&] <std::size_t... Is> (std::index_sequence<Is...>) {
+                return handles<N>{resource_handle{indices[Is]}...};
+            }(std::make_index_sequence<N>{});
     }
 
     template<std::size_t N>
-    gl_index_array<N> to_index_array(const gl_handle_array<N>& handles) {
-        return[&] <std::size_t... Is> (std::index_sequence<Is...>){ return gl_index_array<N>{handles[Is].index()...}; }(std::make_index_sequence<N>{});
+    [[nodiscard]]
+    raw_indices<N> to_index_array(const handles<N>& handles) {
+        return
+            [&] <std::size_t... Is> (std::index_sequence<Is...>) {
+                return raw_indices<N>{handles[Is].index()...};
+            }(std::make_index_sequence<N>{});
     }
 
     struct num_resources { std::size_t value{}; };
@@ -36,13 +44,13 @@ namespace avocet::opengl {
         constexpr static auto N{NumResources.value};
 
         [[nodiscard]]
-        static gl_handle_array<N> generate() {
-            gl_index_array<N> indices{};
+        static handles<N> generate() {
+            raw_indices<N> indices{};
             LifeEvents::generate(indices);
             return to_handle_array(indices);
         }
 
-        static void destroy(const gl_handle_array<N>& handles) {
+        static void destroy(const handles<N>& handles) {
             const auto indices{to_index_array(handles)};
             LifeEvents::destroy(indices);
         }
@@ -50,9 +58,9 @@ namespace avocet::opengl {
 
     template<num_resources N, class T>
     inline constexpr bool has_lifecycle_events_v{
-        requires(T& t, gl_index_array<N.value>& indices) {
-            t.generate(indices);
-            t.destroy(indices);
+        requires(raw_indices<N.value>& indices) {
+            T::generate(indices);
+            T::destroy(indices);
         }
     };
 
@@ -82,26 +90,26 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const resource&, const resource&) noexcept = default;
     private:
-        gl_handle_array<N.value> m_Handles;
+        handles<N.value> m_Handles;
     };
 
     struct vbo_lifecycle_events {
         template<std::size_t N>
-        static void generate(gl_index_array<N>& indices)      { glGenBuffers(N, indices.data()); }
+        static void generate(raw_indices<N>& indices)      { glGenBuffers(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const gl_index_array<N>& indices) { glDeleteBuffers(N, indices.data()); }
+        static void destroy(const raw_indices<N>& indices) { glDeleteBuffers(N, indices.data()); }
     };
 
 
     struct vao_lifecycle_events {
         template<std::size_t N>
-        static void generate(gl_index_array<N>& indices)      { glGenVertexArrays(N, indices.data()); }
+        static void generate(raw_indices<N>& indices)      { glGenVertexArrays(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const gl_index_array<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
+        static void destroy(const raw_indices<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
     };
 
-    using vbo_resource = resource < num_resources{1}, vbo_lifecycle_events > ;
-    using vao_resource = resource < num_resources{1}, vao_lifecycle_events > ;
+    using vbo_resource = resource<num_resources{1}, vbo_lifecycle_events>;
+    using vao_resource = resource<num_resources{1}, vao_lifecycle_events>;
 }
