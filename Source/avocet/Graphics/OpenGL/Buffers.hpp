@@ -30,13 +30,13 @@ namespace avocet::opengl {
 
     template<std::size_t N>
     [[nodiscard]]
-    handles<N> to_handle_array(const raw_indices<N>& indices) {
+    handles<N> to_handles(const raw_indices<N>& indices) {
         return to_array<GLuint, resource_handle>(indices, [](GLuint i){ return resource_handle{i}; });
     }
 
     template<std::size_t N>
     [[nodiscard]]
-    raw_indices<N> to_index_array(const handles<N>& handles) {
+    raw_indices<N> to_raw_indices(const handles<N>& handles) {
         return to_array<resource_handle, GLuint>(handles, [](const resource_handle& h){ return h.index(); });
     }
 }
