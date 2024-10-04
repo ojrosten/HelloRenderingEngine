@@ -16,7 +16,7 @@ namespace avocet::opengl {
     inline constexpr bool has_lifecycle_events_v{
         requires(T& t, const resource_handle& handle) {
             { t.create() } -> std::same_as<resource_handle>;
-            t.destroy(handle);
+            T::destroy(handle);
         }
     };
 
