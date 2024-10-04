@@ -14,9 +14,9 @@
 namespace avocet::opengl {
     template<class T>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T & t, const resource_handle & handle) {
+        requires(T& t, const resource_handle& handle) {
             { t.create() } -> std::same_as<resource_handle>;
-            t.destroy(handle);
+            T::destroy(handle);
         }
     };
 
