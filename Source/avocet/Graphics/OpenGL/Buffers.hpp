@@ -19,27 +19,40 @@ namespace avocet::opengl {
     template<std::size_t N>
     using handles = std::array<resource_handle, N>;
 
+    template<class From, class To, class Fn, std::size_t N>
+        requires std::is_invocable_r_v<To, Fn, From>
+    [[nodiscard]]
+    std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
+        return
+            [&] <std::size_t... Is> (std::index_sequence<Is...>) {
+            return std::array<To, N>{fn(from[Is])...};
+        }(std::make_index_sequence<N>{});
+    }
+
     template<std::size_t N>
     [[nodiscard]]
     handles<N> to_handle_array(const raw_indices<N>& indices) {
-        return
-            [&] <std::size_t... Is> (std::index_sequence<Is...>) {
-                return handles<N>{resource_handle{indices[Is]}...};
-            }(std::make_index_sequence<N>{});
+        return to_array<GLuint, resource_handle>(indices, [](GLuint i){ return resource_handle{i}; });
     }
 
     template<std::size_t N>
     [[nodiscard]]
     raw_indices<N> to_index_array(const handles<N>& handles) {
-        return
-            [&] <std::size_t... Is> (std::index_sequence<Is...>) {
-                return raw_indices<N>{handles[Is].index()...};
-            }(std::make_index_sequence<N>{});
+        return to_array<resource_handle, GLuint>(handles, [](const resource_handle& h){ return h.index(); });
     }
 
     struct num_resources { std::size_t value{}; };
 
+    template<num_resources N, class T>
+    inline constexpr bool has_lifecycle_events_v{
+        requires(raw_indices<N.value>&indices) {
+            T::generate(indices);
+            T::destroy(indices);
+        }
+    };
+
     template<num_resources NumResources, class LifeEvents>
+        requires has_lifecycle_events_v<NumResources, LifeEvents>
     struct generated_resource_lifecycle {
         constexpr static auto N{NumResources.value};
 
@@ -56,20 +69,12 @@ namespace avocet::opengl {
         }
     };
 
-    template<num_resources N, class T>
-    inline constexpr bool has_lifecycle_events_v{
-        requires(raw_indices<N.value>& indices) {
-            T::generate(indices);
-            T::destroy(indices);
-        }
-    };
-
-    template<num_resources N, class LifeEvents>
-        requires has_lifecycle_events_v<N, LifeEvents>
+    template<num_resources NumResources, class LifeEvents>
+        requires has_lifecycle_events_v<NumResources, LifeEvents>
     class resource {
     public:
-        using lifecycle_type = generated_resource_lifecycle<N, LifeEvents>;
-        constexpr static auto resource_count{N};
+        using lifecycle_type = generated_resource_lifecycle<NumResources, LifeEvents>;
+        constexpr static auto resource_count{NumResources};
 
         resource() : m_Handles{lifecycle_type::generate()} {}
 
@@ -80,17 +85,17 @@ namespace avocet::opengl {
         resource& operator=(resource&&) noexcept = default;
 
         template<std::size_t I>
-            requires (I < N.value)
+            requires (I < NumResources.value)
         [[nodiscard]]
         const resource_handle& handle(resource_index<I>) const noexcept { return m_Handles[I]; }
 
         [[nodiscard]]
-        const resource_handle& handle() const noexcept requires (N.value==1) { return m_Handles[0]; }
+        const resource_handle& handle() const noexcept requires (NumResources.value==1) { return m_Handles[0]; }
 
         [[nodiscard]]
         friend bool operator==(const resource&, const resource&) noexcept = default;
     private:
-        handles<N.value> m_Handles;
+        handles<NumResources.value> m_Handles;
     };
 
     struct vbo_lifecycle_events {
