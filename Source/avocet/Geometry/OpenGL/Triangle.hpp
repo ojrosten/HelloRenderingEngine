@@ -23,9 +23,9 @@ namespace avocet::opengl {
         vbo_resource m_VBO;
     public:
         triangle() {
-            glBindVertexArray(m_VAO.handle().index());
+            glBindVertexArray(m_VAO.get_handle().index());
 
-            glBindBuffer(GL_ARRAY_BUFFER, m_VBO.handle().index());
+            glBindBuffer(GL_ARRAY_BUFFER, m_VBO.get_handle().index());
             glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices.data(), GL_STATIC_DRAW);
 
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -33,7 +33,7 @@ namespace avocet::opengl {
         }
 
         void draw() {
-            glBindVertexArray(m_VAO.handle().index());
+            glBindVertexArray(m_VAO.get_handle().index());
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
     };
