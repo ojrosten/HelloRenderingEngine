@@ -72,6 +72,7 @@ namespace avocet::opengl {
     template<num_resources NumResources, class LifeEvents>
         requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
     class vertex_resource {
+        handles<NumResources.value> m_Handles;
     public:
         using lifecycle_type = vertex_resource_lifecycle<NumResources, LifeEvents>;
         constexpr static auto resource_count{NumResources};
@@ -87,15 +88,13 @@ namespace avocet::opengl {
         template<std::size_t I>
             requires (I < NumResources.value)
         [[nodiscard]]
-        const resource_handle& handle(resource_index<I>) const noexcept { return m_Handles[I]; }
+        const resource_handle& handles(resource_index<I>) const noexcept { return m_Handles[I]; }
 
         [[nodiscard]]
         const resource_handle& handle() const noexcept requires (NumResources.value==1) { return m_Handles[0]; }
 
         [[nodiscard]]
         friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
-    private:
-        handles<NumResources.value> m_Handles;
     };
 
     struct vbo_lifecycle_events {
