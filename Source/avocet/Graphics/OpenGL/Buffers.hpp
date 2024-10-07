@@ -44,7 +44,7 @@ namespace avocet::opengl {
     struct num_resources { std::size_t value{}; };
 
     template<num_resources N, class T>
-    inline constexpr bool has_lifecycle_events_v{
+    inline constexpr bool has_vertex_lifecycle_events_v{
         requires(raw_indices<N.value>&indices) {
             T::generate(indices);
             T::destroy(indices);
@@ -52,8 +52,8 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-        requires has_lifecycle_events_v<NumResources, LifeEvents>
-    struct generated_resource_lifecycle {
+        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+    struct vertex_resource_lifecycle {
         constexpr static auto N{NumResources.value};
 
         [[nodiscard]]
@@ -70,19 +70,19 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-        requires has_lifecycle_events_v<NumResources, LifeEvents>
-    class resource {
+        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+    class vertex_resource {
     public:
-        using lifecycle_type = generated_resource_lifecycle<NumResources, LifeEvents>;
+        using lifecycle_type = vertex_resource_lifecycle<NumResources, LifeEvents>;
         constexpr static auto resource_count{NumResources};
 
-        resource() : m_Handles{lifecycle_type::generate()} {}
+        vertex_resource() : m_Handles{lifecycle_type::generate()} {}
 
-        ~resource() { lifecycle_type::destroy(m_Handles); }
+        ~vertex_resource() { lifecycle_type::destroy(m_Handles); }
 
-        resource(resource&&) noexcept = default;
+        vertex_resource(vertex_resource&&) noexcept = default;
 
-        resource& operator=(resource&&) noexcept = default;
+        vertex_resource& operator=(vertex_resource&&) noexcept = default;
 
         template<std::size_t I>
             requires (I < NumResources.value)
@@ -93,7 +93,7 @@ namespace avocet::opengl {
         const resource_handle& handle() const noexcept requires (NumResources.value==1) { return m_Handles[0]; }
 
         [[nodiscard]]
-        friend bool operator==(const resource&, const resource&) noexcept = default;
+        friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
     private:
         handles<NumResources.value> m_Handles;
     };
@@ -115,6 +115,6 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
     };
 
-    using vbo_resource = resource<num_resources{1}, vbo_lifecycle_events>;
-    using vao_resource = resource<num_resources{1}, vao_lifecycle_events>;
+    using vbo_resource = vertex_resource<num_resources{1}, vbo_lifecycle_events>;
+    using vao_resource = vertex_resource<num_resources{1}, vao_lifecycle_events>;
 }
