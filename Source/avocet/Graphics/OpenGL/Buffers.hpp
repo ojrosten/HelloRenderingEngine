@@ -11,7 +11,7 @@
 
 namespace avocet::opengl {
     template<std::size_t I>
-    struct resource_index { constexpr static auto index{I}; };
+    struct index { constexpr static auto value{I}; };
 
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
@@ -88,7 +88,7 @@ namespace avocet::opengl {
         template<std::size_t I>
             requires (I < NumResources.value)
         [[nodiscard]]
-        const resource_handle& get_handle(resource_index<I>) const noexcept { return m_Handles[I]; }
+        const resource_handle& get_handle(index<I>) const noexcept { return m_Handles[I]; }
 
         [[nodiscard]]
         const resource_handle& get_handle() const noexcept requires (NumResources.value==1) { return m_Handles[0]; }
