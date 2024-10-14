@@ -20,5 +20,13 @@ target_sources(TestAll PRIVATE)
 target_include_directories(TestAll PRIVATE ${SourceDir})
 target_include_directories(TestAll PRIVATE ${TestDir})
 
+add_subdirectory(../dependencies/glfw glfw)
+target_link_libraries(TestAll PRIVATE glfw)
+target_include_directories(TestAll PRIVATE ../dependencies/glfw/include)
+
+add_subdirectory(${SourceDir}/avocet avocet)
+target_link_libraries(TestAll PRIVATE avocet)
+target_include_directories(TestAll PRIVATE ${SourceDir})
+
 sequoia_finalize(TestAll ${TestDir} Tests)
 
