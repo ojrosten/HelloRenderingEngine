@@ -45,7 +45,7 @@ namespace avocet::opengl {
 
     template<num_resources N, class T>
     inline constexpr bool has_vertex_lifecycle_events_v{
-        requires(raw_indices<N.value>&indices) {
+        requires(raw_indices<N.value>& indices) {
             T::generate(indices);
             T::destroy(indices);
         }

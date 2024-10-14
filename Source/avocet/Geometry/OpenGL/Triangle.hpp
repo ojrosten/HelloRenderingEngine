@@ -36,5 +36,8 @@ namespace avocet::opengl {
             glBindVertexArray(m_VAO.get_handle().index());
             glDrawArrays(GL_TRIANGLES, 0, 3);
         }
+
+        [[nodiscard]]
+        friend bool operator==(const triangle&, const triangle&) noexcept = default;
     };
 }
