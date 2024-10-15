@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20)
 set(Dependencies ../../dependencies)
 set(BuildSystem ${Dependencies}/sequoia/build_system)
 include(${BuildSystem}/Utilities.cmake)
+set(Source ../../Source)
 
 sequoia_init()
 
@@ -14,7 +15,11 @@ add_library(curlew STATIC ${SourceList})
 target_include_directories(curlew PUBLIC ../)
 
 add_subdirectory(${Dependencies}/glfw glfw)
-target_link_libraries(curlew PRIVATE glfw)
-target_include_directories(curlew PRIVATE ${Dependencies}/glfw/include)
+target_link_libraries(curlew PUBLIC glfw)
+target_include_directories(curlew PUBLIC ${Dependencies}/glfw/include)
+
+add_subdirectory(${Source}/avocet avocet)
+target_link_libraries(curlew PUBLIC avocet)
+target_include_directories(curlew PUBLIC ${Source})
 
 sequoia_finalize_library(curlew)

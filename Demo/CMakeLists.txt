@@ -5,7 +5,7 @@ project(RenderingEngineDemo LANGUAGES C CXX)
 set(Dependencies ../dependencies)
 set(BuildSystem ${Dependencies}/sequoia/build_system)
 set(DemoDir ../Demo)
-set(Source ../Source)
+set(TestingUtils ../TestingUtilities)
 
 include(${BuildSystem}/Utilities.cmake)
 
@@ -13,17 +13,9 @@ sequoia_init()
 
 add_executable(Demo DemoMain.cpp)
 
-target_sources(Demo PRIVATE TestingUtilities/GLFWWrappers.cpp)
-
 target_include_directories(Demo PRIVATE ${DemoDir})
 
-add_subdirectory(${Dependencies}/glfw glfw)
-target_link_libraries(Demo PRIVATE glfw)
-target_include_directories(Demo PRIVATE ${Dependencies}/glfw/include)
-
-add_subdirectory(${Source}/avocet avocet)
-target_link_libraries(Demo PRIVATE avocet)
-target_include_directories(Demo PRIVATE ${Source})
+add_subdirectory(${TestingUtils}/curlew curlew)
+target_link_libraries(Demo PRIVATE curlew)
 
 sequoia_finalize_executable(Demo)
-

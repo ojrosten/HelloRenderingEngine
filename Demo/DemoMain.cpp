@@ -5,7 +5,7 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "TestingUtilities/GLFWWrappers.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 #include "avocet/Geometry/OpenGL/Triangle.hpp"
@@ -37,7 +37,7 @@ int main()
 {
     try
     {
-        demo::glfw_manager manager{};
+        curlew::glfw_manager manager{};
         auto w{manager.create_window()};
 
         namespace agl = avocet::opengl;

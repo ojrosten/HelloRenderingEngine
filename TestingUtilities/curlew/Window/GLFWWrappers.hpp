@@ -9,7 +9,7 @@
 
 struct GLFWwindow;
 
-namespace demo {
+namespace curlew {
     class window;
 
     struct [[nodiscard]] glfw_manager {

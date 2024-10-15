@@ -5,7 +5,7 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "TestingUtilities/GLFWWrappers.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
 
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
@@ -29,7 +29,7 @@ namespace {
     }
 }
 
-namespace demo {
+namespace curlew {
     glfw_manager::glfw_manager() {
         glfwSetErrorCallback(errorCallback);
 
