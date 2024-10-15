@@ -7,8 +7,8 @@
 
 /*! \file */
 
+#include "Graphics/OpenGL/ShaderProgramFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
-
 #include <iostream>
 
 int main(int argc, char** argv)
@@ -19,7 +19,12 @@ int main(int argc, char** argv)
         using namespace testing;
         using namespace std::literals::chrono_literals;
 
-        test_runner runner{argc, argv, "Oliver J. Rosten", "    "};
+        test_runner runner{argc, argv, "Oliver J. Rosten", {.sourceFolder{"avocet"}}, "    "};
+
+        runner.add_test_suite(
+            "Shader Program",
+            shader_program_free_test{"Shader Program Free Test"}
+        );
 
         runner.execute(timer_resolution{1ms});
     }

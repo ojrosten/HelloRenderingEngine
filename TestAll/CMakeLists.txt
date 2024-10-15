@@ -15,7 +15,8 @@ add_executable(TestAll TestAllMain.cpp)
 #!add_subdirectory(${SourceDir}/avocet avocet)
 #!target_link_libraries(TestAll PUBLIC avocet)
 
-target_sources(TestAll PRIVATE)
+target_sources(TestAll PRIVATE
+               ${TestDir}/Graphics/OpenGL/ShaderProgramFreeTest.cpp)
 
 target_include_directories(TestAll PRIVATE ${SourceDir})
 target_include_directories(TestAll PRIVATE ${TestDir})
