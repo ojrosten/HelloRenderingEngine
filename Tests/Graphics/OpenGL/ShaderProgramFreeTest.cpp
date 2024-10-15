@@ -8,6 +8,7 @@
 /*! \file */
 
 #include "ShaderProgramFreeTest.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
 namespace sequoia::testing
@@ -20,8 +21,15 @@ namespace sequoia::testing
 
     void shader_program_free_test::run_tests()
     {
-        using namespace avocet::opengl;
+        namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
-        //check_exception_thrown<std::runtime_error>("Broken Vertex Shader", [this]() { shader_program sp{working_materials() / "Broken_Identity.vs", working_materials() / "Monochrome.fs"}; });
+
+        curlew::glfw_manager manager{};
+        auto w{manager.create_window()};
+
+        check_exception_thrown<std::runtime_error>("Broken Vertex Shader",       [this]() { agl::shader_program sp{working_materials() / "Broken_Identity.vs",     working_materials() / "Monochrome.fs"}; });
+        check_exception_thrown<std::runtime_error>("Unlinkable Vertex Shader",   [this]() { agl::shader_program sp{working_materials() / "Unlinkable_Identity.vs", working_materials() / "Monochrome.fs"}; });
+        check_exception_thrown<std::runtime_error>("Broken Fragment Shader",     [this]() { agl::shader_program sp{working_materials() / "Identity.vs",            working_materials() / "Broken_Monochrome.fs"}; });
+        check_exception_thrown<std::runtime_error>("Unlinkable Fragment Shader", [this]() { agl::shader_program sp{working_materials() / "Identity.vs",            working_materials() / "Unlinkable_Monochrome.fs"}; });
     }
 }
