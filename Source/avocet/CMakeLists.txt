@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(BuildSystem ../../dependencies/sequoia/build_system)
+set(Dependencies ../../dependencies)
+set(BuildSystem ${Dependencies}/sequoia/build_system)
 include(${BuildSystem}/Utilities.cmake)
 
 sequoia_init()
@@ -12,9 +13,9 @@ add_library(avocet STATIC ${SourceList})
 
 target_include_directories(avocet PUBLIC ../)
 
-add_subdirectory(../../dependencies/glad/OpenGL glad)
+add_subdirectory(${Dependencies}/glad/OpenGL glad)
 target_link_libraries(avocet PUBLIC glad)
-target_include_directories(avocet PUBLIC ../dependencies/glad/OpenGL/include)
 set_target_properties(glad PROPERTIES LINKER_LANGUAGE CXX)
+target_include_directories(avocet PUBLIC ${Dependencies}/glad/OpenGL/include)
 
 sequoia_finalize_library(avocet)

@@ -20,6 +20,8 @@ namespace sequoia::testing
 
     void shader_program_free_test::run_tests()
     {
-        // e.g. check(equality, "Useful description", some_function(), 42);
+        using namespace avocet::opengl;
+        const auto shaderDir{working_materials()};
+        //check_exception_thrown<std::runtime_error>("Broken Vertex Shader", [this]() { shader_program sp{working_materials() / "Broken_Identity.vs", working_materials() / "Monochrome.fs"}; });
     }
 }
