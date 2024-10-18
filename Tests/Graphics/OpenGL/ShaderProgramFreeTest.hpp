@@ -11,12 +11,12 @@
 
 #include "sequoia/TestFramework/FreeTestCore.hpp"
 
-namespace sequoia::testing
+namespace avocet::testing
 {
-    class shader_program_free_test final : public free_test
+    class shader_program_free_test final : public sequoia::testing::free_test
     {
     public:
-        using free_test::free_test;
+        using sequoia::testing::free_test::free_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

@@ -11,7 +11,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
-namespace sequoia::testing
+namespace avocet::testing
 {
     [[nodiscard]]
     std::filesystem::path shader_program_free_test::source_file() const
@@ -21,15 +21,15 @@ namespace sequoia::testing
 
     void shader_program_free_test::run_tests()
     {
-        namespace agl = avocet::opengl;
-        const auto shaderDir{working_materials()};
-
         curlew::glfw_manager manager{};
         auto w{manager.create_window()};
 
-        check_exception_thrown<std::runtime_error>("Broken Vertex Shader",       [this]() { agl::shader_program sp{working_materials() / "Broken_Identity.vs",     working_materials() / "Monochrome.fs"}; });
-        check_exception_thrown<std::runtime_error>("Unlinkable Vertex Shader",   [this]() { agl::shader_program sp{working_materials() / "Unlinkable_Identity.vs", working_materials() / "Monochrome.fs"}; });
-        check_exception_thrown<std::runtime_error>("Broken Fragment Shader",     [this]() { agl::shader_program sp{working_materials() / "Identity.vs",            working_materials() / "Broken_Monochrome.fs"}; });
-        check_exception_thrown<std::runtime_error>("Unlinkable Fragment Shader", [this]() { agl::shader_program sp{working_materials() / "Identity.vs",            working_materials() / "Unlinkable_Monochrome.fs"}; });
+        namespace agl = avocet::opengl;
+        const auto shaderDir{working_materials()};
+
+        check_exception_thrown<std::runtime_error>("Broken Vertex Shader",       [shaderDir]() { agl::shader_program sp{shaderDir / "Broken_Identity.vs",     shaderDir / "Monochrome.fs"}; });
+        check_exception_thrown<std::runtime_error>("Unlinkable Vertex Shader",   [shaderDir]() { agl::shader_program sp{shaderDir / "Unlinkable_Identity.vs", shaderDir / "Monochrome.fs"}; });
+        check_exception_thrown<std::runtime_error>("Broken Fragment Shader",     [shaderDir]() { agl::shader_program sp{shaderDir / "Identity.vs",            shaderDir / "Broken_Monochrome.fs"}; });
+        check_exception_thrown<std::runtime_error>("Unlinkable Fragment Shader", [shaderDir]() { agl::shader_program sp{shaderDir / "Identity.vs",            shaderDir / "Unlinkable_Monochrome.fs"}; });
     }
 }

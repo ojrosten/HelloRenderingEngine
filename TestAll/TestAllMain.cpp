@@ -15,18 +15,17 @@ int main(int argc, char** argv)
 {
     try
     {
-        using namespace sequoia;
-        using namespace testing;
+        using namespace avocet::testing;
         using namespace std::literals::chrono_literals;
 
-        test_runner runner{argc, argv, "Oliver J. Rosten", {.sourceFolder{"avocet"}}, "    "};
+        sequoia::testing::test_runner runner{argc, argv, "Oliver J. Rosten", {.sourceFolder{"avocet"}, .additionalDependencyAnalysisPaths{"TestingUtilities"}}, "    "};
 
         runner.add_test_suite(
             "Shader Program",
             shader_program_free_test{"Shader Program Free Test"}
         );
 
-        runner.execute(timer_resolution{1ms});
+        runner.execute(sequoia::timer_resolution{1ms});
     }
     catch(const std::exception& e)
     {
