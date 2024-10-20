@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(avocetTests LANGUAGES CXX)
+project(avocetTests LANGUAGES C CXX)
 
 set(Dependencies ../dependencies)
 set(BuildSystem ${Dependencies}/sequoia/build_system)
