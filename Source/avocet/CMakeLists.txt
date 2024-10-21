@@ -15,7 +15,6 @@ target_include_directories(avocet PUBLIC ../)
 
 add_subdirectory(${Dependencies}/glad/OpenGL glad)
 target_link_libraries(avocet PUBLIC glad)
-set_target_properties(glad PROPERTIES LINKER_LANGUAGE CXX)
 target_include_directories(avocet PUBLIC ${Dependencies}/glad/OpenGL/include)
 
 sequoia_finalize_library(avocet)
