@@ -11,7 +11,7 @@
 
 namespace avocet::opengl {
     template<std::size_t I>
-    struct index { constexpr static auto value{I}; };
+    struct index { constexpr static std::size_t value{I}; };
 
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
@@ -54,7 +54,7 @@ namespace avocet::opengl {
     template<num_resources NumResources, class LifeEvents>
         requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
     struct vertex_resource_lifecycle {
-        constexpr static auto N{NumResources.value};
+        constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
         static handles<N> generate() {
