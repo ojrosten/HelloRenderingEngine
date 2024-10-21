@@ -170,8 +170,8 @@ namespace avocet::opengl {
             ~shader_attacher() { glDetachShader(m_ProgIndex, m_ShaderIndex); }
         };
 
-        static_assert(has_lifecycle_events_v<shader_resource_lifecycle>);
-        static_assert(has_lifecycle_events_v<shader_program_resource_lifecycle>);
+        static_assert(has_shader_lifecycle_events_v<shader_resource_lifecycle>);
+        static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
     shader_program::shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
