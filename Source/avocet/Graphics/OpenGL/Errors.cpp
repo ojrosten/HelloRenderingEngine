@@ -9,14 +9,26 @@
 
 #include "avocet/Graphics/OpenGL/Errors.hpp"
 
+#include <algorithm>
 #include <format>
+#include <ranges>
 #include <stdexcept>
 
-
-#include <iostream>
-
-
 namespace avocet::opengl {
+    namespace {
+        struct gl_errors{
+            using difference_type = GLint;
+
+            GLuint value{GL_NO_ERROR};
+
+            gl_errors& operator++() { value = glGetError(); return *this; }
+
+            gl_errors operator++(int) { gl_errors temp{};  value = glGetError(); return temp; }
+
+            [[nodiscard]]
+            bool operator==(const gl_errors& rhs) const noexcept { return rhs.value == GL_NO_ERROR; }
+        };
+    }
 
     [[nodiscard]]
     std::string to_string(error_codes e) {
@@ -45,6 +57,8 @@ namespace avocet::opengl {
 
     void check_for_errors(std::source_location loc)
     {
+        //std::ranges::fold_left(std::views::iota(gl_errors{}), std::string{}, [](std::string message, const gl_errors& e){ return std::move(message) += ("\n" + to_string(error_codes{e.value})); });
+
         error_codes errorCode;
         std::string errorMessage{};
         if(!glGetError)
