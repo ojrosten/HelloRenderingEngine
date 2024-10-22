@@ -19,21 +19,21 @@ namespace avocet::opengl {
     namespace fs = std::filesystem;
 
     namespace {
-        struct gl_errors{
+        struct gl_error{
             using difference_type = GLint;
 
             static GLenum invoke_validated() { return glGetError ? glGetError() : throw std::runtime_error{"Null OpenGL function pointer"}; }
 
             GLenum value{invoke_validated()};
 
-            gl_errors& operator++() { value = invoke_validated(); return *this; }
+            gl_error& operator++() { value = invoke_validated(); return *this; }
 
-            gl_errors operator++(int) { gl_errors temp{};  value = invoke_validated(); return temp; }
+            gl_error operator++(int) { gl_error temp{};  value = invoke_validated(); return temp; }
         };
 
         struct no_error {
             [[nodiscard]]
-            bool operator==(const gl_errors& rhs) const noexcept { return rhs.value == GL_NO_ERROR; }
+            bool operator==(const gl_error& rhs) const noexcept { return rhs.value == GL_NO_ERROR; }
         };
     }
 
@@ -66,9 +66,9 @@ namespace avocet::opengl {
     {
         const auto errorMessage{
             std::ranges::fold_left(
-                std::views::iota(gl_errors{}, no_error{}),
+                std::views::iota(gl_error{}, no_error{}),
                 std::string{},
-                [](std::string message, const gl_errors& e){
+                [](std::string message, const gl_error& e){
                     return std::move(message) += (to_string(error_codes{e.value}) + "\n");
                 })
         };
