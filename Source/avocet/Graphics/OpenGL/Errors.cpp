@@ -10,11 +10,14 @@
 #include "avocet/Graphics/OpenGL/Errors.hpp"
 
 #include <algorithm>
+#include <filesystem>
 #include <format>
 #include <ranges>
 #include <stdexcept>
 
 namespace avocet::opengl {
+    namespace fs = std::filesystem;
+
     namespace {
         struct gl_errors{
             using difference_type = GLint;
@@ -71,6 +74,6 @@ namespace avocet::opengl {
         }
 
         if(!errorMessage.empty())
-            throw std::runtime_error{std::format("OpenGL error detected in file {}, line {}:\n{}", loc.file_name(), loc.line(), errorMessage)};
+            throw std::runtime_error{std::format("OpenGL error detected in file {}, line {}:\n{}", fs::path{loc.file_name()}.generic_string(), loc.line(), errorMessage)};
     }
 }

@@ -14,6 +14,7 @@ sequoia_init()
 add_executable(TestAll TestAllMain.cpp)
 
 target_sources(TestAll PRIVATE
+               ${TestDir}/Graphics/OpenGL/ErrorsFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramFreeTest.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})

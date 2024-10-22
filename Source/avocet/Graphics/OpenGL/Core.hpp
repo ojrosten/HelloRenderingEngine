@@ -32,7 +32,7 @@ namespace avocet::opengl {
     }
 
     namespace impl {
-        void do_check_for_errors() {
+        inline void do_check_for_errors() {
             if constexpr(get_debugging_mode() == debugging_mode::basic)
                 check_for_errors();
         }

@@ -1,0 +1,18 @@
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 38
+Null opengl pointer
+
+Expected Exception Type:
+[std::runtime_error]
+Null OpenGL function pointer
+
+=======================================
+
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 43
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Source/avocet/Graphics/OpenGL/Core.hpp, line 37:
+Invalid enum
+
+=======================================
+

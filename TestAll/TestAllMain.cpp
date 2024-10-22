@@ -7,6 +7,7 @@
 
 /*! \file */
 
+#include "Graphics/OpenGL/ErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -23,6 +24,11 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Shader Program",
             shader_program_free_test{"Shader Program Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Errors",
+            errors_free_test{"Errors Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
