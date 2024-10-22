@@ -21,8 +21,13 @@ namespace avocet::opengl {
             return debugging_mode::advanced;
         #elif defined(GL_BASIC_DEBUGGING)
             return debugging_mode::basic;
-        #else
+        #elif defined(NDEBUG)
+            // release build
             return debugging_mode::none;
+        #elif defined(__APPLE__)
+            return debugging_mode::basic;
+        #else
+            return debugging_mode::basic;
         #endif
     }
 
