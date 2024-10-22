@@ -7,7 +7,8 @@ include(${BuildSystem}/Utilities.cmake)
 sequoia_init()
 
 set(SourceList
-	Graphics/OpenGL/ShaderProgram.cpp)
+    Graphics/OpenGL/Errors.cpp
+    Graphics/OpenGL/ShaderProgram.cpp)
 
 add_library(avocet STATIC ${SourceList})
 

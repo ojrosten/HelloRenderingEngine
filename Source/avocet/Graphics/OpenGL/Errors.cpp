@@ -1,0 +1,55 @@
+////////////////////////////////////////////////////////////////////
+//                Copyright Oliver J. Rosten 2024.                //
+// Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //
+//    (See accompanying file LICENSE.md or copy at                //
+//          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
+////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "avocet/Graphics/OpenGL/Core.hpp"
+#include "avocet/Graphics/OpenGL/Errors.hpp"
+
+#include <format>
+#include <stdexcept>
+
+namespace avocet::opengl {
+
+    [[nodiscard]]
+    std::string to_string(error_codes e) {
+        using enum error_codes;
+        switch(e) {
+        case none:
+            return "None";
+        case invalid_enum:
+            return "Invalid enum";
+        case invalid_value:
+            return "Invalid value";
+        case invalid_operation:
+            return "Invalid operation";
+        case invalid_framebuffer_operation:
+            return "Invalid framebuffer operation";
+        case stack_overflow:
+            return "Stack overflow";
+        case stack_underflow:
+            return "Stack underflow";
+        case out_of_memory:
+            return "Out of memory";
+        }
+
+        throw std::runtime_error{"error_codes: unrecognized option"};
+    }
+
+    void check_for_errors(std::source_location loc)
+    {
+        error_codes errorCode;
+        std::string errorMessage{};
+        while((errorCode = error_codes{invoke_gl_fn(glGetError)}) != error_codes::none)
+        {
+            errorMessage += to_string(errorCode);
+            errorMessage += '\n';
+        }
+
+        throw std::runtime_error{std::format("OpenGL error detected in file {}, line {}:\n{}", loc.file_name(), loc.line(), errorMessage)};
+    }
+}
