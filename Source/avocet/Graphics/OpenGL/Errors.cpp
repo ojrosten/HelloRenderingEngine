@@ -22,12 +22,16 @@ namespace avocet::opengl {
         struct gl_errors{
             using difference_type = GLint;
 
-            GLuint value{GL_NO_ERROR};
+            static GLenum invoke_validated() { return glGetError ? glGetError() : throw std::runtime_error{"Null OpenGL function pointer"}; }
 
-            gl_errors& operator++() { value = glGetError(); return *this; }
+            GLenum value{invoke_validated()};
 
-            gl_errors operator++(int) { gl_errors temp{};  value = glGetError(); return temp; }
+            gl_errors& operator++() { value = invoke_validated(); return *this; }
 
+            gl_errors operator++(int) { gl_errors temp{};  value = invoke_validated(); return temp; }
+        };
+
+        struct no_error {
             [[nodiscard]]
             bool operator==(const gl_errors& rhs) const noexcept { return rhs.value == GL_NO_ERROR; }
         };
@@ -60,9 +64,16 @@ namespace avocet::opengl {
 
     void check_for_errors(std::source_location loc)
     {
-        //std::ranges::fold_left(std::views::iota(gl_errors{}), std::string{}, [](std::string message, const gl_errors& e){ return std::move(message) += ("\n" + to_string(error_codes{e.value})); });
+        const auto errorMessage{
+            std::ranges::fold_left(
+                std::views::iota(gl_errors{}, no_error{}),
+                std::string{},
+                [](std::string message, const gl_errors& e){
+                    return std::move(message) += (to_string(error_codes{e.value}) + "\n");
+                })
+        };
 
-        error_codes errorCode;
+        /*error_codes errorCode;
         std::string errorMessage{};
         if(!glGetError)
             throw std::runtime_error{"Null OpenGL function pointer"};
@@ -71,7 +82,7 @@ namespace avocet::opengl {
         {
             errorMessage += to_string(errorCode);
             errorMessage += '\n';
-        }
+        }*/
 
         if(!errorMessage.empty())
             throw std::runtime_error{std::format("OpenGL error detected in file {}, line {}:\n{}", fs::path{loc.file_name()}.generic_string(), loc.line(), errorMessage)};
