@@ -21,5 +21,5 @@ target_include_directories(TestAll PRIVATE ${TestDir})
 add_subdirectory(${TestingUtils}/curlew curlew)
 target_link_libraries(TestAll PRIVATE curlew)
 
-sequoia_finalize(TestAll ${TestDir} Tests)
+sequoia_finalize_tests(TestAll ${TestDir} Tests)
 
