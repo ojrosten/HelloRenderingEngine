@@ -32,22 +32,23 @@ namespace avocet::opengl {
     }
 
     namespace impl {
+        void do_check_for_errors() {
+            if constexpr(get_debugging_mode() == debugging_mode::basic)
+                check_for_errors();
+        }
+
         template<class Fn, class... Args>
             requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
         void invoke_gl_fn_unsafe(Fn fn, const Args&... args) {
             fn(args...);
-
-            if constexpr(get_debugging_mode() == debugging_mode::basic)
-                check_for_errors();
+            do_check_for_errors();
         }
 
         template<class Fn, class... Args>
             requires std::invocable<Fn, Args...>
         std::invoke_result_t<Fn, Args...> invoke_gl_fn_unsafe(Fn fn, const Args&... args) {
             auto ret{fn(args...)};
-
-            if constexpr(get_debugging_mode() == debugging_mode::basic)
-                check_for_errors();
+            do_check_for_errors();
 
             return ret;
         }
