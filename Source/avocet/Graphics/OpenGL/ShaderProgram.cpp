@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
+#include "avocet/Graphics/OpenGL/Core.hpp"
 
 #include <fstream>
 #include <functional>
@@ -57,7 +58,7 @@ namespace avocet::opengl {
             [[nodiscard]]
             GLint get_parameter_value(GLenum paramName) const {
                 GLint param{};
-                m_ParamGetter(m_Handle.index(), paramName, &param);
+                invoke_gl_fn(m_ParamGetter, m_Handle.index(), paramName, &param);
                 return param;
             }
 
@@ -65,7 +66,7 @@ namespace avocet::opengl {
             std::string get_info_log() const {
                 const GLint logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
                 std::string info(logLen, ' ');
-                m_InfoLogGetter(m_Handle.index(), logLen, nullptr, info.data());
+                invoke_gl_fn(m_InfoLogGetter, m_Handle.index(), logLen, nullptr, info.data());
                 return info;
             }
         protected:
@@ -92,9 +93,9 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            resource_handle create() { return resource_handle{glCreateShader(static_cast<GLenum>(m_Species))}; }
+            resource_handle create() { return resource_handle{ invoke_gl_fn(glCreateShader, static_cast<GLenum>(m_Species))}; }
 
-            static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
+            static void destroy(const resource_handle& handle) { invoke_gl_fn(glDeleteShader, handle.index()); }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
@@ -145,8 +146,8 @@ namespace avocet::opengl {
                 const auto index{m_Resource.handle().index()};
                 const auto source{read_to_string(sourceFile)};
                 const auto data{source.data()};
-                glShaderSource(index, 1, &data, nullptr);
-                glCompileShader(index);
+                invoke_gl_fn(glShaderSource, index, 1, &data, nullptr);
+                invoke_gl_fn(glCompileShader, index);
                 shader_compiler_checker{m_Resource, species}.check();
             }
 
@@ -164,10 +165,10 @@ namespace avocet::opengl {
                 : m_ProgIndex{program.resource().handle().index()}
                 , m_ShaderIndex{shader.resource().handle().index()}
             {
-                glAttachShader(m_ProgIndex, m_ShaderIndex);
+                invoke_gl_fn(glAttachShader, m_ProgIndex, m_ShaderIndex);
             }
 
-            ~shader_attacher() { glDetachShader(m_ProgIndex, m_ShaderIndex); }
+            ~shader_attacher() { invoke_gl_fn(glDetachShader, m_ProgIndex, m_ShaderIndex); }
         };
 
         static_assert(has_lifecycle_events_v<shader_resource_lifecycle>);
@@ -183,7 +184,7 @@ namespace avocet::opengl {
 
         {
             shader_attacher verteAttacher{*this, vertexShader}, fragmentAttacher{*this, fragmentShader};
-            glLinkProgram(progIndex);
+            invoke_gl_fn(glLinkProgram, progIndex);
         }
 
         shader_program_checker{m_Resource}.check();

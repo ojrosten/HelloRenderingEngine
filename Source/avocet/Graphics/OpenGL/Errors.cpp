@@ -7,11 +7,14 @@
 
 #pragma once
 
-#include "avocet/Graphics/OpenGL/Core.hpp"
 #include "avocet/Graphics/OpenGL/Errors.hpp"
 
 #include <format>
 #include <stdexcept>
+
+
+#include <iostream>
+
 
 namespace avocet::opengl {
 
@@ -44,12 +47,16 @@ namespace avocet::opengl {
     {
         error_codes errorCode;
         std::string errorMessage{};
-        while((errorCode = error_codes{invoke_gl_fn(glGetError)}) != error_codes::none)
+        if(!glGetError)
+            throw std::runtime_error{"Null OpenGL function pointer"};
+
+        while((errorCode = error_codes{glGetError()}) != error_codes::none)
         {
             errorMessage += to_string(errorCode);
             errorMessage += '\n';
         }
 
-        throw std::runtime_error{std::format("OpenGL error detected in file {}, line {}:\n{}", loc.file_name(), loc.line(), errorMessage)};
+        if(!errorMessage.empty())
+            throw std::runtime_error{std::format("OpenGL error detected in file {}, line {}:\n{}", loc.file_name(), loc.line(), errorMessage)};
     }
 }
