@@ -35,11 +35,11 @@ namespace avocet::testing
     {
         namespace agl = avocet::opengl;
 
-        check_exception_thrown<std::runtime_error>("Null opengl pointer", [](){ gl_breaker breaker{}; agl::check_for_errors(); });
+        check_exception_thrown<std::runtime_error>("Null opengl pointer", [](){ gl_breaker breaker{}; agl::check_for_errors(std::source_location::current()); });
 
         curlew::glfw_manager manager{};
         auto w{manager.create_window()};
 
-        check_exception_thrown<std::runtime_error>("", [](){ agl::invoke_gl_fn(glBindBuffer, 42, 42); });
+        check_exception_thrown<std::runtime_error>("", [](){ agl::invoke_gl_fn(glBindBuffer, std::tuple{42, 42}); });
     }
 }

@@ -11,7 +11,7 @@ Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 43
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Source/avocet/Graphics/OpenGL/Core.hpp, line 37:
+OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 43:
 Invalid enum
 
 =======================================

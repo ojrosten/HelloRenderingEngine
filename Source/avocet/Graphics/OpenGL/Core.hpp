@@ -11,6 +11,7 @@
 
 #include <concepts>
 #include <stdexcept>
+#include <tuple>
 
 namespace avocet::opengl {
     enum class debugging_mode { none = 0, basic, advanced };
@@ -32,23 +33,23 @@ namespace avocet::opengl {
     }
 
     namespace impl {
-        inline void do_check_for_errors() {
+        inline void do_check_for_errors(std::source_location loc) {
             if constexpr(get_debugging_mode() == debugging_mode::basic)
-                check_for_errors();
+                check_for_errors(loc);
         }
 
         template<class Fn, class... Args>
             requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
-        void invoke_gl_fn_unsafe(Fn fn, const Args&... args) {
-            fn(args...);
-            do_check_for_errors();
+        void invoke_gl_fn_unsafe(Fn fn, const std::tuple<Args...>& args, std::source_location loc) {
+            std::apply(fn, args);
+            do_check_for_errors(loc);
         }
 
         template<class Fn, class... Args>
             requires std::invocable<Fn, Args...>
-        std::invoke_result_t<Fn, Args...> invoke_gl_fn_unsafe(Fn fn, const Args&... args) {
-            auto ret{fn(args...)};
-            do_check_for_errors();
+        std::invoke_result_t<Fn, Args...> invoke_gl_fn_unsafe(Fn fn, const std::tuple<Args...>& args, std::source_location loc) {
+            auto ret{std::apply(fn, args)};
+            do_check_for_errors(loc);
 
             return ret;
         }
@@ -56,8 +57,14 @@ namespace avocet::opengl {
 
     template<class Fn, class... Args>
         requires std::invocable<Fn, Args...>
-    std::invoke_result_t<Fn, Args...> invoke_gl_fn(Fn fn, const Args&... args) {
+    std::invoke_result_t<Fn, Args...> invoke_gl_fn(Fn fn, const std::tuple<Args...>& args, std::source_location loc=std::source_location::current()) {
         if(!fn) throw std::runtime_error{"Null OpenGL function pointer"};
-        return impl::invoke_gl_fn_unsafe(fn, args...);
+        return impl::invoke_gl_fn_unsafe(fn, args, loc);
+    }
+
+    template<class Fn, class Arg>
+        requires std::invocable<Fn, Arg>
+    std::invoke_result_t<Fn, Arg> invoke_gl_fn(Fn fn, const Arg& arg, std::source_location loc = std::source_location::current()) {
+        return invoke_gl_fn(fn, std::tuple{arg}, loc);
     }
 }
