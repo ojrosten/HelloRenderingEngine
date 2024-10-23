@@ -39,4 +39,82 @@ namespace avocet::opengl {
     raw_indices<N> to_raw_indices(const handles<N>& handles) {
         return to_array<resource_handle, GLuint>(handles, [](const resource_handle& h){ return h.index(); });
     }
+
+    struct num_resources { std::size_t value{}; };
+
+    template<num_resources NumResources, class T>
+    inline constexpr bool has_vertex_lifecycle_events_v{
+        requires(raw_indices<NumResources.value>& indices) {
+            T::generate(indices);
+            T::destroy(indices);
+        }
+    };
+
+    template<num_resources NumResources, class LifeEvents>
+        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+    struct vertex_resource_lifecyle {
+        constexpr static std::size_t N{NumResources.value};
+
+        [[nodiscard]]
+        static handles<N> generate() {
+            raw_indices<N> indices{};
+            LifeEvents::generate(indices);
+            return to_handles(indices);
+        }
+
+        static void destroy(const handles<N>& h) {
+            LifeEvents::destroy(to_raw_indices(h));
+        }
+    };
+
+    struct vao_lifecyle_events {
+        template<std::size_t N>
+        static void generate(raw_indices<N>& indices) { glGenVertexArrays(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const raw_indices<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
+    };
+
+    struct vbo_lifecyle_events {
+        template<std::size_t N>
+        static void generate(raw_indices<N>& indices) { glGenBuffers(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const raw_indices<N>& indices) { glDeleteBuffers(N, indices.data()); }
+    };
+
+    static_assert(has_vertex_lifecycle_events_v<num_resources{1}, vao_lifecyle_events>);
+    static_assert(has_vertex_lifecycle_events_v<num_resources{1}, vbo_lifecyle_events>);
+
+    template<std::size_t I>
+    struct index { constexpr static std::size_t value{I}; };
+
+    template<num_resources NumResources, class LifeEvents>
+        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+    class vertex_resource{
+    public:
+        constexpr static std::size_t N{NumResources.value};
+
+        vertex_resource() : m_Handles{lifecycle_type::generate()} {}
+        ~vertex_resource() { lifecycle_type::destroy(m_Handles); }
+
+        vertex_resource(vertex_resource&&) noexcept = default;
+        vertex_resource& operator=(vertex_resource&&) noexcept = default;
+
+        template<std::size_t I>
+            requires (I < N)
+        const resource_handle& get_handle(index<I>) const { return m_Handles[I]; }
+
+        const resource_handle& get_handle() const requires (N == 1) { return m_Handles[0]; }
+
+        [[nodiscard]]
+        friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
+    private:
+        using lifecycle_type = vertex_resource_lifecyle<NumResources, LifeEvents>;
+
+        handles<N> m_Handles;
+    };
+
+    using vao_resource = vertex_resource<num_resources{1}, vao_lifecyle_events>;
+    using vbo_resource = vertex_resource<num_resources{1}, vbo_lifecyle_events>;
 }
