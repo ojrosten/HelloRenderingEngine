@@ -37,7 +37,7 @@ namespace avocet::opengl {
             check_for_errors(loc);
     }
 
-    template<class Fn, class... Args>
+   /* template<class Fn, class... Args>
         requires std::invocable<Fn, Args...>
     class gl_function {
         Fn m_Fn;
@@ -65,5 +65,37 @@ namespace avocet::opengl {
     };
 
     template<class Fn, class... Args>
-    gl_function(Fn, const Args&...) -> gl_function<Fn, Args...>;
+    gl_function(Fn, const Args&...) -> gl_function<Fn, Args...>;*/
+
+    template<class Fn, class... Args>
+        requires std::invocable<Fn, Args...>
+    class [[nodiscard]] gl_function_invoker {
+    public:
+        using return_type = std::invoke_result_t<Fn, Args...>;
+
+        gl_function_invoker(Fn f, const Args&... args, std::source_location loc = std::source_location::current())
+            : m_Result{f(args...)}
+        {
+            do_check_for_errors(loc);
+        }
+
+        [[nodiscard]]
+        return_type get() const { return m_Result; }
+    private:
+        return_type m_Result;
+    };
+
+    template<class Fn, class... Args>
+        requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
+    class gl_function_invoker<Fn, Args...> {
+    public:
+        gl_function_invoker(Fn f, const Args&... args, std::source_location loc = std::source_location::current())
+        {
+            f(args...);
+            do_check_for_errors(loc);
+        }
+    };
+
+    template<class Fn, class... Args>
+    gl_function_invoker(Fn, const Args&...) -> gl_function_invoker<Fn, Args...>;
 }
