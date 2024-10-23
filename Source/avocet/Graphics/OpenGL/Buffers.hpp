@@ -40,7 +40,7 @@ namespace avocet::opengl {
         return to_array<resource_handle, GLuint>(handles, [](const resource_handle& h){ return h.index(); });
     }
 
-    struct num_resources { std::size_t value; };
+    struct num_resources { std::size_t value{}; };
 
     template<num_resources NumResources, class T>
     inline constexpr bool has_vertex_lifecycle_events_v{
