@@ -32,39 +32,38 @@ namespace avocet::opengl {
         #endif
     }
 
-    namespace impl {
-        inline void do_check_for_errors(std::source_location loc) {
-            if constexpr(get_debugging_mode() == debugging_mode::basic)
-                check_for_errors(loc);
-        }
-
-        template<class Fn, class... Args>
-            requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
-        void invoke_gl_fn_unsafe(Fn fn, const std::tuple<Args...>& args, std::source_location loc) {
-            std::apply(fn, args);
-            do_check_for_errors(loc);
-        }
-
-        template<class Fn, class... Args>
-            requires std::invocable<Fn, Args...>
-        std::invoke_result_t<Fn, Args...> invoke_gl_fn_unsafe(Fn fn, const std::tuple<Args...>& args, std::source_location loc) {
-            auto ret{std::apply(fn, args)};
-            do_check_for_errors(loc);
-
-            return ret;
-        }
+    inline void do_check_for_errors(std::source_location loc) {
+        if constexpr(get_debugging_mode() == debugging_mode::basic)
+            check_for_errors(loc);
     }
 
     template<class Fn, class... Args>
         requires std::invocable<Fn, Args...>
-    std::invoke_result_t<Fn, Args...> invoke_gl_fn(Fn fn, const std::tuple<Args...>& args, std::source_location loc=std::source_location::current()) {
-        if(!fn) throw std::runtime_error{"Null OpenGL function pointer"};
-        return impl::invoke_gl_fn_unsafe(fn, args, loc);
-    }
+    class gl_function {
+        Fn m_Fn;
+        std::tuple<Args...> m_Args;
+        std::source_location m_Loc;
+    public:
+        gl_function(Fn f, const Args&... args, std::source_location loc = std::source_location::current())
+            : m_Fn{f}
+            , m_Args{args...}
+            , m_Loc{loc}
+        {}
 
-    template<class Fn, class Arg>
-        requires std::invocable<Fn, Arg>
-    std::invoke_result_t<Fn, Arg> invoke_gl_fn(Fn fn, const Arg& arg, std::source_location loc = std::source_location::current()) {
-        return invoke_gl_fn(fn, std::tuple{arg}, loc);
-    }
+        [[nodiscard]]
+        std::invoke_result_t<Fn, Args...> operator()() const {
+            auto ret{std::apply(m_Fn, m_Args)};
+            do_check_for_errors(m_Loc);
+
+            return ret;
+        }
+
+        void operator()() const requires std::is_void_v<std::invoke_result_t<Fn, Args...>> {
+            std::apply(m_Fn, m_Args);
+            do_check_for_errors(m_Loc);
+        }
+    };
+
+    template<class Fn, class... Args>
+    gl_function(Fn, const Args&...) -> gl_function<Fn, Args...>;
 }
