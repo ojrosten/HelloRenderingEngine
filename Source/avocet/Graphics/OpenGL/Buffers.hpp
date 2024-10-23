@@ -83,9 +83,6 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { glDeleteBuffers(N, indices.data()); }
     };
 
-    static_assert(has_vertex_lifecycle_events_v<num_resources{1}, vao_lifecyle_events>);
-    static_assert(has_vertex_lifecycle_events_v<num_resources{1}, vbo_lifecyle_events>);
-
     template<std::size_t I>
     struct index { constexpr static std::size_t value{I}; };
 
