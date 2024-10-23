@@ -28,7 +28,7 @@ namespace avocet::opengl {
 
             gl_error& operator++() { value = invoke_validated(); return *this; }
 
-            gl_error operator++(int) { gl_error temp{};  value = invoke_validated(); return temp; }
+            gl_error operator++(int);// { gl_error temp{};  value = invoke_validated(); return temp; }
         };
 
         struct no_error {
