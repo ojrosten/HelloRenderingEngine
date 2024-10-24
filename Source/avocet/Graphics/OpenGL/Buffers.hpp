@@ -100,9 +100,9 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        const resource_handle& get_handle(index<I>) const { return m_Handles[I]; }
+        const resource_handle& get_handle(index<I>) const noexcept { return m_Handles[I]; }
 
-        const resource_handle& get_handle() const requires (N == 1) { return m_Handles[0]; }
+        const resource_handle& get_handle() const noexcept requires (N == 1) { return m_Handles[0]; }
 
         [[nodiscard]]
         friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
