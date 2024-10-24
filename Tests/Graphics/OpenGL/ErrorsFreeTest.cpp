@@ -40,6 +40,6 @@ namespace avocet::testing
         curlew::glfw_manager manager{};
         auto w{manager.create_window()};
 
-        check_exception_thrown<std::runtime_error>("", [](){ agl::gl_function_invoker{glBindBuffer, 42, 42}; });
+        check_exception_thrown<std::runtime_error>("", [](){ agl::gl_function{glBindBuffer}(42, 42); });
     }
 }

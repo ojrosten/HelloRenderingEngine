@@ -37,65 +37,31 @@ namespace avocet::opengl {
             check_for_errors(loc);
     }
 
-   /* template<class Fn, class... Args>
-        requires std::invocable<Fn, Args...>
-    class gl_function {
+    template<class Fn>
+    class [[nodiscard]] gl_function {
         Fn m_Fn;
-        std::tuple<Args...> m_Args;
         std::source_location m_Loc;
     public:
-        gl_function(Fn f, const Args&... args, std::source_location loc = std::source_location::current())
+        gl_function(Fn f, std::source_location loc = std::source_location::current())
             : m_Fn{f}
-            , m_Args{args...}
             , m_Loc{loc}
         {}
 
+        template<class... Args>
+            requires std::invocable<Fn, Args...>
         [[nodiscard]]
-        std::invoke_result_t<Fn, Args...> operator()() const {
-            auto ret{std::apply(m_Fn, m_Args)};
+        std::invoke_result_t<Fn, Args...> operator()(Args... args) const {
+            auto ret{m_Fn(args...)};
             do_check_for_errors(m_Loc);
 
             return ret;
         }
 
-        void operator()() const requires std::is_void_v<std::invoke_result_t<Fn, Args...>> {
-            std::apply(m_Fn, m_Args);
+        template<class... Args>
+            requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
+        void operator()(Args... args) const {
+            m_Fn(args...);
             do_check_for_errors(m_Loc);
         }
     };
-
-    template<class Fn, class... Args>
-    gl_function(Fn, const Args&...) -> gl_function<Fn, Args...>;*/
-
-    template<class Fn, class... Args>
-        requires std::invocable<Fn, Args...>
-    class [[nodiscard]] gl_function_invoker {
-    public:
-        using return_type = std::invoke_result_t<Fn, Args...>;
-
-        gl_function_invoker(Fn f, const Args&... args, std::source_location loc = std::source_location::current())
-            : m_Result{f(args...)}
-        {
-            do_check_for_errors(loc);
-        }
-
-        [[nodiscard]]
-        return_type get() const { return m_Result; }
-    private:
-        return_type m_Result;
-    };
-
-    template<class Fn, class... Args>
-        requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
-    class gl_function_invoker<Fn, Args...> {
-    public:
-        gl_function_invoker(Fn f, const Args&... args, std::source_location loc = std::source_location::current())
-        {
-            f(args...);
-            do_check_for_errors(loc);
-        }
-    };
-
-    template<class Fn, class... Args>
-    gl_function_invoker(Fn, const Args&...) -> gl_function_invoker<Fn, Args...>;
 }
