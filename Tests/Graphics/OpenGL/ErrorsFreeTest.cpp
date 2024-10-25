@@ -15,13 +15,14 @@
 namespace avocet::testing
 {
     namespace {
+        template<class Fn>
         class [[nodiscard]] gl_breaker{
-            using fn_ptr = GLenum(*)();
-            fn_ptr m_Fn;
+            Fn* m_pFn{};
+            Fn m_Fn;
         public:
-            gl_breaker() : m_Fn{std::exchange(glGetError, nullptr)} {}
+            gl_breaker(Fn& fn) : m_pFn{&fn}, m_Fn{ std::exchange(fn, nullptr) } {}
 
-            ~gl_breaker() { glGetError = m_Fn; }
+            ~gl_breaker() { *m_pFn = m_Fn; }
         };
     }
 
@@ -35,11 +36,12 @@ namespace avocet::testing
     {
         namespace agl = avocet::opengl;
 
-        check_exception_thrown<std::runtime_error>("Null opengl pointer", [](){ gl_breaker breaker{}; agl::check_for_errors(std::source_location::current()); });
+        check_exception_thrown<std::runtime_error>("Set glGetError to null pointer", [](){ gl_breaker breaker{glGetError}; agl::check_for_errors(std::source_location::current()); });
 
         curlew::glfw_manager manager{};
         auto w{manager.create_window()};
 
+        check_exception_thrown<std::runtime_error>("Set glBindBuffer to null pointer", [](){ gl_breaker breaker{glBindBuffer}; agl::gl_function{glBindBuffer}(42, 42); });
         check_exception_thrown<std::runtime_error>("", [](){ agl::gl_function{glBindBuffer}(42, 42); });
     }
 }
