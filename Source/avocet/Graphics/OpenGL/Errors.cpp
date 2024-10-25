@@ -5,8 +5,6 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#pragma once
-
 #include "avocet/Graphics/OpenGL/Errors.hpp"
 
 #include <algorithm>
