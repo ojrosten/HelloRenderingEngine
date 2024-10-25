@@ -44,7 +44,6 @@ namespace avocet::opengl {
 
         template<class... Args>
             requires std::invocable<Fn, Args...>
-        [[nodiscard]]
         std::invoke_result_t<Fn, Args...> safe_invoke(Args... args) const {
             if(!m_Fn) throw std::runtime_error{"Null OpenGL function pointer"};
             return m_Fn(args...);
@@ -59,7 +58,7 @@ namespace avocet::opengl {
             requires std::invocable<Fn, Args...>
         [[nodiscard]]
         std::invoke_result_t<Fn, Args...> operator()(Args... args) const {
-            auto ret{safe_invoke(args...)};
+            const auto ret{safe_invoke(args...)};
             do_check_for_errors(m_Loc);
 
             return ret;
