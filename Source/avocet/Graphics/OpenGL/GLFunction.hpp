@@ -44,24 +44,18 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(Args... args, std::source_location loc = std::source_location::current()) const {
-            const auto ret{safe_invoke(args...)};
+            const auto ret{m_Fn(args...)};
             check_for_errors(loc);
 
             return ret;
         }
 
         void operator()(Args... args, std::source_location loc = std::source_location::current()) const requires std::is_void_v<R> {
-            safe_invoke(args...);
+            m_Fn(args...);
             check_for_errors(loc);
         }
     private:
         function_type m_Fn;
-
-        [[nodiscard]]
-        R safe_invoke(Args... args) const {
-            if(!m_Fn) throw std::runtime_error{"Null OpenGL function pointer"};
-            return m_Fn(args...);
-        }
     };
 
     template<class R, class... Args>
