@@ -39,7 +39,7 @@ namespace avocet::opengl {
         using function_type = R(*)(Args...);
 
         gl_function(function_type f)
-            : m_Fn{f}
+            : m_Fn{f ? f : throw std::runtime_error{"Null OpenGL function pointer"}}
         {}
 
         [[nodiscard]]
