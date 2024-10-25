@@ -41,6 +41,14 @@ namespace avocet::opengl {
     class [[nodiscard]] gl_function {
         Fn m_Fn;
         std::source_location m_Loc;
+
+        template<class... Args>
+            requires std::invocable<Fn, Args...>
+        [[nodiscard]]
+        std::invoke_result_t<Fn, Args...> safe_invoke(Args... args) const {
+            if(!m_Fn) throw std::runtime_error{"Null OpenGL function pointer"};
+            return m_Fn(args...);
+        }
     public:
         gl_function(Fn f, std::source_location loc = std::source_location::current())
             : m_Fn{f}
@@ -51,8 +59,7 @@ namespace avocet::opengl {
             requires std::invocable<Fn, Args...>
         [[nodiscard]]
         std::invoke_result_t<Fn, Args...> operator()(Args... args) const {
-            if(!m_Fn) throw std::runtime_error{"Null OpenGL function pointer"};
-            auto ret{m_Fn(args...)};
+            auto ret{safe_invoke(args...)};
             do_check_for_errors(m_Loc);
 
             return ret;
@@ -61,8 +68,7 @@ namespace avocet::opengl {
         template<class... Args>
             requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
         void operator()(Args... args) const {
-            if(!m_Fn) throw std::runtime_error{"Null OpenGL function pointer"};
-            m_Fn(args...);
+            safe_invoke(args...);
             do_check_for_errors(m_Loc);
         }
     };
