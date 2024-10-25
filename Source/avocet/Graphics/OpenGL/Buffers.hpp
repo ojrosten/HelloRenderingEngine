@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
+#include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
 #include <array>
 
@@ -69,18 +70,18 @@ namespace avocet::opengl {
 
     struct vao_lifecyle_events {
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { glGenVertexArrays(N, indices.data()); }
+        static void generate(raw_indices<N>& indices) { gl_function{glGenVertexArrays}(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { glDeleteVertexArrays(N, indices.data()); }
+        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
     };
 
     struct vbo_lifecyle_events {
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { glGenBuffers(N, indices.data()); }
+        static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { glDeleteBuffers(N, indices.data()); }
+        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
     template<std::size_t I>
