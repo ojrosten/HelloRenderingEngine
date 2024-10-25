@@ -10,7 +10,7 @@
 #include "ErrorsFreeTest.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
-#include "avocet/Graphics/OpenGL/Core.hpp"
+#include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
 namespace avocet::testing
 {

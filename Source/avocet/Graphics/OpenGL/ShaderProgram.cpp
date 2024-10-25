@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
-#include "avocet/Graphics/OpenGL/Core.hpp"
+#include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
 #include <fstream>
 #include <functional>
