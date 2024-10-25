@@ -25,9 +25,9 @@ namespace avocet::opengl {
         #endif
     }
 
-    inline void do_check_for_errors(std::source_location loc) {
+    inline void check_for_errors(std::source_location loc) {
         if constexpr(get_debugging_mode() == debugging_mode::basic)
-            check_for_errors(loc);
+            check_for_basic_errors(loc);
     }
 
     template<class Fn>
@@ -45,14 +45,14 @@ namespace avocet::opengl {
         [[nodiscard]]
         R operator()(Args... args, std::source_location loc = std::source_location::current()) const {
             const auto ret{safe_invoke(args...)};
-            do_check_for_errors(loc);
+            check_for_errors(loc);
 
             return ret;
         }
 
         void operator()(Args... args, std::source_location loc = std::source_location::current()) const requires std::is_void_v<R> {
             safe_invoke(args...);
-            do_check_for_errors(loc);
+            check_for_errors(loc);
         }
     private:
         function_type m_Fn;

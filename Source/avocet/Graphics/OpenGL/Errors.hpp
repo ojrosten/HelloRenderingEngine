@@ -27,5 +27,5 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(error_codes e);
 
-    void check_for_errors(std::source_location loc);
+    void check_for_basic_errors(std::source_location loc);
 }

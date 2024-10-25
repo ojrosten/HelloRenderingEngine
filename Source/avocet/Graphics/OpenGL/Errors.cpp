@@ -62,7 +62,7 @@ namespace avocet::opengl {
         throw std::runtime_error{"error_codes: unrecognized option"};
     }
 
-    void check_for_errors(std::source_location loc)
+    void check_for_basic_errors(std::source_location loc)
     {
         const auto errorMessage{
             std::ranges::fold_left(
