@@ -24,7 +24,7 @@ namespace curlew {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(config.version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-            if(config.hidden == window_hiding::yes)
+            if(config.hiding == window_hiding_mode::on)
                 glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
             auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};

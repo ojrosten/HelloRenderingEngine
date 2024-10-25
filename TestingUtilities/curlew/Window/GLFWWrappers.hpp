@@ -14,7 +14,7 @@ struct GLFWwindow;
 namespace curlew {
     class window;
 
-    enum class window_hiding : bool { no, yes };
+    enum class window_hiding_mode : bool { off, on };
 
     struct opengl_version {
         std::size_t major{4}, minor{1};
@@ -23,7 +23,7 @@ namespace curlew {
     struct window_config {
         std::size_t width{800}, height{600};
         std::string name{};
-        window_hiding hidden{window_hiding::no};
+        window_hiding_mode hiding{window_hiding_mode::off};
         opengl_version version{};
     };
 

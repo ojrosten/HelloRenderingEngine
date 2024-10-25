@@ -40,7 +40,7 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>("Set glGetError to null pointer", [](){ gl_breaker breaker{glGetError}; agl::check_for_errors(std::source_location::current()); });
 
         glfw_manager manager{};
-        auto w{manager.create_window({.hidden{window_hiding::yes}})};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
         check_exception_thrown<std::runtime_error>("Set glBindBuffer to null pointer", [](){ gl_breaker breaker{glBindBuffer}; agl::gl_function{glBindBuffer}(42, 42); });
         check_exception_thrown<std::runtime_error>("Illegal call to glBindBuffer", [](){ agl::gl_function{glBindBuffer}(42, 42); });
