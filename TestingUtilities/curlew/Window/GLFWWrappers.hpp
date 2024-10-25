@@ -9,8 +9,23 @@
 
 struct GLFWwindow;
 
+#include <string>
+
 namespace curlew {
     class window;
+
+    enum class window_hiding : bool { no, yes };
+
+    struct opengl_version {
+        std::size_t major{4}, minor{1};
+    };
+
+    struct window_config {
+        std::size_t width{800}, height{600};
+        std::string name{};
+        window_hiding hidden{window_hiding::no};
+        opengl_version version{};
+    };
 
     struct [[nodiscard]] glfw_manager {
         glfw_manager();
@@ -21,7 +36,7 @@ namespace curlew {
 
         ~glfw_manager();
 
-        window create_window();
+        window create_window(const window_config& config);
     };
 
     class [[nodiscard]] window_resource {
@@ -29,7 +44,7 @@ namespace curlew {
 
         GLFWwindow& m_Window;
 
-        window_resource();
+        window_resource(const window_config& config);
     public:
 
         window_resource(const window_resource&) = delete;
@@ -38,7 +53,7 @@ namespace curlew {
 
         ~window_resource();
 
-        [[nodiscard]] GLFWwindow& get() { return m_Window; }
+        [[nodiscard]] GLFWwindow& get() noexcept { return m_Window; }
     };
 
     class [[nodiscard]] window {
@@ -46,7 +61,7 @@ namespace curlew {
 
         window_resource m_Window;
 
-        window();
+        window(const window_config& config);
     public:
 
         window(const window&) = delete;
@@ -55,6 +70,6 @@ namespace curlew {
 
         ~window() = default;
 
-        [[nodiscard]] GLFWwindow& get() { return m_Window.get(); }
+        [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };
 }

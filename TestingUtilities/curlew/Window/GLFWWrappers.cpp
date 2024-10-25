@@ -13,23 +13,26 @@
 #include <iostream>
 #include <format>
 
-namespace {
-    void errorCallback(int error, const char* description) {
-        std::cerr << std::format("Error - {}: {}\n", error, description);
-    }
-
-    GLFWwindow& make_window() {
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-        auto win{glfwCreateWindow(800, 600, "Hello GLFW", nullptr, nullptr)};
-        return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
-    }
-}
-
 namespace curlew {
+    namespace {
+        void errorCallback(int error, const char* description) {
+            std::cerr << std::format("Error - {}: {}\n", error, description);
+        }
+
+        GLFWwindow& make_window(const window_config& config) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(config.version.major));
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(config.version.minor));
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            if(config.hidden == window_hiding::yes)
+                glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
+            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
+            return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
+        }
+    }
+
+
     glfw_manager::glfw_manager() {
         glfwSetErrorCallback(errorCallback);
 
@@ -39,13 +42,13 @@ namespace curlew {
 
     glfw_manager::~glfw_manager() { glfwTerminate(); }
 
-    window glfw_manager::create_window() { return window{}; }
+    window glfw_manager::create_window(const window_config& config) { return window{config}; }
 
-    window_resource::window_resource() : m_Window{make_window()} {}
+    window_resource::window_resource(const window_config& config) : m_Window{make_window(config)} {}
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
-    window::window() {
+    window::window(const window_config& config) : m_Window{config} {
         glfwMakeContextCurrent(&m_Window.get());
 
         if(!gladLoadGL(glfwGetProcAddress))

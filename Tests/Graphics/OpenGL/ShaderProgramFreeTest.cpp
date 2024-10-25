@@ -21,8 +21,9 @@ namespace avocet::testing
 
     void shader_program_free_test::run_tests()
     {
-        curlew::glfw_manager manager{};
-        auto w{manager.create_window()};
+        using namespace curlew;
+        glfw_manager manager{};
+        auto w{manager.create_window({.hidden{window_hiding::yes}})};
 
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};

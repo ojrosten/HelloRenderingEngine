@@ -1,4 +1,4 @@
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 39
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 40
 Set glGetError to null pointer
 
 Expected Exception Type:
@@ -7,7 +7,7 @@ Null OpenGL function pointer
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 44
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 45
 Set glBindBuffer to null pointer
 
 Expected Exception Type:
@@ -16,11 +16,11 @@ Null OpenGL function pointer
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 45
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 46
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 45:
+OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 46:
 Invalid enum
 
 =======================================

@@ -1,4 +1,4 @@
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 30
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 31
 Broken Vertex Shader
 
 Expected Exception Type:
@@ -8,7 +8,7 @@ ERROR: 0:8: '}' : syntax error syntax error
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 31
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 32
 Unlinkable Vertex Shader
 
 Expected Exception Type:
@@ -18,7 +18,7 @@ ERROR: Definition for "void main()" not found.
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 32
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 33
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -28,7 +28,7 @@ ERROR: 0:7: '{' : syntax error syntax error
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 33
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 34
 Unlinkable Fragment Shader
 
 Expected Exception Type:
