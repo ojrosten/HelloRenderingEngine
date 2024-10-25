@@ -14,40 +14,28 @@
 #include <tuple>
 
 namespace avocet::opengl {
-    enum class debugging_mode { none = 0, basic, advanced };
+    enum class debugging_mode { none = 0, basic };
 
     [[nodiscard]]
     constexpr debugging_mode get_debugging_mode() noexcept {
-        #if defined(GL_ADVANCED_DEBUGGING)
-            return debugging_mode::advanced;
-        #elif defined(GL_BASIC_DEBUGGING)
-            return debugging_mode::basic;
-        #elif defined(NDEBUG)
-            // release build
+        #if defined(NDEBUG)
             return debugging_mode::none;
-        #elif defined(__APPLE__)
-            return debugging_mode::basic;
         #else
             return debugging_mode::basic;
         #endif
     }
 
-    inline void do_check_for_errors(std::source_location loc) {
-        if constexpr(get_debugging_mode() == debugging_mode::basic)
-            check_for_errors(loc);
+    template<class Fn, class... Args>
+        requires std::invocable<Fn, Args...>
+    std::invoke_result_t<Fn, Args...> safe_invoke(Fn f, Args... args) {
+        if(!f) throw std::runtime_error{"Null OpenGL function pointer"};
+        return f(args...);
     }
 
-    template<class Fn>
+    template<class Fn, debugging_mode Mode=get_debugging_mode()>
     class [[nodiscard]] gl_function {
         Fn m_Fn;
         std::source_location m_Loc;
-
-        template<class... Args>
-            requires std::invocable<Fn, Args...>
-        std::invoke_result_t<Fn, Args...> safe_invoke(Args... args) const {
-            if(!m_Fn) throw std::runtime_error{"Null OpenGL function pointer"};
-            return m_Fn(args...);
-        }
     public:
         gl_function(Fn f, std::source_location loc = std::source_location::current())
             : m_Fn{f}
@@ -58,8 +46,8 @@ namespace avocet::opengl {
             requires std::invocable<Fn, Args...>
         [[nodiscard]]
         std::invoke_result_t<Fn, Args...> operator()(Args... args) const {
-            const auto ret{safe_invoke(args...)};
-            do_check_for_errors(m_Loc);
+            const auto ret{safe_invoke(m_Fn, args...)};
+            check_for_errors(m_Loc);
 
             return ret;
         }
@@ -67,8 +55,19 @@ namespace avocet::opengl {
         template<class... Args>
             requires std::invocable<Fn, Args...> && std::is_void_v<std::invoke_result_t<Fn, Args...>>
         void operator()(Args... args) const {
-            safe_invoke(args...);
-            do_check_for_errors(m_Loc);
+            safe_invoke(m_Fn, args...);
+            check_for_errors(m_Loc);
         }
+    };
+
+    template<class Fn>
+    class [[nodiscard]] gl_function<Fn, debugging_mode::none> {
+        Fn m_Fn;
+    public:
+        gl_function(Fn f) : m_Fn{f} {}
+
+        template<class... Args>
+            requires std::invocable<Fn, Args...>
+        std::invoke_result_t<Fn, Args...> operator()(Args... args) const { return safe_invoke(m_Fn, args...); }
     };
 }

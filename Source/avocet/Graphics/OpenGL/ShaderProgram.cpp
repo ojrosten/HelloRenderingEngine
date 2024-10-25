@@ -43,8 +43,8 @@ namespace avocet::opengl {
         };
 
         class shader_checker {
-            using gl_param_getter    = std::function<void(GLuint, GLenum, GLint*)>;
-            using gl_info_log_getter = std::function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
+            using gl_param_getter    = void(*)(GLuint, GLenum, GLint*);
+            using gl_info_log_getter = void(*)(GLuint, GLsizei, GLsizei*, GLchar*);
 
             const resource_handle& m_Handle;
             gl_param_getter m_ParamGetter;
