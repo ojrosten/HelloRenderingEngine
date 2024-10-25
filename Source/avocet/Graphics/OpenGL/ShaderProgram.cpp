@@ -9,7 +9,6 @@
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
 #include <fstream>
-#include <functional>
 
 namespace avocet::opengl {
     namespace fs = std::filesystem;
@@ -37,45 +36,15 @@ namespace avocet::opengl {
             }
         };
 
-        template<class T>
-        inline constexpr bool castable_to_bool_v{
-            requires (T& t) { static_cast<bool>(t); }
-        };
-
         class shader_checker {
-            using gl_param_getter    = void(*)(GLuint, GLenum, GLint*);
-            using gl_info_log_getter = void(*)(GLuint, GLsizei, GLsizei*, GLchar*);
-
-            const resource_handle& m_Handle;
-            gl_param_getter m_ParamGetter;
-            gl_info_log_getter m_InfoLogGetter;
-
-            template<class T>
-                requires castable_to_bool_v<T>
-            [[nodiscard]]
-            static T validate(std::string_view prefix, T t) { return t ? t : throw std::runtime_error{std::format("{} is null!", prefix)}; }
-
-            [[nodiscard]]
-            GLint get_parameter_value(GLenum paramName) const {
-                GLint param{};
-                gl_function{m_ParamGetter}(m_Handle.index(), paramName, &param);
-                return param;
-            }
-
-            [[nodiscard]]
-            std::string get_info_log() const {
-                const GLint logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
-                std::string info(logLen, ' ');
-                gl_function{m_InfoLogGetter}(m_Handle.index(), logLen, nullptr, info.data());
-                return info;
-            }
-        protected:
-            ~shader_checker() = default;
         public:
+            using gl_param_getter    = gl_function<void(GLuint, GLenum, GLint*)>;
+            using gl_info_log_getter = gl_function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
+
             shader_checker(const resource_handle& h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
                 : m_Handle{h}
-                , m_ParamGetter{validate("gl_param_getter", paramGetter)}
-                , m_InfoLogGetter{validate("gl_info_log_getter", logGetter)}
+                , m_ParamGetter{paramGetter}
+                , m_InfoLogGetter{logGetter}
             {}
 
             template<class Self>
@@ -85,6 +54,27 @@ namespace avocet::opengl {
                     throw std::runtime_error{std::format("error {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
                 }
             }
+        protected:
+            ~shader_checker() = default;
+        private:
+            const resource_handle& m_Handle;
+            gl_param_getter m_ParamGetter;
+            gl_info_log_getter m_InfoLogGetter;
+
+            [[nodiscard]]
+            GLint get_parameter_value(GLenum paramName) const {
+                GLint param{};
+                m_ParamGetter(m_Handle.index(), paramName, &param);
+                return param;
+            }
+
+            [[nodiscard]]
+            std::string get_info_log() const {
+                const GLint logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
+                std::string info(logLen, ' ');
+                m_InfoLogGetter(m_Handle.index(), logLen, nullptr, info.data());
+                return info;
+            }
         };
 
         class shader_resource_lifecycle {
@@ -93,7 +83,7 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            resource_handle create() { return resource_handle{gl_function{glCreateShader}(static_cast<GLenum>(m_Species))}; }
+            resource_handle create() { return resource_handle{ gl_function{glCreateShader}(static_cast<GLenum>(m_Species))}; }
 
             static void destroy(const resource_handle& handle) { gl_function{glDeleteShader}(handle.index()); }
         };
