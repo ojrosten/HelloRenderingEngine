@@ -31,7 +31,7 @@ namespace avocet::opengl {
     }
 
     template<class Fn>
-    class [[nodiscard]] gl_function;
+    class gl_function;
 
     template<class R, class... Args>
     class [[nodiscard]] gl_function<R(Args...)> {
