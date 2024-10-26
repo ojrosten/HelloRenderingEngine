@@ -9,6 +9,7 @@
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
 #include <fstream>
+#include <functional>
 
 namespace avocet::opengl {
     namespace fs = std::filesystem;
@@ -36,22 +37,27 @@ namespace avocet::opengl {
             }
         };
 
+        template<class T>
+        inline constexpr bool castable_to_bool_v{
+            requires (T & t) { static_cast<bool>(t); }
+        };
+
         class shader_checker {
         public:
-            using gl_param_getter    = gl_function<void(GLuint, GLenum, GLint*)>;
-            using gl_info_log_getter = gl_function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
+            using gl_param_getter    = std::function<void(GLuint, GLenum, GLint*)>;
+            using gl_info_log_getter = std::function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
 
             shader_checker(const resource_handle& h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
                 : m_Handle{h}
-                , m_ParamGetter{paramGetter}
-                , m_InfoLogGetter{logGetter}
+                , m_ParamGetter{validate("gl_param_getter", paramGetter)}
+                , m_InfoLogGetter{validate("gl_info_log_getter", logGetter)}
             {}
 
             template<class Self>
                 requires has_checker_attributes_v<Self>
             void check(this const Self& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
-                    throw std::runtime_error{std::format("Error: {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
+                    throw std::runtime_error{std::format("error {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
                 }
             }
         protected:
@@ -60,6 +66,11 @@ namespace avocet::opengl {
             const resource_handle& m_Handle;
             gl_param_getter m_ParamGetter;
             gl_info_log_getter m_InfoLogGetter;
+
+            template<class T>
+                requires castable_to_bool_v<T>
+            [[nodiscard]]
+            static T validate(std::string_view prefix, T t) { return t ? t : throw std::runtime_error{std::format("{} is null!", prefix)}; }
 
             [[nodiscard]]
             GLint get_parameter_value(GLenum paramName) const {
@@ -83,9 +94,9 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            resource_handle create() { return resource_handle{ gl_function{glCreateShader}(static_cast<GLenum>(m_Species))}; }
+            resource_handle create() { return resource_handle{ glCreateShader(static_cast<GLenum>(m_Species))}; }
 
-            static void destroy(const resource_handle& handle) { gl_function{glDeleteShader}(handle.index()); }
+            static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
@@ -136,8 +147,8 @@ namespace avocet::opengl {
                 const auto index{m_Resource.handle().index()};
                 const auto source{read_to_string(sourceFile)};
                 const auto data{source.data()};
-                gl_function{glShaderSource}(index, 1, &data, nullptr);
-                gl_function{glCompileShader}(index);
+                glShaderSource(index, 1, &data, nullptr);
+                glCompileShader(index);
                 shader_compiler_checker{m_Resource, species}.check();
             }
 
@@ -155,10 +166,10 @@ namespace avocet::opengl {
                 : m_ProgIndex{program.resource().handle().index()}
                 , m_ShaderIndex{shader.resource().handle().index()}
             {
-                gl_function{glAttachShader}(m_ProgIndex, m_ShaderIndex);
+                glAttachShader(m_ProgIndex, m_ShaderIndex);
             }
 
-            ~shader_attacher() { gl_function{glDetachShader}(m_ProgIndex, m_ShaderIndex); }
+            ~shader_attacher() { glDetachShader(m_ProgIndex, m_ShaderIndex); }
         };
 
         static_assert(has_shader_lifecycle_events_v<shader_resource_lifecycle>);
@@ -174,7 +185,7 @@ namespace avocet::opengl {
 
         {
             shader_attacher verteAttacher{*this, vertexShader}, fragmentAttacher{*this, fragmentShader};
-            gl_function{glLinkProgram}(progIndex);
+            glLinkProgram(progIndex);
         }
 
         shader_program_checker{m_Resource}.check();
