@@ -7,38 +7,51 @@
 
 #include "avocet/Graphics/OpenGL/Errors.hpp"
 
-#include <algorithm>
 #include <filesystem>
 #include <format>
-#include <ranges>
 #include <stdexcept>
+
+#include "glad/gl.h"
 
 namespace avocet::opengl {
     namespace fs = std::filesystem;
 
-    [[nodiscard]]
-    std::string to_string(error_codes e) {
-        using enum error_codes;
-        switch(e) {
-        case none:
-            return "None";
-        case invalid_enum:
-            return "Invalid enum";
-        case invalid_value:
-            return "Invalid value";
-        case invalid_operation:
-            return "Invalid operation";
-        case invalid_framebuffer_operation:
-            return "Invalid framebuffer operation";
-        case stack_overflow:
-            return "Stack overflow";
-        case stack_underflow:
-            return "Stack underflow";
-        case out_of_memory:
-            return "Out of memory";
-        }
+    namespace {
+        enum class error_codes : GLuint {
+            none = GL_NO_ERROR,
+            invalid_enum = GL_INVALID_ENUM,
+            invalid_value = GL_INVALID_VALUE,
+            invalid_operation = GL_INVALID_OPERATION,
+            invalid_framebuffer_operation = GL_INVALID_FRAMEBUFFER_OPERATION,
+            stack_overflow = GL_STACK_OVERFLOW,
+            stack_underflow = GL_STACK_UNDERFLOW,
+            out_of_memory = GL_OUT_OF_MEMORY,
+        };
 
-        throw std::runtime_error{"error_codes: unrecognized option"};
+        [[nodiscard]]
+        std::string to_string(error_codes e) {
+            using enum error_codes;
+            switch(e) {
+            case none:
+                return "None";
+            case invalid_enum:
+                return "Invalid enum";
+            case invalid_value:
+                return "Invalid value";
+            case invalid_operation:
+                return "Invalid operation";
+            case invalid_framebuffer_operation:
+                return "Invalid framebuffer operation";
+            case stack_overflow:
+                return "Stack overflow";
+            case stack_underflow:
+                return "Stack underflow";
+            case out_of_memory:
+                return "Out of memory";
+            }
+
+            throw std::runtime_error{"error_codes: unrecognized option"};
+        }
     }
 
     void check_for_basic_errors(std::source_location loc)

@@ -12,6 +12,8 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
+#include "glad/gl.h"
+
 namespace avocet::testing
 {
     namespace {
