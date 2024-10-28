@@ -11,7 +11,6 @@
 
 #include <concepts>
 #include <stdexcept>
-#include <tuple>
 
 namespace avocet::opengl {
     enum class debugging_mode { none = 0, basic };
