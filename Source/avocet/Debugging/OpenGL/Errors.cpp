@@ -5,7 +5,7 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "avocet/Graphics/OpenGL/Errors.hpp"
+#include "avocet/Debugging/OpenGL/Errors.hpp"
 
 #include <filesystem>
 #include <format>

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/Graphics/OpenGL/Errors.hpp"
+#include "avocet/Debugging/OpenGL/Errors.hpp"
 
 #include <concepts>
 #include <stdexcept>
