@@ -1,0 +1,10 @@
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 32
+Broken Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+error vertex shader compilation failed
+ERROR: 0:8: '}' : syntax error syntax error
+
+=======================================
+
