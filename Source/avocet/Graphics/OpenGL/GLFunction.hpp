@@ -10,6 +10,7 @@
 #include "avocet/Debugging/OpenGL/Errors.hpp"
 
 #include <concepts>
+#include <format>
 #include <stdexcept>
 
 namespace avocet::opengl {
@@ -21,7 +22,7 @@ namespace avocet::opengl {
         using function_pointer_type = R(*)(Args...);
 
         gl_function(function_pointer_type f, std::source_location loc = std::source_location::current())
-            : m_Fn{f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))}}
+            : m_Fn{validate(f, loc)}
         {}
 
         [[nodiscard]]
@@ -39,6 +40,10 @@ namespace avocet::opengl {
         }
     private:
         function_pointer_type m_Fn;
+
+        static function_pointer_type validate(function_pointer_type f, std::source_location loc) {
+            return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
+        }
     };
 
     template<class R, class... Args>

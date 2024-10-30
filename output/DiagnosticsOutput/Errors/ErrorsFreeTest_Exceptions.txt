@@ -26,3 +26,13 @@ Invalid enum
 
 =======================================
 
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 67
+Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 71:
+Invalid enum
+
+=======================================
+
