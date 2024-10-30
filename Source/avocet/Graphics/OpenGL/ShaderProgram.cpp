@@ -57,7 +57,7 @@ namespace avocet::opengl {
                 requires has_checker_attributes_v<Self>
             void check(this const Self& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
-                    throw std::runtime_error{std::format("error {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
+                    throw std::runtime_error{std::format("Error: {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
                 }
             }
         protected:

@@ -1,10 +1,58 @@
 Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 32
+Missing Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 42
+Missing Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 52
 Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-error vertex shader compilation failed
+Error: vertex shader compilation failed
 ERROR: 0:8: '}' : syntax error syntax error
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 62
+Unlinkable Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: program linking failed
+ERROR: Definition for "void main()" not found.
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 72
+Broken Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: fragment shader compilation failed
+ERROR: 0:7: '{' : syntax error syntax error
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 82
+Unlinkable Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: program linking failed
+ERROR: Definition for "void main()" not found.
 
 =======================================
 

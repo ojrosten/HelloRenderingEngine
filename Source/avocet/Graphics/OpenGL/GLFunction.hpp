@@ -28,4 +28,35 @@ namespace avocet::opengl {
         if constexpr(get_debugging_mode() == debugging_mode::basic)
             check_for_basic_errors(loc);
     }
+
+    template<class> class gl_function;
+
+    template<class R, class... Args>
+    class gl_function<R(Args...)> {
+    public:
+        using function_pointer_type = R(*)(Args...);
+
+        gl_function(function_pointer_type f)
+            : m_Fn{f ? f : throw std::runtime_error{"Null OpenGL function pointer"}}
+        {}
+
+        [[nodiscard]]
+        R operator()(Args... args, std::source_location loc = std::source_location::current()) const {
+            const auto ret{m_Fn(args...)};
+            check_for_errors(loc);
+            return ret;
+        }
+
+        void operator()(Args... args, std::source_location loc = std::source_location::current()) const
+            requires std::is_void_v<R>
+        {
+            m_Fn(args...);
+            check_for_errors(loc);
+        }
+    private:
+        function_pointer_type m_Fn;
+    };
+
+    template<class R, class... Args>
+    gl_function(R(*)(Args...)) -> gl_function<R(Args...)>;
 }
