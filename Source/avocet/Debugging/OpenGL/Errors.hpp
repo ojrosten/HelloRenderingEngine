@@ -8,7 +8,11 @@
 #pragma once
 
 #include <source_location>
+#include <string>
 
 namespace avocet::opengl {
+    [[nodiscard]]
+    std::string to_string(std::source_location loc);
+
     void check_for_basic_errors(std::source_location loc);
 }

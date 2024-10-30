@@ -131,6 +131,9 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         std::string read_to_string(const fs::path& file){
+            if(fs::exists(file) && !fs::is_regular_file(file))
+                throw std::runtime_error{std::format("Attempting to open something which isn't a file: {}", file.generic_string())};
+
             if(std::ifstream ifile{file}) {
                 return std::string(std::istreambuf_iterator<char>{ifile}, {});
             }

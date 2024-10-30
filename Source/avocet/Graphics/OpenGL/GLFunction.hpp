@@ -36,8 +36,8 @@ namespace avocet::opengl {
     public:
         using function_pointer_type = R(*)(Args...);
 
-        gl_function(function_pointer_type f)
-            : m_Fn{f ? f : throw std::runtime_error{"Null OpenGL function pointer"}}
+        gl_function(function_pointer_type f, std::source_location loc = std::source_location::current())
+            : m_Fn{f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))}}
         {}
 
         [[nodiscard]]

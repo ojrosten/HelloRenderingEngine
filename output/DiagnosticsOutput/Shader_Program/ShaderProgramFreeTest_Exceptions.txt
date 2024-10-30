@@ -3,20 +3,29 @@ Missing Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Unable to open file C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
+Attempting to open something which isn't a file: C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
 
 =======================================
 
 Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 42
-Missing Fragment Shader
+Misnamed Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Unable to open file C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
+Unable to open file C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest/foo.vs
 
 =======================================
 
 Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 52
+Missing Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Attempting to open something which isn't a file: C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 62
 Broken Vertex Shader
 
 Expected Exception Type:
@@ -26,7 +35,7 @@ ERROR: 0:8: '}' : syntax error syntax error
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 62
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 72
 Unlinkable Vertex Shader
 
 Expected Exception Type:
@@ -36,7 +45,7 @@ ERROR: Definition for "void main()" not found.
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 72
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 82
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -46,7 +55,7 @@ ERROR: 0:7: '{' : syntax error syntax error
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 82
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 92
 Unlinkable Fragment Shader
 
 Expected Exception Type:

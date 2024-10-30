@@ -54,10 +54,13 @@ namespace avocet::opengl {
         }
     }
 
+    [[nodiscard]]
+    std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
+
     void check_for_basic_errors(std::source_location loc)
     {
         if(!glGetError)
-            throw std::runtime_error{"Null OpenGL function pointer"};
+            throw std::runtime_error{std::format("check_for_basic_errors: glGetError is nullptr when called from {}", to_string(loc))};
 
         std::string errorMessage{};
         error_codes errorCode{};
@@ -68,6 +71,6 @@ namespace avocet::opengl {
         }
 
         if(!errorMessage.empty())
-            throw std::runtime_error{std::format("OpenGL error detected in file {}, line {}:\n{}", fs::path{loc.file_name()}.generic_string(), loc.line(), errorMessage)};
+            throw std::runtime_error{std::format("OpenGL error detected in {}:\n{}", to_string(loc), errorMessage)};
     }
 }
