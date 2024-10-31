@@ -26,6 +26,15 @@ Attempting to open something which isn't a file: C:/UnitySrc/HelloRenderingEngin
 =======================================
 
 Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 62
+Misnamed Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest/bar.fs
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 72
 Broken Vertex Shader
 
 Expected Exception Type:
@@ -37,7 +46,7 @@ SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, ""
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 72
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 82
 Unlinkable Vertex Shader
 
 Expected Exception Type:
@@ -48,7 +57,7 @@ SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERR
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 82
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 92
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -60,7 +69,7 @@ SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, ""
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 92
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 102
 Unlinkable Fragment Shader
 
 Expected Exception Type:

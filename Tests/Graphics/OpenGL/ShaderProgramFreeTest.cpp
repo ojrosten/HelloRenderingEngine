@@ -59,6 +59,16 @@ namespace avocet::testing
         );
 
         check_exception_thrown<std::runtime_error>(
+            "Misnamed Fragment Shader",
+            [&shaderDir](){
+                agl::shader_program sp{
+                    shaderDir / "Identity.vs",
+                    shaderDir / "bar.fs"
+                };
+            }
+        );
+
+        check_exception_thrown<std::runtime_error>(
             "Broken Vertex Shader",
             [&shaderDir](){
                 agl::shader_program sp{
