@@ -3,7 +3,7 @@ Null glGetError
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 45
+check_for_basic_errors: glGetError is nullptr when coming via C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 45
 
 =======================================
 
