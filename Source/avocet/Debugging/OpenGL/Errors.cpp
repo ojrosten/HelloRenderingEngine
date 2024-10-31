@@ -169,7 +169,7 @@ namespace avocet::opengl {
         }
 
         std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
-            return std::format("OpenGL error detected in file {}, line {}:\n{}", fs::path{loc.file_name()}.generic_string(), loc.line(), errorMessage);
+            return std::format("OpenGL error detected in {}:\n{}", avocet::opengl::to_string(loc), errorMessage);
         }
     }
 
@@ -190,7 +190,7 @@ namespace avocet::opengl {
         }
 
         if(!errorMessage.empty())
-            throw std::runtime_error{std::format("OpenGL error detected in {}:\n{}", to_string(loc), errorMessage)};
+            throw std::runtime_error{compose_error_message(errorMessage, loc)};
     }
 
     void check_for_advanced_errors(std::source_location loc) {
