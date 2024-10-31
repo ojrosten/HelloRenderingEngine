@@ -32,7 +32,7 @@ namespace avocet::opengl {
     template<class> class gl_function;
 
     template<class R, class... Args>
-    class gl_function<R(Args...)> {
+    class [[nodiscard]] gl_function<R(Args...)> {
     public:
         using function_pointer_type = R(*)(Args...);
 
