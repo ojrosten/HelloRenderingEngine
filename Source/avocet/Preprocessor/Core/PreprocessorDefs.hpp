@@ -7,18 +7,22 @@
 
 #pragma once
 
-#include "avocet/Preprocessor/Core/PreprocessorDefs.hpp"
-
-namespace avocet::opengl {
-    enum class debugging_mode { none = 0, ignored, basic, advanced };
+namespace avocet {
+    [[nodiscard]]
+    constexpr bool has_ndebug() noexcept {
+        #if defined(NDEBUG)
+            return true;
+        #else
+            return false;
+        #endif
+    }
 
     [[nodiscard]]
-    constexpr debugging_mode requested_debugging_mode() noexcept {
-        if constexpr(has_ndebug())
-            return debugging_mode::none;
-        else if constexpr(is_apple())
-            return debugging_mode::basic;
-        else
-            return debugging_mode::advanced;
+    constexpr bool is_apple() noexcept {
+        #if defined(__APPLE__)
+            return true;
+        #else
+            return false;
+        #endif
     }
 }

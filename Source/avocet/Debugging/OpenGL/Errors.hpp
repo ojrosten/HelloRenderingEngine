@@ -18,8 +18,12 @@ namespace avocet::opengl {
 
     void check_for_basic_errors(std::source_location loc);
 
+    void check_for_advanced_errors(std::source_location loc);
+
     inline void check_for_errors(std::source_location loc) {
-        if constexpr(get_debugging_mode() == debugging_mode::basic)
+        if constexpr(requested_debugging_mode() == debugging_mode::basic)
             check_for_basic_errors(loc);
+        else if constexpr(requested_debugging_mode() == debugging_mode::advanced)
+            check_for_advanced_errors(loc);
     }
 }

@@ -7,9 +7,11 @@
 
 #pragma once
 
-struct GLFWwindow;
+#include "avocet/Preprocessor/Core/PreprocessorDefs.hpp"
 
 #include <string>
+
+struct GLFWwindow;
 
 namespace curlew {
     class window;
@@ -17,7 +19,9 @@ namespace curlew {
     enum class window_hiding_mode : bool { off, on };
 
     struct opengl_version {
-        std::size_t major{4}, minor{1};
+        std::size_t major{4}, minor{get_minor_version()};
+
+        constexpr static std::size_t get_minor_version() noexcept { return avocet::is_apple() ? 1 : 6; }
     };
 
     struct window_config {

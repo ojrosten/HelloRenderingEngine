@@ -30,8 +30,10 @@ Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: vertex shader compilation failed
-ERROR: 0:8: '}' : syntax error syntax error
+OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 144:
+Source: Shader Compiler; Type: Error; Severity: High
+SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, "": ERROR: 0:8: '}' : syntax error syntax error
+
 
 =======================================
 
@@ -40,8 +42,9 @@ Unlinkable Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: program linking failed
-ERROR: Definition for "void main()" not found.
+OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 181:
+Source: Shader Compiler; Type: Error; Severity: High
+SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
 
 =======================================
 
@@ -50,8 +53,10 @@ Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: fragment shader compilation failed
-ERROR: 0:7: '{' : syntax error syntax error
+OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 144:
+Source: Shader Compiler; Type: Error; Severity: High
+SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, "": ERROR: 0:7: '{' : syntax error syntax error
+
 
 =======================================
 
@@ -60,8 +65,9 @@ Unlinkable Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: program linking failed
-ERROR: Definition for "void main()" not found.
+OpenGL error detected in file C:/UnitySrc/HelloRenderingEngine/Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 181:
+Source: Shader Compiler; Type: Error; Severity: High
+SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
 
 =======================================
 
