@@ -14,17 +14,18 @@
 #include <stdexcept>
 
 namespace avocet::opengl {
-    template<class F> class gl_function;
+    template<class> class gl_function;
 
     template<class R, class... Args>
-    class gl_function<R(Args...)> {
+    class [[nodiscard]] gl_function<R(Args...)> {
     public:
-        using function_type = R(*)(Args...);
+        using function_pointer_type = R(*)(Args...);
 
-        gl_function(function_type f, std::source_location loc = std::source_location::current())
-            : m_Fn{f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))}}
+        gl_function(function_pointer_type f, std::source_location loc = std::source_location::current())
+            : m_Fn{validate(f, loc)}
         {}
 
+        [[nodiscard]]
         R operator()(Args... args, std::source_location loc = std::source_location::current()) const {
             const auto ret{m_Fn(args...)};
             check_for_errors(loc);
@@ -38,7 +39,11 @@ namespace avocet::opengl {
             check_for_errors(loc);
         }
     private:
-        function_type m_Fn;
+        function_pointer_type m_Fn;
+
+        static function_pointer_type validate(function_pointer_type f, std::source_location loc) {
+            return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
+        }
     };
 
     template<class R, class... Args>
