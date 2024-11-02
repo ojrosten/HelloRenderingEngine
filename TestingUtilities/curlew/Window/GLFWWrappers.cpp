@@ -83,5 +83,7 @@ namespace curlew {
 
         if(!gladLoadGL(glfwGetProcAddress))
             throw std::runtime_error{"Failed to initialize GLAD"};
+
+        init_debug();
     }
 }
