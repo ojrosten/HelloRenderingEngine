@@ -10,7 +10,7 @@
 #include "avocet/Preprocessor/Core/PreprocessorDefs.hpp"
 
 namespace avocet::opengl {
-    enum class debugging_mode { none = 0, ignored, basic, advanced };
+    enum class debugging_mode { none = 0, basic, advanced };
 
     [[nodiscard]]
     constexpr debugging_mode requested_debugging_mode() noexcept {
