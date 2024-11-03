@@ -30,13 +30,15 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        GLFWwindow& make_window(const window_config& config) {
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(config.version.major));
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(config.version.minor));
+        int to_int(window_hiding_mode mode) { return mode == window_hiding_mode::off; }
+
+        [[nodiscard]]
+        GLFWwindow& make_window(const window_config& config, const opengl_version& version) {
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-            if(config.hiding == window_hiding_mode::on)
-                glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+            glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));
 
             set_debug_context();
 
@@ -60,25 +62,48 @@ namespace curlew {
                     GL_TRUE);
             }
         }
+
+        [[nodiscard]]
+        std::size_t to_digit(const std::string& version, std::string::size_type pos) {
+            return static_cast<std::size_t>(std::stoi(version.substr(pos, pos+1)));
+        }
     }
 
 
-    glfw_manager::glfw_manager() {
+    glfw_resource::glfw_resource() {
         glfwSetErrorCallback(errorCallback);
 
         if(!glfwInit())
             throw std::runtime_error{"Failed to initialize GLFW\n"};
     }
 
-    glfw_manager::~glfw_manager() { glfwTerminate(); }
+    glfw_resource::~glfw_resource() { glfwTerminate(); }
 
-    window glfw_manager::create_window(const window_config& config) { return window{config}; }
+    glfw_manager::glfw_manager()
+        : m_OpenGLVersion{find_opengl_version()}
+    {}
 
-    window_resource::window_resource(const window_config& config) : m_Window{make_window(config)} {}
+    [[nodiscard]]
+    opengl_version glfw_manager::find_opengl_version() {
+        auto w{window({.hiding{window_hiding_mode::on}}, opengl_version{})};
+
+        const std::string version{reinterpret_cast<const char*>(glGetString(GL_VERSION))};
+        const auto npos{std::string::npos};
+        if(const auto pos{version.find_first_of('.')}; pos != npos) {
+            return {to_digit(version, pos-1), to_digit(version, pos+1)};
+        }
+
+        throw std::runtime_error{std::format("Unable to divine OpenGL version number from: {}", version)};
+    }
+
+
+    window glfw_manager::create_window(const window_config& config) { return window{config, m_OpenGLVersion}; }
+
+    window_resource::window_resource(const window_config& config, const opengl_version& version) : m_Window{make_window(config, version)} {}
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
-    window::window(const window_config& config) : m_Window{config} {
+    window::window(const window_config& config, const opengl_version& version) : m_Window{config, version} {
         glfwMakeContextCurrent(&m_Window.get());
 
         if(!gladLoadGL(glfwGetProcAddress))
