@@ -19,7 +19,7 @@ namespace avocet::opengl {
     namespace fs = std::filesystem;
 
     namespace {
-        enum class error_codes : GLuint {
+        enum class error_code : GLuint {
             none                          = GL_NO_ERROR,
             invalid_enum                  = GL_INVALID_ENUM,
             invalid_value                 = GL_INVALID_VALUE,
@@ -31,8 +31,8 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        std::string to_string(error_codes e) {
-            using enum error_codes;
+        std::string to_string(error_code e) {
+            using enum error_code;
             switch(e) {
             case none:
                 return "None";
@@ -52,10 +52,10 @@ namespace avocet::opengl {
                 return "Out of memory";
             }
 
-            throw std::runtime_error{"error_codes: unrecognized option"};
+            throw std::runtime_error{"error_code: unrecognized option"};
         }
 
-        enum class debug_sources : GLenum {
+        enum class debug_source : GLenum {
             api             = GL_DEBUG_SOURCE_API,
             window_system   = GL_DEBUG_SOURCE_WINDOW_SYSTEM,
             shader_compiler = GL_DEBUG_SOURCE_SHADER_COMPILER,
@@ -65,8 +65,8 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        std::string to_string(debug_sources e) {
-            using enum debug_sources;
+        std::string to_string(debug_source e) {
+            using enum debug_source;
 
             switch(e) {
             case api:             return "API";
@@ -77,10 +77,10 @@ namespace avocet::opengl {
             case other:           return "Other";
             }
 
-            throw std::runtime_error{"debug_sources: unrecognized option"};
+            throw std::runtime_error{"debug_source: unrecognized option"};
         }
 
-        enum class debug_types : GLenum {
+        enum class debug_type : GLenum {
             error                = GL_DEBUG_TYPE_ERROR,
             deprecated_behaviour = GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR,
             undefined_behaviour  = GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR,
@@ -93,8 +93,8 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        std::string to_string(debug_types e) {
-            using enum debug_types;
+        std::string to_string(debug_type e) {
+            using enum debug_type;
 
             switch(e) {
             case error:                return "Error";
@@ -108,10 +108,10 @@ namespace avocet::opengl {
             case other:                return "Other";
             }
 
-            throw std::runtime_error{"debug_types: unrecognized option"};
+            throw std::runtime_error{"debug_type: unrecognized option"};
         }
 
-        enum class debug_severities : GLenum {
+        enum class debug_severity : GLenum {
             high         = GL_DEBUG_SEVERITY_HIGH,
             medium       = GL_DEBUG_SEVERITY_MEDIUM,
             low          = GL_DEBUG_SEVERITY_LOW,
@@ -119,8 +119,8 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        std::string to_string(debug_severities e) {
-            using enum debug_severities;
+        std::string to_string(debug_severity e) {
+            using enum debug_severity;
 
             switch(e) {
             case high:         return "High";
@@ -129,7 +129,7 @@ namespace avocet::opengl {
             case notification: return "Notification";
             }
 
-            throw std::runtime_error{"debug_severities: unrecognized option"};
+            throw std::runtime_error{"debug_severity: unrecognized option"};
         }
 
         [[nodiscard]]
@@ -140,7 +140,7 @@ namespace avocet::opengl {
         }
 
         struct debug_info {
-            debug_severities severity{};
+            debug_severity severity{};
             std::string message{};
         };
 
@@ -158,11 +158,11 @@ namespace avocet::opengl {
             message.resize(trimLen);
 
             if(numFound)
-                return {{debug_severities{severity},
+                return {{debug_severity{severity},
                             std::format("Source: {}; Type: {}; Severity: {}\n{}",
-                                        to_string(debug_sources{source}),
-                                        to_string(debug_types{type}),
-                                        to_string(debug_severities{severity}),
+                                        to_string(debug_source{source}),
+                                        to_string(debug_type{type}),
+                                        to_string(debug_severity{severity}),
                                         message)}};
             
             return std::nullopt;
@@ -182,8 +182,8 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("check_for_basic_errors: glGetError is nullptr when coming via {}", to_string(loc))};
 
         std::string errorMessage{};
-        error_codes errorCode{};
-        while((errorCode = error_codes{glGetError()}) != error_codes::none)
+        error_code errorCode{};
+        while((errorCode = error_code{glGetError()}) != error_code::none)
         {
             errorMessage += to_string(errorCode);
             errorMessage += '\n';
@@ -198,7 +198,7 @@ namespace avocet::opengl {
         std::optional<debug_info> currentInfo{};
         while((currentInfo = get_next_message(loc)) != std::nullopt) {
             const auto& info{currentInfo.value()};
-            if(info.severity == debug_severities::notification)
+            if(info.severity == debug_severity::notification)
                 std::cerr << info.message << '\n';
             else {
                 errorMessage += info.message;
