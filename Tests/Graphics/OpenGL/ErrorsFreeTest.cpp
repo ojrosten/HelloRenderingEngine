@@ -37,13 +37,15 @@ namespace avocet::testing
     void errors_free_test::run_tests()
     {
         namespace agl = avocet::opengl;
+        using namespace curlew;
 
         check_exception_thrown<std::runtime_error>(
             "Null glGetError",
             [](){
                 gl_breaker breaker{glGetError};
                 agl::check_for_basic_errors(std::source_location::current());
-            }
+            },
+            exception_postprocessor{}
         );
 
         using namespace curlew;
@@ -55,12 +57,14 @@ namespace avocet::testing
             [](){
                 gl_breaker breaker{glBindBuffer};
                 agl::gl_function{glBindBuffer}(42, 42);
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
             "Illegal call to glBindBuffer",
-            [](){ agl::gl_function{glBindBuffer}(42, 42);}
+            [](){ agl::gl_function{glBindBuffer}(42, 42);},
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -69,7 +73,8 @@ namespace avocet::testing
                 agl::gl_function f{glBindBuffer};
                 gl_breaker breaker{glBindBuffer};
                 f(42, 42);
-            }
+            },
+            exception_postprocessor{}
         );
     }
 }

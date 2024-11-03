@@ -9,18 +9,18 @@
 
 /*! \file */
 
-#include "sequoia/TestFramework/FreeTestCore.hpp"
+#include "curlew/TestFramework/GraphicsTestCore.hpp"
 
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class errors_free_test final : public free_test
+    class errors_free_test final : public curlew::graphics_test
     {
     public:
         using parallelizable_type = std::false_type;
 
-        using free_test::free_test;
+        using curlew::graphics_test::graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

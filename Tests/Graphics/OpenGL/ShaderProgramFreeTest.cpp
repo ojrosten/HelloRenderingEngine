@@ -35,7 +35,8 @@ namespace avocet::testing
                     shaderDir,
                     shaderDir / "Monochrome.fs"
                 };
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -45,7 +46,8 @@ namespace avocet::testing
                     shaderDir / "foo.vs",
                     shaderDir / "Monochrome.fs"
                 };
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -55,7 +57,8 @@ namespace avocet::testing
                     shaderDir / "Identity.vs",
                     shaderDir
                 };
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -65,7 +68,8 @@ namespace avocet::testing
                     shaderDir / "Identity.vs",
                     shaderDir / "bar.fs"
                 };
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -75,7 +79,8 @@ namespace avocet::testing
                     shaderDir / "Broken_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -85,7 +90,8 @@ namespace avocet::testing
                     shaderDir / "Unlinkable_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -95,7 +101,8 @@ namespace avocet::testing
                     shaderDir / "Identity.vs",
                     shaderDir / "Broken_Monochrome.fs"
                 };
-            }
+            },
+            exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
@@ -105,7 +112,8 @@ namespace avocet::testing
                     shaderDir / "Identity.vs",
                     shaderDir / "Unlinkable_Monochrome.fs"
                 };
-            }
+            },
+            exception_postprocessor{}
         );
     }
 }
