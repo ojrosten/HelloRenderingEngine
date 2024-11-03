@@ -1,38 +1,38 @@
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 42
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 43
 Null glGetError
 
 Expected Exception Type:
 [std::runtime_error]
-check_for_basic_errors: glGetError is nullptr when coming via C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 45
+check_for_basic_errors: glGetError is nullptr when coming via Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 46
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 54
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 56
 Null glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 57
+gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 59
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 62
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 65
 Illegal call to glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 63:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 66:
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 67
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 71
 Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in C:/UnitySrc/HelloRenderingEngine/Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 71:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 75:
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 
