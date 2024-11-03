@@ -18,6 +18,15 @@ namespace avocet {
     }
 
     [[nodiscard]]
+    constexpr bool is_windows() noexcept {
+         #if defined(_WIN32)
+            return true;
+        #else
+            return false;
+        #endif
+    }
+
+    [[nodiscard]]
     constexpr bool is_apple() noexcept {
         #if defined(__APPLE__)
             return true;

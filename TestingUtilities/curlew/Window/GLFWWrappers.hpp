@@ -18,17 +18,17 @@ namespace curlew {
 
     enum class window_hiding_mode : bool { off, on };
 
-    struct opengl_version {
-        std::size_t major{4}, minor{get_minor_version()};
+    struct min_opengl_version {
+        std::size_t major{4}, minor{get_min_minor_version()};
 
-        constexpr static std::size_t get_minor_version() noexcept { return avocet::is_apple() ? 1 : 6; }
+        constexpr static std::size_t get_min_minor_version() noexcept { return avocet::is_windows() ? 6 : 1; }
     };
 
     struct window_config {
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
-        opengl_version version{};
+        min_opengl_version version{};
     };
 
     struct [[nodiscard]] glfw_manager {

@@ -25,7 +25,7 @@ namespace curlew {
         }
 
         void set_debug_context() {
-            if(agl::requested_debugging_mode() == agl::debugging_mode::advanced)
+            if(agl::inferred_debugging_mode() == agl::debugging_mode::advanced)
                 glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
         }
 
