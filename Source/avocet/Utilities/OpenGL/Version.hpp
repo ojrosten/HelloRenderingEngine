@@ -9,18 +9,15 @@
 
 #include "avocet/Preprocessor/Core/PreprocessorDefs.hpp"
 
-namespace avocet::opengl {
-    enum class debugging_mode { none = 0, basic, advanced, dynamic };
+#include <cstddef>
+
+namespace avocet::opengl{
+    struct opengl_version {
+        std::size_t major{4}, minor{get_min_minor_version()};
+
+        constexpr static std::size_t get_min_minor_version() noexcept { return avocet::is_windows() ? 6 : 1; }
+    };
 
     [[nodiscard]]
-    constexpr debugging_mode inferred_debugging_mode() noexcept {
-        if constexpr(has_ndebug())
-            return debugging_mode::none;
-        else if constexpr(is_windows())
-            return debugging_mode::advanced;
-        else if constexpr(is_apple())
-            return debugging_mode::basic;
-        else
-            return debugging_mode::dynamic;
-    }
+    opengl_version get_opengl_version();
 }

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Preprocessor/Core/PreprocessorDefs.hpp"
+#include "avocet/Utilities/OpenGL/Version.hpp"
 
 #include <string>
 
@@ -20,12 +21,6 @@ namespace curlew {
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
-    };
-
-    struct opengl_version {
-        std::size_t major{4}, minor{get_min_minor_version()};
-
-        constexpr static std::size_t get_min_minor_version() noexcept { return avocet::is_windows() ? 6 : 1; }
     };
 
     class glfw_manager;
@@ -46,10 +41,10 @@ namespace curlew {
 
     class [[nodiscard]] glfw_manager {
         glfw_resource m_Resource{};
-        opengl_version m_OpenGLVersion{};
+        avocet::opengl::opengl_version m_OpenGLVersion{};
 
         [[nodiscard]]
-        static opengl_version find_opengl_version();
+        static avocet::opengl::opengl_version find_opengl_version();
     public:
         glfw_manager();
 
@@ -67,7 +62,7 @@ namespace curlew {
 
         GLFWwindow& m_Window;
 
-        window_resource(const window_config& config, const opengl_version& version);
+        window_resource(const window_config& config, const avocet::opengl::opengl_version& version);
     public:
 
         window_resource(const window_resource&) = delete;
@@ -84,7 +79,7 @@ namespace curlew {
 
         window_resource m_Window;
 
-        window(const window_config& config, const opengl_version& version);
+        window(const window_config& config, const avocet::opengl::opengl_version& version);
     public:
 
         window(const window&) = delete;

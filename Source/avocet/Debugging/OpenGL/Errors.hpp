@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Debugging/OpenGL/DebugMode.hpp"
+#include "avocet/Utilities/OpenGL/Version.hpp"
 
 #include <source_location>
 #include <string>
@@ -25,5 +26,11 @@ namespace avocet::opengl {
             check_for_basic_errors(loc);
         else if constexpr(inferred_debugging_mode() == debugging_mode::advanced)
             check_for_advanced_errors(loc);
+        else if constexpr(inferred_debugging_mode() == debugging_mode::dynamic) {
+            if(const auto version{get_opengl_version()}; (version.major > 3) && (version.minor >= 3))
+                check_for_advanced_errors(loc);
+            else
+                check_for_basic_errors(loc);
+        }
     }
 }
