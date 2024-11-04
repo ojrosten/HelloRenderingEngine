@@ -10,10 +10,10 @@
 
 namespace curlew {
     namespace {
-        std::string& erase_backwards(std::string& message, std::string_view pattern) {
+        std::string& erase_backwards(std::string& message, std::string_view rightPattern, std::string_view leftPattern) {
             constexpr auto npos{std::string::npos};
-            if(const auto rightPos{message.find(pattern)}; rightPos < npos) {
-                if(const auto leftPos{message.rfind(" ", rightPos)}; leftPos < rightPos)
+            if(const auto rightPos{message.find(rightPattern)}; rightPos < npos) {
+                if(const auto leftPos{message.rfind(leftPattern, rightPos)}; leftPos < rightPos)
                     message.erase(leftPos + 1, rightPos - leftPos - 1);
             }
 
@@ -23,8 +23,8 @@ namespace curlew {
 
     [[nodiscard]]
     std::string exception_postprocessor::operator()(std::string message) const {
-        erase_backwards(message, "Tests");
-        erase_backwards(message, "Source/avocet");
+        erase_backwards(message, "Tests", " ");
+        erase_backwards(message, "Source/avocet", " ");
 
         return message;
     }
