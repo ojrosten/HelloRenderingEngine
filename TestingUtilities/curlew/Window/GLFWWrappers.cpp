@@ -30,7 +30,7 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        int to_int(window_hiding_mode mode) { return mode == window_hiding_mode::off; }
+        constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
         [[nodiscard]]
         GLFWwindow& make_window(const window_config& config, const  avocet::opengl::opengl_version& version) {
