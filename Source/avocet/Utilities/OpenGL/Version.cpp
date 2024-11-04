@@ -49,7 +49,7 @@ namespace avocet::opengl{
 
     [[nodiscard]]
     opengl_version get_opengl_version() {
-        static opengl_version version{find_opengl_version()};
+        const static opengl_version version{find_opengl_version()};
         return version;
     }
 }
