@@ -14,6 +14,21 @@
 #include <stdexcept>
 
 namespace avocet::opengl{
+    [[nodiscard]]
+    std::string get_opengl_renderer_string() {
+        return {reinterpret_cast<const char*>(glGetString(GL_VENDOR))};
+    }
+
+    [[nodiscard]]
+    std::string get_opengl_vendor_string() {
+        return {reinterpret_cast<const char*>(glGetString(GL_RENDERER))};
+    }
+
+    [[nodiscard]]
+    std::string get_opengl_version_string() {
+        return {reinterpret_cast<const char*>(glGetString(GL_VERSION))};
+    }
+
     namespace {
         [[nodiscard]]
         std::size_t to_digit(const std::string& version, std::string::size_type pos) {
@@ -22,7 +37,7 @@ namespace avocet::opengl{
 
         [[nodiscard]]
         opengl_version find_opengl_version() {
-            const std::string version{reinterpret_cast<const char*>(glGetString(GL_VERSION))};
+            const std::string version{get_opengl_version_string()};
             const auto npos{std::string::npos};
             if(const auto pos{version.find_first_of('.')}; pos != npos) {
                 return {to_digit(version, pos - 1), to_digit(version, pos + 1)};

@@ -9,7 +9,7 @@
 
 #include "avocet/Preprocessor/Core/PreprocessorDefs.hpp"
 
-#include <cstddef>
+#include <string>
 
 namespace avocet::opengl{
     struct opengl_version {
@@ -17,6 +17,15 @@ namespace avocet::opengl{
 
         constexpr static std::size_t get_min_minor_version() noexcept { return avocet::is_windows() ? 6 : 1; }
     };
+
+    [[nodiscard]]
+    std::string get_opengl_vendor_string();
+
+    [[nodiscard]]
+    std::string get_opengl_renderer_string();
+
+    [[nodiscard]]
+    std::string get_opengl_version_string();
 
     [[nodiscard]]
     opengl_version get_opengl_version();
