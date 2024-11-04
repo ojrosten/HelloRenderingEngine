@@ -14,15 +14,7 @@ namespace curlew {
 
     struct exception_postprocessor {
         [[nodiscard]]
-        std::string operator()(std::string message){
-            constexpr auto npos{std::string::npos};
-            if(const auto rightPos{message.find("Tests")}; rightPos < npos) {
-                if(const auto leftPos{message.rfind(" ", rightPos)}; leftPos < rightPos)
-                    message.erase(leftPos + 1, rightPos - leftPos - 1);
-            }
-
-            return message;
-        }
+        std::string operator()(std::string message) const;
     };
 
     template<test_mode Mode>

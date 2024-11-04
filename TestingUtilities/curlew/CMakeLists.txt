@@ -8,7 +8,8 @@ set(Source ../../Source)
 sequoia_init()
 
 set(SourceList
-	Window/GLFWWrappers.cpp)
+    TestFramework/GraphicsTestCore.cpp
+    Window/GLFWWrappers.cpp)
 
 add_library(curlew STATIC ${SourceList})
 
