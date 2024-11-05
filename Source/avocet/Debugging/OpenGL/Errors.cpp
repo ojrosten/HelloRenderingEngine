@@ -19,7 +19,7 @@ namespace avocet::opengl {
     namespace fs = std::filesystem;
 
     namespace {
-        enum class error_code : GLuint {
+        enum class error_code : GLenum {
             none                          = GL_NO_ERROR,
             invalid_enum                  = GL_INVALID_ENUM,
             invalid_value                 = GL_INVALID_VALUE,
