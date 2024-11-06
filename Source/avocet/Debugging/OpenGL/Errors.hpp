@@ -22,8 +22,11 @@ namespace avocet::opengl {
     void check_for_advanced_errors(std::source_location loc);
 
     [[nodiscard]]
-    inline bool supports_debug_output() {
+    inline bool debug_output_supported() {
         const auto version{get_opengl_version()};
         return (version.major > 3) && (version.minor >= 3);
     }
+
+    [[nodiscard]]
+    inline bool object_labels_activated() { return debug_output_supported(); }
 }

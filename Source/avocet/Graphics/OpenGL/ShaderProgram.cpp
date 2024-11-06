@@ -182,7 +182,7 @@ namespace avocet::opengl {
             shader_attacher verteAttacher{*this, vertexShader}, fragmentAttacher{*this, fragmentShader};
             gl_function{glLinkProgram}(progIndex);
 
-            if(supports_debug_output()) {
+            if(object_labels_activated()) {
                 const std::string label{
                     std::format("{} / {}",
                                 sequoia::back(vertexShaderSource).string(),

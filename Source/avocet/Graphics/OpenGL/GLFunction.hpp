@@ -59,7 +59,7 @@ namespace avocet::opengl {
             else if constexpr(Mode == debugging_mode::advanced)
                 check_for_advanced_errors(loc);
             else if constexpr(Mode == debugging_mode::dynamic) {
-                if(supports_debug_output())
+                if(debug_output_supported())
                     check_for_advanced_errors(loc);
                 else
                     check_for_basic_errors(loc);
