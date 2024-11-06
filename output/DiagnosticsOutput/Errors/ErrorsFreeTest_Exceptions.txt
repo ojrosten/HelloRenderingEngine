@@ -31,8 +31,8 @@ Illegal call to glBindBuffer
 Expected Exception Type:
 [std::runtime_error]
 OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 75:
-Source: API; Type: Error; Severity: Medium
-GL_INVALID_ENUM
+Source: API; Type: Error; Severity: High
+Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 
 =======================================
 
@@ -42,8 +42,8 @@ Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's co
 Expected Exception Type:
 [std::runtime_error]
 OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 84:
-Source: API; Type: Error; Severity: Medium
-GL_INVALID_ENUM
+Source: API; Type: Error; Severity: High
+Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 
 =======================================
 
