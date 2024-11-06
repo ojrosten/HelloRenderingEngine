@@ -39,10 +39,9 @@ Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 146:
-Source: Shader Compiler; Type: Error; Severity: High
-SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, "": ERROR: 0:8: '}' : syntax error syntax error
-
+Error: vertex shader compilation failed
+ERROR: 0:8: '' :  syntax error, unexpected RIGHT_BRACE, expecting COMMA or SEMICOLON
+ERROR: 1 compilation errors.  No code generated.
 
 =======================================
 
@@ -51,9 +50,8 @@ Unlinkable Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 183:
-Source: Shader Compiler; Type: Error; Severity: High
-SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
+Error: program linking failed
+ERROR: Linking vertex stage: Missing entry point: Each stage requires one entry point
 
 =======================================
 
@@ -62,10 +60,9 @@ Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 146:
-Source: Shader Compiler; Type: Error; Severity: High
-SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, "": ERROR: 0:7: '{' : syntax error syntax error
-
+Error: fragment shader compilation failed
+ERROR: 0:6: '' :  syntax error, unexpected LEFT_BRACE, expecting RIGHT_PAREN
+ERROR: 1 compilation errors.  No code generated.
 
 =======================================
 
@@ -74,9 +71,8 @@ Unlinkable Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 183:
-Source: Shader Compiler; Type: Error; Severity: High
-SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
+Error: program linking failed
+ERROR: Linking fragment stage: Missing entry point: Each stage requires one entry point
 
 =======================================
 
