@@ -20,19 +20,8 @@ namespace avocet::opengl {
         vao_resource m_VAO;
         vbo_resource m_VBO;
     public:
-        triangle() {
-            gl_function{glBindVertexArray}(m_VAO.get_handle().index());
+        triangle();
 
-            gl_function{glBindBuffer}(GL_ARRAY_BUFFER, m_VBO.get_handle().index());
-            gl_function{glBufferData}(GL_ARRAY_BUFFER, sizeof(m_Vertices), m_Vertices.data(), GL_STATIC_DRAW);
-
-            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-            gl_function{glEnableVertexAttribArray}(0);
-        }
-
-        void draw() {
-            gl_function{glBindVertexArray}(m_VAO.get_handle().index());
-            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
-        }
+        void draw();
     };
 }

@@ -43,6 +43,20 @@ namespace avocet::opengl {
 
     struct num_resources { std::size_t value{}; };
 
+    enum class object_identifier : GLenum {
+        buffer             = GL_BUFFER,
+        shader             = GL_SHADER,
+        program            = GL_PROGRAM,
+        vertex_array       = GL_VERTEX_ARRAY,
+        query              = GL_QUERY,
+        program_pipeline   = GL_PROGRAM_PIPELINE,
+        transform_feedback = GL_TRANSFORM_FEEDBACK,
+        sampler            = GL_SAMPLER,
+        texture            = GL_TEXTURE,
+        render_buffer      = GL_RENDERBUFFER,
+        framebuffer        = GL_FRAMEBUFFER
+    };
+
     template<num_resources NumResources, class T>
     inline constexpr bool has_vertex_lifecycle_events_v{
         requires(raw_indices<NumResources.value>& indices) {

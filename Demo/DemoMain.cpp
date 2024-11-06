@@ -8,7 +8,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
-#include "avocet/Geometry/OpenGL/Triangle.hpp"
+#include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
 
 #include "GLFW/glfw3.h"
 
