@@ -133,9 +133,9 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        GLint get_max_message_length(std::source_location) {
+        GLint get_max_message_length(std::source_location loc) {
             GLint maxLen{};
-            glGetIntegerv(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
+            gl_function{unchecked_debug_output, glGetIntegerv, loc}(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
             return maxLen;
         }
 
@@ -153,7 +153,7 @@ namespace avocet::opengl {
             GLuint id{};
             GLsizei length{};
 
-            const auto numFound{glGetDebugMessageLog(1, static_cast<GLsizei>(message.size()), &source, &type, &id, &severity, &length, message.data())};
+            const auto numFound{gl_function{unchecked_debug_output, glGetDebugMessageLog}(1, static_cast<GLsizei>(message.size()), &source, &type, &id, &severity, &length, message.data())};
             const auto trimLen{((length > 0) && message[length - 1] == '\0') ? length - 1 : length};
             message.resize(trimLen);
 
@@ -178,12 +178,9 @@ namespace avocet::opengl {
 
     void check_for_basic_errors(std::source_location loc)
     {
-        if(!glGetError)
-            throw std::runtime_error{std::format("check_for_basic_errors: glGetError is nullptr when coming via {}", to_string(loc))};
-
         std::string errorMessage{};
         error_code errorCode{};
-        while((errorCode = error_code{glGetError()}) != error_code::none)
+        while((errorCode = error_code{gl_function{unchecked_debug_output, glGetError}()}) != error_code::none)
         {
             errorMessage += to_string(errorCode);
             errorMessage += '\n';

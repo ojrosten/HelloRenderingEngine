@@ -8,6 +8,8 @@
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
+#include "sequoia/FileSystem/FileSystem.hpp"
+
 #include <fstream>
 #include <functional>
 
@@ -179,6 +181,15 @@ namespace avocet::opengl {
         {
             shader_attacher verteAttacher{*this, vertexShader}, fragmentAttacher{*this, fragmentShader};
             gl_function{glLinkProgram}(progIndex);
+
+            if(supports_debug_output()) {
+                const std::string label{
+                    std::format("{} / {}",
+                                sequoia::back(vertexShaderSource).string(),
+                                sequoia::back(fragmentShaderSource).string())};
+
+                gl_function{glObjectLabel}(GL_PROGRAM, progIndex, static_cast<GLsizei>(label.size()), label.data());
+            }
         }
 
         shader_program_checker{m_Resource}.check();

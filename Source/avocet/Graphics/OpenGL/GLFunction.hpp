@@ -14,14 +14,22 @@
 #include <stdexcept>
 
 namespace avocet::opengl {
-    template<class> class gl_function;
+    struct unchecked_debug_output_t {};
 
-    template<class R, class... Args>
-    class [[nodiscard]] gl_function<R(Args...)> {
+    inline constexpr unchecked_debug_output_t unchecked_debug_output{};
+
+    template<class, debugging_mode Mode=inferred_debugging_mode()> class gl_function;
+
+    template<class R, class... Args, debugging_mode Mode>
+    class [[nodiscard]] gl_function<R(Args...), Mode> {
     public:
         using function_pointer_type = R(*)(Args...);
 
         gl_function(function_pointer_type f, std::source_location loc = std::source_location::current())
+            : m_Fn{validate(f, loc)}
+        {}
+
+        gl_function(unchecked_debug_output_t, function_pointer_type f, std::source_location loc = std::source_location::current())
             : m_Fn{validate(f, loc)}
         {}
 
@@ -44,8 +52,27 @@ namespace avocet::opengl {
         static function_pointer_type validate(function_pointer_type f, std::source_location loc) {
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
         }
+
+        static void check_for_errors(std::source_location loc) {
+            if constexpr(Mode == debugging_mode::basic)
+                check_for_basic_errors(loc);
+            else if constexpr(Mode == debugging_mode::advanced)
+                check_for_advanced_errors(loc);
+            else if constexpr(Mode == debugging_mode::dynamic) {
+                if(supports_debug_output())
+                    check_for_advanced_errors(loc);
+                else
+                    check_for_basic_errors(loc);
+            }
+        }
     };
 
     template<class R, class... Args>
     gl_function(R(*)(Args...)) -> gl_function<R(Args...)>;
+
+    template<class R, class...Args>
+    gl_function(unchecked_debug_output_t, R(*)(Args...)) -> gl_function<R(Args...), debugging_mode::none>;
+
+    template<class R, class...Args>
+    gl_function(unchecked_debug_output_t, R(*)(Args...), std::source_location) -> gl_function<R(Args...), debugging_mode::none>;
 }

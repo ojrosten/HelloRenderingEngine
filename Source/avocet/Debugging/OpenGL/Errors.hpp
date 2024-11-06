@@ -26,17 +26,4 @@ namespace avocet::opengl {
         const auto version{get_opengl_version()};
         return (version.major > 3) && (version.minor >= 3);
     }
-
-    inline void check_for_errors(std::source_location loc) {
-        if constexpr(inferred_debugging_mode() == debugging_mode::basic)
-            check_for_basic_errors(loc);
-        else if constexpr(inferred_debugging_mode() == debugging_mode::advanced)
-            check_for_advanced_errors(loc);
-        else if constexpr(inferred_debugging_mode() == debugging_mode::dynamic) {
-            if(supports_debug_output())
-                check_for_advanced_errors(loc);
-            else
-                check_for_basic_errors(loc);
-        }
-    }
 }

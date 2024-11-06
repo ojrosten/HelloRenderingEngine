@@ -49,11 +49,11 @@ namespace curlew {
         void init_debug()
         {
             GLint flags{};
-            glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+            agl::gl_function{agl::unchecked_debug_output, glGetIntegerv}(GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-                glEnable(GL_DEBUG_OUTPUT);
-                glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                glDebugMessageControl(
+                agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT);
+                agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                agl::gl_function{agl::unchecked_debug_output, glDebugMessageControl}(
                     GL_DONT_CARE,
                     GL_DONT_CARE,
                     GL_DONT_CARE,

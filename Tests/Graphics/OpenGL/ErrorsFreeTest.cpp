@@ -40,7 +40,16 @@ namespace avocet::testing
         using namespace curlew;
 
         check_exception_thrown<std::runtime_error>(
-            "Null glGetError",
+            "Constructing gl_function with a null pointer",
+            [](){
+                gl_breaker breaker{glGetError};
+                return agl::gl_function{agl::unchecked_debug_output, glGetError}();
+            },
+            exception_postprocessor{}
+        );
+
+        check_exception_thrown<std::runtime_error>(
+            "Null glGetError when checking for basic errors",
             [](){
                 gl_breaker breaker{glGetError};
                 agl::check_for_basic_errors(std::source_location::current());
