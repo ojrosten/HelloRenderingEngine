@@ -129,4 +129,16 @@ namespace avocet::opengl {
 
     using vao_resource = vertex_resource<num_resources{1}, vao_lifecyle_events>;
     using vbo_resource = vertex_resource<num_resources{1}, vbo_lifecyle_events>;
+
+    template<class Resource>
+    inline constexpr bool has_single_resource_v{
+        requires(const Resource & r) {
+            { r.get_handle() } -> std::same_as<const resource_handle&>;
+        }
+    };
+
+    template<class Resource>
+        requires has_single_resource_v<Resource>
+    [[nodiscard]]
+    GLuint get_raw_index(const Resource& r) { return r.get_handle().index(); }
 }
