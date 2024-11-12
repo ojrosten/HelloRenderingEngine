@@ -9,9 +9,11 @@
 
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
 
+#include "glad/gl.h"
+
 namespace avocet::opengl {
     class triangle {
-        std::array<float, 9> m_Vertices{
+        std::array<GLfloat, 9> m_Vertices{
             -0.5f, -0.5f, 0.0f, // left  
              0.5f, -0.5f, 0.0f, // right 
              0.0f,  0.5f, 0.0f  // top   

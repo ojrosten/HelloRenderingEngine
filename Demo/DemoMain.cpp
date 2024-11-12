@@ -10,6 +10,8 @@
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 #include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
 
+#include "sequoia/FileSystem/FileSystem.hpp"
+
 #include "GLFW/glfw3.h"
 
 #include <format>
@@ -30,6 +32,11 @@ namespace {
         }
 
         throw std::runtime_error{"Relative paths not supported"};
+    }
+
+    [[nodiscard]]
+    std::string make_label(std::string_view name, std::source_location loc = std::source_location::current()) {
+        return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
 }
 

@@ -11,6 +11,7 @@
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
 
 #include <array>
+#include <optional>
 
 namespace avocet::opengl {
     template<std::size_t N>
