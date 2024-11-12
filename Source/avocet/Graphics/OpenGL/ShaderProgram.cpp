@@ -7,6 +7,7 @@
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
+#include "avocet/Utilities/OpenGL/Casts.hpp"
 
 #include "sequoia/FileSystem/FileSystem.hpp"
 
@@ -27,7 +28,7 @@ namespace avocet::opengl {
             case fragment: return "fragment";
             }
 
-            throw std::runtime_error{std::format("shader_species - unexpected value: {}", static_cast<GLenum>(species))};
+            throw std::runtime_error{std::format("shader_species - unexpected value: {}", to_gl_enum(species))};
         }
 
         template<class T>
@@ -86,7 +87,7 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            resource_handle create() { return resource_handle{gl_function{glCreateShader}(static_cast<GLenum>(m_Species))}; }
+            resource_handle create() { return resource_handle{gl_function{glCreateShader}(to_gl_enum(m_Species))}; }
 
             static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
         };
@@ -188,7 +189,7 @@ namespace avocet::opengl {
                                 sequoia::back(vertexShaderSource).string(),
                                 sequoia::back(fragmentShaderSource).string())};
 
-                gl_function{glObjectLabel}(GL_PROGRAM, progIndex, static_cast<GLsizei>(label.size()), label.data());
+                gl_function{glObjectLabel}(GL_PROGRAM, progIndex, to_gl_sizei(label.size()), label.data());
             }
         }
 

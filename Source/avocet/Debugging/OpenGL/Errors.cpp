@@ -7,6 +7,7 @@
 
 #include "avocet/Debugging/OpenGL/Errors.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
+#include "avocet/Utilities/OpenGL/Casts.hpp"
 
 #include <filesystem>
 #include <format>
@@ -153,7 +154,7 @@ namespace avocet::opengl {
             GLuint id{};
             GLsizei length{};
 
-            const auto numFound{gl_function{unchecked_debug_output, glGetDebugMessageLog}(1, static_cast<GLsizei>(message.size()), &source, &type, &id, &severity, &length, message.data())};
+            const auto numFound{gl_function{unchecked_debug_output, glGetDebugMessageLog}(1, to_gl_sizei(message.size()), &source, &type, &id, &severity, &length, message.data())};
             const auto trimLen{((length > 0) && message[length - 1] == '\0') ? length - 1 : length};
             message.resize(trimLen);
 
