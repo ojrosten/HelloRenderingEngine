@@ -54,7 +54,8 @@ int main()
                                     agl::get_opengl_version_string());
 
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
-        agl::triangle tri{};
+        agl::triangle tri{make_label("Triangle")};
+        agl::quad q{make_label("Quad")};
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -62,6 +63,7 @@ int main()
 
             shaderProgram.use();
             tri.draw();
+            q.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();

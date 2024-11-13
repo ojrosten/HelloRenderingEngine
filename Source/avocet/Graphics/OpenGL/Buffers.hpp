@@ -9,6 +9,7 @@
 
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
+#include "avocet/Utilities/OpenGL/Casts.hpp"
 
 #include <array>
 #include <optional>
@@ -63,6 +64,7 @@ namespace avocet::opengl {
         requires(raw_indices<NumResources.value>& indices) {
             T::generate(indices);
             T::destroy(indices);
+            { T::identifier } -> std::convertible_to<object_identifier>;
         }
     };
 
@@ -84,6 +86,8 @@ namespace avocet::opengl {
     };
 
     struct vao_lifecyle_events {
+        constexpr static auto identifier{object_identifier::vertex_array};
+
         template<std::size_t N>
         static void generate(raw_indices<N>& indices) { gl_function{glGenVertexArrays}(N, indices.data()); }
 
@@ -91,7 +95,9 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
     };
 
-    struct vbo_lifecyle_events {
+    struct buffer_lifecyle_events {
+        constexpr static auto identifier{object_identifier::buffer};
+
         template<std::size_t N>
         static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
 
@@ -114,11 +120,8 @@ namespace avocet::opengl {
         vertex_resource(vertex_resource&&) noexcept = default;
         vertex_resource& operator=(vertex_resource&&) noexcept = default;
 
-        template<std::size_t I>
-            requires (I < N)
-        const resource_handle& get_handle(index<I>) const noexcept { return m_Handles[I]; }
-
-        const resource_handle& get_handle() const noexcept requires (N == 1) { return m_Handles[0]; }
+        [[nodiscard]]
+        const handles<N>& get_handles() const noexcept { return m_Handles; }
 
         [[nodiscard]]
         friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
@@ -128,8 +131,54 @@ namespace avocet::opengl {
         handles<N> m_Handles;
     };
 
-    using vao_resource = vertex_resource<num_resources{1}, vao_lifecyle_events>;
-    using vbo_resource = vertex_resource<num_resources{1}, vbo_lifecyle_events>;
+    template<num_resources NumResources, class LifeEvents>
+        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+    class generic_vertex_object {
+        using resource_type = vertex_resource<NumResources, LifeEvents>;
+        resource_type m_Resource;
+    public:
+        constexpr static std::size_t N{NumResources.value};
+
+        generic_vertex_object() = default;
+
+        void add_label(const std::optional<std::string>& label) {
+            if(label && object_labels_activated()) {
+                const auto& str{label.value()};
+                for(const auto& h : m_Resource.get_handles()) {
+                    gl_function{glObjectLabel}(to_gl_enum(LifeEvents::identifier), h.index(), to_gl_sizei(str.size()), str.data());
+                }
+            }
+        }
+
+        template<std::size_t I>
+            requires (I < N)
+        const resource_handle& get_handle(index<I>) const noexcept { return m_Resource.get_handles()[I]; }
+
+        const resource_handle& get_handle() const noexcept requires (N == 1) { return m_Resource.get_handles()[0]; }
+
+        [[nodiscard]]
+        friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
+    protected:
+        ~generic_vertex_object() = default;
+
+        generic_vertex_object(generic_vertex_object&&)            noexcept = default;
+        generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
+    };
+
+    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecyle_events> {
+    public:
+        using generic_vertex_object<num_resources{1}, vao_lifecyle_events>::generic_vertex_object;
+    };
+
+    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecyle_events> {
+    public:
+        using generic_vertex_object<num_resources{1}, buffer_lifecyle_events>::generic_vertex_object;
+    };
+
+    class element_buffer_object :public generic_vertex_object<num_resources{1}, buffer_lifecyle_events> {
+    public:
+        using generic_vertex_object<num_resources{1}, buffer_lifecyle_events>::generic_vertex_object;
+    };
 
     template<class Resource>
     inline constexpr bool has_single_resource_v{
