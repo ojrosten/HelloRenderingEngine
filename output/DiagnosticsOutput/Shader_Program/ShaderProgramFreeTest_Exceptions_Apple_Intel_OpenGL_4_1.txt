@@ -1,0 +1,76 @@
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 32
+Missing Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Attempting to open something which isn't a file: TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 43
+Misnamed Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest/foo.vs
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 54
+Missing Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Attempting to open something which isn't a file: TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 65
+Misnamed Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file TestsTemporaryData/Graphics/OpenGL/ShaderProgramFreeTest/bar.fs
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 76
+Broken Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: vertex shader compilation failed
+ERROR: 0:8: '}' : syntax error: syntax error
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 87
+Unlinkable Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: program linking failed
+ERROR: No definition of main in vertex shader
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 98
+Broken Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: fragment shader compilation failed
+ERROR: 0:6: '{' : syntax error: syntax error
+
+=======================================
+
+Tests/Graphics/OpenGL/ShaderProgramFreeTest.cpp, Line 109
+Unlinkable Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: program linking failed
+ERROR: No definition of main in fragment shader
+
+=======================================
+
