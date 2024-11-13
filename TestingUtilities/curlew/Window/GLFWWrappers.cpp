@@ -75,15 +75,14 @@ namespace curlew {
     glfw_resource::~glfw_resource() { glfwTerminate(); }
 
     glfw_manager::glfw_manager()
-        : m_OpenGLVersion{find_opengl_version()}
+        : m_OpenGLVersion{find_rendering_setup().version}
     {}
 
     [[nodiscard]]
-    agl::opengl_version glfw_manager::find_opengl_version() {
+    rendering_setup glfw_manager::find_rendering_setup() const {
         auto w{window({.hiding{window_hiding_mode::on}}, agl::opengl_version{})};
-        return  agl::get_opengl_version();
+        return { agl::get_opengl_version(), agl::get_renderer()};
     }
-
 
     window glfw_manager::create_window(const window_config& config) { return window{config, m_OpenGLVersion}; }
 

@@ -15,12 +15,12 @@
 
 namespace avocet::opengl{
     [[nodiscard]]
-    std::string get_opengl_vendor_string() {
+    std::string get_vendor() {
         return {std::bit_cast<const char*>(glGetString(GL_VENDOR))};
     }
 
     [[nodiscard]]
-    std::string get_opengl_renderer_string() {
+    std::string get_renderer() {
         return {std::bit_cast<const char*>(glGetString(GL_RENDERER))};
     }
 
@@ -36,7 +36,7 @@ namespace avocet::opengl{
         }
 
         [[nodiscard]]
-        opengl_version find_opengl_version() {
+        opengl_version extract_opengl_version() {
             const std::string version{get_opengl_version_string()};
             const auto npos{std::string::npos};
             if(const auto pos{version.find_first_of('.')}; pos != npos) {
@@ -49,7 +49,7 @@ namespace avocet::opengl{
 
     [[nodiscard]]
     opengl_version get_opengl_version() {
-        const static opengl_version version{find_opengl_version()};
+        const static opengl_version version{extract_opengl_version()};
         return version;
     }
 }

@@ -7,6 +7,9 @@
 
 
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
+
+#include <algorithm>
 
 namespace curlew {
     namespace {
@@ -19,6 +22,24 @@ namespace curlew {
 
             return message;
         }
+
+        [[nodiscard]]
+        std::string platform() {
+            using namespace avocet;
+            if(is_windows()) return "Win_";
+            if(is_linux())   return "Linux_";
+            if(is_apple())   return "Apple_";
+
+            return "";
+        }
+
+        [[nodiscard]]
+        std::string manufacturer(std::string_view rawVendor) {
+            if(rawVendor.find("Intel") != std::string::npos) return "Intel_";
+            if(rawVendor.find("AMD") != std::string::npos) return "AMD_";
+
+            return "";
+        }
     }
 
     [[nodiscard]]
@@ -27,5 +48,11 @@ namespace curlew {
         erase_backwards(message, "Source/avocet", " ");
 
         return message;
+    }
+
+    [[nodiscard]]
+    std::string get_platform() {
+        const auto[version, renderer]{glfw_manager{}.find_rendering_setup()};
+        return std::format("{}{}OpenGL_{}_{}", platform(), manufacturer(renderer), version.major, version.minor);
     }
 }

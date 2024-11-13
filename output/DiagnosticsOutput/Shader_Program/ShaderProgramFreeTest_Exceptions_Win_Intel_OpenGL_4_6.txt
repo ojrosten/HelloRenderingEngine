@@ -39,7 +39,7 @@ Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 146:
+OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 147:
 Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, "": ERROR: 0:8: '}' : syntax error syntax error
 
@@ -51,7 +51,7 @@ Unlinkable Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 183:
+OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 184:
 Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
 
@@ -62,7 +62,7 @@ Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 146:
+OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 147:
 Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, "": ERROR: 0:7: '{' : syntax error syntax error
 
@@ -74,7 +74,7 @@ Unlinkable Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 183:
+OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 184:
 Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
 

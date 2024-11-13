@@ -39,12 +39,14 @@ namespace curlew {
 
     class window;
 
+    struct rendering_setup {
+        avocet::opengl::opengl_version version;
+        std::string renderer{};
+    };
+
     class [[nodiscard]] glfw_manager {
         glfw_resource m_Resource{};
         avocet::opengl::opengl_version m_OpenGLVersion{};
-
-        [[nodiscard]]
-        static avocet::opengl::opengl_version find_opengl_version();
     public:
         glfw_manager();
 
@@ -55,6 +57,8 @@ namespace curlew {
         [[nodiscard]]
         window create_window(const window_config& config);
 
+        [[nodiscard]]
+        rendering_setup find_rendering_setup() const;
     };
 
     class [[nodiscard]] window_resource {

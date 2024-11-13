@@ -17,6 +17,9 @@ namespace curlew {
         std::string operator()(std::string message) const;
     };
 
+    [[nodiscard]]
+    std::string get_platform();
+
     template<test_mode Mode>
     class basic_graphics_test : public basic_test<Mode, trivial_extender>
     {
@@ -24,6 +27,9 @@ namespace curlew {
         using parallelizable_type = std::false_type;
 
         using basic_test<Mode, trivial_extender>::basic_test;
+
+        [[nodiscard]]
+        std::string platform() const { return get_platform(); }
     protected:
         ~basic_graphics_test() = default;
 

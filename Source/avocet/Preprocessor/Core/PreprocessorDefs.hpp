@@ -34,4 +34,13 @@ namespace avocet {
             return false;
         #endif
     }
+
+    [[nodiscard]]
+    constexpr bool is_linux() noexcept {
+        #if defined(__linux__)
+            return true;
+        #else
+            return false;
+        #endif
+    }
 }
