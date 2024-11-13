@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-set(Dependencies ../../dependencies)
+set(Dependencies ${CMAKE_CURRENT_LIST_DIR}/../../dependencies)
 set(BuildSystem ${Dependencies}/sequoia/build_system)
 include(${BuildSystem}/Utilities.cmake)
 
@@ -14,7 +14,7 @@ set(SourceList
 
 add_library(avocet STATIC ${SourceList})
 
-target_include_directories(avocet PUBLIC ../)
+target_include_directories(avocet PUBLIC ${CMAKE_CURRENT_LIST_DIR}/../)
 
 add_subdirectory(${Dependencies}/glad/OpenGL glad)
 target_link_libraries(avocet PUBLIC glad)

@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.20)
 
 project(avocetTests LANGUAGES C CXX)
 
-set(Dependencies ../dependencies)
-set(BuildSystem ${Dependencies}/sequoia/build_system)
-set(TestDir ../Tests)
-set(TestingUtils ../TestingUtilities)
+set(Dependencies ${CMAKE_CURRENT_LIST_DIR}/../dependencies)
+set(BuildSystem  ${Dependencies}/sequoia/build_system)
+set(TestDir      ${CMAKE_CURRENT_LIST_DIR}/../Tests)
+set(TestingUtils ${CMAKE_CURRENT_LIST_DIR}/../TestingUtilities)
 
 include(${BuildSystem}/Utilities.cmake)
 

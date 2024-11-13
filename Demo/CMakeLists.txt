@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.20)
 
 project(RenderingEngineDemo LANGUAGES C CXX)
 
-set(Dependencies ../dependencies)
+set(Dependencies ${CMAKE_CURRENT_LIST_DIR}/../dependencies)
 set(BuildSystem ${Dependencies}/sequoia/build_system)
-set(DemoDir ../Demo)
-set(TestingUtils ../TestingUtilities)
+set(DemoDir ${CMAKE_CURRENT_LIST_DIR}/../Demo)
+set(TestingUtils ${CMAKE_CURRENT_LIST_DIR}/../TestingUtilities)
 
 include(${BuildSystem}/Utilities.cmake)
 
