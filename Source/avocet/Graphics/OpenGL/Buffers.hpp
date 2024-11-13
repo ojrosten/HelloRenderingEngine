@@ -152,8 +152,10 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
+        [[nodiscard]]
         const resource_handle& get_handle(index<I>) const noexcept { return m_Resource.get_handles()[I]; }
 
+        [[nodiscard]]
         const resource_handle& get_handle() const noexcept requires (N == 1) { return m_Resource.get_handles()[0]; }
 
         [[nodiscard]]
