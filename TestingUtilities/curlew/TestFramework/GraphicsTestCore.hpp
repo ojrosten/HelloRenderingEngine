@@ -17,6 +17,16 @@ namespace curlew {
         std::string operator()(std::string message) const;
     };
 
+    template<class Fn>
+    class [[nodiscard]] gl_breaker{
+        Fn* m_pFn{};
+        Fn m_Fn;
+    public:
+        gl_breaker(Fn& fn) : m_pFn{&fn}, m_Fn{std::exchange(fn, nullptr)} {}
+
+        ~gl_breaker() { *m_pFn = m_Fn; }
+    };
+
     [[nodiscard]]
     std::string get_platform();
 

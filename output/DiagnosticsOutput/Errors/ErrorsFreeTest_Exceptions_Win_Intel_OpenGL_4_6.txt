@@ -1,47 +1,29 @@
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 43
-Constructing gl_function with a null pointer
-
-Expected Exception Type:
-[std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 46
-
-=======================================
-
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 51
-Null glGetError when checking for basic errors
-
-Expected Exception Type:
-[std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Source/avocet/Debugging/OpenGL/Errors.cpp, line 184
-
-=======================================
-
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 63
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 34
 Null glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 66
+gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 37
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 71
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 42
 Illegal call to glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 72:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 43:
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 76
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 47
 Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 80:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 51:
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 

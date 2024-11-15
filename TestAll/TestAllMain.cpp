@@ -7,6 +7,7 @@
 
 /*! \file */
 
+#include "Graphics/OpenGL/CommonErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/ErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
@@ -28,6 +29,7 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Errors",
+            common_errors_free_test{"Common Errors Free Test"},
             errors_free_test{"Errors Free Test"}
         );
 
