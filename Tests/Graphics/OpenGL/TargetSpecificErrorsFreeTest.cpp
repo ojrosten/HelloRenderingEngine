@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "ErrorsFreeTest.hpp"
+#include "TargetSpecificErrorsFreeTest.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
@@ -16,39 +16,26 @@
 
 namespace avocet::testing
 {
-    namespace agl = avocet::opengl;
-    using namespace curlew;
-
     [[nodiscard]]
-    std::filesystem::path errors_free_test::source_file() const
+    std::filesystem::path target_specific_errors_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void errors_free_test::run_tests()
+    void target_specific_errors_free_test::run_tests()
     {
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-
-        general_tests();
-
         if constexpr(!avocet::has_ndebug())
             debug_build_tests();
     }
 
-    void errors_free_test::general_tests()
+    void target_specific_errors_free_test::debug_build_tests()
     {
-        check_filtered_exception_thrown<std::runtime_error>(
-            "Null glBindBuffer",
-            [](){
-                gl_breaker breaker{glBindBuffer};
-                agl::gl_function{glBindBuffer}(42, 42);
-            }
-        );
-    }
+        namespace agl = avocet::opengl;
+        using namespace curlew;
 
-    void errors_free_test::debug_build_tests()
-    {
+        glfw_manager manager{};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
         check_filtered_exception_thrown<std::runtime_error>(
             "Illegal call to glBindBuffer",
             [](){ agl::gl_function{glBindBuffer}(42, 42); }

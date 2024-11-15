@@ -8,7 +8,8 @@
 /*! \file */
 
 #include "Graphics/OpenGL/CommonErrorsFreeTest.hpp"
-#include "Graphics/OpenGL/ErrorsFreeTest.hpp"
+#include "Graphics/OpenGL/PlatformSpecificErrorsFreeTest.hpp"
+#include "Graphics/OpenGL/TargetSpecificErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -30,7 +31,8 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Errors",
             common_errors_free_test{"Common Errors Free Test"},
-            errors_free_test{"Errors Free Test"}
+            platform_specific_errors_free_test{"Platform Specific Errors Free Test"},
+            target_specific_errors_free_test{"Target Specific Errors Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

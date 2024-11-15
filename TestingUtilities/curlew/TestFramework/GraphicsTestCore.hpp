@@ -30,6 +30,9 @@ namespace curlew {
     [[nodiscard]]
     std::string get_platform();
 
+    [[nodiscard]]
+    std::string get_build();
+
     template<test_mode Mode>
     class basic_graphics_test : public basic_test<Mode, trivial_extender>
     {
@@ -55,13 +58,38 @@ namespace curlew {
     using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive>;
 
     template<test_mode Mode>
-    class basic_target_dependent_graphics_test : public basic_graphics_test<Mode>
+    class basic_platform_dependent_graphics_test : public basic_graphics_test<Mode>
     {
     public:
         using basic_graphics_test<Mode>::basic_graphics_test;
 
         [[nodiscard]]
         std::string output_discriminator() const { return get_platform(); }
+    protected:
+        ~basic_platform_dependent_graphics_test() = default;
+
+        basic_platform_dependent_graphics_test(basic_platform_dependent_graphics_test&&)            noexcept = default;
+        basic_platform_dependent_graphics_test& operator=(basic_platform_dependent_graphics_test&&) noexcept = default;
+    };
+
+    using platform_dependent_graphics_test                = basic_platform_dependent_graphics_test<test_mode::standard>;
+    using platform_dependent_graphics_false_negative_test = basic_platform_dependent_graphics_test<test_mode::false_negative>;
+    using platform_dependent_graphics_false_positive_test = basic_platform_dependent_graphics_test<test_mode::false_positive>;
+
+    template<test_mode Mode>
+    class basic_target_dependent_graphics_test : public basic_graphics_test<Mode>
+    {
+    public:
+        using basic_graphics_test<Mode>::basic_graphics_test;
+
+        [[nodiscard]]
+        std::string output_discriminator() const {
+            const auto build{get_build()};
+            return get_platform() + (build.empty() ? "" : "_" + get_build());
+        }
+
+        [[nodiscard]]
+        std::string reduction_discriminator() const { return get_build(); }
     protected:
         ~basic_target_dependent_graphics_test() = default;
 
@@ -72,4 +100,5 @@ namespace curlew {
     using target_dependent_graphics_test                = basic_target_dependent_graphics_test<test_mode::standard>;
     using target_dependent_graphics_false_negative_test = basic_target_dependent_graphics_test<test_mode::false_negative>;
     using target_dependent_graphics_false_positive_test = basic_target_dependent_graphics_test<test_mode::false_positive>;
+
 }

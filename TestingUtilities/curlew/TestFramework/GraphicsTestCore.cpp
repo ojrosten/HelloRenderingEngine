@@ -55,4 +55,7 @@ namespace curlew {
         const auto[version, renderer]{glfw_manager{}.find_rendering_setup()};
         return std::format("{}{}OpenGL_{}_{}", platform(), manufacturer(renderer), version.major, version.minor);
     }
+
+    [[nodiscard]]
+    std::string get_build() { return avocet::has_ndebug() ? "Release" : ""; }
 }

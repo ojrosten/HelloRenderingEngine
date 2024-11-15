@@ -15,18 +15,14 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class errors_free_test final : public curlew::target_dependent_graphics_test
+    class platform_specific_errors_free_test final : public curlew::platform_dependent_graphics_test
     {
     public:
-        using curlew::target_dependent_graphics_test::target_dependent_graphics_test;
+        using curlew::platform_dependent_graphics_test::platform_dependent_graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
         void run_tests();
-
-        void general_tests();
-
-        void debug_build_tests();
     };
 }
