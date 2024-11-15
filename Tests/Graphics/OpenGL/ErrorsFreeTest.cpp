@@ -16,6 +16,9 @@
 
 namespace avocet::testing
 {
+    namespace agl = avocet::opengl;
+    using namespace curlew;
+
     [[nodiscard]]
     std::filesystem::path errors_free_test::source_file() const
     {
@@ -24,12 +27,17 @@ namespace avocet::testing
 
     void errors_free_test::run_tests()
     {
-        namespace agl = avocet::opengl;
-        using namespace curlew;
-
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
+        general_tests();
+
+        if constexpr(!avocet::has_ndebug())
+            debug_build_tests();
+    }
+
+    void errors_free_test::general_tests()
+    {
         check_filtered_exception_thrown<std::runtime_error>(
             "Null glBindBuffer",
             [](){
@@ -37,10 +45,13 @@ namespace avocet::testing
                 agl::gl_function{glBindBuffer}(42, 42);
             }
         );
+    }
 
+    void errors_free_test::debug_build_tests()
+    {
         check_filtered_exception_thrown<std::runtime_error>(
             "Illegal call to glBindBuffer",
-            [](){ agl::gl_function{glBindBuffer}(42, 42);}
+            [](){ agl::gl_function{glBindBuffer}(42, 42); }
         );
 
         check_filtered_exception_thrown<std::runtime_error>(
