@@ -39,51 +39,46 @@ namespace avocet::testing
         namespace agl = avocet::opengl;
         using namespace curlew;
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Constructing gl_function with a null pointer",
             [](){
                 gl_breaker breaker{glGetError};
                 return agl::gl_function{agl::unchecked_debug_output, glGetError}();
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Null glGetError when checking for basic errors",
             [](){
                 gl_breaker breaker{glGetError};
                 agl::check_for_basic_errors(std::source_location::current());
-            },
-            exception_postprocessor{}
+            }
         );
 
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Null glBindBuffer",
             [](){
                 gl_breaker breaker{glBindBuffer};
                 agl::gl_function{glBindBuffer}(42, 42);
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Illegal call to glBindBuffer",
-            [](){ agl::gl_function{glBindBuffer}(42, 42);},
-            exception_postprocessor{}
+            [](){ agl::gl_function{glBindBuffer}(42, 42);}
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function",
             [](){
                 agl::gl_function f{glBindBuffer};
                 gl_breaker breaker{glBindBuffer};
                 f(42, 42);
-            },
-            exception_postprocessor{}
+            }
         );
     }
 }

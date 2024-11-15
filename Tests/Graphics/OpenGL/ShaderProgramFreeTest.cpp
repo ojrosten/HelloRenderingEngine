@@ -28,92 +28,84 @@ namespace avocet::testing
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Missing Vertex Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir,
                     shaderDir / "Monochrome.fs"
                 };
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Misnamed Vertex Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "foo.vs",
                     shaderDir / "Monochrome.fs"
                 };
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Missing Fragment Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
                     shaderDir
                 };
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Misnamed Fragment Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
                     shaderDir / "bar.fs"
                 };
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Broken Vertex Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Broken_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Unlinkable Vertex Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Unlinkable_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Broken Fragment Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
                     shaderDir / "Broken_Monochrome.fs"
                 };
-            },
-            exception_postprocessor{}
+            }
         );
 
-        check_exception_thrown<std::runtime_error>(
+        check_filtered_exception_thrown<std::runtime_error>(
             "Unlinkable Fragment Shader",
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
                     shaderDir / "Unlinkable_Monochrome.fs"
                 };
-            },
-            exception_postprocessor{}
+            }
         );
     }
 }

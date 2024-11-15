@@ -7,7 +7,7 @@ gl_function: attempting to construct with a nullptr coming via Tests/Graphics/Op
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 52
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 51
 Null glGetError when checking for basic errors
 
 Expected Exception Type:
@@ -16,32 +16,32 @@ gl_function: attempting to construct with a nullptr coming via Source/avocet/Deb
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 65
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 63
 Null glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 68
+gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 66
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 74
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 71
 Illegal call to glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 75:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 72:
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 
 =======================================
 
-Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 80
+Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, Line 76
 Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 84:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsFreeTest.cpp, line 80:
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 

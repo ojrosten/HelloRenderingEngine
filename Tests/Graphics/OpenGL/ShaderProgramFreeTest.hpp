@@ -15,12 +15,10 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class shader_program_free_test final : public curlew::graphics_test
+    class shader_program_free_test final : public curlew::target_dependent_graphics_test
     {
     public:
-        using parallelizable_type = std::false_type;
-
-        using curlew::graphics_test::graphics_test;
+        using curlew::target_dependent_graphics_test::target_dependent_graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
