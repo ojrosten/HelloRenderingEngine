@@ -29,7 +29,7 @@ namespace curlew {
         using basic_test<Mode, trivial_extender>::basic_test;
 
         [[nodiscard]]
-        std::string platform() const { return get_platform(); }
+        std::string output_discriminator() const { return get_platform(); }
     protected:
         ~basic_graphics_test() = default;
 
