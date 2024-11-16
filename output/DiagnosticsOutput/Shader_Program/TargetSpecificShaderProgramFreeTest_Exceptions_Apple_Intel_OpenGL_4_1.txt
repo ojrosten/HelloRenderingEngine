@@ -3,7 +3,8 @@ Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Unable to open file Broken_Identity.vs
+Error: vertex shader compilation failed
+ERROR: 0:8: '}' : syntax error: syntax error
 
 =======================================
 
@@ -12,7 +13,8 @@ Unlinkable Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Unable to open file Unlinkable_Identity.vs
+Error: program linking failed
+ERROR: No definition of main in vertex shader
 
 =======================================
 
@@ -21,7 +23,8 @@ Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Unable to open file Identity.vs
+Error: fragment shader compilation failed
+ERROR: 0:6: '{' : syntax error: syntax error
 
 =======================================
 
@@ -30,7 +33,8 @@ Unlinkable Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Unable to open file Identity.vs
+Error: program linking failed
+ERROR: No definition of main in fragment shader
 
 =======================================
 
