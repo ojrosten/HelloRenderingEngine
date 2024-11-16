@@ -1,0 +1,36 @@
+Tests/Graphics/OpenGL/CommonShaderProgramFreeTest.cpp, Line 32
+Missing Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file 
+
+=======================================
+
+Tests/Graphics/OpenGL/CommonShaderProgramFreeTest.cpp, Line 42
+Misnamed Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file foo.vs
+
+=======================================
+
+Tests/Graphics/OpenGL/CommonShaderProgramFreeTest.cpp, Line 52
+Missing Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file Identity.vs
+
+=======================================
+
+Tests/Graphics/OpenGL/CommonShaderProgramFreeTest.cpp, Line 62
+Misnamed Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file Identity.vs
+
+=======================================
+

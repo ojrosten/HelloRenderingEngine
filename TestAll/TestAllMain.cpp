@@ -10,7 +10,8 @@
 #include "Graphics/OpenGL/CommonErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/PlatformSpecificErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/TargetSpecificErrorsFreeTest.hpp"
-#include "Graphics/OpenGL/ShaderProgramFreeTest.hpp"
+#include "Graphics/OpenGL/CommonShaderProgramFreeTest.hpp"
+#include "Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
 
@@ -25,7 +26,8 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Shader Program",
-            shader_program_free_test{"Shader Program Free Test"}
+            common_shader_program_free_test{"Common Shader Program Free Test"},
+            target_specific_shader_program_free_test{"Target Specific Shader Program Free Test"}
         );
 
         runner.add_test_suite(
