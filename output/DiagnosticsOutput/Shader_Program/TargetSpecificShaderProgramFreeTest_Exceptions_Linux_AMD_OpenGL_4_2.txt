@@ -1,0 +1,36 @@
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 31
+Broken Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file Broken_Identity.vs
+
+=======================================
+
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 41
+Unlinkable Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file Unlinkable_Identity.vs
+
+=======================================
+
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 51
+Broken Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file Identity.vs
+
+=======================================
+
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 61
+Unlinkable Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Unable to open file Identity.vs
+
+=======================================
+
