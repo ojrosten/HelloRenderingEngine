@@ -3,9 +3,7 @@ Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: vertex shader compilation failed
-ERROR: 0:8: '' :  syntax error, unexpected RIGHT_BRACE, expecting COMMA or SEMICOLON
-ERROR: 1 compilation errors.  No code generated.
+Unable to open file Broken_Identity.vs
 
 =======================================
 
@@ -14,8 +12,7 @@ Unlinkable Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: program linking failed
-ERROR: Linking vertex stage: Missing entry point: Each stage requires one entry point
+Unable to open file Unlinkable_Identity.vs
 
 =======================================
 
@@ -24,9 +21,7 @@ Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: fragment shader compilation failed
-ERROR: 0:6: '' :  syntax error, unexpected LEFT_BRACE, expecting RIGHT_PAREN
-ERROR: 1 compilation errors.  No code generated.
+Unable to open file Identity.vs
 
 =======================================
 
@@ -35,8 +30,7 @@ Unlinkable Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: program linking failed
-ERROR: Linking fragment stage: Missing entry point: Each stage requires one entry point
+Unable to open file Identity.vs
 
 =======================================
 
