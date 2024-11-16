@@ -16,7 +16,7 @@ add_executable(TestAll TestAllMain.cpp)
 target_sources(TestAll PRIVATE
                ${TestDir}/Graphics/OpenGL/CommonErrorsFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/PlatformSpecificErrorsFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/TargetSpecificErrorsFreeTest.cpp
+               ${TestDir}/Graphics/OpenGL/TargetSelectiveErrorsFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/CommonShaderProgramFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp)
 

@@ -9,7 +9,7 @@
 
 #include "Graphics/OpenGL/CommonErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/PlatformSpecificErrorsFreeTest.hpp"
-#include "Graphics/OpenGL/TargetSpecificErrorsFreeTest.hpp"
+#include "Graphics/OpenGL/TargetSelectiveErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/CommonShaderProgramFreeTest.hpp"
 #include "Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
             "Errors",
             common_errors_free_test{"Common Errors Free Test"},
             platform_specific_errors_free_test{"Platform Specific Errors Free Test"},
-            target_specific_errors_free_test{"Target Specific Errors Free Test"}
+            target_selective_errors_free_test{"Target Specific Errors Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
