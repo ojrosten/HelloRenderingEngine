@@ -44,7 +44,7 @@ namespace curlew {
         template<class E, class Fn>
         bool check_filtered_exception_thrown(const reporter& description, Fn&& function)
         {
-            return basic_test<Mode, trivial_extender>::check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
+            return basic_test<Mode, trivial_extender>::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
         }
     protected:
         ~basic_graphics_test() = default;
