@@ -57,6 +57,8 @@ namespace curlew {
     using graphics_false_negative_test = basic_graphics_test<test_mode::false_negative>;
     using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive>;
 
+    /*! \class Differentiates diagnostics output based on the platform */
+
     template<test_mode Mode>
     class basic_platform_specific_graphics_test : public basic_graphics_test<Mode>
     {
@@ -76,6 +78,8 @@ namespace curlew {
     using platform_specific_graphics_false_negative_test = basic_platform_specific_graphics_test<test_mode::false_negative>;
     using platform_specific_graphics_false_positive_test = basic_platform_specific_graphics_test<test_mode::false_positive>;
 
+    /*! \class Differentiates diagnostics output based on the platform and build */
+
     template<test_mode Mode>
     class basic_target_specific_graphics_test : public basic_graphics_test<Mode>
     {
@@ -87,9 +91,6 @@ namespace curlew {
             const auto build{get_build()};
             return get_platform() + (build.empty() ? "" : "_" + get_build());
         }
-
-        [[nodiscard]]
-        std::string reduction_discriminator() const { return get_build(); }
     protected:
         ~basic_target_specific_graphics_test() = default;
 
@@ -100,5 +101,26 @@ namespace curlew {
     using target_specific_graphics_test                = basic_target_specific_graphics_test<test_mode::standard>;
     using target_specific_graphics_false_negative_test = basic_target_specific_graphics_test<test_mode::false_negative>;
     using target_specific_graphics_false_positive_test = basic_target_specific_graphics_test<test_mode::false_positive>;
+
+    /*! \class Differentiates diagnostics output and summaries based on the platform and build */
+
+    template<test_mode Mode>
+    class basic_target_selective_graphics_test : public basic_target_specific_graphics_test<Mode>
+    {
+    public:
+      using basic_target_specific_graphics_test<Mode>::basic_target_specific_graphics_test;
+
+      [[nodiscard]]
+      std::string reduction_discriminator() const { return get_build(); }
+    protected:
+      ~basic_target_selective_graphics_test() = default;
+
+      basic_target_selective_graphics_test(basic_target_selective_graphics_test&&)            noexcept = default;
+      basic_target_selective_graphics_test& operator=(basic_target_selective_graphics_test&&) noexcept = default;
+    };
+
+    using target_selective_graphics_test = basic_target_selective_graphics_test<test_mode::standard>;
+    using target_selective_graphics_false_negative_test = basic_target_selective_graphics_test<test_mode::false_negative>;
+    using target_selective_graphics_false_positive_test = basic_target_selective_graphics_test<test_mode::false_positive>;
 
 }
