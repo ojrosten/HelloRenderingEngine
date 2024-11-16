@@ -1,0 +1,20 @@
+Tests/Graphics/OpenGL/TargetSpecificErrorsFreeTest.cpp, Line 40
+Illegal call to glBindBuffer
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in Tests/Graphics/OpenGL/TargetSpecificErrorsFreeTest.cpp, line 41:
+Invalid enum
+
+=======================================
+
+Tests/Graphics/OpenGL/TargetSpecificErrorsFreeTest.cpp, Line 45
+Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in Tests/Graphics/OpenGL/TargetSpecificErrorsFreeTest.cpp, line 49:
+Invalid enum
+
+=======================================
+
