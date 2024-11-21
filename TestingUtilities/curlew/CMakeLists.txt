@@ -10,10 +10,10 @@ FUNCTION(curlew_glfw_compile_options target)
     if(MSVC)
         target_compile_options(${target} PRIVATE /wd4100 /wd4244)
     else()
-        target_compile_options(${target} PRIVATE -Wno-unused-parameter -Wno-sign-compare -Wno-pedantic)
-	if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-            target_compile_options(${target} PRIVATE -Wno-missing-field-initializers)
-        endif()
+        target_compile_options(${target} PRIVATE -Wno-unused-parameter
+                                                 -Wno-sign-compare
+                                                 -Wno-pedantic
+                                                 -Wno-missing-field-initializers)
     endif()
 ENDFUNCTION()
 
