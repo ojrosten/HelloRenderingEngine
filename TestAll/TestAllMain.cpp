@@ -8,7 +8,6 @@
 /*! \file */
 
 #include "Graphics/OpenGL/CommonErrorsFreeTest.hpp"
-#include "Graphics/OpenGL/PlatformSpecificErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/TargetSelectiveErrorsFreeTest.hpp"
 #include "Graphics/OpenGL/CommonShaderProgramFreeTest.hpp"
 #include "Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.hpp"
@@ -33,7 +32,6 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Errors",
             common_errors_free_test{"Common Errors Free Test"},
-            platform_specific_errors_free_test{"Platform Specific Errors Free Test"},
             target_selective_errors_free_test{"Target Specific Errors Free Test"}
         );
 

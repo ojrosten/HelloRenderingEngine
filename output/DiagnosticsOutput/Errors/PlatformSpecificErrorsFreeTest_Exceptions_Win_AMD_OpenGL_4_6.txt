@@ -1,9 +1,0 @@
-Tests/Graphics/OpenGL/PlatformSpecificErrorsFreeTest.cpp, Line 34
-Null glBindBuffer
-
-Expected Exception Type:
-[std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/PlatformSpecificErrorsFreeTest.cpp, line 37
-
-=======================================
-

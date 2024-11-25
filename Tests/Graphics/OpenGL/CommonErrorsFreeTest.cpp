@@ -42,5 +42,16 @@ namespace avocet::testing
                 agl::check_for_basic_errors(std::source_location::current());
             }
         );
+
+        glfw_manager manager{};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        check_filtered_exception_thrown<std::runtime_error>(
+            reporter{"Null glBindBuffer"},
+            [](){
+                gl_breaker breaker{glBindBuffer};
+                agl::gl_function{glBindBuffer}(42, 42);
+            }
+        );
     }
 }
