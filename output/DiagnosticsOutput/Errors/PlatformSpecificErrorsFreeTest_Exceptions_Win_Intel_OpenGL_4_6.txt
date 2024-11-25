@@ -1,9 +1,11 @@
 Tests/Graphics/OpenGL/PlatformSpecificErrorsFreeTest.cpp, Line 34
-Null glBindBuffer
+Illegal call to glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/PlatformSpecificErrorsFreeTest.cpp, line 37
+OpenGL error detected in Tests/Graphics/OpenGL/PlatformSpecificErrorsFreeTest.cpp, line 35:
+Source: API; Type: Error; Severity: High
+Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
 
 =======================================
 
