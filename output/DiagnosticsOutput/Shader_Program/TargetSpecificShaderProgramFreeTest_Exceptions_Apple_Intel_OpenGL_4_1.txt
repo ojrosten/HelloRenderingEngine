@@ -9,6 +9,16 @@ ERROR: 0:8: '}' : syntax error: syntax error
 =======================================
 
 Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 42
+Unlinkable Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: program linking failed
+ERROR: No definition of main in vertex shader
+
+=======================================
+
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 52
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -18,14 +28,13 @@ ERROR: 0:6: '{' : syntax error: syntax error
 
 =======================================
 
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 52
-Unlinkable Vertex Shader / Fragment Shader Combo
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 62
+Unlinkable Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
 Error: program linking failed
-ERROR: Input of fragment shader 'colour' differs in type/qualifiers to that written by vertex shader
-ERROR: Input of fragment shader 'colour' not written by vertex shader
+ERROR: No definition of main in fragment shader
 
 =======================================
 

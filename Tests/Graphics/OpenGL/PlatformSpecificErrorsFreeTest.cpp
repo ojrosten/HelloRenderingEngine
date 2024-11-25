@@ -31,8 +31,11 @@ namespace avocet::testing
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
         check_filtered_exception_thrown<std::runtime_error>(
-            reporter{"Illegal call to glBindBuffer"},
-            [](){  agl::gl_function{glBindBuffer}(42, 42); }
+            "Null glBindBuffer",
+            [](){
+                gl_breaker breaker{glBindBuffer};
+                agl::gl_function{glBindBuffer}(42, 42);
+            }
         );
     }
 }
