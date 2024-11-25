@@ -35,8 +35,9 @@ namespace curlew {
 
         [[nodiscard]]
         std::string manufacturer(std::string_view rawVendor) {
-            if(rawVendor.find("Intel") != std::string::npos) return "Intel_";
-            if(rawVendor.find("AMD") != std::string::npos) return "AMD_";
+            if(rawVendor.find("Intel")  != std::string::npos) return "Intel_";
+            if(rawVendor.find("AMD")    != std::string::npos) return "AMD_";
+            if(rawVendor.find("NVIDIA") != std::string::npos) return "NVIDIA_";
 
             return "";
         }
