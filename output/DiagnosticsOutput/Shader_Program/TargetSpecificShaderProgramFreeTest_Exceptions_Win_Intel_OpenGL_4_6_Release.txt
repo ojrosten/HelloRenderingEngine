@@ -9,16 +9,6 @@ ERROR: 0:8: '}' : syntax error syntax error
 =======================================
 
 Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 42
-Unlinkable Vertex Shader
-
-Expected Exception Type:
-[std::runtime_error]
-Error: program linking failed
-ERROR: Definition for "void main()" not found.
-
-=======================================
-
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 52
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -28,13 +18,13 @@ ERROR: 0:7: '{' : syntax error syntax error
 
 =======================================
 
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 62
-Unlinkable Fragment Shader
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 52
+Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
 [std::runtime_error]
 Error: program linking failed
-ERROR: Definition for "void main()" not found.
+Varying "colour" has different type width across different shaders.
 
 =======================================
 
