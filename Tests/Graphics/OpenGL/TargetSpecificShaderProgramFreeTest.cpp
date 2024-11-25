@@ -39,16 +39,6 @@ namespace avocet::testing
         );
 
         check_filtered_exception_thrown<std::runtime_error>(
-            "Unlinkable Vertex Shader",
-            [&shaderDir](){
-                agl::shader_program sp{
-                    shaderDir / "Unlinkable_Identity.vs",
-                    shaderDir / "Monochrome.fs"
-                };
-            }
-        );
-
-        check_filtered_exception_thrown<std::runtime_error>(
             "Broken Fragment Shader",
             [&shaderDir](){
                 agl::shader_program sp{
@@ -59,11 +49,11 @@ namespace avocet::testing
         );
 
         check_filtered_exception_thrown<std::runtime_error>(
-            "Unlinkable Fragment Shader",
+            "Unlinkable Vertex Shader / Fragment Shader Combo",
             [&shaderDir](){
                 agl::shader_program sp{
-                    shaderDir / "Identity.vs",
-                    shaderDir / "Unlinkable_Monochrome.fs"
+                    shaderDir / "Output_vec3.vs",
+                    shaderDir / "Input_float.fs"
                 };
             }
         );

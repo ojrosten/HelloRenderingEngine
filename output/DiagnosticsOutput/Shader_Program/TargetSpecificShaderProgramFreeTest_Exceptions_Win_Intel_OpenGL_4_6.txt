@@ -11,17 +11,6 @@ SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, ""
 =======================================
 
 Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 42
-Unlinkable Vertex Shader
-
-Expected Exception Type:
-[std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 184:
-Source: Shader Compiler; Type: Error; Severity: High
-SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
-
-=======================================
-
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 52
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -33,14 +22,14 @@ SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, ""
 
 =======================================
 
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 62
-Unlinkable Fragment Shader
+Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 52
+Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
 [std::runtime_error]
 OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 184:
 Source: Shader Compiler; Type: Error; Severity: High
-SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": ERROR: Definition for "void main()" not found.
+SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": Varying "colour" has different type width across different shaders.
 
 =======================================
 
