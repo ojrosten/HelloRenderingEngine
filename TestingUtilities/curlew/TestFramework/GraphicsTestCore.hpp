@@ -111,7 +111,7 @@ namespace curlew {
       using basic_target_specific_graphics_test<Mode>::basic_target_specific_graphics_test;
 
       [[nodiscard]]
-      std::string reduction_discriminator() const { return get_build(); }
+      std::string summary_discriminator() const { return get_build(); }
     protected:
       ~basic_target_selective_graphics_test() = default;
 
