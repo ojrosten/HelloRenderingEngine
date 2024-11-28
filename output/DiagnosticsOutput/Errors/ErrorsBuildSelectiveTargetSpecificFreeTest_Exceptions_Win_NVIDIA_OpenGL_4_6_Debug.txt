@@ -1,20 +1,20 @@
-Tests/Graphics/OpenGL/TargetSelectiveErrorsFreeTest.cpp, Line 40
+Tests/Graphics/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.cpp, Line 40
 Illegal call to glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/Graphics/OpenGL/TargetSelectiveErrorsFreeTest.cpp, line 41:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.cpp, line 41:
 Source: API; Type: Error; Severity: High
 GL_INVALID_ENUM error generated. Invalid buffer target enum.
 
 =======================================
 
-Tests/Graphics/OpenGL/TargetSelectiveErrorsFreeTest.cpp, Line 45
+Tests/Graphics/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.cpp, Line 45
 Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/Graphics/OpenGL/TargetSelectiveErrorsFreeTest.cpp, line 49:
+OpenGL error detected in Tests/Graphics/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.cpp, line 49:
 Source: API; Type: Error; Severity: High
 GL_INVALID_ENUM error generated. Invalid buffer target enum.
 

@@ -1,4 +1,4 @@
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 32
+Tests/Graphics/OpenGL/ShaderProgramTargetSpecificFreeTest.cpp, Line 32
 Broken Vertex Shader
 
 Expected Exception Type:
@@ -8,7 +8,7 @@ Error: vertex shader compilation failed
 
 =======================================
 
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 42
+Tests/Graphics/OpenGL/ShaderProgramTargetSpecificFreeTest.cpp, Line 42
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -18,7 +18,7 @@ Error: fragment shader compilation failed
 
 =======================================
 
-Tests/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp, Line 52
+Tests/Graphics/OpenGL/ShaderProgramTargetSpecificFreeTest.cpp, Line 52
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
