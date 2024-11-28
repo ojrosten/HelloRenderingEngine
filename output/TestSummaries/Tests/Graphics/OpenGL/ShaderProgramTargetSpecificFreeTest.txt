@@ -1,2 +1,2 @@
-Target Specific Shader Program Free Test
+Shader Program Target Specific Free Test
 Standard Top Level Checks:                 3;  Failures:  0  [Deep checks: 3]

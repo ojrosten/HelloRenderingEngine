@@ -14,10 +14,11 @@ sequoia_init()
 add_executable(TestAll TestAllMain.cpp)
 
 target_sources(TestAll PRIVATE
-               ${TestDir}/Graphics/OpenGL/CommonErrorsFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/TargetSelectiveErrorsFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/CommonShaderProgramFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.cpp)
+               ${TestDir}/Graphics/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.cpp
+               ${TestDir}/Graphics/OpenGL/ErrorsCommonFreeTest.cpp
+               ${TestDir}/Graphics/OpenGL/ShaderProgramBuildAndVersionSelectiveFreeTest.cpp
+               ${TestDir}/Graphics/OpenGL/ShaderProgramCommonFreeTest.cpp
+               ${TestDir}/Graphics/OpenGL/ShaderProgramTargetSpecificFreeTest.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})
 

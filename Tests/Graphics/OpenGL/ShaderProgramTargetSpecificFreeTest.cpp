@@ -7,19 +7,19 @@
 
 /*! \file */
 
-#include "TargetSpecificShaderProgramFreeTest.hpp"
+#include "ShaderProgramTargetSpecificFreeTest.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path target_specific_shader_program_free_test::source_file() const
+    std::filesystem::path shader_program_target_specific_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void target_specific_shader_program_free_test::run_tests()
+    void shader_program_target_specific_free_test::run_tests()
     {
         using namespace curlew;
         glfw_manager manager{};

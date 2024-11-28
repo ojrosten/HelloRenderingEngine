@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "CommonErrorsFreeTest.hpp"
+#include "ErrorsCommonFreeTest.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
@@ -17,12 +17,12 @@
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path common_errors_free_test::source_file() const
+    std::filesystem::path errors_common_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void common_errors_free_test::run_tests()
+    void errors_common_free_test::run_tests()
     {
         namespace agl = avocet::opengl;
         using namespace curlew;

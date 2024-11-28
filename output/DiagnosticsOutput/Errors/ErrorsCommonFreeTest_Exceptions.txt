@@ -1,13 +1,13 @@
-Tests/Graphics/OpenGL/CommonErrorsFreeTest.cpp, Line 31
+Tests/Graphics/OpenGL/ErrorsCommonFreeTest.cpp, Line 31
 Constructing gl_function with a null pointer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/CommonErrorsFreeTest.cpp, line 34
+gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsCommonFreeTest.cpp, line 34
 
 =======================================
 
-Tests/Graphics/OpenGL/CommonErrorsFreeTest.cpp, Line 39
+Tests/Graphics/OpenGL/ErrorsCommonFreeTest.cpp, Line 39
 Null glGetError when checking for basic errors
 
 Expected Exception Type:
@@ -16,12 +16,12 @@ gl_function: attempting to construct with a nullptr coming via Source/avocet/Deb
 
 =======================================
 
-Tests/Graphics/OpenGL/CommonErrorsFreeTest.cpp, Line 50
+Tests/Graphics/OpenGL/ErrorsCommonFreeTest.cpp, Line 50
 Null glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/CommonErrorsFreeTest.cpp, line 53
+gl_function: attempting to construct with a nullptr coming via Tests/Graphics/OpenGL/ErrorsCommonFreeTest.cpp, line 53
 
 =======================================
 

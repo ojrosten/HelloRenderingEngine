@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "TargetSelectiveErrorsFreeTest.hpp"
+#include "ErrorsBuildSelectiveTargetSpecificFreeTest.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
@@ -17,18 +17,18 @@
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path target_selective_errors_free_test::source_file() const
+    std::filesystem::path errors_build_selective_target_specific_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void target_selective_errors_free_test::run_tests()
+    void errors_build_selective_target_specific_free_test::run_tests()
     {
         if constexpr(!avocet::has_ndebug())
             debug_build_tests();
     }
 
-    void target_selective_errors_free_test::debug_build_tests()
+    void errors_build_selective_target_specific_free_test::debug_build_tests()
     {
         namespace agl = avocet::opengl;
         using namespace curlew;

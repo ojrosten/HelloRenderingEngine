@@ -15,14 +15,16 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class common_shader_program_free_test final : public curlew::graphics_test
+    class errors_build_selective_target_specific_free_test final : public curlew::build_selective_target_specific_graphics_test
     {
     public:
-        using curlew::graphics_test::graphics_test;
+        using curlew::build_selective_target_specific_graphics_test::build_selective_target_specific_graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
         void run_tests();
+
+        void debug_build_tests();
     };
 }

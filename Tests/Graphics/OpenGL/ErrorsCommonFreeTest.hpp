@@ -15,7 +15,7 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class common_errors_free_test final : public curlew::graphics_test
+    class errors_common_free_test final : public curlew::graphics_test
     {
     public:
         using curlew::graphics_test::graphics_test;
