@@ -7,10 +7,11 @@
 
 /*! \file */
 
-#include "Graphics/OpenGL/CommonErrorsFreeTest.hpp"
-#include "Graphics/OpenGL/TargetSelectiveErrorsFreeTest.hpp"
-#include "Graphics/OpenGL/CommonShaderProgramFreeTest.hpp"
-#include "Graphics/OpenGL/TargetSpecificShaderProgramFreeTest.hpp"
+#include "Graphics/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.hpp"
+#include "Graphics/OpenGL/ErrorsCommonFreeTest.hpp"
+#include "Graphics/OpenGL/ShaderProgramBuildAndVersionSelectiveFreeTest.hpp"
+#include "Graphics/OpenGL/ShaderProgramCommonFreeTest.hpp"
+#include "Graphics/OpenGL/ShaderProgramTargetSpecificFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
 
@@ -24,15 +25,16 @@ int main(int argc, char** argv)
         sequoia::testing::test_runner runner{argc, argv, "Oliver J. Rosten", "    ", {.source_folder{"avocet"}, .additional_dependency_analysis_paths{"TestingUtilities", "dependencies/sequoia/Source"}}};
 
         runner.add_test_suite(
-            "Shader Program",
-            common_shader_program_free_test{"Common Shader Program Free Test"},
-            target_specific_shader_program_free_test{"Target Specific Shader Program Free Test"}
+            "Errors",
+            errors_common_free_test{"Errors Common Free Test"},
+            errors_build_selective_target_specific_free_test{"Errors Build Selective Target Specific Free Test"}
         );
 
         runner.add_test_suite(
-            "Errors",
-            common_errors_free_test{"Common Errors Free Test"},
-            target_selective_errors_free_test{"Target Specific Errors Free Test"}
+            "Shader Program",
+            shader_program_common_free_test{"Shader Program Common Free Test"},
+            shader_program_target_specific_free_test{"Shader Program Target Specific Free Test"},
+            shader_program_build_and_version_selective_free_test{"Shader Program Build And Version Selective Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

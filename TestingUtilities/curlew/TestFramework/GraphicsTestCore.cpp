@@ -52,11 +52,17 @@ namespace curlew {
     }
 
     [[nodiscard]]
+    std::string opengl_version_as_string() {
+        const auto [major, minor]{glfw_manager{}.find_rendering_setup().version};
+        return std::format("OpenGL_{}_{}", major, minor);
+    }
+
+    [[nodiscard]]
     std::string get_platform() {
         const auto[version, renderer]{glfw_manager{}.find_rendering_setup()};
         return std::format("{}{}OpenGL_{}_{}", platform(), manufacturer(renderer), version.major, version.minor);
     }
 
     [[nodiscard]]
-    std::string get_build() { return avocet::has_ndebug() ? "Release" : ""; }
+    std::string get_build() { return avocet::has_ndebug() ? "Release" : "Debug"; }
 }

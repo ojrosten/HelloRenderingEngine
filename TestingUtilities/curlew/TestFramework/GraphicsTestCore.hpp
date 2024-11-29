@@ -28,6 +28,9 @@ namespace curlew {
     };
 
     [[nodiscard]]
+    std::string opengl_version_as_string();
+
+    [[nodiscard]]
     std::string get_platform();
 
     [[nodiscard]]
@@ -57,7 +60,11 @@ namespace curlew {
     using graphics_false_negative_test = basic_graphics_test<test_mode::false_negative>;
     using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive>;
 
-    /*! \class Differentiates diagnostics output based on the platform */
+    /*! \brief Differentiates diagnostics output based on the platform 
+        
+        This is for the case where the same number of tests are run on all targets
+        (i.e. platforms and builds), but the versioned output may vary per platform.
+     */
 
     template<test_mode Mode>
     class basic_platform_specific_graphics_test : public basic_graphics_test<Mode>
@@ -78,7 +85,11 @@ namespace curlew {
     using platform_specific_graphics_false_negative_test = basic_platform_specific_graphics_test<test_mode::false_negative>;
     using platform_specific_graphics_false_positive_test = basic_platform_specific_graphics_test<test_mode::false_positive>;
 
-    /*! \class Differentiates diagnostics output based on the platform and build */
+    /*! \brief Differentiates diagnostics output based on the platform and build
+
+        This is for the case where the same number of tests are run on all targets
+        (i.e. platforms and builds), but the versioned output may vary per target.
+     */
 
     template<test_mode Mode>
     class basic_target_specific_graphics_test : public basic_graphics_test<Mode>
@@ -102,10 +113,15 @@ namespace curlew {
     using target_specific_graphics_false_negative_test = basic_target_specific_graphics_test<test_mode::false_negative>;
     using target_specific_graphics_false_positive_test = basic_target_specific_graphics_test<test_mode::false_positive>;
 
-    /*! \class Differentiates diagnostics output and summaries based on the platform and build */
+    /*! \brief Differentiates diagnostics output based on the platform and build, and differentiates summaries based on the build
+    
+        This is for the case where a different number of tests may be run for
+        different builds. For a given build, the same tests will be run for each 
+        platform, but the versioned output may vary per platform.
+     */
 
     template<test_mode Mode>
-    class basic_target_selective_graphics_test : public basic_target_specific_graphics_test<Mode>
+    class basic_build_selective_target_specific_graphics_test : public basic_target_specific_graphics_test<Mode>
     {
     public:
       using basic_target_specific_graphics_test<Mode>::basic_target_specific_graphics_test;
@@ -113,14 +129,43 @@ namespace curlew {
       [[nodiscard]]
       std::string summary_discriminator() const { return get_build(); }
     protected:
-      ~basic_target_selective_graphics_test() = default;
+      ~basic_build_selective_target_specific_graphics_test() = default;
 
-      basic_target_selective_graphics_test(basic_target_selective_graphics_test&&)            noexcept = default;
-      basic_target_selective_graphics_test& operator=(basic_target_selective_graphics_test&&) noexcept = default;
+      basic_build_selective_target_specific_graphics_test(basic_build_selective_target_specific_graphics_test&&)            noexcept = default;
+      basic_build_selective_target_specific_graphics_test& operator=(basic_build_selective_target_specific_graphics_test&&) noexcept = default;
     };
 
-    using target_selective_graphics_test = basic_target_selective_graphics_test<test_mode::standard>;
-    using target_selective_graphics_false_negative_test = basic_target_selective_graphics_test<test_mode::false_negative>;
-    using target_selective_graphics_false_positive_test = basic_target_selective_graphics_test<test_mode::false_positive>;
+    using build_selective_target_specific_graphics_test                = basic_build_selective_target_specific_graphics_test<test_mode::standard>;
+    using build_selective_target_specific_graphics_false_negative_test = basic_build_selective_target_specific_graphics_test<test_mode::false_negative>;
+    using build_selective_target_specific_graphics_false_positive_test = basic_build_selective_target_specific_graphics_test<test_mode::false_positive>;
+
+    /*! \brief Differentiates summaries based on the build and opengl version
+    
+        This is for the case where a different number of tests may be run depending on the build
+        and opengl version. However, for a given build and opengl version, all versioned output
+        is the same.
+     */
+
+    template<test_mode Mode>
+    class basic_build_and_version_selective_graphics_test : public basic_graphics_test<Mode>
+    {
+    public:
+      using basic_graphics_test<Mode>::basic_graphics_test;
+
+      [[nodiscard]]
+      std::string summary_discriminator() const {      
+          const auto build{get_build()};
+          return opengl_version_as_string() + (build.empty() ? "" : "_" + get_build());
+      }
+    protected:
+      ~basic_build_and_version_selective_graphics_test() = default;
+
+      basic_build_and_version_selective_graphics_test(basic_build_and_version_selective_graphics_test&&)            noexcept = default;
+      basic_build_and_version_selective_graphics_test& operator=(basic_build_and_version_selective_graphics_test&&) noexcept = default;
+    };
+
+    using build_and_version_selective_graphics_test                = basic_build_and_version_selective_graphics_test<test_mode::standard>;
+    using build_and_version_selective_graphics_false_negative_test = basic_build_and_version_selective_graphics_test<test_mode::false_negative>;
+    using build_and_version_selective_graphics_false_positive_test = basic_build_and_version_selective_graphics_test<test_mode::false_positive>;
 
 }
