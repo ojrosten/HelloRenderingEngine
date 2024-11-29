@@ -49,7 +49,7 @@ namespace avocet::testing
         );
 
         check_filtered_exception_thrown<std::runtime_error>(
-	    reporter{"Missing Fragment Shader"},
+	        reporter{"Missing Fragment Shader"},
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
@@ -59,7 +59,7 @@ namespace avocet::testing
         );
 
         check_filtered_exception_thrown<std::runtime_error>(
-	    reporter{"Misnamed Fragment Shader"},
+	        reporter{"Misnamed Fragment Shader"},
             [&shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
