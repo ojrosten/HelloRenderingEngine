@@ -183,8 +183,7 @@ namespace avocet::opengl {
         error_code errorCode{};
         while((errorCode = error_code{gl_function{unchecked_debug_output, glGetError}()}) != error_code::none)
         {
-            errorMessage += to_string(errorCode);
-            errorMessage += '\n';
+            errorMessage += to_string(errorCode) += "\n";
         }
 
         if(!errorMessage.empty())
@@ -199,8 +198,7 @@ namespace avocet::opengl {
             if(info.severity == debug_severity::notification)
                 std::cerr << info.message << '\n';
             else {
-                errorMessage += info.message;
-                errorMessage += '\n';
+                (errorMessage += info.message) += "\n";
             }
         }
 
