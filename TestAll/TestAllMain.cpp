@@ -7,8 +7,8 @@
 
 /*! \file */
 
-#include "Graphics/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.hpp"
-#include "Graphics/OpenGL/ErrorsCommonFreeTest.hpp"
+#include "Debugging/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.hpp"
+#include "Debugging/OpenGL/ErrorsCommonFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramBuildAndVersionSelectiveFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramCommonFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramTargetSpecificFreeTest.hpp"
