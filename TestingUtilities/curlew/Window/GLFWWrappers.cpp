@@ -24,23 +24,26 @@ namespace curlew {
             std::cerr << std::format("Error - {}: {}\n", error, description);
         }
 
-        void set_debug_context() {
-            if(agl::inferred_debugging_mode() == agl::debugging_mode::advanced)
+        void set_debug_context(const avocet::opengl::opengl_version& version) {
+            const auto mode{agl::inferred_debugging_mode()};
+            if(agl::debug_output_supported(version)) {
+	      if((mode == agl::debugging_mode::dynamic) || (mode == agl::debugging_mode::advanced))
                 glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+	    }
         }
 
         [[nodiscard]]
         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
         [[nodiscard]]
-        GLFWwindow& make_window(const window_config& config, const  avocet::opengl::opengl_version& version) {
+        GLFWwindow& make_window(const window_config& config, const avocet::opengl::opengl_version& version) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));
 
-            set_debug_context();
+            set_debug_context(version);
 
             auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
