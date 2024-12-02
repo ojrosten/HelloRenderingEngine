@@ -15,7 +15,7 @@ namespace curlew {
     enum class specificity_flavour : uint64_t { none = 0, build = 1, opengl_version = 2, hardware = 4 };
 }
 
-namespace sequoia_bitmask {
+inline namespace sequoia_bitmask {
     template<>
     struct as_bitmask<curlew::selectivity_flavour> : std::true_type {};
 

@@ -35,5 +35,6 @@ curlew_glfw_compile_options(glfw)
 add_subdirectory(${Source}/avocet avocet)
 target_link_libraries(curlew PUBLIC avocet)
 target_include_directories(curlew PUBLIC ${Source})
+target_compile_definitions(curlew PUBLIC EXPOSE_SEQUOIA_BITMASK)
 
 sequoia_finalize_library(curlew)
