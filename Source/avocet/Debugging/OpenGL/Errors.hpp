@@ -25,11 +25,9 @@ namespace avocet::opengl {
     inline bool debug_output_supported(opengl_version version) {
         return (version.major > 3) && (version.minor >= 3);
     }
-  
+
     [[nodiscard]]
-    inline bool debug_output_supported() {
-        return debug_output_supported(get_opengl_version());
-    }
+    inline bool debug_output_supported() { return debug_output_supported(get_opengl_version()); }
 
     [[nodiscard]]
     inline bool object_labels_activated() { return debug_output_supported(); }
