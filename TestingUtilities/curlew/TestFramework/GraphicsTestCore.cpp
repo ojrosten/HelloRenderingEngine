@@ -5,7 +5,6 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
 
@@ -26,21 +25,63 @@ namespace curlew {
         [[nodiscard]]
         std::string platform() {
             using namespace avocet;
-            if(is_windows()) return "Win_";
-            if(is_linux())   return "Linux_";
-            if(is_apple())   return "Apple_";
+            if(is_windows()) return "Win";
+            if(is_linux())   return "Linux";
+            if(is_apple())   return "Apple";
 
             return "";
         }
 
         [[nodiscard]]
         std::string manufacturer(std::string_view rawVendor) {
-            if(rawVendor.find("Intel")  != std::string::npos) return "Intel_";
-            if(rawVendor.find("AMD")    != std::string::npos) return "AMD_";
-            if(rawVendor.find("NVIDIA") != std::string::npos) return "NVIDIA_";
+            if(rawVendor.find("Intel")  != std::string::npos) return "Intel";
+            if(rawVendor.find("AMD")    != std::string::npos) return "AMD";
+            if(rawVendor.find("NVIDIA") != std::string::npos) return "NVIDIA";
 
             return "";
         }
+        
+        std::string& add_separator(std::string& str) {
+            if(!str.empty()) str += "_";
+
+            return str;
+        }
+
+        template<class Flavour>
+            requires(std::is_scoped_enum_v<Flavour>)
+        [[nodiscard]]
+        constexpr bool build_dependent(Flavour flavour) noexcept { return (flavour & Flavour::build) == Flavour::build; }
+
+        template<class Flavour>
+            requires(std::is_scoped_enum_v<Flavour>)
+        [[nodiscard]]
+        constexpr bool ogl_version_dependent(Flavour flavour) noexcept { return (flavour & Flavour::opengl_version) == Flavour::opengl_version; }
+
+        template<class Flavour>
+            requires(std::is_scoped_enum_v<Flavour>)
+        [[nodiscard]]
+        constexpr bool hardware_dependent(Flavour flavour) noexcept { return (flavour & Flavour::hardware) == Flavour::hardware; }
+
+        template<class Flavour>
+            requires(std::is_scoped_enum_v<Flavour>)
+        [[nodiscard]]
+        std::string do_make_discriminator(Flavour flavour) {
+            std::string str{};
+            const auto [version, renderer]{glfw_manager{}.find_rendering_setup()};
+            if(hardware_dependent(flavour))
+                add_separator(str += platform()) += manufacturer(renderer);
+
+            if(ogl_version_dependent(flavour)) {
+                add_separator(str) += std::format("OpenGL_{}_{}", version.major, version.minor);
+            }
+
+            if(build_dependent(flavour)) {
+                add_separator(str) += (avocet::has_ndebug() ? "Release" : "Debug");
+            }
+
+            return str;
+        }
+
     }
 
     [[nodiscard]]
@@ -52,17 +93,9 @@ namespace curlew {
     }
 
     [[nodiscard]]
-    std::string opengl_version_as_string() {
-        const auto [major, minor]{glfw_manager{}.find_rendering_setup().version};
-        return std::format("OpenGL_{}_{}", major, minor);
-    }
+    std::string make_discriminator(selectivity_flavour selectivity) { return do_make_discriminator(selectivity); }
 
     [[nodiscard]]
-    std::string get_platform() {
-        const auto[version, renderer]{glfw_manager{}.find_rendering_setup()};
-        return std::format("{}{}OpenGL_{}_{}", platform(), manufacturer(renderer), version.major, version.minor);
-    }
+    std::string make_discriminator(specificity_flavour specificity) { return do_make_discriminator(specificity); }
 
-    [[nodiscard]]
-    std::string get_build() { return avocet::has_ndebug() ? "Release" : "Debug"; }
 }

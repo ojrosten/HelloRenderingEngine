@@ -8,9 +8,28 @@
 #pragma once
 
 #include "sequoia/TestFramework/FreeTestCore.hpp"
+#define EXPOSE_SEQUOIA_BITMASK
+#include "sequoia/Core/Logic/Bitmask.hpp"
+
+namespace curlew {
+    enum class selectivity_flavour : uint64_t { none = 0, build = 1, opengl_version = 2, hardware = 4 };
+    enum class specificity_flavour : uint64_t { none = 0, build = 1, opengl_version = 2, hardware = 4 };
+}
+
+namespace sequoia_bitmask {
+    template<>
+    struct as_bitmask<curlew::selectivity_flavour> : std::true_type {};
+
+    template<>
+    struct as_bitmask<curlew::specificity_flavour> : std::true_type {};
+}
 
 namespace curlew {
     using namespace sequoia::testing;
+
+    constexpr inline selectivity_flavour build_and_ogl_version_selective{curlew::selectivity_flavour::build | curlew::selectivity_flavour::opengl_version};
+    constexpr inline specificity_flavour platform_specific{specificity_flavour::hardware | specificity_flavour::opengl_version};
+    constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
 
     struct exception_postprocessor {
         [[nodiscard]]
@@ -28,15 +47,12 @@ namespace curlew {
     };
 
     [[nodiscard]]
-    std::string opengl_version_as_string();
+    std::string make_discriminator(selectivity_flavour selectivity);
 
     [[nodiscard]]
-    std::string get_platform();
+    std::string make_discriminator(specificity_flavour specificity);
 
-    [[nodiscard]]
-    std::string get_build();
-
-    template<test_mode Mode>
+    template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none>
     class basic_graphics_test : public basic_test<Mode, trivial_extender>
     {
     public:
@@ -49,6 +65,20 @@ namespace curlew {
         {
             return basic_test<Mode, trivial_extender>::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
         }
+
+        [[nodiscard]]
+        std::string summary_discriminator() const
+            requires (Selectivity != selectivity_flavour::none)
+        {
+            return make_discriminator(Selectivity);
+        }
+
+        [[nodiscard]]
+        std::string output_discriminator() const
+            requires (Specificity != specificity_flavour::none)
+        {
+            return make_discriminator(Specificity);
+        }
     protected:
         ~basic_graphics_test() = default;
 
@@ -56,116 +86,14 @@ namespace curlew {
         basic_graphics_test& operator=(basic_graphics_test&&) noexcept = default;
     };
 
-    using graphics_test                = basic_graphics_test<test_mode::standard>;
-    using graphics_false_negative_test = basic_graphics_test<test_mode::false_negative>;
-    using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive>;
+    template<selectivity_flavour Selectivity, specificity_flavour Specificity>
+    using graphics_test = basic_graphics_test<test_mode::standard, Selectivity, Specificity>;
 
-    /*! \brief Differentiates diagnostics output based on the platform 
-        
-        This is for the case where the same number of tests are run on all targets
-        (i.e. platforms and builds), but the versioned output may vary per platform.
-     */
+    template<selectivity_flavour Selectivity, specificity_flavour Specificity>
+    using graphics_false_negative_test = basic_graphics_test<test_mode::false_negative, Selectivity, Specificity>;
 
-    template<test_mode Mode>
-    class basic_platform_specific_graphics_test : public basic_graphics_test<Mode>
-    {
-    public:
-        using basic_graphics_test<Mode>::basic_graphics_test;
+    template<selectivity_flavour Selectivity, specificity_flavour Specificity>
+    using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive, Selectivity, Specificity>;
 
-        [[nodiscard]]
-        std::string output_discriminator() const { return get_platform(); }
-    protected:
-        ~basic_platform_specific_graphics_test() = default;
-
-        basic_platform_specific_graphics_test(basic_platform_specific_graphics_test&&)            noexcept = default;
-        basic_platform_specific_graphics_test& operator=(basic_platform_specific_graphics_test&&) noexcept = default;
-    };
-
-    using platform_specific_graphics_test                = basic_platform_specific_graphics_test<test_mode::standard>;
-    using platform_specific_graphics_false_negative_test = basic_platform_specific_graphics_test<test_mode::false_negative>;
-    using platform_specific_graphics_false_positive_test = basic_platform_specific_graphics_test<test_mode::false_positive>;
-
-    /*! \brief Differentiates diagnostics output based on the platform and build
-
-        This is for the case where the same number of tests are run on all targets
-        (i.e. platforms and builds), but the versioned output may vary per target.
-     */
-
-    template<test_mode Mode>
-    class basic_target_specific_graphics_test : public basic_graphics_test<Mode>
-    {
-    public:
-        using basic_graphics_test<Mode>::basic_graphics_test;
-
-        [[nodiscard]]
-        std::string output_discriminator() const {
-            const auto build{get_build()};
-            return get_platform() + (build.empty() ? "" : "_" + get_build());
-        }
-    protected:
-        ~basic_target_specific_graphics_test() = default;
-
-        basic_target_specific_graphics_test(basic_target_specific_graphics_test&&)            noexcept = default;
-        basic_target_specific_graphics_test& operator=(basic_target_specific_graphics_test&&) noexcept = default;
-    };
-
-    using target_specific_graphics_test                = basic_target_specific_graphics_test<test_mode::standard>;
-    using target_specific_graphics_false_negative_test = basic_target_specific_graphics_test<test_mode::false_negative>;
-    using target_specific_graphics_false_positive_test = basic_target_specific_graphics_test<test_mode::false_positive>;
-
-    /*! \brief Differentiates diagnostics output based on the platform and build, and differentiates summaries based on the build
-    
-        This is for the case where a different number of tests may be run for
-        different builds. For a given build, the same tests will be run for each 
-        platform, but the versioned output may vary per platform.
-     */
-
-    template<test_mode Mode>
-    class basic_build_selective_target_specific_graphics_test : public basic_target_specific_graphics_test<Mode>
-    {
-    public:
-      using basic_target_specific_graphics_test<Mode>::basic_target_specific_graphics_test;
-
-      [[nodiscard]]
-      std::string summary_discriminator() const { return get_build(); }
-    protected:
-      ~basic_build_selective_target_specific_graphics_test() = default;
-
-      basic_build_selective_target_specific_graphics_test(basic_build_selective_target_specific_graphics_test&&)            noexcept = default;
-      basic_build_selective_target_specific_graphics_test& operator=(basic_build_selective_target_specific_graphics_test&&) noexcept = default;
-    };
-
-    using build_selective_target_specific_graphics_test                = basic_build_selective_target_specific_graphics_test<test_mode::standard>;
-    using build_selective_target_specific_graphics_false_negative_test = basic_build_selective_target_specific_graphics_test<test_mode::false_negative>;
-    using build_selective_target_specific_graphics_false_positive_test = basic_build_selective_target_specific_graphics_test<test_mode::false_positive>;
-
-    /*! \brief Differentiates summaries based on the build and opengl version
-    
-        This is for the case where a different number of tests may be run depending on the build
-        and opengl version. However, for a given build and opengl version, all versioned output
-        is the same.
-     */
-
-    template<test_mode Mode>
-    class basic_build_and_version_selective_graphics_test : public basic_graphics_test<Mode>
-    {
-    public:
-      using basic_graphics_test<Mode>::basic_graphics_test;
-
-      [[nodiscard]]
-      std::string summary_discriminator() const {      
-          const auto build{get_build()};
-          return opengl_version_as_string() + (build.empty() ? "" : "_" + get_build());
-      }
-    protected:
-      ~basic_build_and_version_selective_graphics_test() = default;
-
-      basic_build_and_version_selective_graphics_test(basic_build_and_version_selective_graphics_test&&)            noexcept = default;
-      basic_build_and_version_selective_graphics_test& operator=(basic_build_and_version_selective_graphics_test&&) noexcept = default;
-    };
-
-    using build_and_version_selective_graphics_test                = basic_build_and_version_selective_graphics_test<test_mode::standard>;
-    using build_and_version_selective_graphics_false_negative_test = basic_build_and_version_selective_graphics_test<test_mode::false_negative>;
-    using build_and_version_selective_graphics_false_positive_test = basic_build_and_version_selective_graphics_test<test_mode::false_positive>;
-
+    using common_graphics_test = graphics_test<selectivity_flavour::none, specificity_flavour::none>;
 }

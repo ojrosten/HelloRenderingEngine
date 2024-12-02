@@ -15,10 +15,10 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class errors_build_selective_target_specific_free_test final : public curlew::build_selective_target_specific_graphics_test
+    class errors_build_selective_target_specific_free_test final : public curlew::graphics_test<curlew::selectivity_flavour::build, curlew::target_specific>
     {
     public:
-        using curlew::build_selective_target_specific_graphics_test::build_selective_target_specific_graphics_test;
+        using curlew::graphics_test<curlew::selectivity_flavour::build, curlew::target_specific>::graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

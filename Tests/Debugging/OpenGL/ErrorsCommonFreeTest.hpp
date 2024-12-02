@@ -15,10 +15,10 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class errors_common_free_test final : public curlew::graphics_test
+    class errors_common_free_test final : public curlew::common_graphics_test
     {
     public:
-        using curlew::graphics_test::graphics_test;
+        using curlew::common_graphics_test::common_graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
