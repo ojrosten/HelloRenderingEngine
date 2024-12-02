@@ -24,5 +24,7 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+
+        void debug_build_tests();
     };
 }
