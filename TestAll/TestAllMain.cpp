@@ -7,11 +7,11 @@
 
 /*! \file */
 
-#include "Debugging/OpenGL/ErrorsBuildSelectiveTargetSpecificFreeTest.hpp"
-#include "Debugging/OpenGL/ErrorsCommonFreeTest.hpp"
-#include "Graphics/OpenGL/ShaderProgramBuildAndVersionSelectiveFreeTest.hpp"
-#include "Graphics/OpenGL/ShaderProgramCommonFreeTest.hpp"
-#include "Graphics/OpenGL/ShaderProgramTargetSpecificFreeTest.hpp"
+#include "Debugging/OpenGL/IllegalGPUCallFreeTest.hpp"
+#include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
+#include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
+#include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
+#include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
 
@@ -26,15 +26,15 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Errors",
-            errors_common_free_test{"Errors Common Free Test"},
-            errors_build_selective_target_specific_free_test{"Errors Build Selective Target Specific Free Test"}
+            null_function_pointer_free_test{"Null Function Pointer Free Test"},
+            illegal_gpu_call_free_test{"Illegal GPU Call Free Test"}
         );
 
         runner.add_test_suite(
             "Shader Program",
-            shader_program_common_free_test{"Shader Program Common Free Test"},
-            shader_program_target_specific_free_test{"Shader Program Target Specific Free Test"},
-            shader_program_build_and_version_selective_free_test{"Shader Program Build And Version Selective Free Test"}
+            shader_program_file_existence_free_test{"Shader Program File Existence Free Test"},
+            shader_program_broken_stages_free_test{"Shader Program Broken Stages Free Test"},
+            shader_program_labelling_free_test{"Shader Program Labelling Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
