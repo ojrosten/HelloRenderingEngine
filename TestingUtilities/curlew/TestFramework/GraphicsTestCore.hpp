@@ -8,7 +8,6 @@
 #pragma once
 
 #include "sequoia/TestFramework/FreeTestCore.hpp"
-#define EXPOSE_SEQUOIA_BITMASK
 #include "sequoia/Core/Logic/Bitmask.hpp"
 
 namespace curlew {
