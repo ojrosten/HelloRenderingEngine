@@ -27,6 +27,7 @@ namespace curlew {
     using namespace sequoia::testing;
 
     constexpr inline selectivity_flavour ogl_version_and_build_selective{curlew::selectivity_flavour::opengl_version | curlew::selectivity_flavour::build};
+    constexpr inline selectivity_flavour os_and_renderer_selective{curlew::selectivity_flavour::os | curlew::selectivity_flavour::renderer};
     constexpr inline specificity_flavour platform_specific{specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version};
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
 
@@ -44,6 +45,19 @@ namespace curlew {
 
         ~gl_breaker() { *m_pFn = m_Fn; }
     };
+
+    [[nodiscard]]
+    bool is_intel(std::string_view renderer);
+
+
+    [[nodiscard]]
+    bool is_amd(std::string_view renderer);
+
+    [[nodiscard]]
+    bool is_nvidia(std::string_view renderer);
+
+    [[nodiscard]]
+    bool is_mesa(std::string_view renderer);
 
     [[nodiscard]]
     std::string make_discriminator(selectivity_flavour selectivity);

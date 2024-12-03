@@ -8,6 +8,7 @@
 /*! \file */
 
 #include "Debugging/OpenGL/IllegalGPUCallFreeTest.hpp"
+#include "Debugging/OpenGL/InfiniteRecursionFreeTest.hpp"
 #include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
@@ -29,7 +30,8 @@ int main(int argc, char** argv)
             "Errors",
             null_function_pointer_free_test{"Null Function Pointer Free Test"},
             illegal_gpu_call_free_test{"Illegal GPU Call Free Test"},
-            multiple_illegal_gpu_calls_free_test{"Multiple Illegal GPU Calls Free Test"}
+            multiple_illegal_gpu_calls_free_test{"Multiple Illegal GPU Calls Free Test"},
+            infinite_recursion_free_test{"Infinite Recursion Free Test"}
         );
 
         runner.add_test_suite(
@@ -47,7 +49,7 @@ int main(int argc, char** argv)
     }
     catch(...)
     {
-        std::cout << "Unrecognized error\n"; 
+        std::cout << "Unrecognized error\n";
     }
 
     return 0;

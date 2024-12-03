@@ -11,6 +11,18 @@
 #include <algorithm>
 
 namespace curlew {
+    [[nodiscard]]
+    bool is_intel(std::string_view renderer) { return renderer.find("Intel") != std::string::npos; }
+
+    [[nodiscard]]
+    bool is_nvidia(std::string_view renderer) { return renderer.find("NVIDIA") != std::string::npos; }
+
+    [[nodiscard]]
+    bool is_amd(std::string_view renderer) { return renderer.find("AMD") != std::string::npos; }
+
+    [[nodiscard]]
+    bool is_mesa(std::string_view renderer) { return renderer.find("llvmpipe") != std::string::npos; }
+
     namespace {
         std::string& erase_backwards(std::string& message, std::string_view rightPattern, std::string_view leftPattern) {
             constexpr auto npos{std::string::npos};
@@ -34,10 +46,10 @@ namespace curlew {
 
         [[nodiscard]]
         std::string concise_renderer(std::string_view rawRenderer) {
-            if(rawRenderer.find("Intel")    != std::string::npos) return "Intel";
-            if(rawRenderer.find("AMD")      != std::string::npos) return "AMD";
-            if(rawRenderer.find("NVIDIA")   != std::string::npos) return "NVIDIA";
-            if(rawRenderer.find("llvmpipe") != std::string::npos) return "Mesa";
+            if(is_intel(rawRenderer))  return "Intel";
+            if(is_amd(rawRenderer))    return "AMD";
+            if(is_nvidia(rawRenderer)) return "NVIDIA";
+            if(is_mesa(rawRenderer))   return "Mesa";
 
             return "";
         }
