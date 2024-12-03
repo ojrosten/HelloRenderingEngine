@@ -22,6 +22,7 @@
     },
     {
       "name": "superbuild-release",
+      "hidden": true,
       "inherits": "superbuild-base",
       "cacheVariables": {
         "SUPERBUILD_PRESETS": "android-arm64v8a-release;android-armeabiv7a-release;windows-x64-release"
@@ -52,6 +53,7 @@
     {
       "name": "android-arm64v8a-debug",
       "inherits": "android-base",
+      "hidden": true,
       "architecture": {
         "value": "arm64",
         "strategy": "external"
@@ -64,6 +66,7 @@
     {
       "name": "android-arm64v8a-release",
       "inherits": "android-arm64v8a-debug",
+      "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -71,6 +74,7 @@
     {
       "name": "android-armeabiv7a-debug",
       "inherits": "android-base",
+      "hidden": true,
       "architecture": {
         "value": "arm64",
         "strategy": "external"
@@ -83,6 +87,7 @@
     {
       "name": "android-armeabiv7a-release",
       "inherits": "android-armeabiv7a-debug",
+      "hidden": true,
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
