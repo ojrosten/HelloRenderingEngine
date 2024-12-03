@@ -15,16 +15,14 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class multiple_illegal_gpu_calls_free_test final : public curlew::graphics_test<curlew::ogl_version_and_build_selective, curlew::target_specific>
+    class infinite_recursion_free_test final : public curlew::graphics_test<curlew::os_and_renderer_selective, curlew::specificity_flavour::none>
     {
     public:
-        using curlew::graphics_test<curlew::ogl_version_and_build_selective, curlew::target_specific>::graphics_test;
+        using curlew::graphics_test<curlew::os_and_renderer_selective, curlew::specificity_flavour::none>::graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
         void run_tests();
-
-        void debug_build_tests();
     };
 }

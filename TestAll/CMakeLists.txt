@@ -15,6 +15,7 @@ add_executable(TestAll TestAllMain.cpp)
 
 target_sources(TestAll PRIVATE
                ${TestDir}/Debugging/OpenGL/IllegalGPUCallFreeTest.cpp
+               ${TestDir}/Debugging/OpenGL/InfiniteRecursionFreeTest.cpp
                ${TestDir}/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/Debugging/OpenGL/NullFunctionPointerFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp
