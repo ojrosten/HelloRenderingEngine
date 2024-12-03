@@ -30,6 +30,7 @@ namespace curlew {
     constexpr inline selectivity_flavour os_and_renderer_selective{curlew::selectivity_flavour::os | curlew::selectivity_flavour::renderer};
     constexpr inline specificity_flavour platform_specific{specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version};
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
+    constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
     struct exception_postprocessor {
         [[nodiscard]]
