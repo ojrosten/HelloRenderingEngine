@@ -11,8 +11,8 @@
 #include "sequoia/Core/Logic/Bitmask.hpp"
 
 namespace curlew {
-    enum class selectivity_flavour : uint64_t { none = 0, build = 1, opengl_version = 2, hardware = 4 };
-    enum class specificity_flavour : uint64_t { none = 0, build = 1, opengl_version = 2, hardware = 4 };
+    enum class selectivity_flavour : uint64_t { none = 0, os = 1, renderer = 2, opengl_version = 4, build = 8 };
+    enum class specificity_flavour : uint64_t { none = 0, os = 1, renderer = 2, opengl_version = 4, build = 8 };
 }
 
 inline namespace sequoia_bitmask {
@@ -27,7 +27,7 @@ namespace curlew {
     using namespace sequoia::testing;
 
     constexpr inline selectivity_flavour build_and_ogl_version_selective{curlew::selectivity_flavour::build | curlew::selectivity_flavour::opengl_version};
-    constexpr inline specificity_flavour platform_specific{specificity_flavour::hardware | specificity_flavour::opengl_version};
+    constexpr inline specificity_flavour platform_specific{specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version};
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
 
     struct exception_postprocessor {
