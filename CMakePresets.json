@@ -1,5 +1,10 @@
 ﻿{
   "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 24,
+    "patch": 0
+  },
   "configurePresets": [
     {
       "name": "superbuild-base",
@@ -29,20 +34,43 @@
       }
     },
     {
+      "name": "generic-base",
+      "hidden": true,
+      "description": "Base (default) configuration for all platforms.",
+      "generator": "Ninja Multi-Config",
+      "binaryDir": "${sourceDir}/out/${hostSystemName}-build/${presetName}",
+      "installDir": "${sourceDir}/out/${hostSystemName}-install/${presetName}",
+      "cacheVariables": {
+        "CMAKE_COLOR_DIAGNOSTICS": "ON",
+        "ToDo_CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "cmake/cpm_dependency_provider.cmake"
+      }
+    },
+    {
       "name": "android-base",
       "hidden": true,
       "description": "Target Android with Ninja build.",
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/${hostSystemName}-build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
+      "inherits": "generic-base",
       "cacheVariables": {
-        "ANDROIDPACKAGING_BUILD_TESTING": true,
-        "ANDROIDPACKAGING_BUILD_EXAMPLES": true,
+        "JAVA_HOME": "$env{JAVA_HOME}",
+        "CMAKE_ANDROID_SDK": "$env{ANDROID_HOME}",
+        "CMAKE_ANDROID_NDK": "$env{ANDROID_HOME}/ndk/25.2.9519653",
         "CMAKE_SYSTEM_NAME": "Android",
         "CMAKE_SYSTEM_VERSION": "29",
         "CMAKE_ANDROID_STL_TYPE": "c++_static",
-        "CMAKE_ANDROID_EXCEPTIONS": "TRUE",
-        "CMAKE_CROSSCOMPILING_EMULATOR": "${sourceDir}/adbShellRun.ps1"
+        "CMAKE_ANDROID_EXCEPTIONS": "TRUE"
+      }
+    },
+    {
+      "hidden": true,
+      "description": "[HIDDEN] unsupported Android",
+      "name": "android-arm64",
+      "inherits": "android-base",
+      "architecture": {
+        "value": "arm64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a"
       },
       "vendor": {
         "microsoft.com/VisualStudioSettings/CMake/1.0": {
@@ -51,120 +79,29 @@
       }
     },
     {
-      "name": "android-arm64v8a-debug",
+      "name": "android-arm",
+      "hidden": true,
+      "description": "[HIDDEN] unsupported Android x86",
       "inherits": "android-base",
-      "hidden": true,
       "architecture": {
-        "value": "arm64",
+        "value": "arm",
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_ANDROID_ARCH_ABI": "arm64-v8a",
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "android-arm64v8a-release",
-      "inherits": "android-arm64v8a-debug",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "android-armeabiv7a-debug",
-      "inherits": "android-base",
-      "hidden": true,
-      "architecture": {
-        "value": "arm64",
-        "strategy": "external"
+        "CMAKE_ANDROID_ARCH_ABI": "armeabi-v7a"
       },
-      "cacheVariables": {
-        "CMAKE_ANDROID_ARCH_ABI": "armeabi-v7a",
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "android-armeabiv7a-release",
-      "inherits": "android-armeabiv7a-debug",
-      "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "windows-base",
-      "hidden": true,
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/${hostSystemName}-build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
-      "cacheVariables": {
-        "CMAKE_C_COMPILER": "cl.exe",
-        "CMAKE_CXX_COMPILER": "cl.exe",
-        "CMAKE_DOTNET_TARGET_FRAMEWORK_VERSION": "v4.8"
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
-      }
-    },
-    {
-      "name": "windows-x64-debug",
-      "inherits": "windows-base",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "windows-x64-release",
-      "inherits": "windows-x64-debug",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "name": "linux-base",
-      "hidden": true,
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/${hostSystemName}-build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
-      "cacheVariables": {
-      },
-      "condition": {
-        "type": "equals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Linux"
-      }
-    },
-    {
-      "name": "linux-x64-debug",
-      "inherits": "linux-base",
-      "architecture": {
-        "value": "x64",
-        "strategy": "external"
-      },
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
-    },
-    {
-      "name": "linux-x64-release",
-      "inherits": "linux-x64-debug",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+      "vendor": {
+        "microsoft.com/VisualStudioSettings/CMake/1.0": {
+          "intelliSenseMode": "android-clang-arm"
+        }
       }
     },
     {
       "name": "macos-base",
       "hidden": true,
-      "generator": "Ninja",
-      "binaryDir": "${sourceDir}/out/${hostSystemName}-build/${presetName}",
-      "installDir": "${sourceDir}/out/install/${presetName}",
+      "generator": "Xcode",
+      "description": "Target a macOS system.",
+      "inherits": "generic-base",
       "cacheVariables": {
       },
       "condition": {
@@ -179,20 +116,262 @@
       }
     },
     {
-      "name": "macos-debug",
-      "displayName": "macOS Debug",
+      "name": "macos-x64",
+      "description": "Target Macos (Intel 64-bit)",
       "inherits": "macos-base",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
       }
     },
     {
-      "name": "macos-release",
-      "displayName": "macOS Release",
+      "name": "macos-arm64",
+      "description": "Target Macos (Arm64)",
       "inherits": "macos-base",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+      "architecture": {
+        "value": "arm64",
+        "strategy": "external"
       }
+    },
+    {
+      "name": "linux-base",
+      "hidden": true,
+      "description": "Target the Windows Subsystem for linux (WSL) or a remote linux system.",
+      "inherits": "generic-base",
+      "cacheVariables": {
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "vendor": {
+        "microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+          "sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+        }
+      }
+    },
+    {
+      "name": "linux-x64",
+      "description": "Target Windows (64-bit)",
+      "inherits": "linux-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "linux-x86",
+      "hidden": true,
+      "description": "[HIDDEN] x86 target",
+      "inherits": "linux-base",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "windows-base",
+      "hidden": true,
+      "generator": "Visual Studio 17 2022",
+      "description": "Target local-machine with the default development environment.",
+      "inherits": "generic-base",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "cl.exe",
+        "CMAKE_CXX_COMPILER": "cl.exe"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name": "windows-x64",
+      "description": "Target Windows (64-bit)",
+      "inherits": "windows-base",
+      "architecture": {
+        "value": "x64",
+        "strategy": "external"
+      }
+    },
+    {
+      "name": "windows-x86",
+      "hidden": true,
+      "description": "[HIDDEN] x86 target",
+      "inherits": "windows-base",
+      "architecture": {
+        "value": "x86",
+        "strategy": "external"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "android-arm-Debug",
+      "displayName": "Debug",
+      "configurePreset": "android-arm",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "android-arm-release",
+      "displayName": "Release",
+      "configurePreset": "android-arm",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "android-arm-clean+release",
+      "displayName": "Clean+Release",
+      "inherits": "android-arm-release",
+      "cleanFirst": true
+    },
+    {
+      "name": "android-arm64-Debug",
+      "displayName": "Debug",
+      "configurePreset": "android-arm64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "android-arm64-release",
+      "displayName": "Release",
+      "configurePreset": "android-arm64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "android-arm64-clean+release",
+      "displayName": "Clean+Release",
+      "inherits": "android-arm64-release",
+      "cleanFirst": true
+    },
+    {
+      "name": "windows-x64-debug",
+      "displayName": "Debug",
+      "configurePreset": "windows-x64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "windows-x64-release",
+      "displayName": "Release",
+      "configurePreset": "windows-x64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "windows-x64-clean+delease",
+      "displayName": "Clean+Release",
+      "inherits": "windows-x64-release",
+      "cleanFirst": true
+    },
+    {
+      "hidden": true,
+      "name": "windows-x86-debug",
+      "displayName": "Debug",
+      "configurePreset": "windows-x86",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "hidden": true,
+      "name": "windows-x86-release",
+      "displayName": "Release",
+      "configurePreset": "windows-x86",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "hidden": true,
+      "name": "windows-x86-clean+delease",
+      "displayName": "Clean+Release",
+      "inherits": "windows-x86-release",
+      "cleanFirst": true
+    },
+    {
+      "displayName": "Debug",
+      "name": "linux-x64-debug",
+      "configurePreset": "linux-x64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "linux-x64-release",
+      "displayName": "Release",
+      "configurePreset": "linux-x64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "linux-x64-clean+release",
+      "displayName": "Clean+Release",
+      "inherits": "linux-x64-release",
+      "cleanFirst": true
+    },
+    {
+      "hidden": true,
+      "displayName": "Debug",
+      "name": "linux-x86-debug",
+      "configurePreset": "linux-x86",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "hidden": true,
+      "name": "linux-x86-release",
+      "displayName": "Release",
+      "configurePreset": "linux-x86",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "hidden": true,
+      "name": "linux-x86-clean+release",
+      "displayName": "Clean+Release",
+      "inherits": "linux-x86-release",
+      "cleanFirst": true
+    },
+    {
+      "name": "macos-x64-Debug",
+      "displayName": "Debug",
+      "configurePreset": "macos-x64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-x64-release",
+      "displayName": "Release",
+      "configurePreset": "macos-x64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-x64-clean+release",
+      "displayName": "Clean+Release",
+      "inherits": "macos-x64-release",
+      "cleanFirst": true
+    },
+    {
+      "name": "macos-arm64-Debug",
+      "displayName": "Debug",
+      "configurePreset": "macos-arm64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Debug"
+    },
+    {
+      "name": "macos-arm64-release",
+      "displayName": "Release",
+      "configurePreset": "macos-arm64",
+      "inheritConfigureEnvironment": true,
+      "configuration": "Release"
+    },
+    {
+      "name": "macos-arm64-clean+release",
+      "displayName": "Clean+Release",
+      "inherits": "macos-arm64-release",
+      "cleanFirst": true
     }
   ]
 }
