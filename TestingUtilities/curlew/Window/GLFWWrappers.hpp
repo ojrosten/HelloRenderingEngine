@@ -47,6 +47,9 @@ namespace curlew {
     class [[nodiscard]] glfw_manager {
         glfw_resource m_Resource{};
         avocet::opengl::opengl_version m_OpenGLVersion{};
+
+        [[nodiscard]]
+        rendering_setup do_find_rendering_setup() const;
     public:
         glfw_manager();
 
@@ -58,7 +61,7 @@ namespace curlew {
         window create_window(const window_config& config);
 
         [[nodiscard]]
-        rendering_setup find_rendering_setup() const;
+        static rendering_setup find_rendering_setup();
     };
 
     class [[nodiscard]] window_resource {

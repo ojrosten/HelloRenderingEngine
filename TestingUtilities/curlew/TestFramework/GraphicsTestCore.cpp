@@ -86,7 +86,7 @@ namespace curlew {
         [[nodiscard]]
         std::string do_make_discriminator(Flavour flavour) {
             std::string str{};
-            const auto [version, renderer]{glfw_manager{}.find_rendering_setup()};
+            const auto [version, renderer]{glfw_manager::find_rendering_setup()};
             if(os_dependent(flavour))
                 str += operating_system();
 
