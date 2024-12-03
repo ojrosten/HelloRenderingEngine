@@ -15,10 +15,10 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class infinite_recursion_free_test final : public curlew::graphics_test<curlew::os_and_renderer_selective, curlew::specificity_flavour::none>
+    class infinite_recursion_free_test final : public curlew::graphics_test<curlew::os_and_renderer_selective, curlew::os_and_renderer_specific>
     {
     public:
-        using curlew::graphics_test<curlew::os_and_renderer_selective, curlew::specificity_flavour::none>::graphics_test;
+        using curlew::graphics_test<curlew::os_and_renderer_selective, curlew::os_and_renderer_specific>::graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

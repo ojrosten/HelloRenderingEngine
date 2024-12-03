@@ -26,7 +26,6 @@ namespace avocet::testing
             using namespace curlew;
             glfw_manager manager{};
             if(is_intel(manager.find_rendering_setup().renderer)) {
-                auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
             }
         }
