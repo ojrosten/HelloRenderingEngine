@@ -26,7 +26,7 @@ inline namespace sequoia_bitmask {
 namespace curlew {
     using namespace sequoia::testing;
 
-    constexpr inline selectivity_flavour build_and_ogl_version_selective{curlew::selectivity_flavour::build | curlew::selectivity_flavour::opengl_version};
+    constexpr inline selectivity_flavour ogl_version_and_build_selective{curlew::selectivity_flavour::opengl_version | curlew::selectivity_flavour::build};
     constexpr inline specificity_flavour platform_specific{specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version};
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
 
