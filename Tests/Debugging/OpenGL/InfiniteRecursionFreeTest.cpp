@@ -26,8 +26,10 @@ namespace avocet::testing
             using namespace curlew;
             glfw_manager manager{};
             if(is_intel(manager.find_rendering_setup().renderer)) {
-                auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-
+                check_filtered_exception_thrown<std::runtime_error>(
+                    reporter{"Recursively call glGetError"},
+                    [](){ opengl::check_for_basic_errors(std::source_location::current()); }
+                );
             }
         }
     }
