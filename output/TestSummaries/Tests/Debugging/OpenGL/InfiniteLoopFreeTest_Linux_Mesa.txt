@@ -1,1 +1,1 @@
-Infinite Recursion Free Test
+Infinite Loop Free Test
