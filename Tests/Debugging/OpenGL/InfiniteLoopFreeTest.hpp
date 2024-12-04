@@ -15,7 +15,7 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class infinite_recursion_free_test final : public curlew::graphics_test<curlew::os_and_renderer_selective, curlew::os_and_renderer_specific>
+    class infinite_loop_free_test final : public curlew::graphics_test<curlew::os_and_renderer_selective, curlew::os_and_renderer_specific>
     {
     public:
         using curlew::graphics_test<curlew::os_and_renderer_selective, curlew::os_and_renderer_specific>::graphics_test;

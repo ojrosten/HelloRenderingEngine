@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "InfiniteRecursionFreeTest.hpp"
+#include "InfiniteLoopFreeTest.hpp"
 #include "avocet/Debugging/OpenGL/Errors.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
@@ -15,12 +15,12 @@
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path infinite_recursion_free_test::source_file() const
+    std::filesystem::path infinite_loop_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void infinite_recursion_free_test::run_tests()
+    void infinite_loop_free_test::run_tests()
     {
         if(is_windows()) {
             using namespace curlew;
