@@ -211,20 +211,22 @@ namespace avocet::opengl {
 
     void check_for_basic_errors(std::source_location loc)
     {
-        const std::string errorMessage{
+        std::string errorMessage{
             std::ranges::fold_left(
                 get_errors(max_num_errors{10}),
                 std::string{},
-                [](std::string message, error_code e){ return message += to_string(e) += "\n"; }
+                [](std::string message, error_code e){ return message += to_string(e) += "\n\n"; }
             )
         };
 
-        if(!errorMessage.empty())
+        if(!errorMessage.empty()) {
+            errorMessage.pop_back();
             throw std::runtime_error{compose_error_message(errorMessage, loc)};
+        }
     }
 
     void check_for_advanced_errors(std::source_location loc) {
-        const std::string errorMessage{
+        std::string errorMessage{
             std::ranges::fold_left(
                 get_messages(max_num_errors{10}, loc),
                 std::string{},
@@ -234,12 +236,14 @@ namespace avocet::opengl {
                         return message;
                     }
 
-                    return message += info.message += "\n";
+                    return message += info.message += "\n\n";
                 }
             )
         };
 
-        if(!errorMessage.empty())
+        if(!errorMessage.empty()) {
+            errorMessage.pop_back();
             throw std::runtime_error{compose_error_message(errorMessage, loc)};
+        }
     }
 }

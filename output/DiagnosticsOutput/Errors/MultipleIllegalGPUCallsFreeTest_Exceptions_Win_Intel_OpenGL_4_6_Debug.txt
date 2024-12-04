@@ -1,11 +1,12 @@
-Tests/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp, Line 40
-Two errors
+Tests/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp, Line 41
+At least two errors
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp, line 44:
+OpenGL error detected in Tests/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp, line 45:
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_OPERATION in BindBuffer: (ID: 1360204945) Generic error
+
 Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in CreateShader: (ID: 4172578152) Generic error
 
