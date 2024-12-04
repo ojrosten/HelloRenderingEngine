@@ -9,12 +9,20 @@
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
 #include "avocet/Utilities/OpenGL/Casts.hpp"
 
+#include <algorithm>
 #include <filesystem>
 #include <format>
 #include <iostream>
+#include <ranges>
 #include <stdexcept>
 
-#include "glad/gl.h"
+#if defined(_MSC_VER)
+    #include <experimental/generator>
+    #define STD_GENERATOR std::experimental::generator
+#elif defined(__linux__)
+    #include <generator>
+    #define STD_GENERATOR std::generator
+#endif
 
 namespace avocet::opengl {
     namespace fs = std::filesystem;
