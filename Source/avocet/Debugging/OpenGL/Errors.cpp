@@ -196,6 +196,19 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
+        auto get_errors2(max_num_errors bound) {
+           return  std::views::iota(0u, bound.value)
+                 | std::views::transform([](auto){ 
+                       error_code e{gl_function{unchecked_debug_output, glGetError}()}; 
+                        return e;
+                   })
+                 | std::views::take_while([](error_code e) { 
+                       return e != error_code::none;
+                   });
+        }
+
+
+        [[nodiscard]]
         STD_GENERATOR<debug_info> get_messages(max_num_errors bound, std::source_location loc) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, bound.value)) {
                 const auto optMessage{get_next_message(loc)};
@@ -213,9 +226,11 @@ namespace avocet::opengl {
     {
         std::string errorMessage{
             std::ranges::fold_left(
-                get_errors(max_num_errors{10}),
+                get_errors2(max_num_errors{10}),
                 std::string{},
-                [](std::string message, error_code e){ return message += to_string(e) += "\n\n"; }
+                [](std::string message, const error_code& e){
+                    return message += to_string(e) += "\n\n";
+                }
             )
         };
 
