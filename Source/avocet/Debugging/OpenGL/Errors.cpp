@@ -198,13 +198,8 @@ namespace avocet::opengl {
         [[nodiscard]]
         auto get_errors2(max_num_errors bound) {
            return  std::views::iota(0u, bound.value)
-                 | std::views::transform([](auto){ 
-                       error_code e{gl_function{unchecked_debug_output, glGetError}()}; 
-                        return e;
-                   })
-                 | std::views::take_while([](error_code e) { 
-                       return e != error_code::none;
-                   });
+                 | std::views::transform([](auto){ return error_code{gl_function{unchecked_debug_output, glGetError}()}; })
+                 | std::views::take_while([](error_code e) { return e != error_code::none; });
         }
 
 
