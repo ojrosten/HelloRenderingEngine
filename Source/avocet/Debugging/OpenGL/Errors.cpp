@@ -217,6 +217,40 @@ namespace avocet::opengl {
                 co_yield optMessage.value();
             }
         }
+
+        struct gl_error{
+            using difference_type = std::make_signed_t<GLenum>;
+
+            static error_code get_error() { return error_code{gl_function{unchecked_debug_output, glGetError}()}; }
+
+            error_code error{get_error()};
+            std::size_t count{};
+
+            gl_error& operator++() {
+                ++count;
+                error = get_error();
+                return *this;
+            }
+
+            gl_error operator++(int);
+
+            [[nodiscard]]
+            operator error_code() const noexcept { return error; }
+        };
+
+        class error_bound {
+            max_num_errors m_Max{10};
+        public:
+            error_bound() = default;
+
+            explicit error_bound(max_num_errors maxNum)
+                : m_Max{maxNum}
+            {}
+
+            [[nodiscard]]
+            bool operator==(const gl_error& rhs) const noexcept { return (rhs.error == error_code::none) || (rhs.count == m_Max.value); }
+        };
+
     }
 
     [[nodiscard]]
