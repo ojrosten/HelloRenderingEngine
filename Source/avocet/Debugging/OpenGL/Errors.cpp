@@ -242,7 +242,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        auto get_errors4(max_num_errors bound) {
+        std::vector<error_code> get_errors4(max_num_errors bound) {
             std::vector<error_code> errorCodes{};
             for([[maybe_unused]] auto _ : std::views::iota(0u, bound.value)) {
                 const error_code e{gl_function{unchecked_debug_output, glGetError}()};
@@ -272,9 +272,9 @@ namespace avocet::opengl {
     {
         std::string errorMessage{
             std::ranges::fold_left(
-                get_errors4(max_num_errors{10}),
+                get_errors(max_num_errors{10}),
                 std::string{},
-                [](std::string message, const error_code& e){
+                [](std::string message, error_code e){
                     return message += to_string(e) += "\n\n";
                 }
             )
