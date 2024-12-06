@@ -203,17 +203,6 @@ namespace avocet::opengl {
                  | std::views::take_while([](error_code e) { return e != error_code::none; });
         }
 
-
-        [[nodiscard]]
-        STD_GENERATOR<debug_info> get_messages(max_num_errors bound, std::source_location loc) {
-            for([[maybe_unused]] auto _ : std::views::iota(0u, bound.value)) {
-                const auto optMessage{get_next_message(loc)};
-                if(!optMessage) co_return;
-
-                co_yield optMessage.value();
-            }
-        }
-
         struct gl_error{
             using difference_type = std::make_signed_t<GLenum>;
 
@@ -252,6 +241,28 @@ namespace avocet::opengl {
             return std::views::iota(gl_error{}, error_bound{bound});
         }
 
+        [[nodiscard]]
+        auto get_errors4(max_num_errors bound) {
+            std::vector<error_code> errorCodes{};
+            for([[maybe_unused]] auto _ : std::views::iota(0u, bound.value)) {
+                const error_code e{gl_function{unchecked_debug_output, glGetError}()};
+                if(e == error_code::none) break;
+
+                errorCodes.emplace_back(e);
+            }
+
+            return errorCodes;
+        }
+
+        [[nodiscard]]
+        STD_GENERATOR<debug_info> get_messages(max_num_errors bound, std::source_location loc) {
+            for([[maybe_unused]] auto _ : std::views::iota(0u, bound.value)) {
+                const auto optMessage{get_next_message(loc)};
+                if(!optMessage) co_return;
+
+                co_yield optMessage.value();
+            }
+        }
     }
 
     [[nodiscard]]
@@ -261,7 +272,7 @@ namespace avocet::opengl {
     {
         std::string errorMessage{
             std::ranges::fold_left(
-                get_errors3(max_num_errors{10}),
+                get_errors4(max_num_errors{10}),
                 std::string{},
                 [](std::string message, const error_code& e){
                     return message += to_string(e) += "\n\n";
