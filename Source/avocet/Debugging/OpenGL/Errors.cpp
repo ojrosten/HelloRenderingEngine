@@ -195,6 +195,7 @@ namespace avocet::opengl {
             }
         }
 
+        // Wrong! Has UB since transform is not equality preserving
         [[nodiscard]]
         auto get_errors2(max_num_errors bound) {
            return  std::views::iota(0u, bound.value)
@@ -246,6 +247,11 @@ namespace avocet::opengl {
             bool operator==(const gl_error& rhs) const noexcept { return (rhs.error == error_code::none) || (rhs.count == m_Max.value); }
         };
 
+        [[nodiscard]]
+        auto get_errors3(max_num_errors bound) {
+            return std::views::iota(gl_error{}, error_bound{bound});
+        }
+
     }
 
     [[nodiscard]]
@@ -255,7 +261,7 @@ namespace avocet::opengl {
     {
         std::string errorMessage{
             std::ranges::fold_left(
-                get_errors2(max_num_errors{10}),
+                get_errors3(max_num_errors{10}),
                 std::string{},
                 [](std::string message, const error_code& e){
                     return message += to_string(e) += "\n\n";
