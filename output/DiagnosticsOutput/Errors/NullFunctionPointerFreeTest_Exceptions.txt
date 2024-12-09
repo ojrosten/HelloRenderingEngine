@@ -12,7 +12,7 @@ Null glGetError when checking for basic errors
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Source/avocet/Debugging/OpenGL/Errors.cpp, line 192
+gl_function: attempting to construct with a nullptr coming via Source/avocet/Debugging/OpenGL/Errors.cpp, line 187
 
 =======================================
 
