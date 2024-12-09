@@ -13,6 +13,17 @@
 namespace avocet::testing
 {
     [[nodiscard]]
+    std::filesystem::path buffers_labelling_false_negative_test::source_file() const
+    {
+        return std::source_location::current().file_name();
+    }
+
+    void buffers_labelling_false_negative_test::labelling_tests()
+    {
+        namespace agl = avocet::opengl;
+    }
+
+    [[nodiscard]]
     std::filesystem::path buffers_labelling_free_test::source_file() const
     {
         return std::source_location::current().file_name();

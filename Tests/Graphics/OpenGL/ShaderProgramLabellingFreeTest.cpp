@@ -13,6 +13,16 @@
 namespace avocet::testing
 {
     [[nodiscard]]
+    std::filesystem::path shader_program_labelling_false_negative_test::source_file() const
+    {
+        return std::source_location::current().file_name();
+    }
+
+    void shader_program_labelling_false_negative_test::labelling_tests()
+    {
+    }
+
+    [[nodiscard]]
     std::filesystem::path shader_program_labelling_free_test::source_file() const
     {
         return std::source_location::current().file_name();
