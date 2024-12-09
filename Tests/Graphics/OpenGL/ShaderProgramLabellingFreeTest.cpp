@@ -42,16 +42,7 @@ namespace avocet::testing
                 shaderDir / "Monochrome.fs"
             };
 
-            const auto label{
-                [&sp](){
-                    std::string label(28, ' ');
-                    agl::gl_function{glGetObjectLabel}(GL_PROGRAM, sp.resource().handle().index(), agl::to_gl_sizei(label.size()), nullptr, label.data());
-                    if((label.back() == '\0') || (label.back() == ' ')) label.pop_back();
-                    return label;
-                }()
-            };
-
-            check(equivalence, "Shader Program Label", label, "Identity.vs / Monochrome.fs");
+            check_object_label("Shader Program Label", sp, agl::object_identifier::program, "Identity.vs / Monochrome.fs");
         }
     }
 }
