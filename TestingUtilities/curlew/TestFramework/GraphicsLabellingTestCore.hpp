@@ -52,4 +52,6 @@ namespace curlew {
     };
 
     using graphics_labelling_test = basic_graphics_labelling_test<test_mode::standard>;
+    using graphics_labelling_false_negative_test = basic_graphics_labelling_test<test_mode::false_negative>;
+    using graphics_labelling_false_positive_test = basic_graphics_labelling_test<test_mode::false_positive>;
 }

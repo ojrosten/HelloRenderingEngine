@@ -40,6 +40,7 @@ int main(int argc, char** argv)
             "Shader Program",
             shader_program_file_existence_free_test{"Shader Program File Existence Free Test"},
             shader_program_broken_stages_free_test{"Shader Program Broken Stages Free Test"},
+            shader_program_labelling_false_negative_test{"Shader Program Labelling False Negative Test"},
             shader_program_labelling_free_test{"Shader Program Labelling Free Test"}
         );
 
