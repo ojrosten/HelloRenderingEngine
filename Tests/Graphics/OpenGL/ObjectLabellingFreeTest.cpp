@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "ShaderProgramLabellingFreeTest.hpp"
+#include "ObjectLabellingFreeTest.hpp"
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 #include "avocet/Utilities/OpenGL/Casts.hpp"
 

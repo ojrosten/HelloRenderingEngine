@@ -12,9 +12,9 @@
 #include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
 #include "Graphics/OpenGL/BuffersFreeTest.hpp"
+#include "Graphics/OpenGL/ObjectLabellingFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
-#include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
 

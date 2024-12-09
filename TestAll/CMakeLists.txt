@@ -19,9 +19,9 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/Debugging/OpenGL/NullFunctionPointerFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/BuffersFreeTest.cpp
+               ${TestDir}/Graphics/OpenGL/ObjectLabellingFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/ShaderProgramLabellingFreeTest.cpp)
+               ${TestDir}/Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})
 
