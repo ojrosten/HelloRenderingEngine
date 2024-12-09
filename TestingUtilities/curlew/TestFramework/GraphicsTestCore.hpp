@@ -79,17 +79,13 @@ namespace curlew {
     public:
         using parallelizable_type = std::false_type;
 
-        using base_type = basic_test<Mode, trivial_extender>;
-        using base_type::basic_test;
+        using base_test_type = basic_test<Mode, trivial_extender>;
+        using base_test_type::basic_test;
 
         template<class E, class Fn>
         bool check_filtered_exception_thrown(const reporter& description, Fn&& function)
         {
-            return base_type::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
-        }
-
-        bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view expected) {
-            return base_type::check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);
+            return base_test_type::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
         }
 
         [[nodiscard]]
@@ -122,4 +118,23 @@ namespace curlew {
     using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive, Selectivity, Specificity>;
 
     using common_graphics_test = graphics_test<selectivity_flavour::none, specificity_flavour::none>;
+
+    template<test_mode Mode>
+    class basic_graphics_labelling_test : public basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>
+    {
+    public:
+        using base_graphics_test_type = basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>;
+        using base_graphics_test_type::base_graphics_test_type;
+
+        bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view expected) {
+            return this->check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);
+        }
+    protected:
+        ~basic_graphics_labelling_test() = default;
+
+        basic_graphics_labelling_test(basic_graphics_labelling_test&&)            noexcept = default;
+        basic_graphics_labelling_test& operator=(basic_graphics_labelling_test&&) noexcept = default;
+    };
+
+    using graphics_labelling_test = basic_graphics_labelling_test<test_mode::standard>;
 }
