@@ -9,6 +9,7 @@
 
 #include "avocet/Graphics/OpenGL/ObjectIdentifiers.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
+#include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 
 #include "sequoia/TestFramework/FreeTestCore.hpp"
 #include "sequoia/Core/Logic/Bitmask.hpp"
@@ -69,6 +70,9 @@ namespace curlew {
     [[nodiscard]]
     std::string make_discriminator(specificity_flavour specificity);
 
+    [[nodiscard]]
+    std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::size_t expectedSize);
+
     template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none>
     class basic_graphics_test : public basic_test<Mode, trivial_extender>
     {
@@ -84,14 +88,8 @@ namespace curlew {
             return base_type::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
         }
 
-        template<class GPUObject>
-        bool check_object_label(const reporter& description, const GPUObject& object, avocet::opengl::object_identifier identifier, std::string_view expected) {
-            namespace agl = avocet::opengl;
-            std::string label(expected.size() + 1, ' ');
-            agl::gl_function{glGetObjectLabel}(agl::to_gl_enum(identifier), object.resource().handle().index(), agl::to_gl_sizei(label.size()), nullptr, label.data());
-            if((label.back() == '\0') || (label.back() == ' ')) label.pop_back();
-
-            return base_type::check(equivalence, description, label, expected);
+        bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view expected) {
+            return base_type::check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);
         }
 
         [[nodiscard]]

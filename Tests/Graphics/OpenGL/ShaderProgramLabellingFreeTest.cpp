@@ -42,7 +42,7 @@ namespace avocet::testing
                 shaderDir / "Monochrome.fs"
             };
 
-            check_object_label("Shader Program Label", sp, agl::object_identifier::program, "Identity.vs / Monochrome.fs");
+            check_object_label("Shader Program Label", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.fs");
         }
     }
 }
