@@ -47,6 +47,7 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Buffers",
             buffers_free_test{"Buffers Free Test"},
+            buffers_labelling_false_negative_test{"Buffers Labelling False Negative Test"},
             buffers_labelling_free_test{"Buffers Labelling Free Test"}
         );
 
