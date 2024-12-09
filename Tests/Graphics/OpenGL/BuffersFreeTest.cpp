@@ -8,10 +8,13 @@
 /*! \file */
 
 #include "BuffersFreeTest.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
 
 namespace avocet::testing
 {
+    namespace agl = avocet::opengl;
+
     [[nodiscard]]
     std::filesystem::path buffers_free_test::source_file() const
     {
@@ -20,6 +23,24 @@ namespace avocet::testing
 
     void buffers_free_test::run_tests()
     {
-        // e.g. check(equality, "Useful description", some_function(), 42);
+        using namespace curlew;
+        glfw_manager manager{};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        test_vbo();
+        test_vao();
+        test_ebo();
+    }
+
+    void buffers_free_test::test_vbo()
+    {
+    }
+
+    void buffers_free_test::test_vao()
+    {
+    }
+
+    void buffers_free_test::test_ebo()
+    {
     }
 }
