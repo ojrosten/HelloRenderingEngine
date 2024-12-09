@@ -1,0 +1,44 @@
+Tests/Graphics/OpenGL/BuffersLabellingFreeTest.cpp, Line 27
+VBO label too short
+
+Comparison performed using:
+[sequoia::testing::value_tester<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >]
+Checking for equivalence with:
+[std::basic_string_view<char, std::char_traits<char> >]
+
+  Lengths differ
+  Obtained string is too short
+  [unsigned long long]
+  operator== returned false
+  Obtained : 15
+  Predicted: 16
+
+  First missing character: s
+  Full strings:
+  Obtained : Hello VBO Label
+  Predicted: Hello VBO Labels
+
+=======================================
+
+Tests/Graphics/OpenGL/BuffersLabellingFreeTest.cpp, Line 28
+VBO label too long
+
+Comparison performed using:
+[sequoia::testing::value_tester<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >]
+Checking for equivalence with:
+[std::basic_string_view<char, std::char_traits<char> >]
+
+  Lengths differ
+  Obtained string is too long
+  [unsigned long long]
+  operator== returned false
+  Obtained : 15
+  Predicted: 14
+
+  First excess character: l
+  Full strings:
+  Obtained : Hello VBO Label
+  Predicted: Hello VBO Labe
+
+=======================================
+
