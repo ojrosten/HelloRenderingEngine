@@ -11,6 +11,7 @@
 #include "Debugging/OpenGL/InfiniteLoopFreeTest.hpp"
 #include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
+#include "Graphics/OpenGL/BuffersFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
@@ -39,6 +40,11 @@ int main(int argc, char** argv)
             shader_program_file_existence_free_test{"Shader Program File Existence Free Test"},
             shader_program_broken_stages_free_test{"Shader Program Broken Stages Free Test"},
             shader_program_labelling_free_test{"Shader Program Labelling Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Buffers",
+            buffers_free_test{"Buffers Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
