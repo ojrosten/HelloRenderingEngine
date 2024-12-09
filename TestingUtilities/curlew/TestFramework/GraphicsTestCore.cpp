@@ -8,8 +8,6 @@
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
 
-#include "avocet/Utilities/OpenGL/Casts.hpp"
-
 namespace curlew {
     [[nodiscard]]
     bool is_intel(std::string_view renderer) { return renderer.find("Intel") != std::string::npos; }
@@ -118,15 +116,4 @@ namespace curlew {
 
     [[nodiscard]]
     std::string make_discriminator(specificity_flavour specificity) { return do_make_discriminator(specificity); }
-
-
-    [[nodiscard]]
-    std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::size_t expectedSize) {
-        namespace agl = avocet::opengl;
-        std::string label(expectedSize + 1, ' ');
-        agl::gl_function{glGetObjectLabel}(agl::to_gl_enum(identifier), handle.index(), agl::to_gl_sizei(label.size()), nullptr, label.data());
-        if((label.back() == '\0') || (label.back() == ' ')) label.pop_back();
-
-        return label;
-    }
 }

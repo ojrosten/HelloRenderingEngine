@@ -12,6 +12,7 @@
 #include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
 #include "Graphics/OpenGL/BuffersFreeTest.hpp"
+#include "Graphics/OpenGL/BuffersLabellingFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
@@ -44,7 +45,8 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Buffers",
-            buffers_free_test{"Buffers Free Test"}
+            buffers_free_test{"Buffers Free Test"},
+            buffers_labelling_free_test{"Buffers Labelling Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

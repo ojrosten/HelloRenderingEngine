@@ -54,7 +54,6 @@ namespace curlew {
     [[nodiscard]]
     bool is_intel(std::string_view renderer);
 
-
     [[nodiscard]]
     bool is_amd(std::string_view renderer);
 
@@ -69,9 +68,6 @@ namespace curlew {
 
     [[nodiscard]]
     std::string make_discriminator(specificity_flavour specificity);
-
-    [[nodiscard]]
-    std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::size_t expectedSize);
 
     template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none>
     class basic_graphics_test : public basic_test<Mode, trivial_extender>
@@ -118,23 +114,4 @@ namespace curlew {
     using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive, Selectivity, Specificity>;
 
     using common_graphics_test = graphics_test<selectivity_flavour::none, specificity_flavour::none>;
-
-    template<test_mode Mode>
-    class basic_graphics_labelling_test : public basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>
-    {
-    public:
-        using base_graphics_test_type = basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>;
-        using base_graphics_test_type::base_graphics_test_type;
-
-        bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view expected) {
-            return this->check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);
-        }
-    protected:
-        ~basic_graphics_labelling_test() = default;
-
-        basic_graphics_labelling_test(basic_graphics_labelling_test&&)            noexcept = default;
-        basic_graphics_labelling_test& operator=(basic_graphics_labelling_test&&) noexcept = default;
-    };
-
-    using graphics_labelling_test = basic_graphics_labelling_test<test_mode::standard>;
 }

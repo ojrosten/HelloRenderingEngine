@@ -15,7 +15,7 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class shader_program_labelling_free_test final : public curlew::graphics_labelling_test
+    class buffers_labelling_free_test final : public curlew::graphics_labelling_test
     {
     public:
         using curlew::graphics_labelling_test::graphics_labelling_test;
