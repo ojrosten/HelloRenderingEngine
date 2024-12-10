@@ -32,18 +32,21 @@ namespace avocet::testing
         test_ebo();
     }
 
-    void buffers_free_test::test_vbo()
-    {
-        agl::vertex_buffer_object vbo{};
+    template<class BufferObject, class T, std::size_t N>
+    bool buffers_free_test::check_buffer_object(const reporter& description, const std::array<T, N>& buffer) {
+        BufferObject bufferObject{};
 
-        std::array<GLfloat, 4> buffer{0.0, 1.0, 2.0, 3.0};
-
-        agl::gl_function{glBindBuffer}(GL_ARRAY_BUFFER, get_raw_index(vbo));
+        agl::gl_function{glBindBuffer}(GL_ARRAY_BUFFER, get_raw_index(bufferObject));
         agl::gl_function{glBufferData}(GL_ARRAY_BUFFER, sizeof(buffer), buffer.data(), GL_STATIC_DRAW);
 
-        std::array<GLfloat, 4> recoveredBuffer{};
+        std::array<T, N> recoveredBuffer{};
         agl::gl_function{glGetBufferSubData}(GL_ARRAY_BUFFER, 0, sizeof(recoveredBuffer), recoveredBuffer.data());
-        check(equality, "VBO Data", recoveredBuffer, buffer);
+        return check(equality, description, recoveredBuffer, buffer);
+    }
+
+    void buffers_free_test::test_vbo()
+    {
+        check_buffer_object<agl::vertex_buffer_object>("VBO Data", std::array<GLfloat, 4>{0.0, 1.0, 2.0, 3.0});
     }
 
     void buffers_free_test::test_vao()
@@ -52,15 +55,6 @@ namespace avocet::testing
 
     void buffers_free_test::test_ebo()
     {
-        agl::element_buffer_object ebo{};
-
-        std::array<GLubyte, 3> buffer{0, 1, 3};
-
-        agl::gl_function{glBindBuffer}(GL_ARRAY_BUFFER, get_raw_index(ebo));
-        agl::gl_function{glBufferData}(GL_ARRAY_BUFFER, sizeof(buffer), buffer.data(), GL_STATIC_DRAW);
-
-        std::array<GLubyte, 3> recoveredBuffer{};
-        agl::gl_function{glGetBufferSubData}(GL_ARRAY_BUFFER, 0, sizeof(recoveredBuffer), recoveredBuffer.data());
-        check(equality, "EBO Data", recoveredBuffer, buffer);
+        check_buffer_object<agl::element_buffer_object>("EBO Data", std::array<GLfloat, 4>{0, 1, 3});
     }
 }
