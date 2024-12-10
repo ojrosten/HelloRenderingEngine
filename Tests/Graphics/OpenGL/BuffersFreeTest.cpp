@@ -51,6 +51,14 @@ namespace avocet::testing
 
     void buffers_free_test::test_vao()
     {
+        agl::vertex_attribute_object vao{};
+
+        agl::gl_function{glBindVertexArray}(get_raw_index(vao));
+        agl::gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+
+        GLuint param{};
+        glGetVertexAttribIuiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &param);
+        check(equality, "VAO Data", param, GLuint(3 * sizeof(GLfloat)));
     }
 
     void buffers_free_test::test_ebo()
