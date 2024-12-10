@@ -22,11 +22,14 @@ namespace curlew {
     };
 
     template<test_mode Mode>
-    class basic_graphics_labelling_test : public basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>
+    using labelling_test_base
+        = basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, (Mode == test_mode::false_positive) ? curlew::platform_specific : curlew::ogl_version_and_build_specific>;
+
+    template<test_mode Mode>
+    class basic_graphics_labelling_test : public labelling_test_base<Mode>
     {
     public:
-        using base_graphics_test_type = basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>;
-        using base_graphics_test_type::base_graphics_test_type;
+        using labelling_test_base<Mode>::labelling_test_base;
 
         bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view expected) {
             return this->check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);

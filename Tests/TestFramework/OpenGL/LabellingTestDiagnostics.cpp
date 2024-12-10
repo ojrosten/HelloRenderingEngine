@@ -7,19 +7,27 @@
 
 /*! \file */
 
-#include "BuffersLabellingFreeTest.hpp"
-#include "avocet/Graphics/OpenGL/Buffers.hpp"
+#include "LabellingTestDiagnostics.hpp"
 
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path buffers_labelling_free_test::source_file() const
+    std::filesystem::path labelling_false_negative_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void buffers_labelling_free_test::labelling_tests()
+    void labelling_false_negative_test::labelling_tests()
     {
-        namespace agl = avocet::opengl;
+    }
+
+    [[nodiscard]]
+    std::filesystem::path labelling_false_positive_test::source_file() const
+    {
+        return std::source_location::current().file_name();
+    }
+
+    void labelling_false_positive_test::labelling_tests()
+    {
     }
 }

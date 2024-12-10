@@ -15,17 +15,6 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class shader_program_labelling_false_negative_test final : public curlew::graphics_labelling_false_negative_test
-    {
-    public:
-        using curlew::graphics_labelling_false_negative_test::graphics_labelling_false_negative_test;
-
-        [[nodiscard]]
-        std::filesystem::path source_file() const;
-
-        void labelling_tests();
-    };
-
     class shader_program_labelling_free_test final : public curlew::graphics_labelling_test
     {
     public:
