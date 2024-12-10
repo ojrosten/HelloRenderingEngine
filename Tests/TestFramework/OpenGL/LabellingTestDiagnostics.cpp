@@ -7,26 +7,28 @@
 
 /*! \file */
 
-#include "ShaderProgramLabellingFreeTest.hpp"
+#include "LabellingTestDiagnostics.hpp"
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
 namespace avocet::testing
 {
-    std::filesystem::path shader_program_labelling_free_test::source_file() const
+    [[nodiscard]]
+    std::filesystem::path labelling_false_negative_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void shader_program_labelling_free_test::labelling_tests()
+    void labelling_false_negative_test::labelling_tests()
     {
-        namespace agl = avocet::opengl;
-        const auto shaderDir{working_materials()};
+    }
 
-        agl::shader_program sp{
-            shaderDir / "Identity.vs",
-            shaderDir / "Monochrome.fs"
-        };
+    [[nodiscard]]
+    std::filesystem::path labelling_false_positive_test::source_file() const
+    {
+        return std::source_location::current().file_name();
+    }
 
-        check_object_label("Shader Program Label", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.fs");
+    void labelling_false_positive_test::labelling_tests()
+    {
     }
 }

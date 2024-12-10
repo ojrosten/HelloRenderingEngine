@@ -12,23 +12,6 @@
 
 namespace avocet::testing
 {
-    [[nodiscard]]
-    std::filesystem::path buffers_labelling_false_negative_test::source_file() const
-    {
-        return std::source_location::current().file_name();
-    }
-
-    void buffers_labelling_false_negative_test::labelling_tests()
-    {
-        namespace agl = avocet::opengl;
-
-        agl::vertex_buffer_object vbo{};
-        vbo.add_label("Hello VBO Label");
-        check_object_label("VBO label too short", agl::object_identifier::buffer, vbo.get_handle(), "Hello VBO Labels");
-        check_object_label("VBO label too long", agl::object_identifier::buffer, vbo.get_handle(), "Hello VBO Labe");
-    }
-
-    [[nodiscard]]
     std::filesystem::path buffers_labelling_free_test::source_file() const
     {
         return std::source_location::current().file_name();

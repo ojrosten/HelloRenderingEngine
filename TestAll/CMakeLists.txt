@@ -22,7 +22,8 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Graphics/OpenGL/BuffersLabellingFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/ShaderProgramLabellingFreeTest.cpp)
+               ${TestDir}/Graphics/OpenGL/ShaderProgramLabellingFreeTest.cpp
+               ${TestDir}/TestFramework/OpenGL/LabellingTestDiagnostics.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})
 
