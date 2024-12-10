@@ -11,6 +11,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/Debugging/OpenGL/Errors.hpp"
+#include "avocet/Graphics/OpenGL/ObjectIdentifiers.hpp"
 
 namespace curlew {
     [[nodiscard]]
