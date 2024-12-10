@@ -34,6 +34,16 @@ namespace avocet::testing
 
     void buffers_free_test::test_vbo()
     {
+        agl::vertex_buffer_object vbo{};
+
+        std::array<GLfloat, 4> buffer{0.0, 1.0, 2.0, 3.0};
+
+        agl::gl_function{glBindBuffer}(GL_ARRAY_BUFFER, get_raw_index(vbo));
+        agl::gl_function{glBufferData}(GL_ARRAY_BUFFER, sizeof(buffer), buffer.data(), GL_STATIC_DRAW);
+
+        std::array<GLfloat, 4> recoveredBuffer{};
+        agl::gl_function{glGetBufferSubData}(GL_ARRAY_BUFFER, 0, sizeof(recoveredBuffer), recoveredBuffer.data());
+        check(equality, "VBO Data", recoveredBuffer, buffer);
     }
 
     void buffers_free_test::test_vao()
