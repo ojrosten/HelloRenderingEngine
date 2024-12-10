@@ -20,6 +20,17 @@ namespace avocet::testing
 
     void labelling_false_negative_test::labelling_tests()
     {
+        namespace agl = avocet::opengl;
+        const auto shaderDir{working_materials()};
+
+        agl::shader_program sp{
+            shaderDir / "Identity.vs",
+            shaderDir / "Monochrome.fs"
+        };
+
+        check_object_label("Shader Program Label typo",      agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.ff");
+        check_object_label("Shader Program Label too long",  agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.f");
+        check_object_label("Shader Program Label too short", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.fss");
     }
 
     [[nodiscard]]
@@ -30,5 +41,17 @@ namespace avocet::testing
 
     void labelling_false_positive_test::labelling_tests()
     {
+        namespace agl = avocet::opengl;
+        const auto shaderDir{working_materials()};
+
+        agl::shader_program sp{
+            shaderDir / "Identity.vs",
+            shaderDir / "Monochrome.fs"
+        };
+
+        check_exception_thrown<std::runtime_error>(
+            "Incorrect object identifier",
+            [&sp, this](){ check_object_label("Shader Program Label", agl::object_identifier::framebuffer, sp.resource().handle(), "Identity.vs / Monochrome.fs"); }
+        );
     }
 }
