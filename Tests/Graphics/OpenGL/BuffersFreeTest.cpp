@@ -57,7 +57,7 @@ namespace avocet::testing
         agl::gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 
         GLuint param{};
-        glGetVertexAttribIuiv(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &param);
+        agl::gl_function{glGetVertexAttribIuiv}(0, GL_VERTEX_ATTRIB_ARRAY_STRIDE, &param);
         check(equality, "VAO Data", param, GLuint(3 * sizeof(GLfloat)));
     }
 
