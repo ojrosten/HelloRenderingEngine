@@ -52,5 +52,15 @@ namespace avocet::testing
 
     void buffers_free_test::test_ebo()
     {
+        agl::element_buffer_object ebo{};
+
+        std::array<GLubyte, 3> buffer{0, 1, 3};
+
+        agl::gl_function{glBindBuffer}(GL_ARRAY_BUFFER, get_raw_index(ebo));
+        agl::gl_function{glBufferData}(GL_ARRAY_BUFFER, sizeof(buffer), buffer.data(), GL_STATIC_DRAW);
+
+        std::array<GLubyte, 3> recoveredBuffer{};
+        agl::gl_function{glGetBufferSubData}(GL_ARRAY_BUFFER, 0, sizeof(recoveredBuffer), recoveredBuffer.data());
+        check(equality, "EBO Data", recoveredBuffer, buffer);
     }
 }
