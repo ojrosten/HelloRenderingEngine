@@ -8,6 +8,7 @@
 /*! \file */
 
 #include "LabellingTestDiagnostics.hpp"
+#include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 
 namespace avocet::testing
 {
