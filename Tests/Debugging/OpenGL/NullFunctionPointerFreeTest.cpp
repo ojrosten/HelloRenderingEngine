@@ -39,7 +39,7 @@ namespace avocet::testing
             reporter{"Null glGetError when checking for basic errors"},
             [](){
                 gl_breaker breaker{glGetError};
-                agl::check_for_basic_errors(std::source_location::current());
+                agl::check_for_basic_errors(agl::num_messages{10}, std::source_location::current());
             }
         );
 
