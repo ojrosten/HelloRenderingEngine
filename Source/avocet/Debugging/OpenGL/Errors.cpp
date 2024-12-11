@@ -180,7 +180,7 @@ namespace avocet::opengl {
         std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
             return std::format("OpenGL error detected in {}:\n{}", avocet::opengl::to_string(loc), errorMessage);
         }
-
+#ifndef __clang__
         [[nodiscard]]
         STD_GENERATOR<error_code> get_errors(num_messages maxNum) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
@@ -200,6 +200,33 @@ namespace avocet::opengl {
                 co_yield message.value();
             }
         }
+#elif
+        [[nodiscard]]
+        std::vector<error_code> get_errors(num_messages maxNum) {
+            std::vector<error_code> errors;
+            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                const error_code e{gl_function{unchecked_debug_output, glGetError}()};
+                if(e == error_code::none) break;
+
+                errors.push_back(e);
+            }
+
+            return errors;
+        }
+
+        [[nodiscard]]
+        std::vector<debug_info> get_messages(num_messages maxNum, std::source_location loc) {
+            std::vector<debug_info> info;
+            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                const std::optional<debug_info> message{get_next_message(loc)};
+                if(!message) break;
+
+                info.push_back(message.value());
+            }
+
+            return info;
+        }
+#endif
     }
 
     [[nodiscard]]
@@ -229,11 +256,12 @@ namespace avocet::opengl {
                 [](std::string message, const debug_info& info){
                     if(info.severity == debug_severity::notification) {
                         std::cerr << info.message << '\n';
-                        return message;
                     }
                     else {
-                        return (message += info.message) += "\n";
+                        (message += info.message) += "\n";
                     }
+
+                    return message;
                 }
             )
         };
