@@ -17,7 +17,12 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(std::source_location loc);
 
-    struct num_messages { std::size_t value{}; };
+    struct num_messages {
+        std::size_t value{};
+    
+        [[nodiscard]]
+        friend auto operator<=>(const num_messages&, const num_messages&) noexcept = default;
+    };
 
     void check_for_basic_errors(num_messages maxNum, std::source_location loc);
 

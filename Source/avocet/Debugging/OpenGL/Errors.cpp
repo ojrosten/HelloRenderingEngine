@@ -228,6 +228,32 @@ namespace avocet::opengl {
             return info;
         }
 #endif
+
+        struct gl_error{
+            using difference_type = GLint;
+
+            static error_code invoke_validated() { return error_code{gl_function{unchecked_debug_output, glGetError}()}; }
+
+            num_messages count{};
+            error_code value{invoke_validated()};
+
+            gl_error& operator++() {
+                value = invoke_validated();
+                ++count.value;
+                return *this;
+            }
+
+            gl_error operator++(int); // Declared to satisfy the concept, but no need to actually define it (!)
+        };
+
+        struct gl_error_sentinal {
+            num_messages max_messages{};
+
+            [[nodiscard]]
+            bool operator==(const gl_error& rhs) const noexcept {
+                return (rhs.value == error_code::none) || (rhs.count == max_messages);
+            }
+        };
     }
 
     [[nodiscard]]
@@ -235,12 +261,22 @@ namespace avocet::opengl {
 
     void check_for_basic_errors(num_messages maxNum, std::source_location loc)
     {
-        const std::string errorMessage{
+        /*const std::string errorMessage{
             std::ranges::fold_left(
                 get_errors(maxNum),
                 std::string{},
                 [](std::string message, error_code e){
                     return message += to_string(e) += "\n";
+                }
+            )
+        };*/
+
+        const std::string errorMessage{
+            std::ranges::fold_left(
+                std::views::iota(gl_error{}, gl_error_sentinal{maxNum}),
+                std::string{},
+                [](std::string message, const gl_error& e){
+                    return message += to_string(e.value) += "\n";
                 }
             )
         };
