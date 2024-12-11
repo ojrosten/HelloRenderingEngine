@@ -15,6 +15,7 @@
 #include <iostream>
 #include <ranges>
 #include <stdexcept>
+#include <vector>
 
 #if defined(_MSC_VER)
     #include <experimental/generator>
