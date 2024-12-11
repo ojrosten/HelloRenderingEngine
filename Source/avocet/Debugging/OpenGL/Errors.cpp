@@ -200,7 +200,7 @@ namespace avocet::opengl {
                 co_yield message.value();
             }
         }
-#elif
+#else
         [[nodiscard]]
         std::vector<error_code> get_errors(num_messages maxNum) {
             std::vector<error_code> errors;
