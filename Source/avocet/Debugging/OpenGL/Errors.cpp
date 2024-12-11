@@ -180,6 +180,18 @@ namespace avocet::opengl {
         std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
             return std::format("OpenGL error detected in {}:\n{}", avocet::opengl::to_string(loc), errorMessage);
         }
+
+        struct num_errors { std::size_t value{}; };
+
+        [[nodiscard]]
+        STD_GENERATOR<error_code> get_errors(num_errors maxNum) {
+            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                const error_code e{gl_function{unchecked_debug_output, glGetError}()};
+                if(e == error_code::none) co_return;
+
+                co_yield e;
+            }
+        }
     }
 
     [[nodiscard]]
@@ -187,12 +199,15 @@ namespace avocet::opengl {
 
     void check_for_basic_errors(std::source_location loc)
     {
-        std::string errorMessage{};
-        error_code errorCode{};
-        while((errorCode = error_code{gl_function{unchecked_debug_output, glGetError}()}) != error_code::none)
-        {
-            errorMessage += to_string(errorCode) += "\n";
-        }
+        const std::string errorMessage{
+            std::ranges::fold_left(
+                get_errors(num_errors{10}),
+                std::string{},
+                [](std::string message, error_code e) {
+                    return message += to_string(e) + "\n";
+                }
+            )
+        };
 
         if(!errorMessage.empty())
             throw std::runtime_error{compose_error_message(errorMessage, loc)};

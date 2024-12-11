@@ -1,0 +1,19 @@
+Tests/Debugging/OpenGL/InfiniteLoopFreeTest.cpp, Line 30
+Repeatedly calling glGetError
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in Tests/Debugging/OpenGL/InfiniteLoopFreeTest.cpp, line 31:
+Invalid operation
+Invalid operation
+Invalid operation
+Invalid operation
+Invalid operation
+Invalid operation
+Invalid operation
+Invalid operation
+Invalid operation
+Invalid operation
+
+=======================================
+
