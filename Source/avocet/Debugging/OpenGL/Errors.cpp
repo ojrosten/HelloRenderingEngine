@@ -15,6 +15,7 @@
 #include <iostream>
 #include <ranges>
 #include <stdexcept>
+#include <vector>
 
 #if defined(_MSC_VER)
     #include <experimental/generator>
@@ -180,35 +181,91 @@ namespace avocet::opengl {
         std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
             return std::format("OpenGL error detected in {}:\n{}", avocet::opengl::to_string(loc), errorMessage);
         }
+#ifndef __clang__
+        [[nodiscard]]
+        STD_GENERATOR<error_code> get_errors(num_messages maxNum) {
+            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                const error_code e{gl_function{unchecked_debug_output, glGetError}()};
+                if(e == error_code::none) co_return;
+
+                co_yield e;
+            }
+        }
+
+        [[nodiscard]]
+        STD_GENERATOR<debug_info> get_messages(num_messages maxNum, std::source_location loc) {
+            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                const std::optional<debug_info> message{get_next_message(loc)};
+                if(!message) co_return;
+
+                co_yield message.value();
+            }
+        }
+#else
+        [[nodiscard]]
+        std::vector<error_code> get_errors(num_messages maxNum) {
+            std::vector<error_code> errors;
+            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                const error_code e{gl_function{unchecked_debug_output, glGetError}()};
+                if(e == error_code::none) break;
+
+                errors.push_back(e);
+            }
+
+            return errors;
+        }
+
+        [[nodiscard]]
+        std::vector<debug_info> get_messages(num_messages maxNum, std::source_location loc) {
+            std::vector<debug_info> info;
+            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                const std::optional<debug_info> message{get_next_message(loc)};
+                if(!message) break;
+
+                info.push_back(message.value());
+            }
+
+            return info;
+        }
+#endif
     }
 
     [[nodiscard]]
     std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
 
-    void check_for_basic_errors(std::source_location loc)
+    void check_for_basic_errors(num_messages maxNum, std::source_location loc)
     {
-        std::string errorMessage{};
-        error_code errorCode{};
-        while((errorCode = error_code{gl_function{unchecked_debug_output, glGetError}()}) != error_code::none)
-        {
-            errorMessage += to_string(errorCode) += "\n";
-        }
+        const std::string errorMessage{
+            std::ranges::fold_left(
+                get_errors(maxNum),
+                std::string{},
+                [](std::string message, error_code e){
+                    return message += to_string(e) += "\n";
+                }
+            )
+        };
 
         if(!errorMessage.empty())
             throw std::runtime_error{compose_error_message(errorMessage, loc)};
     }
 
-    void check_for_advanced_errors(std::source_location loc) {
-        std::string errorMessage{};
-        std::optional<debug_info> currentInfo{};
-        while((currentInfo = get_next_message(loc)) != std::nullopt) {
-            const auto& info{currentInfo.value()};
-            if(info.severity == debug_severity::notification)
-                std::cerr << info.message << '\n';
-            else {
-                (errorMessage += info.message) += "\n";
-            }
-        }
+    void check_for_advanced_errors(num_messages maxNum, std::source_location loc) {
+        const std::string errorMessage{
+            std::ranges::fold_left(
+                get_messages(maxNum, loc),
+                std::string{},
+                [](std::string message, const debug_info& info){
+                    if(info.severity == debug_severity::notification) {
+                        std::cerr << info.message << '\n';
+                    }
+                    else {
+                        (message += info.message) += "\n";
+                    }
+
+                    return message;
+                }
+            )
+        };
 
         if(!errorMessage.empty())
             throw std::runtime_error{compose_error_message(errorMessage, loc)};

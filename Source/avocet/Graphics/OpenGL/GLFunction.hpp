@@ -25,6 +25,8 @@ namespace avocet::opengl {
     public:
         using function_pointer_type = R(*)(Args...);
 
+        constexpr static num_messages max_reported_messages{10};
+
         gl_function(function_pointer_type f, std::source_location loc = std::source_location::current())
             : m_Fn{validate(f, loc)}
         {}
@@ -55,14 +57,14 @@ namespace avocet::opengl {
 
         static void check_for_errors(std::source_location loc) {
             if constexpr(Mode == debugging_mode::basic)
-                check_for_basic_errors(loc);
+                check_for_basic_errors(max_reported_messages, loc);
             else if constexpr(Mode == debugging_mode::advanced)
-                check_for_advanced_errors(loc);
+                check_for_advanced_errors(max_reported_messages, loc);
             else if constexpr(Mode == debugging_mode::dynamic) {
                 if(debug_output_supported())
-                    check_for_advanced_errors(loc);
+                    check_for_advanced_errors(max_reported_messages, loc);
                 else
-                    check_for_basic_errors(loc);
+                    check_for_basic_errors(max_reported_messages, loc);
             }
         }
     };
