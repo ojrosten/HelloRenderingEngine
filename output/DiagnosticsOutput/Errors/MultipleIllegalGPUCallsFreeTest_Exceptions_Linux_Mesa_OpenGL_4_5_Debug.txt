@@ -6,6 +6,7 @@ Expected Exception Type:
 OpenGL error detected in Tests/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp, line 44:
 Source: API; Type: Error; Severity: High
 GL_INVALID_OPERATION in glBindBuffer(non-gen name)
+
 Source: API; Type: Error; Severity: High
 GL_INVALID_ENUM in glCreateShader(GL_NONE)
 

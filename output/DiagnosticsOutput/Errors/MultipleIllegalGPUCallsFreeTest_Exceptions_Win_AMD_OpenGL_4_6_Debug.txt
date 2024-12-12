@@ -6,8 +6,10 @@ Expected Exception Type:
 OpenGL error detected in Tests/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp, line 44:
 Source: API; Type: Error; Severity: Medium
 GL_INVALID_OPERATION
+
 Source: API; Type: Error; Severity: Medium
 GL_INVALID_OPERATION
+
 Source: API; Type: Error; Severity: Medium
 GL_INVALID_ENUM
 
