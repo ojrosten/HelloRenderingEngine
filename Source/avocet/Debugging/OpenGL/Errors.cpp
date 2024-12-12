@@ -179,7 +179,7 @@ namespace avocet::opengl {
         }
 
         std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
-            return std::format("OpenGL error detected in {}:\n{}", avocet::opengl::to_string(loc), errorMessage);
+            return std::format("OpenGL error detected in {}:\n{}\n", avocet::opengl::to_string(loc), errorMessage);
         }
 #ifndef __clang__
         [[nodiscard]]
@@ -240,7 +240,8 @@ namespace avocet::opengl {
                 get_errors(maxNum),
                 std::string{},
                 [](std::string message, error_code e){
-                    return message += to_string(e) += "\n";
+                    const auto separator{message.empty() ? "" : "\n"};
+                    return (message += separator) += to_string(e);
                 }
             )
         };
@@ -255,11 +256,12 @@ namespace avocet::opengl {
                 get_messages(maxNum, loc),
                 std::string{},
                 [](std::string message, const debug_info& info){
+                    const auto separator{message.empty() ? "" : "\n\n"};
                     if(info.severity == debug_severity::notification) {
-                        std::cerr << info.message << '\n';
+                        std::cerr << separator << info.message;
                     }
                     else {
-                        (message += info.message) += "\n";
+                        (message += separator) += info.message;
                     }
 
                     return message;
