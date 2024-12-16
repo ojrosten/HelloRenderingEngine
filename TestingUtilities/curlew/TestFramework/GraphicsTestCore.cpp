@@ -21,6 +21,9 @@ namespace curlew {
     [[nodiscard]]
     bool is_mesa(std::string_view renderer) { return renderer.find("llvmpipe") != std::string::npos; }
 
+    [[nodiscard]]
+    bool is_apple(std::string_view renderer) { return renderer.find("Apple") != std::string::npos; }
+
     namespace {
         std::string& erase_backwards(std::string& message, std::string_view rightPattern, std::string_view leftPattern) {
             constexpr auto npos{std::string::npos};
@@ -34,10 +37,9 @@ namespace curlew {
 
         [[nodiscard]]
         std::string operating_system() {
-            using namespace avocet;
-            if(is_windows()) return "Win";
-            if(is_linux())   return "Linux";
-            if(is_apple())   return "Apple";
+            if(avocet::is_windows()) return "Win";
+            if(avocet::is_linux())   return "Linux";
+            if(avocet::is_apple())   return "Apple";
 
             return "";
         }
@@ -48,6 +50,7 @@ namespace curlew {
             if(is_amd(rawRenderer))    return "AMD";
             if(is_nvidia(rawRenderer)) return "NVIDIA";
             if(is_mesa(rawRenderer))   return "Mesa";
+            if(is_apple(rawRenderer))  return "Apple";
 
             return "";
         }
