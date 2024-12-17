@@ -6,15 +6,24 @@ if [[ -z "$1" ]]; then
   exit 1
 fi
 
+# Get the directory of the script
+script_dir=$(dirname "$0")
+
 # Get the test directory from the first argument
 test_dir="$1"
+
+# Relative location of the html output directory
+output_dir="${script_dir}/../coverage_reports"
+
+# Create output directory if it doesn't exist
+mkdir -p "$output_dir"
 
 # Run ctest in the specified directory
 cd "$test_dir"
 ctest -T Test -T Coverage
 
 # Generate lcov coverage report
-lcov --directpry .  --capture --outputfile coverage.info
+lcov --directory .  --capture --output-file coverage.info
 
 # Generate HTML report
-genhtml --demangle-cpp -o coverage coverage.info
+genhtml --demangle-cpp -o "${output_dir}" coverage.info
