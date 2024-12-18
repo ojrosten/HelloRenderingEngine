@@ -97,7 +97,4 @@ namespace curlew {
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };
-
-    [[nodiscard]]
-    std::string get_rendering_setup();
 }

@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "curlew/Window/GLFWWrappers.hpp"
+#include "curlew/Window/RenderingSetup.hpp"
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 #include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
@@ -44,7 +45,7 @@ int main()
 {
     try
     {
-        std::cout << curlew::get_rendering_setup();
+        std::cout << curlew::rendering_setup_summary();
 
         curlew::glfw_manager manager{};
         auto w{manager.create_window({.name{"Hello Rendering Engine"}})};

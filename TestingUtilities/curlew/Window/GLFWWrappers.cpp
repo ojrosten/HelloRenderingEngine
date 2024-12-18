@@ -108,12 +108,4 @@ namespace curlew {
 
         init_debug();
     }
-
-    [[nodiscard]]
-    std::string get_rendering_setup() {
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
-        namespace agl = avocet::opengl;
-        return std::format("GL Vendor  : {}\nGL Renderer: {}\nGL Version : {}\n", agl::get_vendor(), agl::get_renderer(),  agl::get_opengl_version_string());
-    }
 }
