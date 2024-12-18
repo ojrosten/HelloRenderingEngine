@@ -27,6 +27,8 @@ int main(int argc, char** argv)
         using namespace avocet::testing;
         using namespace std::literals::chrono_literals;
 
+        std::cout << curlew::get_rendering_setup();
+
         sequoia::testing::test_runner runner{argc, argv, "Oliver J. Rosten", "    ", {.source_folder{"avocet"}, .additional_dependency_analysis_paths{"TestingUtilities", "dependencies/sequoia/Source"}}};
 
         runner.add_test_suite(
