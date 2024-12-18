@@ -33,7 +33,7 @@ ctest -T Test -T Coverage
 
 # Generate lcov coverage report
 lcov --directory .  --capture --output-file coverage.info
-lcov --remove coverage.info '/usr/*' --output-file coverage.info
+lcov --remove coverage.info '/usr/*' '*/sequoia/*' --output-file coverage.info
 
 # Generate HTML report
 genhtml --demangle-cpp -o "${output_dir}" coverage.info
