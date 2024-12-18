@@ -10,6 +10,7 @@
 #include "sequoia/Core/Logic/Bitmask.hpp"
 
 #include <string>
+#include <cstdint>
 
 namespace curlew {
     enum class selectivity_flavour : uint64_t { none = 0, os = 1, renderer = 2, opengl_version = 4, build = 8 };
