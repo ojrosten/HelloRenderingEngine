@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">20.0&nbsp;%</td>
@@ -116,17 +116,17 @@
 <span id="L54"><span class="lineNum">      54</span> <span class="tlaUNC">           0 :     return std::nullopt;</span></span>
 <span id="L55"><span class="lineNum">      55</span>              :   }</span>
 <span id="L56"><span class="lineNum">      56</span>              : </span>
-<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC tlaBgGNC">          39 :   void write_to_file(const std::filesystem::path&amp; file, std::string_view text)</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC tlaBgGNC">          45 :   void write_to_file(const std::filesystem::path&amp; file, std::string_view text)</span></span>
 <span id="L58"><span class="lineNum">      58</span>              :   {</span>
-<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          39 :     if(std::ofstream ofile{file})</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          45 :     if(std::ofstream ofile{file})</span></span>
 <span id="L60"><span class="lineNum">      60</span>              :     {</span>
-<span id="L61"><span class="lineNum">      61</span> <span class="tlaGNC">          39 :       ofile.write(text.data(), text.size());</span></span>
+<span id="L61"><span class="lineNum">      61</span> <span class="tlaGNC">          45 :       ofile.write(text.data(), text.size());</span></span>
 <span id="L62"><span class="lineNum">      62</span>              :     }</span>
 <span id="L63"><span class="lineNum">      63</span>              :     else</span>
 <span id="L64"><span class="lineNum">      64</span>              :     {</span>
 <span id="L65"><span class="lineNum">      65</span> <span class="tlaUNC tlaBgUNC">           0 :       throw std::runtime_error{report_failed_write(file)};</span></span>
-<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC tlaBgGNC">          39 :     }</span></span>
-<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">          39 :   }</span></span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC tlaBgGNC">          45 :     }</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">          45 :   }</span></span>
 <span id="L68"><span class="lineNum">      68</span>              : }</span>
         </pre>
               </td>

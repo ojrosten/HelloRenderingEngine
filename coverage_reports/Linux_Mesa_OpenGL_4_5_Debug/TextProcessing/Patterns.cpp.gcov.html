@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
@@ -78,11 +78,11 @@
 <span id="L16"><span class="lineNum">      16</span>              : {</span>
 <span id="L17"><span class="lineNum">      17</span>              :   [[nodiscard]]</span>
 <span id="L18"><span class="lineNum">      18</span>              :   std::pair&lt;std::string::size_type, std::string::size_type&gt;</span>
-<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC tlaBgGNC">         105 :   find_matched_delimiters(std::string_view text, const char open, const char close, std::string::size_type pos)</span></span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC tlaBgGNC">         120 :   find_matched_delimiters(std::string_view text, const char open, const char close, std::string::size_type pos)</span></span>
 <span id="L20"><span class="lineNum">      20</span>              :   {</span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         105 :     constexpr auto npos{std::string::npos};</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         120 :     constexpr auto npos{std::string::npos};</span></span>
 <span id="L22"><span class="lineNum">      22</span>              : </span>
-<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">         105 :     if(const std::string::size_type openPos{text.find(open, pos)}; openPos != npos)</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">         120 :     if(const std::string::size_type openPos{text.find(open, pos)}; openPos != npos)</span></span>
 <span id="L24"><span class="lineNum">      24</span>              :     {</span>
 <span id="L25"><span class="lineNum">      25</span> <span class="tlaUNC tlaBgUNC">           0 :       int64_t openCount{1};</span></span>
 <span id="L26"><span class="lineNum">      26</span> <span class="tlaUNC">           0 :       pos = openPos+1;</span></span>
@@ -99,7 +99,7 @@
 <span id="L37"><span class="lineNum">      37</span> <span class="tlaUNC">           0 :       return {openPos, openPos};</span></span>
 <span id="L38"><span class="lineNum">      38</span>              :     }</span>
 <span id="L39"><span class="lineNum">      39</span>              : </span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC tlaBgGNC">         105 :     return {npos, npos};</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC tlaBgGNC">         120 :     return {npos, npos};</span></span>
 <span id="L41"><span class="lineNum">      41</span>              :   }</span>
 <span id="L42"><span class="lineNum">      42</span>              : </span>
 <span id="L43"><span class="lineNum">      43</span>              :   [[nodiscard]]</span>

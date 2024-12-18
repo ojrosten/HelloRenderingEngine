@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -140,7 +140,7 @@
 <span id="L78"><span class="lineNum">      78</span>              : </span>
 <span id="L79"><span class="lineNum">      79</span>              :         ~window_resource();</span>
 <span id="L80"><span class="lineNum">      80</span>              : </span>
-<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC tlaBgGNC">          96 :         [[nodiscard]] GLFWwindow&amp; get() noexcept { return m_Window; }</span></span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC tlaBgGNC">         120 :         [[nodiscard]] GLFWwindow&amp; get() noexcept { return m_Window; }</span></span>
 <span id="L82"><span class="lineNum">      82</span>              :     };</span>
 <span id="L83"><span class="lineNum">      83</span>              : </span>
 <span id="L84"><span class="lineNum">      84</span>              :     class [[nodiscard]] window {</span>
@@ -155,7 +155,7 @@
 <span id="L93"><span class="lineNum">      93</span>              : </span>
 <span id="L94"><span class="lineNum">      94</span>              :         window&amp; operator=(const window&amp;) = delete;</span>
 <span id="L95"><span class="lineNum">      95</span>              : </span>
-<span id="L96"><span class="lineNum">      96</span> <span class="tlaGNC">          96 :         ~window() = default;</span></span>
+<span id="L96"><span class="lineNum">      96</span> <span class="tlaGNC">         120 :         ~window() = default;</span></span>
 <span id="L97"><span class="lineNum">      97</span>              : </span>
 <span id="L98"><span class="lineNum">      98</span>              :         [[nodiscard]] GLFWwindow&amp; get() noexcept { return m_Window.get(); }</span>
 <span id="L99"><span class="lineNum">      99</span>              :     };</span>

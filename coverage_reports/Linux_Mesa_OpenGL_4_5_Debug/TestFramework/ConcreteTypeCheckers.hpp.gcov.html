@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">20.0&nbsp;%</td>
@@ -229,11 +229,11 @@
 <span id="L167"><span class="lineNum">     167</span>              : </span>
 <span id="L168"><span class="lineNum">     168</span>              :   public:</span>
 <span id="L169"><span class="lineNum">     169</span>              :     template&lt;test_mode Mode, class Advisor&gt;</span>
-<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC tlaBgGNC">           7 :     static void test(equality_check_t, test_logger&lt;Mode&gt;&amp; logger, string_view_type obtained, string_view_type prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
+<span id="L170"><span class="lineNum">     170</span> <span class="tlaGNC tlaBgGNC">           8 :     static void test(equality_check_t, test_logger&lt;Mode&gt;&amp; logger, string_view_type obtained, string_view_type prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
 <span id="L171"><span class="lineNum">     171</span>              :     {</span>
-<span id="L172"><span class="lineNum">     172</span> <span class="tlaGNC">           7 :       auto iters{std::ranges::mismatch(obtained, prediction)};</span></span>
+<span id="L172"><span class="lineNum">     172</span> <span class="tlaGNC">           8 :       auto iters{std::ranges::mismatch(obtained, prediction)};</span></span>
 <span id="L173"><span class="lineNum">     173</span>              : </span>
-<span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">           7 :       if((iters.in1 != obtained.end()) &amp;&amp; (iters.in2 != prediction.end()))</span></span>
+<span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">           8 :       if((iters.in1 != obtained.end()) &amp;&amp; (iters.in2 != prediction.end()))</span></span>
 <span id="L175"><span class="lineNum">     175</span>              :       {</span>
 <span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC tlaBgUNC">           0 :         const auto dist{std::ranges::distance(obtained.begin(), iters.in1)};</span></span>
 <span id="L177"><span class="lineNum">     177</span> <span class="tlaUNC">           0 :         auto adv{make_advisor(&quot;&quot;, obtained, prediction, dist, advisor)};</span></span>
@@ -252,7 +252,7 @@
 <span id="L190"><span class="lineNum">     190</span>              : </span>
 <span id="L191"><span class="lineNum">     191</span> <span class="tlaUNC">           0 :         check(equality, mess, logger, *(iters.in1), *(iters.in2), adv);</span></span>
 <span id="L192"><span class="lineNum">     192</span> <span class="tlaUNC">           0 :       }</span></span>
-<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC tlaBgGNC">           7 :       else if((iters.in1 != obtained.end()) || (iters.in2 != prediction.end()))</span></span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC tlaBgGNC">           8 :       else if((iters.in1 != obtained.end()) || (iters.in2 != prediction.end()))</span></span>
 <span id="L194"><span class="lineNum">     194</span>              :       {</span>
 <span id="L195"><span class="lineNum">     195</span> <span class="tlaUNC tlaBgUNC">           0 :         auto checker{</span></span>
 <span id="L196"><span class="lineNum">     196</span> <span class="tlaUNC">           0 :           [&amp;logger, obtained, prediction, &amp;advisor](auto begin, auto iter, std::string_view state, std::string_view adjective){</span></span>
@@ -275,7 +275,7 @@
 <span id="L213"><span class="lineNum">     213</span> <span class="tlaUNC">           0 :           checker(obtained.begin(), iters.in1, &quot;excess&quot;, &quot;long&quot;);</span></span>
 <span id="L214"><span class="lineNum">     214</span>              :         }</span>
 <span id="L215"><span class="lineNum">     215</span>              :       }</span>
-<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC tlaBgGNC">           7 :     }</span></span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC tlaBgGNC">           8 :     }</span></span>
 <span id="L217"><span class="lineNum">     217</span>              : </span>
 <span id="L218"><span class="lineNum">     218</span>              :     template&lt;test_mode Mode, class Advisor, class Allocator&gt;</span>
 <span id="L219"><span class="lineNum">     219</span>              :     static void test(equivalence_check_t, test_logger&lt;Mode&gt;&amp; logger, string_view_type obtained, string_type&lt;Allocator&gt; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span>
@@ -312,12 +312,12 @@
 <span id="L250"><span class="lineNum">     250</span>              :     }</span>
 <span id="L251"><span class="lineNum">     251</span>              : </span>
 <span id="L252"><span class="lineNum">     252</span>              :     template&lt;test_mode Mode, class Advisor&gt;</span>
-<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">           7 :     static void test(equivalence_check_t, test_logger&lt;Mode&gt;&amp; logger, const string_type&amp; obtained, std::basic_string_view&lt;Char, Traits&gt; prediction, tutor&lt;Advisor&gt; advisor)</span></span>
+<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">           8 :     static void test(equivalence_check_t, test_logger&lt;Mode&gt;&amp; logger, const string_type&amp; obtained, std::basic_string_view&lt;Char, Traits&gt; prediction, tutor&lt;Advisor&gt; advisor)</span></span>
 <span id="L254"><span class="lineNum">     254</span>              :     {</span>
 <span id="L255"><span class="lineNum">     255</span>              :        using tester = value_tester&lt;std::basic_string_view&lt;Char, Traits&gt;&gt;;</span>
 <span id="L256"><span class="lineNum">     256</span>              : </span>
-<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">           7 :        tester::test(equality_check_t{}, logger, string_view_type{obtained}, string_view_type{prediction}, std::move(advisor));</span></span>
-<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC">           7 :     }</span></span>
+<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">           8 :        tester::test(equality_check_t{}, logger, string_view_type{obtained}, string_view_type{prediction}, std::move(advisor));</span></span>
+<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC">           8 :     }</span></span>
 <span id="L259"><span class="lineNum">     259</span>              :   };</span>
 <span id="L260"><span class="lineNum">     260</span>              : </span>
 <span id="L261"><span class="lineNum">     261</span>              :   /*! \brief Compares instances of `std::pair` */</span>

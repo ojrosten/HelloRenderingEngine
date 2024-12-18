@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
@@ -244,7 +244,7 @@
 <span id="L182"><span class="lineNum">     182</span>              :     using edge_allocator_type        = typename edge_storage_type::allocator_type;</span>
 <span id="L183"><span class="lineNum">     183</span>              :     using node_weight_allocator_type = typename node_storage_type::node_weight_container_type::allocator_type;</span>
 <span id="L184"><span class="lineNum">     184</span>              : </span>
-<span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC tlaBgGNC">           7 :     graph_base() = default;</span></span>
+<span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC tlaBgGNC">           8 :     graph_base() = default;</span></span>
 <span id="L186"><span class="lineNum">     186</span>              : </span>
 <span id="L187"><span class="lineNum">     187</span>              :     graph_base(edges_initializer edges) : primitive_type{edges} {}</span>
 <span id="L188"><span class="lineNum">     188</span>              : </span>
@@ -291,9 +291,9 @@
 <span id="L229"><span class="lineNum">     229</span>              :     template&lt;tree_link_direction dir&gt;</span>
 <span id="L230"><span class="lineNum">     230</span>              :       requires (    !std::is_empty_v&lt;node_weight_type&gt; &amp;&amp; !heterogeneous_nodes&lt;graph_base&gt;</span>
 <span id="L231"><span class="lineNum">     231</span>              :                  &amp;&amp; ((dir == tree_link_direction::symmetric) || is_directed(primitive_type::connectivity::flavour)))</span>
-<span id="L232"><span class="lineNum">     232</span> <span class="tlaGNC">          84 :     graph_base(tree_initializer&lt;node_weight_type&gt; tree, tree_link_direction_constant&lt;dir&gt; tdc)</span></span>
-<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          84 :       : primitive_type{tree, tdc}</span></span>
-<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          84 :     {}</span></span>
+<span id="L232"><span class="lineNum">     232</span> <span class="tlaGNC">          96 :     graph_base(tree_initializer&lt;node_weight_type&gt; tree, tree_link_direction_constant&lt;dir&gt; tdc)</span></span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">          96 :       : primitive_type{tree, tdc}</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          96 :     {}</span></span>
 <span id="L235"><span class="lineNum">     235</span>              : </span>
 <span id="L236"><span class="lineNum">     236</span>              :      graph_base(const graph_base&amp; in, const edge_allocator_type&amp; edgeAllocator, const node_weight_allocator_type&amp; nodeWeightAllocator)</span>
 <span id="L237"><span class="lineNum">     237</span>              :       : primitive_type{in, edgeAllocator, nodeWeightAllocator}</span>
@@ -316,7 +316,7 @@
 <span id="L254"><span class="lineNum">     254</span>              :       : primitive_type{std::move(in), edgeAllocator, edgePartitionsAllocator, nodeWeightAllocator}</span>
 <span id="L255"><span class="lineNum">     255</span>              :     {}</span>
 <span id="L256"><span class="lineNum">     256</span>              : </span>
-<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">          84 :     graph_base(const graph_base&amp;)     = default;</span></span>
+<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">          96 :     graph_base(const graph_base&amp;)     = default;</span></span>
 <span id="L258"><span class="lineNum">     258</span> <span class="tlaUNC tlaBgUNC">           0 :     graph_base(graph_base&amp;&amp;) noexcept = default;</span></span>
 <span id="L259"><span class="lineNum">     259</span>              : </span>
 <span id="L260"><span class="lineNum">     260</span>              :     graph_base&amp; operator=(const graph_base&amp;)     = default;</span>
@@ -342,7 +342,7 @@
 <span id="L280"><span class="lineNum">     280</span>              :       lhs.swap(rhs);</span>
 <span id="L281"><span class="lineNum">     281</span>              :     }</span>
 <span id="L282"><span class="lineNum">     282</span>              :   protected:</span>
-<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC tlaBgGNC">         172 :     ~graph_base() = default;</span></span>
+<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC tlaBgGNC">         197 :     ~graph_base() = default;</span></span>
 <span id="L284"><span class="lineNum">     284</span>              :   };</span>
 <span id="L285"><span class="lineNum">     285</span>              : </span>
 <span id="L286"><span class="lineNum">     286</span>              :   template</span>

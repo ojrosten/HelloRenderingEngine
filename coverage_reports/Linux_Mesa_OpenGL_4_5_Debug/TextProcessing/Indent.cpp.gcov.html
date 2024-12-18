@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
@@ -75,10 +75,10 @@
 <span id="L13"><span class="lineNum">      13</span>              : </span>
 <span id="L14"><span class="lineNum">      14</span>              : namespace sequoia</span>
 <span id="L15"><span class="lineNum">      15</span>              : {</span>
-<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC tlaBgGNC">         455 :   std::string indent(std::string_view sv, indentation ind)</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC tlaBgGNC">         520 :   std::string indent(std::string_view sv, indentation ind)</span></span>
 <span id="L17"><span class="lineNum">      17</span>              :   {</span>
-<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">         455 :     if(sv.empty()) return {};</span></span>
-<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">        1344 :     if(ind == no_indent) return std::string{sv};</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">         520 :     if(sv.empty()) return {};</span></span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">        1536 :     if(ind == no_indent) return std::string{sv};</span></span>
 <span id="L20"><span class="lineNum">      20</span>              : </span>
 <span id="L21"><span class="lineNum">      21</span> <span class="tlaUNC tlaBgUNC">           0 :     std::string str{};</span></span>
 <span id="L22"><span class="lineNum">      22</span> <span class="tlaUNC">           0 :     str.reserve(sv.size());</span></span>
@@ -103,21 +103,21 @@
 <span id="L41"><span class="lineNum">      41</span> <span class="tlaUNC">           0 :     return str;</span></span>
 <span id="L42"><span class="lineNum">      42</span> <span class="tlaUNC">           0 :   }</span></span>
 <span id="L43"><span class="lineNum">      43</span>              : </span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC tlaBgGNC">         455 :   std::string&amp; append_indented(std::string&amp; s1, std::string_view s2, indentation ind)</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC tlaBgGNC">         520 :   std::string&amp; append_indented(std::string&amp; s1, std::string_view s2, indentation ind)</span></span>
 <span id="L45"><span class="lineNum">      45</span>              :   {</span>
-<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">         455 :     if(!s2.empty())</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">         520 :     if(!s2.empty())</span></span>
 <span id="L47"><span class="lineNum">      47</span>              :     {</span>
-<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">         350 :       if(s1.empty())</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">         400 :       if(s1.empty())</span></span>
 <span id="L49"><span class="lineNum">      49</span>              :       {</span>
-<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           7 :         s1 = s2;</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           8 :         s1 = s2;</span></span>
 <span id="L51"><span class="lineNum">      51</span>              :       }</span>
 <span id="L52"><span class="lineNum">      52</span>              :       else</span>
 <span id="L53"><span class="lineNum">      53</span>              :       {</span>
-<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">         343 :         s1.append(&quot;\n&quot;).append(indent(s2, ind));</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">         392 :         s1.append(&quot;\n&quot;).append(indent(s2, ind));</span></span>
 <span id="L55"><span class="lineNum">      55</span>              :       }</span>
 <span id="L56"><span class="lineNum">      56</span>              :     }</span>
 <span id="L57"><span class="lineNum">      57</span>              : </span>
-<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">         455 :     return s1;</span></span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">         520 :     return s1;</span></span>
 <span id="L59"><span class="lineNum">      59</span>              :   }</span>
 <span id="L60"><span class="lineNum">      60</span>              : </span>
 <span id="L61"><span class="lineNum">      61</span>              :   [[nodiscard]]</span>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">14.3&nbsp;%</td>
@@ -188,11 +188,11 @@
 <span id="L126"><span class="lineNum">     126</span>              :   std::string replace_all(std::string_view text, std::string_view anyOfLeft, std::string_view from, std::string_view anyOfRight, std::string_view to);</span>
 <span id="L127"><span class="lineNum">     127</span>              : </span>
 <span id="L128"><span class="lineNum">     128</span>              :   template&lt;invocable_r&lt;bool, char&gt; LeftPred, invocable_r&lt;bool, char&gt; RightPred&gt;</span>
-<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC tlaBgGNC">         210 :   std::string&amp; replace_all(std::string&amp; text, LeftPred lPred, std::string_view from, RightPred rPred, std::string_view to)</span></span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC tlaBgGNC">         240 :   std::string&amp; replace_all(std::string&amp; text, LeftPred lPred, std::string_view from, RightPred rPred, std::string_view to)</span></span>
 <span id="L130"><span class="lineNum">     130</span>              :   {</span>
-<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">         210 :     constexpr auto npos{std::string::npos};</span></span>
-<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">         210 :     std::string::size_type pos{};</span></span>
-<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">         210 :     while((pos = text.find(from, pos)) != npos)</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">         240 :     constexpr auto npos{std::string::npos};</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">         240 :     std::string::size_type pos{};</span></span>
+<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">         240 :     while((pos = text.find(from, pos)) != npos)</span></span>
 <span id="L134"><span class="lineNum">     134</span>              :     {</span>
 <span id="L135"><span class="lineNum">     135</span> <span class="tlaUNC tlaBgUNC">           0 :       if(    (((pos &gt; 0) &amp;&amp; lPred(text[pos - 1])) || ((pos == 0) &amp;&amp; lPred('\0')))</span></span>
 <span id="L136"><span class="lineNum">     136</span> <span class="tlaUNC">           0 :           &amp;&amp; (   ((pos + from.length() &lt; text.length())  &amp;&amp; rPred(text[pos + from.length()]))</span></span>
@@ -208,7 +208,7 @@
 <span id="L146"><span class="lineNum">     146</span>              :       }</span>
 <span id="L147"><span class="lineNum">     147</span>              :     }</span>
 <span id="L148"><span class="lineNum">     148</span>              : </span>
-<span id="L149"><span class="lineNum">     149</span> <span class="tlaGNC tlaBgGNC">         210 :     return text;</span></span>
+<span id="L149"><span class="lineNum">     149</span> <span class="tlaGNC tlaBgGNC">         240 :     return text;</span></span>
 <span id="L150"><span class="lineNum">     150</span>              :   }</span>
 <span id="L151"><span class="lineNum">     151</span>              : </span>
 <span id="L152"><span class="lineNum">     152</span>              :   template&lt;invocable_r&lt;bool, char&gt; LeftPred, invocable_r&lt;bool, char&gt; RightPred&gt;</span>

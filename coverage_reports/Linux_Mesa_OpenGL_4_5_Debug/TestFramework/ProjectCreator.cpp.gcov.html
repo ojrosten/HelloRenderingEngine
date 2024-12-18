@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">5.3&nbsp;%</td>
@@ -174,11 +174,11 @@
 <span id="L112"><span class="lineNum">     112</span> <span class="tlaUNC">           0 :     }</span></span>
 <span id="L113"><span class="lineNum">     113</span>              :   }</span>
 <span id="L114"><span class="lineNum">     114</span>              : </span>
-<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC tlaBgGNC">           7 :   void check_indent(const indentation&amp; ind)</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC tlaBgGNC">           8 :   void check_indent(const indentation&amp; ind)</span></span>
 <span id="L116"><span class="lineNum">     116</span>              :   {</span>
-<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">           7 :     if(std::string_view{ind}.find_first_not_of(&quot;\t &quot;) != npos)</span></span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">           8 :     if(std::string_view{ind}.find_first_not_of(&quot;\t &quot;) != npos)</span></span>
 <span id="L118"><span class="lineNum">     118</span> <span class="tlaUNC tlaBgUNC">           0 :       throw std::runtime_error{&quot;Code indent must comprise only spaces or tabs&quot;};</span></span>
-<span id="L119"><span class="lineNum">     119</span> <span class="tlaGNC tlaBgGNC">           7 :   }</span></span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaGNC tlaBgGNC">           8 :   }</span></span>
 <span id="L120"><span class="lineNum">     120</span>              : </span>
 <span id="L121"><span class="lineNum">     121</span> <span class="tlaUNC tlaBgUNC">           0 :   void generate_test_main(std::string_view copyright, indentation codeIndent, const fs::path&amp; newProjRoot)</span></span>
 <span id="L122"><span class="lineNum">     122</span>              :   {</span>

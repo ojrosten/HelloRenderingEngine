@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">64.3&nbsp;%</td>
@@ -265,18 +265,18 @@
 <span id="L203"><span class="lineNum">     203</span>              :       constexpr static auto npos{std::numeric_limits&lt;edge_index_type&gt;::max()};</span>
 <span id="L204"><span class="lineNum">     204</span>              :       constexpr static graph_flavour flavour{Flavour};</span>
 <span id="L205"><span class="lineNum">     205</span>              : </span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC tlaBgGNC">          91 :       constexpr connectivity_base() = default;</span></span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC tlaBgGNC">         104 :       constexpr connectivity_base() = default;</span></span>
 <span id="L207"><span class="lineNum">     207</span>              : </span>
 <span id="L208"><span class="lineNum">     208</span>              :       constexpr connectivity_base(std::initializer_list&lt;std::initializer_list&lt;edge_init_type&gt;&gt; edges)</span>
 <span id="L209"><span class="lineNum">     209</span>              :         : m_Edges{make_edges(edges)}</span>
 <span id="L210"><span class="lineNum">     210</span>              :       {}</span>
 <span id="L211"><span class="lineNum">     211</span>              : </span>
-<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">          84 :       constexpr connectivity_base(const connectivity_base&amp; other)</span></span>
-<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">          84 :         : m_Edges{copy_edges(other)}</span></span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          84 :       {}</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">          96 :       constexpr connectivity_base(const connectivity_base&amp; other)</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">          96 :         : m_Edges{copy_edges(other)}</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">          96 :       {}</span></span>
 <span id="L215"><span class="lineNum">     215</span>              : </span>
 <span id="L216"><span class="lineNum">     216</span>              :       [[nodiscard]]</span>
-<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">       14488 :       constexpr size_type order() const noexcept { return m_Edges.num_partitions(); }</span></span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">       18110 :       constexpr size_type order() const noexcept { return m_Edges.num_partitions(); }</span></span>
 <span id="L218"><span class="lineNum">     218</span>              : </span>
 <span id="L219"><span class="lineNum">     219</span>              :       [[nodiscard]]</span>
 <span id="L220"><span class="lineNum">     220</span>              :       constexpr size_type size() const noexcept</span>
@@ -285,19 +285,19 @@
 <span id="L223"><span class="lineNum">     223</span>              :       }</span>
 <span id="L224"><span class="lineNum">     224</span>              : </span>
 <span id="L225"><span class="lineNum">     225</span>              :       [[nodiscard]]</span>
-<span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">         112 :       constexpr const_edge_iterator cbegin_edges(const edge_index_type node) const</span></span>
+<span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">         128 :       constexpr const_edge_iterator cbegin_edges(const edge_index_type node) const</span></span>
 <span id="L227"><span class="lineNum">     227</span>              :       {</span>
-<span id="L228"><span class="lineNum">     228</span> <span class="tlaGNC">         112 :         graph_errors::check_node_index_range(&quot;cbegin_edges&quot;, order(), node);</span></span>
+<span id="L228"><span class="lineNum">     228</span> <span class="tlaGNC">         128 :         graph_errors::check_node_index_range(&quot;cbegin_edges&quot;, order(), node);</span></span>
 <span id="L229"><span class="lineNum">     229</span>              : </span>
-<span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">         112 :         return m_Edges.cbegin_partition(node);</span></span>
+<span id="L230"><span class="lineNum">     230</span> <span class="tlaGNC">         128 :         return m_Edges.cbegin_partition(node);</span></span>
 <span id="L231"><span class="lineNum">     231</span>              :       }</span>
 <span id="L232"><span class="lineNum">     232</span>              : </span>
 <span id="L233"><span class="lineNum">     233</span>              :       [[nodiscard]]</span>
-<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">         112 :       constexpr const_edge_iterator cend_edges(const edge_index_type node) const</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">         128 :       constexpr const_edge_iterator cend_edges(const edge_index_type node) const</span></span>
 <span id="L235"><span class="lineNum">     235</span>              :       {</span>
-<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">         112 :         graph_errors::check_node_index_range(&quot;cend_edges&quot;, order(), node);</span></span>
+<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">         128 :         graph_errors::check_node_index_range(&quot;cend_edges&quot;, order(), node);</span></span>
 <span id="L237"><span class="lineNum">     237</span>              : </span>
-<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">         112 :         return m_Edges.cend_partition(node);</span></span>
+<span id="L238"><span class="lineNum">     238</span> <span class="tlaGNC">         128 :         return m_Edges.cend_partition(node);</span></span>
 <span id="L239"><span class="lineNum">     239</span>              :       }</span>
 <span id="L240"><span class="lineNum">     240</span>              : </span>
 <span id="L241"><span class="lineNum">     241</span>              :       [[nodiscard]]</span>
@@ -317,11 +317,11 @@
 <span id="L255"><span class="lineNum">     255</span>              :       }</span>
 <span id="L256"><span class="lineNum">     256</span>              : </span>
 <span id="L257"><span class="lineNum">     257</span>              :       [[nodiscard]]</span>
-<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC tlaBgGNC">          84 :       constexpr const_edges_range cedges(const edge_index_type node) const</span></span>
+<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC tlaBgGNC">         105 :       constexpr const_edges_range cedges(const edge_index_type node) const</span></span>
 <span id="L259"><span class="lineNum">     259</span>              :       {</span>
-<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          84 :         graph_errors::check_node_index_range(&quot;cedges&quot;, order(), node);</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">         105 :         graph_errors::check_node_index_range(&quot;cedges&quot;, order(), node);</span></span>
 <span id="L261"><span class="lineNum">     261</span>              : </span>
-<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">          84 :         return {m_Edges.cbegin_partition(node), m_Edges.cend_partition(node)};</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">         105 :         return {m_Edges.cbegin_partition(node), m_Edges.cend_partition(node)};</span></span>
 <span id="L263"><span class="lineNum">     263</span>              :       }</span>
 <span id="L264"><span class="lineNum">     264</span>              : </span>
 <span id="L265"><span class="lineNum">     265</span>              :       template&lt;class... Args&gt;</span>
@@ -444,7 +444,7 @@
 <span id="L382"><span class="lineNum">     382</span>              :         : m_Edges{std::move(c.m_Edges), as...}</span>
 <span id="L383"><span class="lineNum">     383</span>              :       {}</span>
 <span id="L384"><span class="lineNum">     384</span>              : </span>
-<span id="L385"><span class="lineNum">     385</span> <span class="tlaGNC tlaBgGNC">         100 :       ~connectivity_base() = default;</span></span>
+<span id="L385"><span class="lineNum">     385</span> <span class="tlaGNC tlaBgGNC">         125 :       ~connectivity_base() = default;</span></span>
 <span id="L386"><span class="lineNum">     386</span>              : </span>
 <span id="L387"><span class="lineNum">     387</span>              :       constexpr connectivity_base&amp; operator=(connectivity_base&amp;&amp;) = default;</span>
 <span id="L388"><span class="lineNum">     388</span>              : </span>
@@ -499,18 +499,18 @@
 <span id="L437"><span class="lineNum">     437</span>              :       }</span>
 <span id="L438"><span class="lineNum">     438</span>              : </span>
 <span id="L439"><span class="lineNum">     439</span>              :       // TO DO: change semantics to non-throwing?</span>
-<span id="L440"><span class="lineNum">     440</span> <span class="tlaGNC">         462 :       constexpr void swap_nodes(edge_index_type i, edge_index_type j)</span></span>
+<span id="L440"><span class="lineNum">     440</span> <span class="tlaGNC">         528 :       constexpr void swap_nodes(edge_index_type i, edge_index_type j)</span></span>
 <span id="L441"><span class="lineNum">     441</span>              :       {</span>
-<span id="L442"><span class="lineNum">     442</span> <span class="tlaGNC">         462 :         graph_errors::check_node_index_range(&quot;swap_nodes&quot;, order(), i, j);</span></span>
+<span id="L442"><span class="lineNum">     442</span> <span class="tlaGNC">         528 :         graph_errors::check_node_index_range(&quot;swap_nodes&quot;, order(), i, j);</span></span>
 <span id="L443"><span class="lineNum">     443</span>              : </span>
-<span id="L444"><span class="lineNum">     444</span> <span class="tlaGNC">         462 :         if(i == j) return;</span></span>
+<span id="L444"><span class="lineNum">     444</span> <span class="tlaGNC">         528 :         if(i == j) return;</span></span>
 <span id="L445"><span class="lineNum">     445</span>              : </span>
-<span id="L446"><span class="lineNum">     446</span> <span class="tlaGNC">         455 :         auto fixUp{</span></span>
-<span id="L447"><span class="lineNum">     447</span> <span class="tlaGNC">        7280 :           [this, i, j](edge_index_type n){</span></span>
-<span id="L448"><span class="lineNum">     448</span> <span class="tlaGNC">       14105 :             for(auto&amp; e : edges(n))</span></span>
+<span id="L446"><span class="lineNum">     446</span> <span class="tlaGNC">         520 :         auto fixUp{</span></span>
+<span id="L447"><span class="lineNum">     447</span> <span class="tlaGNC">        8320 :           [this, i, j](edge_index_type n){</span></span>
+<span id="L448"><span class="lineNum">     448</span> <span class="tlaGNC">       16120 :             for(auto&amp; e : edges(n))</span></span>
 <span id="L449"><span class="lineNum">     449</span>              :             {</span>
-<span id="L450"><span class="lineNum">     450</span> <span class="tlaGNC">        6825 :               if     (e.target_node() == i) e.target_node(j);</span></span>
-<span id="L451"><span class="lineNum">     451</span> <span class="tlaGNC">        6370 :               else if(e.target_node() == j) e.target_node(i);</span></span>
+<span id="L450"><span class="lineNum">     450</span> <span class="tlaGNC">        7800 :               if     (e.target_node() == i) e.target_node(j);</span></span>
+<span id="L451"><span class="lineNum">     451</span> <span class="tlaGNC">        7280 :               else if(e.target_node() == j) e.target_node(i);</span></span>
 <span id="L452"><span class="lineNum">     452</span>              :             }</span>
 <span id="L453"><span class="lineNum">     453</span>              :           }</span>
 <span id="L454"><span class="lineNum">     454</span>              :         };</span>
@@ -531,13 +531,13 @@
 <span id="L469"><span class="lineNum">     469</span>              :         }</span>
 <span id="L470"><span class="lineNum">     470</span>              :         else</span>
 <span id="L471"><span class="lineNum">     471</span>              :         {</span>
-<span id="L472"><span class="lineNum">     472</span> <span class="tlaGNC">        7735 :           for(edge_index_type n{}; n &lt; static_cast&lt;edge_index_type&gt;(order()); ++n)</span></span>
+<span id="L472"><span class="lineNum">     472</span> <span class="tlaGNC">        8840 :           for(edge_index_type n{}; n &lt; static_cast&lt;edge_index_type&gt;(order()); ++n)</span></span>
 <span id="L473"><span class="lineNum">     473</span>              :           {</span>
-<span id="L474"><span class="lineNum">     474</span> <span class="tlaGNC">        7280 :             fixUp(n);</span></span>
+<span id="L474"><span class="lineNum">     474</span> <span class="tlaGNC">        8320 :             fixUp(n);</span></span>
 <span id="L475"><span class="lineNum">     475</span>              :           }</span>
 <span id="L476"><span class="lineNum">     476</span>              :         }</span>
 <span id="L477"><span class="lineNum">     477</span>              : </span>
-<span id="L478"><span class="lineNum">     478</span> <span class="tlaGNC">         455 :         m_Edges.swap_partitions(i, j);</span></span>
+<span id="L478"><span class="lineNum">     478</span> <span class="tlaGNC">         520 :         m_Edges.swap_partitions(i, j);</span></span>
 <span id="L479"><span class="lineNum">     479</span>              :       }</span>
 <span id="L480"><span class="lineNum">     480</span>              : </span>
 <span id="L481"><span class="lineNum">     481</span>              :       [[nodiscard]]</span>
@@ -597,19 +597,19 @@
 <span id="L535"><span class="lineNum">     535</span>              : </span>
 <span id="L536"><span class="lineNum">     536</span>              :       // TO DO: Consider interaction of throwing semantics with that of edge storage class</span>
 <span id="L537"><span class="lineNum">     537</span>              :       [[nodiscard]]</span>
-<span id="L538"><span class="lineNum">     538</span> <span class="tlaGNC">        7280 :       constexpr edge_iterator begin_edges(const edge_index_type node)</span></span>
+<span id="L538"><span class="lineNum">     538</span> <span class="tlaGNC">        8320 :       constexpr edge_iterator begin_edges(const edge_index_type node)</span></span>
 <span id="L539"><span class="lineNum">     539</span>              :       {</span>
-<span id="L540"><span class="lineNum">     540</span> <span class="tlaGNC">        7280 :         graph_errors::check_node_index_range(&quot;begin_edges&quot;, order(), node);</span></span>
+<span id="L540"><span class="lineNum">     540</span> <span class="tlaGNC">        8320 :         graph_errors::check_node_index_range(&quot;begin_edges&quot;, order(), node);</span></span>
 <span id="L541"><span class="lineNum">     541</span>              : </span>
-<span id="L542"><span class="lineNum">     542</span> <span class="tlaGNC">        7280 :         return m_Edges.begin_partition(node);</span></span>
+<span id="L542"><span class="lineNum">     542</span> <span class="tlaGNC">        8320 :         return m_Edges.begin_partition(node);</span></span>
 <span id="L543"><span class="lineNum">     543</span>              :       }</span>
 <span id="L544"><span class="lineNum">     544</span>              : </span>
 <span id="L545"><span class="lineNum">     545</span>              :       [[nodiscard]]</span>
-<span id="L546"><span class="lineNum">     546</span> <span class="tlaGNC">        7280 :       constexpr edge_iterator end_edges(const edge_index_type node)</span></span>
+<span id="L546"><span class="lineNum">     546</span> <span class="tlaGNC">        8320 :       constexpr edge_iterator end_edges(const edge_index_type node)</span></span>
 <span id="L547"><span class="lineNum">     547</span>              :       {</span>
-<span id="L548"><span class="lineNum">     548</span> <span class="tlaGNC">        7280 :         graph_errors::check_node_index_range(&quot;end_edges&quot;, order(), node);</span></span>
+<span id="L548"><span class="lineNum">     548</span> <span class="tlaGNC">        8320 :         graph_errors::check_node_index_range(&quot;end_edges&quot;, order(), node);</span></span>
 <span id="L549"><span class="lineNum">     549</span>              : </span>
-<span id="L550"><span class="lineNum">     550</span> <span class="tlaGNC">        7280 :         return m_Edges.end_partition(node);</span></span>
+<span id="L550"><span class="lineNum">     550</span> <span class="tlaGNC">        8320 :         return m_Edges.end_partition(node);</span></span>
 <span id="L551"><span class="lineNum">     551</span>              :       }</span>
 <span id="L552"><span class="lineNum">     552</span>              : </span>
 <span id="L553"><span class="lineNum">     553</span>              :       [[nodiscard]]</span>
@@ -661,21 +661,21 @@
 <span id="L599"><span class="lineNum">     599</span>              :       }</span>
 <span id="L600"><span class="lineNum">     600</span>              : </span>
 <span id="L601"><span class="lineNum">     601</span>              :       [[nodiscard]]</span>
-<span id="L602"><span class="lineNum">     602</span> <span class="tlaGNC">        7280 :       constexpr edges_range edges(const edge_index_type node) { return {begin_edges(node), end_edges(node)}; }</span></span>
+<span id="L602"><span class="lineNum">     602</span> <span class="tlaGNC">        8320 :       constexpr edges_range edges(const edge_index_type node) { return {begin_edges(node), end_edges(node)}; }</span></span>
 <span id="L603"><span class="lineNum">     603</span>              : </span>
 <span id="L604"><span class="lineNum">     604</span>              :       void add_node()</span>
 <span id="L605"><span class="lineNum">     605</span>              :       {</span>
 <span id="L606"><span class="lineNum">     606</span>              :         m_Edges.add_slot();</span>
 <span id="L607"><span class="lineNum">     607</span>              :       }</span>
 <span id="L608"><span class="lineNum">     608</span>              : </span>
-<span id="L609"><span class="lineNum">     609</span> <span class="tlaGNC">         232 :       size_type insert_node(const size_type node)</span></span>
+<span id="L609"><span class="lineNum">     609</span> <span class="tlaGNC">         290 :       size_type insert_node(const size_type node)</span></span>
 <span id="L610"><span class="lineNum">     610</span>              :       {</span>
-<span id="L611"><span class="lineNum">     611</span> <span class="tlaGNC">         232 :         m_Edges.insert_slot(node);</span></span>
-<span id="L612"><span class="lineNum">     612</span> <span class="tlaGNC">         232 :         fix_edge_data(node,</span></span>
-<span id="L613"><span class="lineNum">     613</span> <span class="tlaGNC">        1460 :           [](const auto targetNode, const auto node) { return targetNode &gt;= node; },</span></span>
+<span id="L611"><span class="lineNum">     611</span> <span class="tlaGNC">         290 :         m_Edges.insert_slot(node);</span></span>
+<span id="L612"><span class="lineNum">     612</span> <span class="tlaGNC">         290 :         fix_edge_data(node,</span></span>
+<span id="L613"><span class="lineNum">     613</span> <span class="tlaGNC">        1825 :           [](const auto targetNode, const auto node) { return targetNode &gt;= node; },</span></span>
 <span id="L614"><span class="lineNum">     614</span> <span class="tlaUNC tlaBgUNC">           0 :           [](const auto index) { return index + 1; });</span></span>
 <span id="L615"><span class="lineNum">     615</span>              : </span>
-<span id="L616"><span class="lineNum">     616</span> <span class="tlaGNC tlaBgGNC">         232 :         return node;</span></span>
+<span id="L616"><span class="lineNum">     616</span> <span class="tlaGNC tlaBgGNC">         290 :         return node;</span></span>
 <span id="L617"><span class="lineNum">     617</span>              :       }</span>
 <span id="L618"><span class="lineNum">     618</span>              : </span>
 <span id="L619"><span class="lineNum">     619</span> <span class="tlaUNC tlaBgUNC">           0 :       void erase_node(const size_type node)</span></span>
@@ -740,17 +740,17 @@
 <span id="L678"><span class="lineNum">     678</span>              : </span>
 <span id="L679"><span class="lineNum">     679</span>              :       template&lt;class... Args&gt;</span>
 <span id="L680"><span class="lineNum">     680</span>              :         requires (std::is_empty_v&lt;edge_meta_data_type&gt;&amp;&amp; initializable_from&lt;edge_weight_type, Args...&gt; &amp;&amp; (is_directed(flavour) || std::is_copy_constructible_v&lt;edge_type&gt;))</span>
-<span id="L681"><span class="lineNum">     681</span> <span class="tlaGNC tlaBgGNC">         180 :       void join(const edge_index_type node1, const edge_index_type node2, Args&amp;&amp;... args)</span></span>
+<span id="L681"><span class="lineNum">     681</span> <span class="tlaGNC tlaBgGNC">         225 :       void join(const edge_index_type node1, const edge_index_type node2, Args&amp;&amp;... args)</span></span>
 <span id="L682"><span class="lineNum">     682</span>              :       {</span>
-<span id="L683"><span class="lineNum">     683</span> <span class="tlaGNC">         180 :         graph_errors::check_node_index_range(&quot;join&quot;, order(), node1, node2);</span></span>
+<span id="L683"><span class="lineNum">     683</span> <span class="tlaGNC">         225 :         graph_errors::check_node_index_range(&quot;join&quot;, order(), node1, node2);</span></span>
 <span id="L684"><span class="lineNum">     684</span>              : </span>
-<span id="L685"><span class="lineNum">     685</span> <span class="tlaGNC">         180 :         add_to_partition(node1, node2, std::forward&lt;Args&gt;(args)...);</span></span>
+<span id="L685"><span class="lineNum">     685</span> <span class="tlaGNC">         225 :         add_to_partition(node1, node2, std::forward&lt;Args&gt;(args)...);</span></span>
 <span id="L686"><span class="lineNum">     686</span>              : </span>
 <span id="L687"><span class="lineNum">     687</span>              :         if constexpr(!is_directed(flavour))</span>
 <span id="L688"><span class="lineNum">     688</span>              :         {</span>
 <span id="L689"><span class="lineNum">     689</span>              :           reciprocal_join(node1, node2);</span>
 <span id="L690"><span class="lineNum">     690</span>              :         }</span>
-<span id="L691"><span class="lineNum">     691</span> <span class="tlaGNC">         180 :       }</span></span>
+<span id="L691"><span class="lineNum">     691</span> <span class="tlaGNC">         225 :       }</span></span>
 <span id="L692"><span class="lineNum">     692</span>              : </span>
 <span id="L693"><span class="lineNum">     693</span>              :       template&lt;class... Args&gt;</span>
 <span id="L694"><span class="lineNum">     694</span>              :         requires (!std::is_empty_v&lt;edge_meta_data_type&gt;&amp;&amp; initializable_from&lt;edge_weight_type, Args...&gt; &amp;&amp; (is_directed(flavour) || std::is_copy_constructible_v&lt;edge_type&gt;))</span>
@@ -1345,10 +1345,10 @@
 <span id="L1283"><span class="lineNum">    1283</span>              : </span>
 <span id="L1284"><span class="lineNum">    1284</span>              :       template&lt;alloc... Allocators&gt;</span>
 <span id="L1285"><span class="lineNum">    1285</span>              :       [[nodiscard]]</span>
-<span id="L1286"><span class="lineNum">    1286</span> <span class="tlaGNC tlaBgGNC">          84 :       edge_storage_type copy_edges(const connectivity_base&amp; in, const Allocators&amp;... as)</span></span>
+<span id="L1286"><span class="lineNum">    1286</span> <span class="tlaGNC tlaBgGNC">          96 :       edge_storage_type copy_edges(const connectivity_base&amp; in, const Allocators&amp;... as)</span></span>
 <span id="L1287"><span class="lineNum">    1287</span>              :         requires direct_copy_v</span>
 <span id="L1288"><span class="lineNum">    1288</span>              :       {</span>
-<span id="L1289"><span class="lineNum">    1289</span> <span class="tlaGNC">          84 :         return edge_storage_type{in.m_Edges, as...};</span></span>
+<span id="L1289"><span class="lineNum">    1289</span> <span class="tlaGNC">          96 :         return edge_storage_type{in.m_Edges, as...};</span></span>
 <span id="L1290"><span class="lineNum">    1290</span>              :       }</span>
 <span id="L1291"><span class="lineNum">    1291</span>              : </span>
 <span id="L1292"><span class="lineNum">    1292</span>              :       [[nodiscard]]</span>
@@ -1581,11 +1581,11 @@
 <span id="L1519"><span class="lineNum">    1519</span>              :       }</span>
 <span id="L1520"><span class="lineNum">    1520</span>              : </span>
 <span id="L1521"><span class="lineNum">    1521</span>              :       template&lt;class... Args&gt;</span>
-<span id="L1522"><span class="lineNum">    1522</span> <span class="tlaGNC">         180 :       void add_to_partition(const edge_index_type node1, const edge_index_type node2, Args&amp;&amp;... args)</span></span>
+<span id="L1522"><span class="lineNum">    1522</span> <span class="tlaGNC">         225 :       void add_to_partition(const edge_index_type node1, const edge_index_type node2, Args&amp;&amp;... args)</span></span>
 <span id="L1523"><span class="lineNum">    1523</span>              :       {</span>
 <span id="L1524"><span class="lineNum">    1524</span>              :         if constexpr (edge_type::flavour == edge_flavour::partial)</span>
 <span id="L1525"><span class="lineNum">    1525</span>              :         {</span>
-<span id="L1526"><span class="lineNum">    1526</span> <span class="tlaGNC">         180 :           m_Edges.push_back_to_partition(node1, node2, std::forward&lt;Args&gt;(args)...);</span></span>
+<span id="L1526"><span class="lineNum">    1526</span> <span class="tlaGNC">         225 :           m_Edges.push_back_to_partition(node1, node2, std::forward&lt;Args&gt;(args)...);</span></span>
 <span id="L1527"><span class="lineNum">    1527</span>              :         }</span>
 <span id="L1528"><span class="lineNum">    1528</span>              :         else if constexpr (edge_type::flavour == edge_flavour::partial_embedded)</span>
 <span id="L1529"><span class="lineNum">    1529</span>              :         {</span>
@@ -1593,7 +1593,7 @@
 <span id="L1531"><span class="lineNum">    1531</span>              :           const edge_index_type i{ node1 == node2 ? dist + 1 : dist };</span>
 <span id="L1532"><span class="lineNum">    1532</span>              :           m_Edges.push_back_to_partition(node1, node2, i, std::forward&lt;Args&gt;(args)...);</span>
 <span id="L1533"><span class="lineNum">    1533</span>              :         }</span>
-<span id="L1534"><span class="lineNum">    1534</span> <span class="tlaGNC">         180 :       }</span></span>
+<span id="L1534"><span class="lineNum">    1534</span> <span class="tlaGNC">         225 :       }</span></span>
 <span id="L1535"><span class="lineNum">    1535</span>              : </span>
 <span id="L1536"><span class="lineNum">    1536</span>              :       template&lt;class... Args&gt;</span>
 <span id="L1537"><span class="lineNum">    1537</span>              :       const_edge_iterator insert_to_partition(const_edge_iterator citer1, const edge_index_type node2, const edge_index_type pos2, Args&amp;&amp;... args)</span>
@@ -1656,17 +1656,17 @@
 <span id="L1594"><span class="lineNum">    1594</span>              :       }</span>
 <span id="L1595"><span class="lineNum">    1595</span>              : </span>
 <span id="L1596"><span class="lineNum">    1596</span>              :       template&lt;class Pred, class Modifier&gt;</span>
-<span id="L1597"><span class="lineNum">    1597</span> <span class="tlaGNC">         232 :       constexpr void fix_edge_data(const edge_index_type node, Pred pred, Modifier modifier) noexcept</span></span>
+<span id="L1597"><span class="lineNum">    1597</span> <span class="tlaGNC">         290 :       constexpr void fix_edge_data(const edge_index_type node, Pred pred, Modifier modifier) noexcept</span></span>
 <span id="L1598"><span class="lineNum">    1598</span>              :       {</span>
-<span id="L1599"><span class="lineNum">    1599</span> <span class="tlaGNC">        2104 :         for(size_type i{}; i &lt; m_Edges.num_partitions(); ++i)</span></span>
+<span id="L1599"><span class="lineNum">    1599</span> <span class="tlaGNC">        2630 :         for(size_type i{}; i &lt; m_Edges.num_partitions(); ++i)</span></span>
 <span id="L1600"><span class="lineNum">    1600</span>              :         {</span>
-<span id="L1601"><span class="lineNum">    1601</span> <span class="tlaGNC">        3332 :           for(auto&amp; edge : m_Edges.partition(i))</span></span>
+<span id="L1601"><span class="lineNum">    1601</span> <span class="tlaGNC">        4165 :           for(auto&amp; edge : m_Edges.partition(i))</span></span>
 <span id="L1602"><span class="lineNum">    1602</span>              :           {</span>
-<span id="L1603"><span class="lineNum">    1603</span> <span class="tlaGNC">        1460 :             const auto target{edge.target_node()};</span></span>
-<span id="L1604"><span class="lineNum">    1604</span> <span class="tlaGNC">        1460 :             if(pred(target, node)) edge.target_node(modifier(target));</span></span>
+<span id="L1603"><span class="lineNum">    1603</span> <span class="tlaGNC">        1825 :             const auto target{edge.target_node()};</span></span>
+<span id="L1604"><span class="lineNum">    1604</span> <span class="tlaGNC">        1825 :             if(pred(target, node)) edge.target_node(modifier(target));</span></span>
 <span id="L1605"><span class="lineNum">    1605</span>              :           }</span>
 <span id="L1606"><span class="lineNum">    1606</span>              :         }</span>
-<span id="L1607"><span class="lineNum">    1607</span> <span class="tlaGNC">         232 :       }</span></span>
+<span id="L1607"><span class="lineNum">    1607</span> <span class="tlaGNC">         290 :       }</span></span>
 <span id="L1608"><span class="lineNum">    1608</span>              :     };</span>
 <span id="L1609"><span class="lineNum">    1609</span>              : </span>
 <span id="L1610"><span class="lineNum">    1610</span>              :     template&lt;std::input_or_output_iterator Iterator&gt;</span>

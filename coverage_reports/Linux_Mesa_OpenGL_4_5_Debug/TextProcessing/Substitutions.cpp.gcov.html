@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">13.6&nbsp;%</td>
@@ -179,24 +179,24 @@
 <span id="L117"><span class="lineNum">     117</span> <span class="tlaUNC">           0 :     return replace(str, from, to);</span></span>
 <span id="L118"><span class="lineNum">     118</span> <span class="tlaUNC">           0 :   }</span></span>
 <span id="L119"><span class="lineNum">     119</span>              : </span>
-<span id="L120"><span class="lineNum">     120</span> <span class="tlaGNC tlaBgGNC">         679 :   std::string&amp; replace_all(std::string&amp; text, std::string_view from, std::string_view to)</span></span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaGNC tlaBgGNC">         776 :   std::string&amp; replace_all(std::string&amp; text, std::string_view from, std::string_view to)</span></span>
 <span id="L121"><span class="lineNum">     121</span>              :   {</span>
-<span id="L122"><span class="lineNum">     122</span> <span class="tlaGNC">         679 :     std::string::size_type pos{};</span></span>
-<span id="L123"><span class="lineNum">     123</span> <span class="tlaGNC">         756 :     while((pos = text.find(from, pos)) != std::string::npos)</span></span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaGNC">         776 :     std::string::size_type pos{};</span></span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaGNC">         864 :     while((pos = text.find(from, pos)) != std::string::npos)</span></span>
 <span id="L124"><span class="lineNum">     124</span>              :     {</span>
-<span id="L125"><span class="lineNum">     125</span> <span class="tlaGNC">          77 :       text.replace(pos, from.length(), to);</span></span>
-<span id="L126"><span class="lineNum">     126</span> <span class="tlaGNC">          77 :       pos += to.length();</span></span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaGNC">          88 :       text.replace(pos, from.length(), to);</span></span>
+<span id="L126"><span class="lineNum">     126</span> <span class="tlaGNC">          88 :       pos += to.length();</span></span>
 <span id="L127"><span class="lineNum">     127</span>              :     }</span>
 <span id="L128"><span class="lineNum">     128</span>              : </span>
-<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">         679 :     return text;</span></span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">         776 :     return text;</span></span>
 <span id="L130"><span class="lineNum">     130</span>              :   }</span>
 <span id="L131"><span class="lineNum">     131</span>              : </span>
 <span id="L132"><span class="lineNum">     132</span>              :   [[nodiscard]]</span>
-<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">         154 :   std::string replace_all(std::string_view text, std::string_view from, std::string_view to)</span></span>
+<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">         176 :   std::string replace_all(std::string_view text, std::string_view from, std::string_view to)</span></span>
 <span id="L134"><span class="lineNum">     134</span>              :   {</span>
-<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">         154 :     std::string str{text};</span></span>
-<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">         308 :     return replace_all(str, from, to);</span></span>
-<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">         154 :   }</span></span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">         176 :     std::string str{text};</span></span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">         352 :     return replace_all(str, from, to);</span></span>
+<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">         176 :   }</span></span>
 <span id="L138"><span class="lineNum">     138</span>              : </span>
 <span id="L139"><span class="lineNum">     139</span> <span class="tlaUNC tlaBgUNC">           0 :   std::string&amp; replace_all_recursive(std::string&amp; text, std::string_view from, std::string_view to)</span></span>
 <span id="L140"><span class="lineNum">     140</span>              :   {</span>
@@ -240,19 +240,19 @@
 <span id="L178"><span class="lineNum">     178</span> <span class="tlaUNC">           0 :     return replace_all(str, fromBegin, fromEnd, to);</span></span>
 <span id="L179"><span class="lineNum">     179</span> <span class="tlaUNC">           0 :   }</span></span>
 <span id="L180"><span class="lineNum">     180</span>              : </span>
-<span id="L181"><span class="lineNum">     181</span> <span class="tlaGNC tlaBgGNC">         210 :   std::string&amp; replace_all(std::string&amp; text, std::string_view anyOfLeft, std::string_view from, std::string_view anyOfRight, std::string_view to)</span></span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaGNC tlaBgGNC">         240 :   std::string&amp; replace_all(std::string&amp; text, std::string_view anyOfLeft, std::string_view from, std::string_view anyOfRight, std::string_view to)</span></span>
 <span id="L182"><span class="lineNum">     182</span>              :   {</span>
-<span id="L183"><span class="lineNum">     183</span> <span class="tlaGNC">         210 :     constexpr auto npos{std::string::npos};</span></span>
+<span id="L183"><span class="lineNum">     183</span> <span class="tlaGNC">         240 :     constexpr auto npos{std::string::npos};</span></span>
 <span id="L184"><span class="lineNum">     184</span>              : </span>
 <span id="L185"><span class="lineNum">     185</span>              :     auto left{</span>
 <span id="L186"><span class="lineNum">     186</span> <span class="tlaUNC tlaBgUNC">           0 :       [anyOfLeft](char c) { return !anyOfLeft.size() || (anyOfLeft.find(c) &lt; npos); }</span></span>
-<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC tlaBgGNC">         210 :     };</span></span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC tlaBgGNC">         240 :     };</span></span>
 <span id="L188"><span class="lineNum">     188</span>              : </span>
 <span id="L189"><span class="lineNum">     189</span>              :     auto right{</span>
 <span id="L190"><span class="lineNum">     190</span> <span class="tlaUNC tlaBgUNC">           0 :       [anyOfRight](char c) {return !anyOfRight.size() || (anyOfRight.find(c) &lt; npos); }</span></span>
-<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC tlaBgGNC">         210 :     };</span></span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC tlaBgGNC">         240 :     };</span></span>
 <span id="L192"><span class="lineNum">     192</span>              : </span>
-<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">         420 :     return replace_all(text, left, from, right, to);</span></span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">         480 :     return replace_all(text, left, from, right, to);</span></span>
 <span id="L194"><span class="lineNum">     194</span>              :   }</span>
 <span id="L195"><span class="lineNum">     195</span>              : </span>
 <span id="L196"><span class="lineNum">     196</span>              :   [[nodiscard]]</span>

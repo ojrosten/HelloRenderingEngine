@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -94,27 +94,27 @@
 <span id="L32"><span class="lineNum">      32</span>              :     public:</span>
 <span id="L33"><span class="lineNum">      33</span>              :         using labelling_test_base&lt;Mode&gt;::labelling_test_base;</span>
 <span id="L34"><span class="lineNum">      34</span>              : </span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC tlaBgGNC">           7 :         bool check_object_label(const reporter&amp; description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle&amp; handle, std::string_view expected) {</span></span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           7 :             return this-&gt;check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC tlaBgGNC">           8 :         bool check_object_label(const reporter&amp; description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle&amp; handle, std::string_view expected) {</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           8 :             return this-&gt;check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);</span></span>
 <span id="L37"><span class="lineNum">      37</span>              :         }</span>
 <span id="L38"><span class="lineNum">      38</span>              : </span>
 <span id="L39"><span class="lineNum">      39</span>              :         template&lt;class Self&gt;</span>
 <span id="L40"><span class="lineNum">      40</span>              :             requires has_labelling_tests_v&lt;Self&gt;</span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          16 :         void run_tests(this Self&amp; self) {</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          20 :         void run_tests(this Self&amp; self) {</span></span>
 <span id="L42"><span class="lineNum">      42</span>              :             if constexpr(!avocet::has_ndebug()) {</span>
 <span id="L43"><span class="lineNum">      43</span>              :                 using namespace curlew;</span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">          16 :                 glfw_manager manager{};</span></span>
-<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          16 :                 auto w{manager.create_window({.hiding{window_hiding_mode::on}})};</span></span>
-<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">          16 :                 if(avocet::opengl::object_labels_activated()) {</span></span>
-<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">          16 :                     self.labelling_tests();</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">          20 :                 glfw_manager manager{};</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          20 :                 auto w{manager.create_window({.hiding{window_hiding_mode::on}})};</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">          20 :                 if(avocet::opengl::object_labels_activated()) {</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">          20 :                     self.labelling_tests();</span></span>
 <span id="L48"><span class="lineNum">      48</span>              :                 }</span>
-<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">          16 :             }</span></span>
-<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">          32 :         }</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">          20 :             }</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">          40 :         }</span></span>
 <span id="L51"><span class="lineNum">      51</span>              :     protected:</span>
-<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">          80 :         ~basic_graphics_labelling_test() = default;</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">         100 :         ~basic_graphics_labelling_test() = default;</span></span>
 <span id="L53"><span class="lineNum">      53</span>              : </span>
-<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">          48 :         basic_graphics_labelling_test(basic_graphics_labelling_test&amp;&amp;)            noexcept = default;</span></span>
-<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">          16 :         basic_graphics_labelling_test&amp; operator=(basic_graphics_labelling_test&amp;&amp;) noexcept = default;</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">          60 :         basic_graphics_labelling_test(basic_graphics_labelling_test&amp;&amp;)            noexcept = default;</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">          20 :         basic_graphics_labelling_test&amp; operator=(basic_graphics_labelling_test&amp;&amp;) noexcept = default;</span></span>
 <span id="L56"><span class="lineNum">      56</span>              :     };</span>
 <span id="L57"><span class="lineNum">      57</span>              : </span>
 <span id="L58"><span class="lineNum">      58</span>              :     using graphics_labelling_test = basic_graphics_labelling_test&lt;test_mode::standard&gt;;</span>

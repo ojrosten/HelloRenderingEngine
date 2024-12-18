@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td class="headerValue">2024-12-18 15:32:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">12.1&nbsp;%</td>
@@ -514,22 +514,22 @@
 <span id="L452"><span class="lineNum">     452</span> <span class="tlaUNC">           0 :       return staleTests;</span></span>
 <span id="L453"><span class="lineNum">     453</span> <span class="tlaUNC">           0 :     }</span></span>
 <span id="L454"><span class="lineNum">     454</span>              : </span>
-<span id="L455"><span class="lineNum">     455</span> <span class="tlaGNC tlaBgGNC">           7 :     void update_prune_stamp_on_disk(const prune_paths&amp; prunePaths, fs::file_time_type time)</span></span>
+<span id="L455"><span class="lineNum">     455</span> <span class="tlaGNC tlaBgGNC">           8 :     void update_prune_stamp_on_disk(const prune_paths&amp; prunePaths, fs::file_time_type time)</span></span>
 <span id="L456"><span class="lineNum">     456</span>              :     {</span>
-<span id="L457"><span class="lineNum">     457</span> <span class="tlaGNC">           7 :       const auto stamp{prunePaths.stamp()};</span></span>
-<span id="L458"><span class="lineNum">     458</span> <span class="tlaGNC">           7 :       if(!fs::exists(stamp))</span></span>
+<span id="L457"><span class="lineNum">     457</span> <span class="tlaGNC">           8 :       const auto stamp{prunePaths.stamp()};</span></span>
+<span id="L458"><span class="lineNum">     458</span> <span class="tlaGNC">           8 :       if(!fs::exists(stamp))</span></span>
 <span id="L459"><span class="lineNum">     459</span>              :       {</span>
 <span id="L460"><span class="lineNum">     460</span> <span class="tlaUNC tlaBgUNC">           0 :         std::ofstream{stamp};</span></span>
 <span id="L461"><span class="lineNum">     461</span>              :       }</span>
-<span id="L462"><span class="lineNum">     462</span> <span class="tlaGNC tlaBgGNC">           7 :       fs::last_write_time(stamp, time);</span></span>
-<span id="L463"><span class="lineNum">     463</span> <span class="tlaGNC">           7 :     }</span></span>
+<span id="L462"><span class="lineNum">     462</span> <span class="tlaGNC tlaBgGNC">           8 :       fs::last_write_time(stamp, time);</span></span>
+<span id="L463"><span class="lineNum">     463</span> <span class="tlaGNC">           8 :     }</span></span>
 <span id="L464"><span class="lineNum">     464</span>              : </span>
 <span id="L465"><span class="lineNum">     465</span>              :     [[nodiscard]]</span>
-<span id="L466"><span class="lineNum">     466</span> <span class="tlaGNC">           7 :     prune_paths prepare(const project_paths&amp; projPaths, std::vector&lt;fs::path&gt;&amp; failedTests)</span></span>
+<span id="L466"><span class="lineNum">     466</span> <span class="tlaGNC">           8 :     prune_paths prepare(const project_paths&amp; projPaths, std::vector&lt;fs::path&gt;&amp; failedTests)</span></span>
 <span id="L467"><span class="lineNum">     467</span>              :     {</span>
-<span id="L468"><span class="lineNum">     468</span> <span class="tlaGNC">           7 :       std::ranges::sort(failedTests);</span></span>
+<span id="L468"><span class="lineNum">     468</span> <span class="tlaGNC">           8 :       std::ranges::sort(failedTests);</span></span>
 <span id="L469"><span class="lineNum">     469</span>              : </span>
-<span id="L470"><span class="lineNum">     470</span> <span class="tlaGNC">           7 :       return projPaths.prune();</span></span>
+<span id="L470"><span class="lineNum">     470</span> <span class="tlaGNC">           8 :       return projPaths.prune();</span></span>
 <span id="L471"><span class="lineNum">     471</span>              :     }</span>
 <span id="L472"><span class="lineNum">     472</span>              : </span>
 <span id="L473"><span class="lineNum">     473</span>              :     [[nodiscard]]</span>
@@ -601,16 +601,16 @@
 <span id="L539"><span class="lineNum">     539</span> <span class="tlaUNC">           0 :     return read_tests(file, tests);</span></span>
 <span id="L540"><span class="lineNum">     540</span> <span class="tlaUNC">           0 :   }</span></span>
 <span id="L541"><span class="lineNum">     541</span>              : </span>
-<span id="L542"><span class="lineNum">     542</span> <span class="tlaGNC tlaBgGNC">           7 :   void write_tests(const project_paths&amp; projPaths, const fs::path&amp; file, const std::vector&lt;fs::path&gt;&amp; tests)</span></span>
+<span id="L542"><span class="lineNum">     542</span> <span class="tlaGNC tlaBgGNC">           8 :   void write_tests(const project_paths&amp; projPaths, const fs::path&amp; file, const std::vector&lt;fs::path&gt;&amp; tests)</span></span>
 <span id="L543"><span class="lineNum">     543</span>              :   {</span>
-<span id="L544"><span class="lineNum">     544</span> <span class="tlaGNC">           7 :     if(std::ofstream ostream{file})</span></span>
+<span id="L544"><span class="lineNum">     544</span> <span class="tlaGNC">           8 :     if(std::ofstream ostream{file})</span></span>
 <span id="L545"><span class="lineNum">     545</span>              :     {</span>
-<span id="L546"><span class="lineNum">     546</span> <span class="tlaGNC">           7 :       for(const auto&amp; test : tests)</span></span>
+<span id="L546"><span class="lineNum">     546</span> <span class="tlaGNC">           8 :       for(const auto&amp; test : tests)</span></span>
 <span id="L547"><span class="lineNum">     547</span>              :       {</span>
 <span id="L548"><span class="lineNum">     548</span> <span class="tlaUNC tlaBgUNC">           0 :         ostream &lt;&lt; rebase_from(test, projPaths.tests().repo()).generic_string() &lt;&lt; &quot;\n&quot;;</span></span>
 <span id="L549"><span class="lineNum">     549</span>              :       }</span>
-<span id="L550"><span class="lineNum">     550</span> <span class="tlaGNC tlaBgGNC">           7 :     }</span></span>
-<span id="L551"><span class="lineNum">     551</span> <span class="tlaGNC">           7 :   }</span></span>
+<span id="L550"><span class="lineNum">     550</span> <span class="tlaGNC tlaBgGNC">           8 :     }</span></span>
+<span id="L551"><span class="lineNum">     551</span> <span class="tlaGNC">           8 :   }</span></span>
 <span id="L552"><span class="lineNum">     552</span>              : </span>
 <span id="L553"><span class="lineNum">     553</span>              :   [[nodiscard]]</span>
 <span id="L554"><span class="lineNum">     554</span>              :   std::optional&lt;std::vector&lt;fs::path&gt;&gt;</span>
@@ -631,17 +631,17 @@
 <span id="L569"><span class="lineNum">     569</span> <span class="tlaUNC">           0 :     return testsToRun;</span></span>
 <span id="L570"><span class="lineNum">     570</span> <span class="tlaUNC">           0 :   }</span></span>
 <span id="L571"><span class="lineNum">     571</span>              : </span>
-<span id="L572"><span class="lineNum">     572</span> <span class="tlaGNC tlaBgGNC">           7 :   void update_prune_files(const project_paths&amp; projPaths,</span></span>
+<span id="L572"><span class="lineNum">     572</span> <span class="tlaGNC tlaBgGNC">           8 :   void update_prune_files(const project_paths&amp; projPaths,</span></span>
 <span id="L573"><span class="lineNum">     573</span>              :                           std::vector&lt;fs::path&gt; failedTests,</span>
 <span id="L574"><span class="lineNum">     574</span>              :                           fs::file_time_type updateTime,</span>
 <span id="L575"><span class="lineNum">     575</span>              :                           std::optional&lt;std::size_t&gt; id)</span>
 <span id="L576"><span class="lineNum">     576</span>              :   {</span>
-<span id="L577"><span class="lineNum">     577</span> <span class="tlaGNC">           7 :     const auto prunePaths{prepare(projPaths, failedTests)};</span></span>
+<span id="L577"><span class="lineNum">     577</span> <span class="tlaGNC">           8 :     const auto prunePaths{prepare(projPaths, failedTests)};</span></span>
 <span id="L578"><span class="lineNum">     578</span>              : </span>
-<span id="L579"><span class="lineNum">     579</span> <span class="tlaGNC">           7 :     write_tests(projPaths, prunePaths.failures(id), failedTests);</span></span>
-<span id="L580"><span class="lineNum">     580</span> <span class="tlaGNC">           7 :     fs::remove(prunePaths.selected_passes(id));</span></span>
-<span id="L581"><span class="lineNum">     581</span> <span class="tlaGNC">           7 :     update_prune_stamp_on_disk(prunePaths, updateTime);</span></span>
-<span id="L582"><span class="lineNum">     582</span> <span class="tlaGNC">           7 :   }</span></span>
+<span id="L579"><span class="lineNum">     579</span> <span class="tlaGNC">           8 :     write_tests(projPaths, prunePaths.failures(id), failedTests);</span></span>
+<span id="L580"><span class="lineNum">     580</span> <span class="tlaGNC">           8 :     fs::remove(prunePaths.selected_passes(id));</span></span>
+<span id="L581"><span class="lineNum">     581</span> <span class="tlaGNC">           8 :     update_prune_stamp_on_disk(prunePaths, updateTime);</span></span>
+<span id="L582"><span class="lineNum">     582</span> <span class="tlaGNC">           8 :   }</span></span>
 <span id="L583"><span class="lineNum">     583</span>              : </span>
 <span id="L584"><span class="lineNum">     584</span> <span class="tlaUNC tlaBgUNC">           0 :   void update_prune_files(const project_paths&amp; projPaths,</span></span>
 <span id="L585"><span class="lineNum">     585</span>              :                           std::vector&lt;fs::path&gt; executedTests,</span>
