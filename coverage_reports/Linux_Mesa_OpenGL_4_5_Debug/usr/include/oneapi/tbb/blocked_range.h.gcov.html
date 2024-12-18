@@ -1,0 +1,246 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - usr/include/oneapi/tbb/blocked_range.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html">top level</a> - <a href="index.html">/usr/include/oneapi/tbb</a> - blocked_range.h<span style="font-size: 80%;"> (source / <a href="blocked_range.h.func-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryLo">22.2&nbsp;%</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">4</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2024-12-18 15:21:35</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryLo">25.0&nbsp;%</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">2</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : /*</span>
+<span id="L2"><span class="lineNum">       2</span>              :     Copyright (c) 2005-2021 Intel Corporation</span>
+<span id="L3"><span class="lineNum">       3</span>              : </span>
+<span id="L4"><span class="lineNum">       4</span>              :     Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
+<span id="L5"><span class="lineNum">       5</span>              :     you may not use this file except in compliance with the License.</span>
+<span id="L6"><span class="lineNum">       6</span>              :     You may obtain a copy of the License at</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              :         http://www.apache.org/licenses/LICENSE-2.0</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              :     Unless required by applicable law or agreed to in writing, software</span>
+<span id="L11"><span class="lineNum">      11</span>              :     distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span>
+<span id="L12"><span class="lineNum">      12</span>              :     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span>
+<span id="L13"><span class="lineNum">      13</span>              :     See the License for the specific language governing permissions and</span>
+<span id="L14"><span class="lineNum">      14</span>              :     limitations under the License.</span>
+<span id="L15"><span class="lineNum">      15</span>              : */</span>
+<span id="L16"><span class="lineNum">      16</span>              : </span>
+<span id="L17"><span class="lineNum">      17</span>              : #ifndef __TBB_blocked_range_H</span>
+<span id="L18"><span class="lineNum">      18</span>              : #define __TBB_blocked_range_H</span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span>              : #include &lt;cstddef&gt;</span>
+<span id="L21"><span class="lineNum">      21</span>              : </span>
+<span id="L22"><span class="lineNum">      22</span>              : #include &quot;detail/_range_common.h&quot;</span>
+<span id="L23"><span class="lineNum">      23</span>              : #include &quot;detail/_namespace_injection.h&quot;</span>
+<span id="L24"><span class="lineNum">      24</span>              : </span>
+<span id="L25"><span class="lineNum">      25</span>              : #include &quot;version.h&quot;</span>
+<span id="L26"><span class="lineNum">      26</span>              : </span>
+<span id="L27"><span class="lineNum">      27</span>              : namespace tbb {</span>
+<span id="L28"><span class="lineNum">      28</span>              : namespace detail {</span>
+<span id="L29"><span class="lineNum">      29</span>              : namespace d1 {</span>
+<span id="L30"><span class="lineNum">      30</span>              : </span>
+<span id="L31"><span class="lineNum">      31</span>              : /** \page range_req Requirements on range concept</span>
+<span id="L32"><span class="lineNum">      32</span>              :     Class \c R implementing the concept of range must define:</span>
+<span id="L33"><span class="lineNum">      33</span>              :     - \code R::R( const R&amp; ); \endcode               Copy constructor</span>
+<span id="L34"><span class="lineNum">      34</span>              :     - \code R::~R(); \endcode                        Destructor</span>
+<span id="L35"><span class="lineNum">      35</span>              :     - \code bool R::is_divisible() const; \endcode   True if range can be partitioned into two subranges</span>
+<span id="L36"><span class="lineNum">      36</span>              :     - \code bool R::empty() const; \endcode          True if range is empty</span>
+<span id="L37"><span class="lineNum">      37</span>              :     - \code R::R( R&amp; r, split ); \endcode            Split range \c r into two subranges.</span>
+<span id="L38"><span class="lineNum">      38</span>              : **/</span>
+<span id="L39"><span class="lineNum">      39</span>              : </span>
+<span id="L40"><span class="lineNum">      40</span>              : //! A range over which to iterate.</span>
+<span id="L41"><span class="lineNum">      41</span>              : /** @ingroup algorithms */</span>
+<span id="L42"><span class="lineNum">      42</span>              : template&lt;typename Value&gt;</span>
+<span id="L43"><span class="lineNum">      43</span>              :     __TBB_requires(blocked_range_value&lt;Value&gt;)</span>
+<span id="L44"><span class="lineNum">      44</span>              : class blocked_range {</span>
+<span id="L45"><span class="lineNum">      45</span>              : public:</span>
+<span id="L46"><span class="lineNum">      46</span>              :     //! Type of a value</span>
+<span id="L47"><span class="lineNum">      47</span>              :     /** Called a const_iterator for sake of algorithms that need to treat a blocked_range</span>
+<span id="L48"><span class="lineNum">      48</span>              :         as an STL container. */</span>
+<span id="L49"><span class="lineNum">      49</span>              :     using const_iterator = Value;</span>
+<span id="L50"><span class="lineNum">      50</span>              : </span>
+<span id="L51"><span class="lineNum">      51</span>              :     //! Type for size of a range</span>
+<span id="L52"><span class="lineNum">      52</span>              :     using size_type = std::size_t;</span>
+<span id="L53"><span class="lineNum">      53</span>              : </span>
+<span id="L54"><span class="lineNum">      54</span>              :     //! Construct range over half-open interval [begin,end), with the given grainsize.</span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC tlaBgGNC">           7 :     blocked_range( Value begin_, Value end_, size_type grainsize_=1 ) :</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           7 :         my_end(end_), my_begin(begin_), my_grainsize(grainsize_)</span></span>
+<span id="L57"><span class="lineNum">      57</span>              :     {</span>
+<span id="L58"><span class="lineNum">      58</span>              :         __TBB_ASSERT( my_grainsize&gt;0, &quot;grainsize must be positive&quot; );</span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">           7 :     }</span></span>
+<span id="L60"><span class="lineNum">      60</span>              : </span>
+<span id="L61"><span class="lineNum">      61</span>              :     //! Beginning of range.</span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaUNC tlaBgUNC">           0 :     const_iterator begin() const { return my_begin; }</span></span>
+<span id="L63"><span class="lineNum">      63</span>              : </span>
+<span id="L64"><span class="lineNum">      64</span>              :     //! One past last value in range.</span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaUNC">           0 :     const_iterator end() const { return my_end; }</span></span>
+<span id="L66"><span class="lineNum">      66</span>              : </span>
+<span id="L67"><span class="lineNum">      67</span>              :     //! Size of the range</span>
+<span id="L68"><span class="lineNum">      68</span>              :     /** Unspecified if end()&lt;begin(). */</span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaUNC">           0 :     size_type size() const {</span></span>
+<span id="L70"><span class="lineNum">      70</span>              :         __TBB_ASSERT( !(end()&lt;begin()), &quot;size() unspecified if end()&lt;begin()&quot; );</span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaUNC">           0 :         return size_type(my_end-my_begin);</span></span>
+<span id="L72"><span class="lineNum">      72</span>              :     }</span>
+<span id="L73"><span class="lineNum">      73</span>              : </span>
+<span id="L74"><span class="lineNum">      74</span>              :     //! The grain size for this range.</span>
+<span id="L75"><span class="lineNum">      75</span>              :     size_type grainsize() const { return my_grainsize; }</span>
+<span id="L76"><span class="lineNum">      76</span>              : </span>
+<span id="L77"><span class="lineNum">      77</span>              :     //------------------------------------------------------------------------</span>
+<span id="L78"><span class="lineNum">      78</span>              :     // Methods that implement Range concept</span>
+<span id="L79"><span class="lineNum">      79</span>              :     //------------------------------------------------------------------------</span>
+<span id="L80"><span class="lineNum">      80</span>              : </span>
+<span id="L81"><span class="lineNum">      81</span>              :     //! True if range is empty.</span>
+<span id="L82"><span class="lineNum">      82</span> <span class="tlaGNC tlaBgGNC">           7 :     bool empty() const { return !(my_begin&lt;my_end); }</span></span>
+<span id="L83"><span class="lineNum">      83</span>              : </span>
+<span id="L84"><span class="lineNum">      84</span>              :     //! True if range is divisible.</span>
+<span id="L85"><span class="lineNum">      85</span>              :     /** Unspecified if end()&lt;begin(). */</span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaUNC tlaBgUNC">           0 :     bool is_divisible() const { return my_grainsize&lt;size(); }</span></span>
+<span id="L87"><span class="lineNum">      87</span>              : </span>
+<span id="L88"><span class="lineNum">      88</span>              :     //! Split range.</span>
+<span id="L89"><span class="lineNum">      89</span>              :     /** The new Range *this has the second part, the old range r has the first part.</span>
+<span id="L90"><span class="lineNum">      90</span>              :         Unspecified if end()&lt;begin() or !is_divisible(). */</span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaUNC">           0 :     blocked_range( blocked_range&amp; r, split ) :</span></span>
+<span id="L92"><span class="lineNum">      92</span> <span class="tlaUNC">           0 :         my_end(r.my_end),</span></span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaUNC">           0 :         my_begin(do_split(r, split())),</span></span>
+<span id="L94"><span class="lineNum">      94</span> <span class="tlaUNC">           0 :         my_grainsize(r.my_grainsize)</span></span>
+<span id="L95"><span class="lineNum">      95</span>              :     {</span>
+<span id="L96"><span class="lineNum">      96</span>              :         // only comparison 'less than' is required from values of blocked_range objects</span>
+<span id="L97"><span class="lineNum">      97</span>              :         __TBB_ASSERT( !(my_begin &lt; r.my_end) &amp;&amp; !(r.my_end &lt; my_begin), &quot;blocked_range has been split incorrectly&quot; );</span>
+<span id="L98"><span class="lineNum">      98</span> <span class="tlaUNC">           0 :     }</span></span>
+<span id="L99"><span class="lineNum">      99</span>              : </span>
+<span id="L100"><span class="lineNum">     100</span>              :     //! Split range.</span>
+<span id="L101"><span class="lineNum">     101</span>              :     /** The new Range *this has the second part split according to specified proportion, the old range r has the first part.</span>
+<span id="L102"><span class="lineNum">     102</span>              :         Unspecified if end()&lt;begin() or !is_divisible(). */</span>
+<span id="L103"><span class="lineNum">     103</span>              :     blocked_range( blocked_range&amp; r, proportional_split&amp; proportion ) :</span>
+<span id="L104"><span class="lineNum">     104</span>              :         my_end(r.my_end),</span>
+<span id="L105"><span class="lineNum">     105</span>              :         my_begin(do_split(r, proportion)),</span>
+<span id="L106"><span class="lineNum">     106</span>              :         my_grainsize(r.my_grainsize)</span>
+<span id="L107"><span class="lineNum">     107</span>              :     {</span>
+<span id="L108"><span class="lineNum">     108</span>              :         // only comparison 'less than' is required from values of blocked_range objects</span>
+<span id="L109"><span class="lineNum">     109</span>              :         __TBB_ASSERT( !(my_begin &lt; r.my_end) &amp;&amp; !(r.my_end &lt; my_begin), &quot;blocked_range has been split incorrectly&quot; );</span>
+<span id="L110"><span class="lineNum">     110</span>              :     }</span>
+<span id="L111"><span class="lineNum">     111</span>              : </span>
+<span id="L112"><span class="lineNum">     112</span>              : private:</span>
+<span id="L113"><span class="lineNum">     113</span>              :     /** NOTE: my_end MUST be declared before my_begin, otherwise the splitting constructor will break. */</span>
+<span id="L114"><span class="lineNum">     114</span>              :     Value my_end;</span>
+<span id="L115"><span class="lineNum">     115</span>              :     Value my_begin;</span>
+<span id="L116"><span class="lineNum">     116</span>              :     size_type my_grainsize;</span>
+<span id="L117"><span class="lineNum">     117</span>              : </span>
+<span id="L118"><span class="lineNum">     118</span>              :     //! Auxiliary function used by the splitting constructor.</span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaUNC">           0 :     static Value do_split( blocked_range&amp; r, split )</span></span>
+<span id="L120"><span class="lineNum">     120</span>              :     {</span>
+<span id="L121"><span class="lineNum">     121</span>              :         __TBB_ASSERT( r.is_divisible(), &quot;cannot split blocked_range that is not divisible&quot; );</span>
+<span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :         Value middle = r.my_begin + (r.my_end - r.my_begin) / 2u;</span></span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaUNC">           0 :         r.my_end = middle;</span></span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaUNC">           0 :         return middle;</span></span>
+<span id="L125"><span class="lineNum">     125</span>              :     }</span>
+<span id="L126"><span class="lineNum">     126</span>              : </span>
+<span id="L127"><span class="lineNum">     127</span>              :     static Value do_split( blocked_range&amp; r, proportional_split&amp; proportion )</span>
+<span id="L128"><span class="lineNum">     128</span>              :     {</span>
+<span id="L129"><span class="lineNum">     129</span>              :         __TBB_ASSERT( r.is_divisible(), &quot;cannot split blocked_range that is not divisible&quot; );</span>
+<span id="L130"><span class="lineNum">     130</span>              : </span>
+<span id="L131"><span class="lineNum">     131</span>              :         // usage of 32-bit floating point arithmetic is not enough to handle ranges of</span>
+<span id="L132"><span class="lineNum">     132</span>              :         // more than 2^24 iterations accurately. However, even on ranges with 2^64</span>
+<span id="L133"><span class="lineNum">     133</span>              :         // iterations the computational error approximately equals to 0.000001% which</span>
+<span id="L134"><span class="lineNum">     134</span>              :         // makes small impact on uniform distribution of such range's iterations (assuming</span>
+<span id="L135"><span class="lineNum">     135</span>              :         // all iterations take equal time to complete). See 'test_partitioner_whitebox'</span>
+<span id="L136"><span class="lineNum">     136</span>              :         // for implementation of an exact split algorithm</span>
+<span id="L137"><span class="lineNum">     137</span>              :         size_type right_part = size_type(float(r.size()) * float(proportion.right())</span>
+<span id="L138"><span class="lineNum">     138</span>              :                                          / float(proportion.left() + proportion.right()) + 0.5f);</span>
+<span id="L139"><span class="lineNum">     139</span>              :         return r.my_end = Value(r.my_end - right_part);</span>
+<span id="L140"><span class="lineNum">     140</span>              :     }</span>
+<span id="L141"><span class="lineNum">     141</span>              : </span>
+<span id="L142"><span class="lineNum">     142</span>              :     template&lt;typename RowValue, typename ColValue&gt;</span>
+<span id="L143"><span class="lineNum">     143</span>              :         __TBB_requires(blocked_range_value&lt;RowValue&gt; &amp;&amp;</span>
+<span id="L144"><span class="lineNum">     144</span>              :                        blocked_range_value&lt;ColValue&gt;)</span>
+<span id="L145"><span class="lineNum">     145</span>              :     friend class blocked_range2d;</span>
+<span id="L146"><span class="lineNum">     146</span>              : </span>
+<span id="L147"><span class="lineNum">     147</span>              :     template&lt;typename RowValue, typename ColValue, typename PageValue&gt;</span>
+<span id="L148"><span class="lineNum">     148</span>              :         __TBB_requires(blocked_range_value&lt;RowValue&gt; &amp;&amp;</span>
+<span id="L149"><span class="lineNum">     149</span>              :                        blocked_range_value&lt;ColValue&gt; &amp;&amp;</span>
+<span id="L150"><span class="lineNum">     150</span>              :                        blocked_range_value&lt;PageValue&gt;)</span>
+<span id="L151"><span class="lineNum">     151</span>              :     friend class blocked_range3d;</span>
+<span id="L152"><span class="lineNum">     152</span>              : </span>
+<span id="L153"><span class="lineNum">     153</span>              :     template&lt;typename DimValue, unsigned int N, typename&gt;</span>
+<span id="L154"><span class="lineNum">     154</span>              :         __TBB_requires(blocked_range_value&lt;DimValue&gt;)</span>
+<span id="L155"><span class="lineNum">     155</span>              :     friend class blocked_rangeNd_impl;</span>
+<span id="L156"><span class="lineNum">     156</span>              : };</span>
+<span id="L157"><span class="lineNum">     157</span>              : </span>
+<span id="L158"><span class="lineNum">     158</span>              : } // namespace d1</span>
+<span id="L159"><span class="lineNum">     159</span>              : } // namespace detail</span>
+<span id="L160"><span class="lineNum">     160</span>              : </span>
+<span id="L161"><span class="lineNum">     161</span>              : inline namespace v1 {</span>
+<span id="L162"><span class="lineNum">     162</span>              : using detail::d1::blocked_range;</span>
+<span id="L163"><span class="lineNum">     163</span>              : // Split types</span>
+<span id="L164"><span class="lineNum">     164</span>              : using detail::split;</span>
+<span id="L165"><span class="lineNum">     165</span>              : using detail::proportional_split;</span>
+<span id="L166"><span class="lineNum">     166</span>              : } // namespace v1</span>
+<span id="L167"><span class="lineNum">     167</span>              : </span>
+<span id="L168"><span class="lineNum">     168</span>              : } // namespace tbb</span>
+<span id="L169"><span class="lineNum">     169</span>              : </span>
+<span id="L170"><span class="lineNum">     170</span>              : #endif /* __TBB_blocked_range_H */</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

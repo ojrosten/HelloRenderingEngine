@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "curlew/Window/GLFWWrappers.hpp"
+#include "curlew/Window/RenderingSetup.hpp"
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
 #include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
@@ -44,15 +45,12 @@ int main()
 {
     try
     {
+        std::cout << curlew::rendering_setup_summary();
+
         curlew::glfw_manager manager{};
         auto w{manager.create_window({.name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
-        std::cout << std::format("GL Vendor  : {}\nGL Renderer: {}\nGL Version : {}\n",
-                                    agl::get_vendor(),
-                                    agl::get_renderer(),
-                                    agl::get_opengl_version_string());
-
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
         agl::triangle tri{make_label("Triangle")};
         agl::quad q{make_label("Quad")};
