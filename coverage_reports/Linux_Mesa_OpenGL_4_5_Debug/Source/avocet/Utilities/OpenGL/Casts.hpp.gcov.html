@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 15:36:00</td>
+            <td class="headerValue">2024-12-18 16:05:24</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -75,12 +75,12 @@
 <span id="L13"><span class="lineNum">      13</span>              : </span>
 <span id="L14"><span class="lineNum">      14</span>              : namespace avocet::opengl {</span>
 <span id="L15"><span class="lineNum">      15</span>              :     [[nodiscard]]</span>
-<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC tlaBgGNC">         603 :     constexpr GLsizei to_gl_sizei(std::size_t val) noexcept { return static_cast&lt;GLsizei&gt;(val); }</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC tlaBgGNC">         670 :     constexpr GLsizei to_gl_sizei(std::size_t val) noexcept { return static_cast&lt;GLsizei&gt;(val); }</span></span>
 <span id="L17"><span class="lineNum">      17</span>              : </span>
 <span id="L18"><span class="lineNum">      18</span>              :     template&lt;class T&gt;</span>
 <span id="L19"><span class="lineNum">      19</span>              :         requires std::is_scoped_enum_v&lt;T&gt; &amp;&amp; std::is_same_v&lt;std::underlying_type_t&lt;T&gt;, GLenum&gt;</span>
 <span id="L20"><span class="lineNum">      20</span>              :     [[nodiscard]]</span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         126 :     constexpr GLenum to_gl_enum(T val) noexcept { return static_cast&lt;GLenum&gt;(val); }</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         140 :     constexpr GLenum to_gl_enum(T val) noexcept { return static_cast&lt;GLenum&gt;(val); }</span></span>
 <span id="L22"><span class="lineNum">      22</span>              : }</span>
         </pre>
               </td>

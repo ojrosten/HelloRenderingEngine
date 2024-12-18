@@ -27,6 +27,9 @@ output_dir="${script_dir}/../coverage_reports/${rendering_setup}"
 # Create output directory if it doesn't exist
 mkdir -p "$output_dir"
 
+# Cleanup lcov
+lcov --zerocounters --directory .
+
 # Run ctest in the specified directory
 cd "$test_dir"
 ctest -T Test -T Coverage
