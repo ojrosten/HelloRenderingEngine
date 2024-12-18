@@ -2,7 +2,7 @@
 
 # Check if a test directory was provided as an argument
 if [[ -z "$1" ]]; then
-  echo "Usage: $0 <test_directory>"
+  echo "Usage: $0 <Test Executable Directory>"
   exit 1
 fi
 
@@ -12,8 +12,17 @@ script_dir=$(dirname "$0")
 # Get the test directory from the first argument
 test_dir="$1"
 
+#Read the single line from RenderingSetup.txt (assuming it exists)
+rendering_setup=$(head -n 1 "$test_dir/RenderingSetup.txt")
+
+# Check if reading the line was successful (optional)
+if [[ $? -ne 0 ]]; then
+    echo "Error: Could not read the first line from RenderingSetup.txt"
+    exit 1
+fi         
+
 # Relative location of the html output directory
-output_dir="${script_dir}/../coverage_reports"
+output_dir="${script_dir}/../coverage_reports/${rendering_setup}"
 
 # Create output directory if it doesn't exist
 mkdir -p "$output_dir"

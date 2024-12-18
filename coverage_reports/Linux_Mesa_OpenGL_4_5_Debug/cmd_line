@@ -1,0 +1,1 @@
+genhtml --demangle-cpp -o ../../scripts/../coverage_reports/Linux_Mesa_OpenGL_4_5_Debug coverage.info
