@@ -48,4 +48,9 @@ namespace curlew {
 
     [[nodiscard]]
     std::string rendering_setup_summary();
+
+    [[nodiscard]]
+    constexpr specificity_flavour full_specificity() noexcept {
+        return specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version | specificity_flavour::build;
+    }
 }
