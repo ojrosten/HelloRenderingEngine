@@ -1,0 +1,28 @@
+Tests/Graphics/OpenGL/ResourceHandleTestingDiagnostics.cpp, Line 24
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::resource_handle>]
+Checking for equivalence with:
+[int]
+
+  Wrapped Value
+  [unsigned int]
+  operator== returned false
+  Obtained : 42
+  Predicted: 7
+
+=======================================
+
+Tests/Graphics/OpenGL/ResourceHandleTestingDiagnostics.cpp, Line 25
+
+[avocet::opengl::resource_handle]
+operator== returned false
+
+  Wrapped Value
+  [unsigned int]
+  operator== returned false
+  Obtained : 42
+  Predicted: 1729
+
+=======================================
+

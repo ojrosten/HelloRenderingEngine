@@ -19,5 +19,11 @@ namespace avocet::testing
 
     void resource_handle_test::run_tests()
     {
+        auto x = []() { return avocet::opengl::resource_handle{42}; };
+        auto y = []() { return avocet::opengl::resource_handle{1729}; };
+        check(equivalence, "", x(), 42);
+        check(equivalence, "", y(), 1729);
+
+        check_semantics("", x, y);
     }
 }

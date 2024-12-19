@@ -21,11 +21,13 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const type& actual, const type& prediction)
         {
+            check(equality, "Wrapped Value", logger, actual.index(), prediction.index());
         }
         
         template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const type& actual, const GLuint& prediction)
         {
+            check(equality, "Wrapped Value", logger, actual.index(), prediction);
         }
     };
 }

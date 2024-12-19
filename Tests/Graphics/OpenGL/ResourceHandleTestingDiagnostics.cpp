@@ -19,5 +19,9 @@ namespace avocet::testing
 
     void resource_handle_false_negative_test::run_tests()
     {
+        auto x = []() { return avocet::opengl::resource_handle{42}; };
+        auto y = []() { return avocet::opengl::resource_handle{1729}; };
+        check(equivalence, "", x(), 7);
+        check(equality, "", x(), y());
     }
 }
