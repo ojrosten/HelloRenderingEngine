@@ -12,6 +12,13 @@ script_dir=$(dirname "$0")
 # Get the test directory from the first argument
 test_dir="$1"
 
+# Cleanup lcov
+lcov --zerocounters --directory "$test_Dir"
+
+# Run cTest to ensure RenderingSetup.txt is generatated
+cd "$test_dir"
+ctest -T Test
+
 #Read the single line from RenderingSetup.txt (assuming it exists)
 rendering_setup=$(head -n 1 "$test_dir/RenderingSetup.txt")
 
@@ -27,15 +34,11 @@ output_dir="${script_dir}/../coverage_reports/${rendering_setup}"
 # Create output directory if it doesn't exist
 mkdir -p "$output_dir"
 
-# Cleanup lcov
-lcov --zerocounters --directory .
-
-# Run ctest in the specified directory
-cd "$test_dir"
-ctest -T Test -T Coverage
+# Run ctest in coverage mode
+ctest -T Coverage
 
 # Generate lcov coverage report
-lcov --directory .  --capture --output-file coverage.info
+lcov --directory "$test_dir".  --capture --output-file coverage.info
 lcov --remove coverage.info '/usr/*' '*/sequoia/*' --output-file coverage.info
 
 # Generate HTML report

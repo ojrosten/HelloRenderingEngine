@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 16:05:24</td>
+            <td class="headerValue">2024-12-20 11:56:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -77,42 +77,42 @@
 <span id="L15"><span class="lineNum">      15</span>              : </span>
 <span id="L16"><span class="lineNum">      16</span>              : namespace avocet::opengl{</span>
 <span id="L17"><span class="lineNum">      17</span>              :     [[nodiscard]]</span>
-<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC tlaBgGNC">           7 :     std::string get_vendor() {</span></span>
-<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">          21 :         return {std::bit_cast&lt;const char*&gt;(glGetString(GL_VENDOR))};</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC tlaBgGNC">           1 :     std::string get_vendor() {</span></span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">           3 :         return {std::bit_cast&lt;const char*&gt;(glGetString(GL_VENDOR))};</span></span>
 <span id="L20"><span class="lineNum">      20</span>              :     }</span>
 <span id="L21"><span class="lineNum">      21</span>              : </span>
 <span id="L22"><span class="lineNum">      22</span>              :     [[nodiscard]]</span>
-<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">         134 :     std::string get_renderer() {</span></span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">         402 :         return {std::bit_cast&lt;const char*&gt;(glGetString(GL_RENDERER))};</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">          14 :     std::string get_renderer() {</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          42 :         return {std::bit_cast&lt;const char*&gt;(glGetString(GL_RENDERER))};</span></span>
 <span id="L25"><span class="lineNum">      25</span>              :     }</span>
 <span id="L26"><span class="lineNum">      26</span>              : </span>
 <span id="L27"><span class="lineNum">      27</span>              :     [[nodiscard]]</span>
-<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          17 :     std::string get_opengl_version_string() {</span></span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          51 :         return {std::bit_cast&lt;const char*&gt;(glGetString(GL_VERSION))};</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">           2 :     std::string get_opengl_version_string() {</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           6 :         return {std::bit_cast&lt;const char*&gt;(glGetString(GL_VERSION))};</span></span>
 <span id="L30"><span class="lineNum">      30</span>              :     }</span>
 <span id="L31"><span class="lineNum">      31</span>              : </span>
 <span id="L32"><span class="lineNum">      32</span>              :     namespace {</span>
 <span id="L33"><span class="lineNum">      33</span>              :         [[nodiscard]]</span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          20 :         std::size_t to_digit(const std::string&amp; version, std::string::size_type pos) {</span></span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          20 :             return static_cast&lt;std::size_t&gt;(std::stoi(version.substr(pos, pos + 1)));</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           2 :         std::size_t to_digit(const std::string&amp; version, std::string::size_type pos) {</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           2 :             return static_cast&lt;std::size_t&gt;(std::stoi(version.substr(pos, pos + 1)));</span></span>
 <span id="L36"><span class="lineNum">      36</span>              :         }</span>
 <span id="L37"><span class="lineNum">      37</span>              : </span>
 <span id="L38"><span class="lineNum">      38</span>              :         [[nodiscard]]</span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          10 :         opengl_version extract_opengl_version() {</span></span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          10 :             const std::string version{get_opengl_version_string()};</span></span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          10 :             const auto npos{std::string::npos};</span></span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">          10 :             if(const auto pos{version.find_first_of('.')}; pos != npos) {</span></span>
-<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">          20 :                 return {to_digit(version, pos - 1), to_digit(version, pos + 1)};</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           1 :         opengl_version extract_opengl_version() {</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           1 :             const std::string version{get_opengl_version_string()};</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           1 :             const auto npos{std::string::npos};</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           1 :             if(const auto pos{version.find_first_of('.')}; pos != npos) {</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           2 :                 return {to_digit(version, pos - 1), to_digit(version, pos + 1)};</span></span>
 <span id="L44"><span class="lineNum">      44</span>              :             }</span>
 <span id="L45"><span class="lineNum">      45</span>              : </span>
 <span id="L46"><span class="lineNum">      46</span> <span class="tlaUNC tlaBgUNC">           0 :             throw std::runtime_error{std::format(&quot;Unable to divine OpenGL version number from: {}&quot;, version)};</span></span>
-<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC tlaBgGNC">          10 :         }</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC tlaBgGNC">           1 :         }</span></span>
 <span id="L48"><span class="lineNum">      48</span>              :     }</span>
 <span id="L49"><span class="lineNum">      49</span>              : </span>
 <span id="L50"><span class="lineNum">      50</span>              :     [[nodiscard]]</span>
-<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">         767 :     opengl_version get_opengl_version() {</span></span>
-<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">         767 :         const static opengl_version version{extract_opengl_version()};</span></span>
-<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">         767 :         return version;</span></span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">          77 :     opengl_version get_opengl_version() {</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">          77 :         const static opengl_version version{extract_opengl_version()};</span></span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">          77 :         return version;</span></span>
 <span id="L54"><span class="lineNum">      54</span>              :     }</span>
 <span id="L55"><span class="lineNum">      55</span>              : }</span>
         </pre>

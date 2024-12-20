@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 16:05:24</td>
+            <td class="headerValue">2024-12-20 11:56:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">66.7&nbsp;%</td>
@@ -80,11 +80,11 @@
 <span id="L18"><span class="lineNum">      18</span>              :     }</span>
 <span id="L19"><span class="lineNum">      19</span>              : </span>
 <span id="L20"><span class="lineNum">      20</span>              :     [[nodiscard]]</span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC tlaBgGNC">         147 :     constexpr bool is_windows() noexcept {</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC tlaBgGNC">          21 :     constexpr bool is_windows() noexcept {</span></span>
 <span id="L22"><span class="lineNum">      22</span>              :          #if defined(_WIN32)</span>
 <span id="L23"><span class="lineNum">      23</span>              :             return true;</span>
 <span id="L24"><span class="lineNum">      24</span>              :         #else</span>
-<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">         147 :             return false;</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">          21 :             return false;</span></span>
 <span id="L26"><span class="lineNum">      26</span>              :         #endif</span>
 <span id="L27"><span class="lineNum">      27</span>              :     }</span>
 <span id="L28"><span class="lineNum">      28</span>              : </span>
@@ -98,9 +98,9 @@
 <span id="L36"><span class="lineNum">      36</span>              :     }</span>
 <span id="L37"><span class="lineNum">      37</span>              : </span>
 <span id="L38"><span class="lineNum">      38</span>              :     [[nodiscard]]</span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC tlaBgGNC">          49 :     constexpr bool is_linux() noexcept {</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC tlaBgGNC">           7 :     constexpr bool is_linux() noexcept {</span></span>
 <span id="L40"><span class="lineNum">      40</span>              :         #if defined(__linux__)</span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          49 :             return true;</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           7 :             return true;</span></span>
 <span id="L42"><span class="lineNum">      42</span>              :         #else</span>
 <span id="L43"><span class="lineNum">      43</span>              :             return false;</span>
 <span id="L44"><span class="lineNum">      44</span>              :         #endif</span>

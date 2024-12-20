@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-18 16:05:24</td>
+            <td class="headerValue">2024-12-20 11:56:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -73,23 +73,23 @@
 <span id="L11"><span class="lineNum">      11</span>              : </span>
 <span id="L12"><span class="lineNum">      12</span>              : namespace curlew {</span>
 <span id="L13"><span class="lineNum">      13</span>              :     namespace {</span>
-<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC tlaBgGNC">         182 :         std::string&amp; erase_backwards(std::string&amp; message, std::string_view rightPattern, std::string_view leftPattern) {</span></span>
-<span id="L15"><span class="lineNum">      15</span> <span class="tlaGNC">         182 :             constexpr auto npos{std::string::npos};</span></span>
-<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">         182 :             if(const auto rightPos{message.find(rightPattern)}; rightPos &lt; npos) {</span></span>
-<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">          84 :                 if(const auto leftPos{message.rfind(leftPattern, rightPos)}; leftPos &lt; rightPos)</span></span>
-<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">          84 :                     message.erase(leftPos + 1, rightPos - leftPos - 1);</span></span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC tlaBgGNC">          26 :         std::string&amp; erase_backwards(std::string&amp; message, std::string_view rightPattern, std::string_view leftPattern) {</span></span>
+<span id="L15"><span class="lineNum">      15</span> <span class="tlaGNC">          26 :             constexpr auto npos{std::string::npos};</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">          26 :             if(const auto rightPos{message.find(rightPattern)}; rightPos &lt; npos) {</span></span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">          12 :                 if(const auto leftPos{message.rfind(leftPattern, rightPos)}; leftPos &lt; rightPos)</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">          12 :                     message.erase(leftPos + 1, rightPos - leftPos - 1);</span></span>
 <span id="L19"><span class="lineNum">      19</span>              :             }</span>
 <span id="L20"><span class="lineNum">      20</span>              : </span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         182 :             return message;</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">          26 :             return message;</span></span>
 <span id="L22"><span class="lineNum">      22</span>              :         }</span>
 <span id="L23"><span class="lineNum">      23</span>              :     }</span>
 <span id="L24"><span class="lineNum">      24</span>              : </span>
 <span id="L25"><span class="lineNum">      25</span>              :     [[nodiscard]]</span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          91 :     std::string exception_postprocessor::operator()(std::string message) const {</span></span>
-<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">          91 :         erase_backwards(message, &quot;Tests&quot;, &quot; &quot;);</span></span>
-<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          91 :         erase_backwards(message, &quot;Source/avocet&quot;, &quot; &quot;);</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          13 :     std::string exception_postprocessor::operator()(std::string message) const {</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">          13 :         erase_backwards(message, &quot;Tests&quot;, &quot; &quot;);</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          13 :         erase_backwards(message, &quot;Source/avocet&quot;, &quot; &quot;);</span></span>
 <span id="L29"><span class="lineNum">      29</span>              : </span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          91 :         return message;</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          13 :         return message;</span></span>
 <span id="L31"><span class="lineNum">      31</span>              :     }</span>
 <span id="L32"><span class="lineNum">      32</span>              : }</span>
         </pre>
