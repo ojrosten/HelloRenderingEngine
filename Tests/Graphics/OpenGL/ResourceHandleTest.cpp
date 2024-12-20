@@ -19,11 +19,12 @@ namespace avocet::testing
 
     void resource_handle_test::run_tests()
     {
-        auto x = []() { return avocet::opengl::resource_handle{42}; };
-        auto y = []() { return avocet::opengl::resource_handle{1729}; };
+        namespace agl = avocet::opengl;
+        auto x = []() { return agl::resource_handle{42}; };
+        auto y = []() { return agl::resource_handle{1729}; };
         check(equivalence, "", x(), 42);
         check(equivalence, "", y(), 1729);
 
-        check_semantics("", x, y);
+        check_semantics("", x, y, agl::resource_handle{}, x());
     }
 }
