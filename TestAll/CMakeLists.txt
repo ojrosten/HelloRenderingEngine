@@ -31,4 +31,3 @@ add_subdirectory(${TestingUtils}/curlew curlew)
 target_link_libraries(TestAll PRIVATE curlew)
 
 sequoia_finalize_tests(TestAll ${TestDir} Tests)
-add_test(NAME TestAll COMMAND TestAll)
