@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-20 11:56:23</td>
+            <td class="headerValue">2024-12-20 19:42:55</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -73,13 +73,13 @@
 <span id="L11"><span class="lineNum">      11</span>              : </span>
 <span id="L12"><span class="lineNum">      12</span>              : namespace curlew {</span>
 <span id="L13"><span class="lineNum">      13</span>              :     [[nodiscard]]</span>
-<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC tlaBgGNC">           1 :     std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle&amp; handle, std::size_t expectedSize) {</span></span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC tlaBgGNC">           2 :     std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle&amp; handle, std::size_t expectedSize) {</span></span>
 <span id="L15"><span class="lineNum">      15</span>              :         namespace agl = avocet::opengl;</span>
-<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">           1 :         std::string label(expectedSize + 1, ' ');</span></span>
-<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           1 :         agl::gl_function{glGetObjectLabel}(agl::to_gl_enum(identifier), handle.index(), agl::to_gl_sizei(label.size()), nullptr, label.data());</span></span>
-<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">           1 :         if((label.back() == '\0') || (label.back() == ' ')) label.pop_back();</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">           2 :         std::string label(expectedSize + 1, ' ');</span></span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           2 :         agl::gl_function{glGetObjectLabel}(agl::to_gl_enum(identifier), handle.index(), agl::to_gl_sizei(label.size()), nullptr, label.data());</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">           2 :         if((label.back() == '\0') || (label.back() == ' ')) label.pop_back();</span></span>
 <span id="L19"><span class="lineNum">      19</span>              : </span>
-<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">           1 :         return label;</span></span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">           2 :         return label;</span></span>
 <span id="L21"><span class="lineNum">      21</span> <span class="tlaUNC tlaBgUNC">           0 :     }</span></span>
 <span id="L22"><span class="lineNum">      22</span>              : }</span>
         </pre>
