@@ -9,7 +9,6 @@
 
 #include "BuffersFreeTest.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
-#include "avocet/Graphics/OpenGL/Buffers.hpp"
 
 namespace avocet::testing
 {
@@ -47,6 +46,24 @@ namespace avocet::testing
     void buffers_free_test::test_vbo()
     {
         check_buffer_object<agl::vertex_buffer_object>("VBO Data", std::array<GLfloat, 4>{0.0, 1.0, 2.0, 3.0});
+
+        agl::vertex_buffer_object vbo{};
+        std::vector<GLfloat> buffer{0.0, 1.0, 2.0, 3.0};
+
+        agl::gl_function{glBindBuffer}(GL_ARRAY_BUFFER, get_raw_index(vbo));
+        agl::gl_function{glBufferData}(GL_ARRAY_BUFFER, buffer.size() * sizeof(GLfloat), buffer.data(), GL_STATIC_DRAW);
+
+        check(equivalence, "", vbo, std::optional{buffer});
+
+        agl::vertex_buffer_object vbo2{};
+        std::vector<GLfloat> buffer2{-3.0, -2.0, -1.0};
+
+        agl::gl_function{glBindBuffer}(GL_ARRAY_BUFFER, get_raw_index(vbo2));
+        agl::gl_function{glBufferData}(GL_ARRAY_BUFFER, buffer.size() * sizeof(GLfloat), buffer2.data(), GL_STATIC_DRAW);
+
+        check(equivalence, "", vbo2, std::optional{buffer2});
+
+        check_semantics("", vbo, vbo2, std::optional{buffer}, std::optional{buffer2}, std::optional<std::vector<GLfloat>>{}, std::optional{buffer});
     }
 
     void buffers_free_test::test_vao()
