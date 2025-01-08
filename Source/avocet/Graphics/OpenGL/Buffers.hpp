@@ -179,5 +179,5 @@ namespace avocet::opengl {
     template<class Resource>
         requires has_single_resource_v<Resource>
     [[nodiscard]]
-    GLuint get_raw_index(const Resource& r) { return r.get_handle().index(); }
+    GLuint get_raw_index(const Resource& r) noexcept { return r.get_handle().index(); }
 }
