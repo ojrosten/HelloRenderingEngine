@@ -63,7 +63,7 @@ namespace avocet::testing
 
         check(equivalence, "", vbo2, std::optional{buffer2});
 
-        check_semantics("", vbo, vbo2, std::optional{buffer}, std::optional{buffer2}, std::optional<std::vector<GLfloat>>{}, std::optional{buffer});
+        check_semantics("", std::move(vbo), std::move(vbo2), std::optional{buffer}, std::optional{buffer2}, std::optional<std::vector<GLfloat>>{}, std::optional{buffer});
     }
 
     void buffers_free_test::test_vao()
