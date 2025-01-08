@@ -3,7 +3,7 @@ Incorrect object identifier
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in /home/ojrosten/HelloRenderingEngine/TestingUtilities/curlew/TestFramework/GraphicsLabellingTestCore.cpp, line 36:
+OpenGL error detected in /home/ojrosten/HelloRenderingEngine/TestingUtilities/curlew/TestFramework/GraphicsLabellingTestCore.cpp, line 37:
 Source: API; Type: Error; Severity: High
 GL_INVALID_VALUE in glGetObjectLabel(name = 1)
 
