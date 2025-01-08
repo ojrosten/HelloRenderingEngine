@@ -1,0 +1,11 @@
+Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 53
+Incorrect object identifier
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in C:/Users/olive/HelloRenderingEngine/TestingUtilities/curlew/TestFramework/GraphicsLabellingTestCore.cpp, line 37:
+Source: API; Type: Error; Severity: Medium
+GL_INVALID_VALUE
+
+=======================================
+

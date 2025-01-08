@@ -1,0 +1,9 @@
+False Negative Failure:
+Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 53
+Incorrect object identifier
+
+Expected Exception Type:
+[std::runtime_error]
+
+=======================================
+
