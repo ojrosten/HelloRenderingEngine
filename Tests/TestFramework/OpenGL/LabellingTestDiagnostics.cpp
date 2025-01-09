@@ -53,5 +53,10 @@ namespace avocet::testing
             "Incorrect object identifier",
             [&sp, this](){ check_object_label("Shader Program Label", agl::object_identifier::framebuffer, sp.resource().handle(), "Identity.vs / Monochrome.fs"); }
         );
+
+        check_exception_thrown<std::runtime_error>(
+            "Incorrect handle",
+            [&sp, this](){ check_object_label("Shader Program Label", agl::object_identifier::program, agl::resource_handle{42}, "Identity.vs / Monochrome.fs"); }
+        );
     }
 }

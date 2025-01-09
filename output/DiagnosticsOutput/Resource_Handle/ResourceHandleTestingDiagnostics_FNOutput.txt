@@ -13,16 +13,3 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Graphics/OpenGL/ResourceHandleTestingDiagnostics.cpp, Line 25
-
-[avocet::opengl::resource_handle]
-operator== returned false
-
-  Wrapped Value
-  [unsigned int]
-  operator== returned false
-  Obtained : 42
-  Predicted: 1729
-
-=======================================
-

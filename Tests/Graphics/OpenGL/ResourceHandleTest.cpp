@@ -25,6 +25,7 @@ namespace avocet::testing
         check(equivalence, "", x(), 42);
         check(equivalence, "", y(), 1729);
 
-        check_semantics("", x, y, agl::resource_handle{}, x());
+        check_semantics("", x(), y(), GLuint{42}, GLuint{1729}, GLuint{}, GLuint{42});
+
     }
 }

@@ -7,3 +7,12 @@ Expected Exception Type:
 
 =======================================
 
+False Negative Failure:
+Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 58
+Incorrect handle
+
+Expected Exception Type:
+[std::runtime_error]
+
+=======================================
+

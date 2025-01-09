@@ -9,3 +9,14 @@ Error has been generated. GL error GL_INVALID_VALUE in GetObjectLabel: (ID: 7390
 
 =======================================
 
+Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 58
+Incorrect handle
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in C:/UnitySrc/HelloRenderingEngine/TestingUtilities/curlew/TestFramework/GraphicsLabellingTestCore.cpp, line 37:
+Source: API; Type: Error; Severity: High
+Error has been generated. GL error GL_INVALID_VALUE in GetObjectLabel: (ID: 739079020) Generic error
+
+=======================================
+
