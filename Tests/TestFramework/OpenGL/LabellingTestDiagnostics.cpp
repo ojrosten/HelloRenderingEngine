@@ -20,5 +20,13 @@ namespace avocet::testing
 
     void labelling_false_negative_test::labelling_tests()
     {
+        namespace agl = avocet::opengl;
+        const auto shaderDir{working_materials()};
+
+        agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+
+        check_object_label("Label too long", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.fss");
+        check_object_label("Label too short", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.f");
+        check_object_label("Label typo", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.ff");
     }
 }
