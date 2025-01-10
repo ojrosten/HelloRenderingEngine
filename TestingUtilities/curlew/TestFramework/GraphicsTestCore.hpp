@@ -44,9 +44,9 @@ namespace curlew {
     {
     public:
         using parallelizable_type = std::false_type;
-
         using base_test_type = basic_test<Mode, trivial_extender>;
-        using base_test_type::basic_test;
+
+        using basic_test<Mode, trivial_extender>::basic_test;
 
         template<class E, class Fn>
         bool check_filtered_exception_thrown(const reporter& description, Fn&& function)
