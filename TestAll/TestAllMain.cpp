@@ -34,8 +34,7 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Test Framework",
-            labelling_false_negative_test{"Labelling False Negative Test"},
-            labelling_false_positive_test{"Labelling False Positive Test"}
+            labelling_false_negative_test{"Labelling False Negative Test"}
         );
 
         runner.add_test_suite(

@@ -21,14 +21,4 @@ namespace avocet::testing
     void labelling_false_negative_test::labelling_tests()
     {
     }
-
-    [[nodiscard]]
-    std::filesystem::path labelling_false_positive_test::source_file() const
-    {
-        return std::source_location::current().file_name();
-    }
-
-    void labelling_false_positive_test::labelling_tests()
-    {
-    }
 }

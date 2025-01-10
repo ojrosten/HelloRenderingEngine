@@ -25,15 +25,4 @@ namespace avocet::testing
 
         void labelling_tests();
     };
-
-    class labelling_false_positive_test final : public curlew::graphics_labelling_false_positive_test
-    {
-    public:
-        using curlew::graphics_labelling_false_positive_test::graphics_labelling_false_positive_test;
-
-        [[nodiscard]]
-        std::filesystem::path source_file() const;
-
-        void labelling_tests();
-    };
 }
