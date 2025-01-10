@@ -17,11 +17,6 @@ namespace sequoia::testing
     template<> struct value_tester<avocet::opengl::resource_handle>
     {
         using type = avocet::opengl::resource_handle;
-
-        template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>& logger, const type& actual, const type& prediction)
-        {
-        }
         
         template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const type& actual, const GLuint& prediction)

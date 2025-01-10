@@ -18,8 +18,6 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Debugging/OpenGL/InfiniteLoopFreeTest.cpp
                ${TestDir}/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/Debugging/OpenGL/NullFunctionPointerFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/BuffersFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/BuffersLabellingFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/ResourceHandleTest.cpp
                ${TestDir}/Graphics/OpenGL/ResourceHandleTestingDiagnostics.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp

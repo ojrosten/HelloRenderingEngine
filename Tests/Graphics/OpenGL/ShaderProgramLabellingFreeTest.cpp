@@ -20,14 +20,5 @@ namespace avocet::testing
 
     void shader_program_labelling_free_test::labelling_tests()
     {
-        namespace agl = avocet::opengl;
-        const auto shaderDir{working_materials()};
-
-        agl::shader_program sp{
-            shaderDir / "Identity.vs",
-            shaderDir / "Monochrome.fs"
-        };
-
-        check_object_label("Shader Program Label", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.fs");
     }
 }

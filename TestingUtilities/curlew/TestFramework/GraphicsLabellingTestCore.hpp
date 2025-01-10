@@ -15,7 +15,7 @@
 
 namespace curlew {
     [[nodiscard]]
-    std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::size_t expectedSize);
+    std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle);
 
     template<class T>
     inline constexpr bool has_labelling_tests_v{
@@ -32,8 +32,8 @@ namespace curlew {
     public:
         using labelling_test_base<Mode>::labelling_test_base;
 
-        bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view expected) {
-            return this->check(equivalence, description, get_object_label(identifier, handle, expected.size()), expected);
+        bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view predicted) {
+            return this->check(equivalence, description, get_object_label(identifier, handle), predicted);
         }
 
         template<class Self>
