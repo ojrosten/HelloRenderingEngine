@@ -19,5 +19,8 @@ namespace avocet::testing
 
     void resource_handle_false_negative_test::run_tests()
     {
+        namespace agl = avocet::opengl;
+
+        check(equivalence, "Incorrect wrapped value", agl::resource_handle{43}, 42);
     }
 }
