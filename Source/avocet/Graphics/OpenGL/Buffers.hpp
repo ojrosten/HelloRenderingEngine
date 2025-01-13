@@ -155,7 +155,7 @@ namespace avocet::opengl {
             requires (I < N)
         void bind(index<I> i) { m_Resource.bind(i); }
 
-        void bind() requires (N == 1) { m_Resource.bind(index<0>{}); }
+        void bind() requires (N == 1) { bind(index<0>{}); }
 
         [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
