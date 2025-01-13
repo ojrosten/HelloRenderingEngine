@@ -32,6 +32,7 @@ namespace avocet::testing
         check(equivalence, "Useful Description", x(), std::optional{xBuffer});
         check(equivalence, "Useful Description", y(), std::optional{yBuffer});
 
-        check_semantics("", x(), y(), std::optional{xBuffer}, std::optional{yBuffer}, std::optional<std::vector<GLfloat>>{}, std::optional{xBuffer});
+        using opt_vec = std::optional<std::vector<GLfloat>>;
+        check_semantics("", x(), y(), std::optional{xBuffer}, std::optional{yBuffer}, opt_vec{}, std::optional{xBuffer});
     }
 }

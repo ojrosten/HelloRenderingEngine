@@ -26,7 +26,9 @@ namespace avocet::testing
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
         namespace agl = avocet::opengl;
+        using opt_vec = std::optional<std::vector<GLfloat>>;
         std::vector<GLfloat> xBuffer{0.0, 1.0, 2.0, 3.0};
-        check(equivalence, "Wrong buffer data", agl::vertex_buffer_object{std::span{xBuffer}, std::nullopt}, std::optional<std::vector<GLfloat>>{});
+        check(equivalence, "Wrong buffer data", agl::vertex_buffer_object{std::span{xBuffer}, std::nullopt}, opt_vec{{}});
+        check(equivalence, "Buffer which should be null", agl::vertex_buffer_object{std::span{xBuffer}, std::nullopt}, opt_vec{});
     }
 }

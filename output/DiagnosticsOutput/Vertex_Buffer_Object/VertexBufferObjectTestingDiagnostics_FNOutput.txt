@@ -1,5 +1,25 @@
-Tests/Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.cpp, Line 30
+Tests/Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.cpp, Line 31
 Wrong buffer data
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object>]
+Checking for equivalence with:
+[std::optional<std::vector<float, std::allocator<float> > >]
+
+  Buffer data
+  [std::vector<float, std::allocator<float> >]
+  operator== returned false
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 0
+
+=======================================
+
+Tests/Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.cpp, Line 32
+Buffer which should be null
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object>]
