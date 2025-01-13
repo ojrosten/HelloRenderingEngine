@@ -67,16 +67,23 @@ namespace avocet::opengl {
             return to_handles(indices);
         }
 
+        static void bind(const resource_handle& h) { LifeEvents::bind(h.index()); }
+
         static void destroy(const handles<N>& h) {
             LifeEvents::destroy(to_raw_indices(h));
         }
     };
+
+    template<std::size_t I>
+    struct index { constexpr static std::size_t value{I}; };
 
     struct vao_lifecyle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
 
         template<std::size_t N>
         static void generate(raw_indices<N>& indices) { gl_function{glGenVertexArrays}(N, indices.data()); }
+
+        static void bind(GLuint i) { gl_function{glBindVertexArray}(i); }
 
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
@@ -92,8 +99,13 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
-    template<std::size_t I>
-    struct index { constexpr static std::size_t value{I}; };
+    struct vbo_lifecycle_events : buffer_lifecyle_events {
+        static void bind(GLuint i) { gl_function{glBindBuffer}(GL_ARRAY_BUFFER, i); }
+    };
+
+    struct ebo_lifecycle_events : buffer_lifecyle_events {
+        static void bind(GLuint i) { gl_function{glBindBuffer}(GL_ELEMENT_ARRAY_BUFFER, i); }
+    };
 
     template<num_resources NumResources, class LifeEvents>
         requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
@@ -104,11 +116,15 @@ namespace avocet::opengl {
         vertex_resource() : m_Handles{lifecycle_type::generate()} {}
         ~vertex_resource() { lifecycle_type::destroy(m_Handles); }
 
-        vertex_resource(vertex_resource&&) noexcept = default;
+        vertex_resource(vertex_resource&&)            noexcept = default;
         vertex_resource& operator=(vertex_resource&&) noexcept = default;
 
         [[nodiscard]]
         const handles<N>& get_handles() const noexcept { return m_Handles; }
+
+        template<std::size_t I>
+            requires (I < N)
+        void bind(index<I> i) { lifecycle_type::bind(get_handles()[i.value]); }
 
         [[nodiscard]]
         friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
@@ -126,16 +142,18 @@ namespace avocet::opengl {
     public:
         constexpr static std::size_t N{NumResources.value};
 
-        generic_vertex_object() = default;
-
-        void add_label(const std::optional<std::string>& label) {
-            if(label && object_labels_activated()) {
-                const auto& str{label.value()};
-                for(const auto& h : m_Resource.get_handles()) {
-                    gl_function{glObjectLabel}(to_gl_enum(LifeEvents::identifier), h.index(), to_gl_sizei(str.size()), str.data());
-                }
-            }
+        generic_vertex_object(const std::optional<std::string>& label) {
+            [this, &label] <std::size_t I>(std::index_sequence<I>){
+                bind(index<I>{});
+                add_label(label);
+            }(std::make_index_sequence<N>{});
         }
+
+        template<std::size_t I>
+            requires (I < N)
+        void bind(index<I> i) { m_Resource.bind(i); }
+
+        void bind() requires (N == 1) { m_Resource.bind(index<0>{}); }
 
         template<std::size_t I>
             requires (I < N)
@@ -152,21 +170,15 @@ namespace avocet::opengl {
 
         generic_vertex_object(generic_vertex_object&&)            noexcept = default;
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
-    };
-
-    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecyle_events> {
-    public:
-        using generic_vertex_object<num_resources{1}, vao_lifecyle_events>::generic_vertex_object;
-    };
-
-    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecyle_events> {
-    public:
-        using generic_vertex_object<num_resources{1}, buffer_lifecyle_events>::generic_vertex_object;
-    };
-
-    class element_buffer_object :public generic_vertex_object<num_resources{1}, buffer_lifecyle_events> {
-    public:
-        using generic_vertex_object<num_resources{1}, buffer_lifecyle_events>::generic_vertex_object;
+    private:
+        void add_label(const std::optional<std::string>& label) {
+            if(label && object_labels_activated()) {
+                const auto& str{label.value()};
+                for(const auto& h : m_Resource.get_handles()) {
+                    gl_function{glObjectLabel}(to_gl_enum(LifeEvents::identifier), h.index(), to_gl_sizei(str.size()), str.data());
+                }
+            }
+        }
     };
 
     template<class Resource>
@@ -180,4 +192,20 @@ namespace avocet::opengl {
         requires has_single_resource_v<Resource>
     [[nodiscard]]
     GLuint get_raw_index(const Resource& r) { return r.get_handle().index(); }
+
+
+    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecyle_events> {
+    public:
+        using generic_vertex_object<num_resources{1}, vao_lifecyle_events>::generic_vertex_object;
+    };
+
+    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, vbo_lifecycle_events> {
+    public:
+        using generic_vertex_object<num_resources{1}, vbo_lifecycle_events>::generic_vertex_object;
+    };
+
+    class element_buffer_object :public generic_vertex_object<num_resources{1}, ebo_lifecycle_events> {
+    public:
+        using generic_vertex_object<num_resources{1}, ebo_lifecycle_events>::generic_vertex_object;
+    };
 }
