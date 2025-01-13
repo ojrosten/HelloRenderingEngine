@@ -14,6 +14,7 @@
 
 #include <array>
 #include <optional>
+#include <span>
 
 namespace avocet::opengl {
     template<std::size_t N>
@@ -89,22 +90,23 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
     };
 
-    struct buffer_lifecyle_events {
+    enum class buffer_config : GLenum {
+        array_buffer         = GL_ARRAY_BUFFER,
+        element_array_buffer = GL_ELEMENT_ARRAY_BUFFER
+    };
+
+    template<buffer_config BufferConfig>
+    struct buffer_lifecycle_events {
         constexpr static auto identifier{object_identifier::buffer};
+        constexpr static auto config{BufferConfig};
 
         template<std::size_t N>
         static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
 
+        static void bind(GLuint i) { gl_function{glBindBuffer}(to_gl_enum(BufferConfig), i); }
+
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
-    };
-
-    struct vbo_lifecycle_events : buffer_lifecyle_events {
-        static void bind(GLuint i) { gl_function{glBindBuffer}(GL_ARRAY_BUFFER, i); }
-    };
-
-    struct ebo_lifecycle_events : buffer_lifecyle_events {
-        static void bind(GLuint i) { gl_function{glBindBuffer}(GL_ELEMENT_ARRAY_BUFFER, i); }
     };
 
     template<num_resources NumResources, class LifeEvents>
@@ -155,14 +157,6 @@ namespace avocet::opengl {
 
         void bind() requires (N == 1) { m_Resource.bind(index<0>{}); }
 
-        template<std::size_t I>
-            requires (I < N)
-        [[nodiscard]]
-        const resource_handle& get_handle(index<I>) const noexcept { return m_Resource.get_handles()[I]; }
-
-        [[nodiscard]]
-        const resource_handle& get_handle() const noexcept requires (N == 1) { return m_Resource.get_handles()[0]; }
-
         [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
     protected:
@@ -181,31 +175,36 @@ namespace avocet::opengl {
         }
     };
 
-    template<class Resource>
-    inline constexpr bool has_single_resource_v{
-        requires(const Resource & r) {
-            { r.get_handle() } -> std::same_as<const resource_handle&>;
-        }
-    };
-
-    template<class Resource>
-        requires has_single_resource_v<Resource>
-    [[nodiscard]]
-    GLuint get_raw_index(const Resource& r) { return r.get_handle().index(); }
-
-
     class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecyle_events> {
     public:
         using generic_vertex_object<num_resources{1}, vao_lifecyle_events>::generic_vertex_object;
     };
 
-    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, vbo_lifecycle_events> {
+    template<buffer_config Config>
+    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> {
     public:
-        using generic_vertex_object<num_resources{1}, vbo_lifecycle_events>::generic_vertex_object;
+        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> ;
+
+        template<class T, std::size_t N>
+        generic_buffer_object(std::span<T, N> bufferData, const std::optional<std::string>& label)
+            : base_type{label}
+        {
+            gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * N, bufferData.data(), GL_STATIC_DRAW);
+        }
+    protected:
+        ~generic_buffer_object() = default;
+
+        generic_buffer_object(generic_buffer_object&&)            noexcept = default;
+        generic_buffer_object& operator=(generic_buffer_object&&) noexcept = default;
     };
 
-    class element_buffer_object :public generic_vertex_object<num_resources{1}, ebo_lifecycle_events> {
+    class vertex_buffer_object  : public generic_buffer_object<buffer_config::array_buffer> {
     public:
-        using generic_vertex_object<num_resources{1}, ebo_lifecycle_events>::generic_vertex_object;
+        using generic_buffer_object<buffer_config::array_buffer>::generic_buffer_object;
+    };
+
+    class element_buffer_object : public generic_buffer_object<buffer_config::element_array_buffer> {
+    public:
+        using generic_buffer_object<buffer_config::element_array_buffer>::generic_buffer_object;
     };
 }
