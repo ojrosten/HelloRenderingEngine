@@ -136,6 +136,8 @@ namespace avocet::opengl {
         handles<N> m_Handles;
     };
 
+    constexpr static std::optional<std::string> null_label{std::nullopt};
+
     template<num_resources NumResources, class LifeEvents>
         requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
     class generic_vertex_object {
