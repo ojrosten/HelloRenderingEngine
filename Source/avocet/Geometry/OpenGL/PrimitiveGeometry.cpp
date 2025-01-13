@@ -8,12 +8,18 @@
 #include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
 
 namespace avocet::opengl {
+    namespace {
+        void set_vao() {
+            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+            gl_function{glEnableVertexAttribArray}(0);
+        }
+    }
+
     triangle::triangle(const std::optional<std::string>& label)
         : m_VAO{label}
         , m_VBO{std::span{m_Vertices}, label}
     {    
-        gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-        gl_function{glEnableVertexAttribArray}(0);
+        set_vao();
     }
     
     void triangle::draw() {
@@ -26,8 +32,7 @@ namespace avocet::opengl {
         , m_VBO{std::span{m_Vertices}, label}
         , m_EBO{std::span{m_Indices}, label}
     {
-        gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-        gl_function{glEnableVertexAttribArray}(0);
+        set_vao();
     }
 
     void quad::draw() {

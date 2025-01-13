@@ -126,7 +126,7 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        void bind(index<I> i) { lifecycle_type::bind(get_handles()[i.value]); }
+        void bind(index<I> i) { lifecycle_type::bind(m_Handles[i.value]); }
 
         [[nodiscard]]
         friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
@@ -144,7 +144,7 @@ namespace avocet::opengl {
     public:
         constexpr static std::size_t N{NumResources.value};
 
-        generic_vertex_object(const std::optional<std::string>& label) {
+        explicit generic_vertex_object(const std::optional<std::string>& label) {
             [this, &label] <std::size_t I>(std::index_sequence<I>){
                 bind(index<I>{});
                 add_label(label);
