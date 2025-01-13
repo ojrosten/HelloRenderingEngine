@@ -126,7 +126,7 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        void bind(index<I> i) { lifecycle_type::bind(m_Handles[i.value]); }
+        friend void bind(const vertex_resource& resource, index<I> i) { lifecycle_type::bind(resource.get_handles()[i.value]); }
 
         [[nodiscard]]
         friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
@@ -146,16 +146,19 @@ namespace avocet::opengl {
 
         explicit generic_vertex_object(const std::optional<std::string>& label) {
             [this, &label] <std::size_t I>(std::index_sequence<I>){
-                bind(index<I>{});
+                bind(*this, index<I>{});
                 add_label(label);
             }(std::make_index_sequence<N>{});
         }
 
         template<std::size_t I>
             requires (I < N)
-        void bind(index<I> i) { m_Resource.bind(i); }
+        friend void bind(const generic_vertex_object& gvo, index<I> i) { bind(gvo.m_Resource, i); }
 
-        void bind() requires (N == 1) { bind(index<0>{}); }
+        friend void bind(const generic_vertex_object& gvo) requires (N == 1) { bind(gvo, index<0>{}); }
+
+        [[nodiscard]]
+        explicit operator bool() const noexcept requires (N == 1) { return m_Resource.get_handles()[0] == resource_handle{}; }
 
         [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
@@ -190,6 +193,13 @@ namespace avocet::opengl {
             : base_type{label}
         {
             gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * N, bufferData.data(), GL_STATIC_DRAW);
+        }
+
+        template<class T>
+        generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
+            : base_type{label}
+        {
+            gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * bufferData.size(), bufferData.data(), GL_STATIC_DRAW);
         }
     protected:
         ~generic_buffer_object() = default;
