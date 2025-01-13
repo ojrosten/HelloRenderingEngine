@@ -27,8 +27,9 @@ namespace avocet::testing
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
         std::vector<GLfloat> xBuffer{0.0, 1.0, 2.0, 3.0}, yBuffer{-4.0, -5.0, 7.0};
-        auto x = [&xBuffer]() { return agl::vertex_buffer_object{std::span{xBuffer}, agl::null_label}; };
-        auto y = [&yBuffer]() { return agl::vertex_buffer_object{std::span{yBuffer}, agl::null_label}; };
+
+        auto x = [&xBuffer]() { return agl::vertex_buffer_object{xBuffer, agl::null_label}; };
+        auto y = [&yBuffer]() { return agl::vertex_buffer_object{yBuffer, agl::null_label}; };
         check(equivalence, "", x(), std::optional{xBuffer});
         check(equivalence, "", y(), std::optional{yBuffer});
 

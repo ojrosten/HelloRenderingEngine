@@ -190,18 +190,11 @@ namespace avocet::opengl {
     public:
         using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> ;
 
-        template<class T, std::size_t N>
-        generic_buffer_object(std::span<T, N> bufferData, const std::optional<std::string>& label)
+        template<std::ranges::contiguous_range R>
+        generic_buffer_object(R&& bufferData, const std::optional<std::string>& label)
             : base_type{label}
         {
-            gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * N, bufferData.data(), GL_STATIC_DRAW);
-        }
-
-        template<class T>
-        generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
-            : base_type{label}
-        {
-            gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * bufferData.size(), bufferData.data(), GL_STATIC_DRAW);
+            gl_function{glBufferData}(to_gl_enum(Config), sizeof(std::ranges::range_value_t<R>) * bufferData.size(), bufferData.data(), GL_STATIC_DRAW);
         }
     protected:
         ~generic_buffer_object() = default;

@@ -17,7 +17,7 @@ namespace avocet::opengl {
 
     triangle::triangle(const std::optional<std::string>& label)
         : m_VAO{label}
-        , m_VBO{std::span{m_Vertices}, label}
+        , m_VBO{m_Vertices, label}
     {    
         set_vao();
     }
@@ -29,8 +29,8 @@ namespace avocet::opengl {
 
     quad::quad(const std::optional<std::string>& label)
         : m_VAO{label}
-        , m_VBO{std::span{m_Vertices}, label}
-        , m_EBO{std::span{m_Indices}, label}
+        , m_VBO{m_Vertices, label}
+        , m_EBO{m_Indices, label}
     {
         set_vao();
     }
