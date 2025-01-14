@@ -79,7 +79,7 @@ namespace avocet::opengl {
     template<std::size_t I>
     struct index { constexpr static std::size_t value{I}; };
 
-    struct vao_lifecyle_events {
+    struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
 
         template<std::size_t N>
@@ -143,16 +143,16 @@ namespace avocet::opengl {
     public:
         constexpr static std::size_t N{NumResources.value};
 
-        explicit generic_vertex_object(const std::optional<std::string>& label) {
-            for(auto i : std::views::iota(0u, N)) {
-                do_bind(*this, i);
+        explicit generic_vertex_object(const std::array<std::optional<std::string>, N>& labels) {
+            for(auto [handle, label] : std::views::zip(m_Resource.get_handles(), labels)) {
+                lifecycle_type::bind(handle);
                 add_label(label);
             }
         }
 
         template<std::size_t I>
             requires (I < N)
-        friend void bind(const generic_vertex_object& gvo, index<I> i) { do_bind(gvo, i.value); }
+        friend void bind(const generic_vertex_object& gvo, index<I> i) { lifecycle_type::bind(gvo.m_Resource.get_handles()[i.value]); }
 
         friend void bind(const generic_vertex_object& gvo) requires (N == 1) { bind(gvo, index<0>{}); }
 
@@ -177,15 +177,15 @@ namespace avocet::opengl {
                 }
             }
         }
-
-        static void do_bind(const generic_vertex_object& gvo, GLuint i) {
-            lifecycle_type::bind(gvo.m_Resource.get_handles()[i]);
-        }
     };
 
-    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecyle_events> {
+    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
     public:
-        using generic_vertex_object<num_resources{1}, vao_lifecyle_events>::generic_vertex_object;
+        using base_type = generic_vertex_object<num_resources{1}, vao_lifecycle_events> ;
+
+        explicit vertex_attribute_object(const std::optional<std::string>& label)
+            : base_type{std::array{label}}
+        {}
     };
 
     template<buffer_config Config, class T>
@@ -194,7 +194,7 @@ namespace avocet::opengl {
         using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> ;
 
         generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
-            : base_type{label}
+            : base_type{std::array{label}}
         {
             gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * bufferData.size(), bufferData.data(), GL_STATIC_DRAW);
         }
