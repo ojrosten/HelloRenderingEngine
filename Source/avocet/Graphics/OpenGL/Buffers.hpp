@@ -178,7 +178,7 @@ namespace avocet::opengl {
         constexpr static std::size_t N{NumResources.value};
 
         explicit generic_vertex_object(const std::array<configurator_type, N>& configurators) {
-            for(auto [handle, configurator] : std::views::zip(m_Resource.get_handles(), configurators)) {
+            for(auto [handle, configurator] : std::views::zip(get_handles(), configurators)) {
                 lifecycle_type::bind(handle);
                 lifecycle_type::configure(handle, configurator);
             }
@@ -186,12 +186,12 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        friend void bind(const generic_vertex_object& gvo, index<I> i) { lifecycle_type::bind(gvo.m_Resource.get_handles()[i.value]); }
+        friend void bind(const generic_vertex_object& gvo, index<I> i) { lifecycle_type::bind(gvo.get_handles()[i.value]); }
 
         friend void bind(const generic_vertex_object& gvo) requires (N == 1) { bind(gvo, index<0>{}); }
 
         [[nodiscard]]
-        explicit operator bool() const noexcept requires (N == 1) { return m_Resource.get_handles()[0] == resource_handle{}; }
+        explicit operator bool() const noexcept requires (N == 1) { return get_handles()[0] == resource_handle{}; }
 
         [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
@@ -202,6 +202,9 @@ namespace avocet::opengl {
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
     private:
         using lifecycle_type = resource_type::lifecycle_type;
+
+        [[nodiscard]]
+        const handles<N>& get_handles() const noexcept { return m_Resource.get_handles(); }
     };
 
     class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
