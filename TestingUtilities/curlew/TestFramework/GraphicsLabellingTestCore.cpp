@@ -14,10 +14,10 @@ namespace curlew {
 
     namespace {
         [[nodiscard]]
-        GLsizei get_max_label_length() {
-            const static GLsizei length{
+        GLint get_max_label_length() {
+            const static GLint length{
                 [](){
-                    GLsizei param{};
+                    GLint param{};
                     agl::gl_function{glGetIntegerv}(GL_MAX_LABEL_LENGTH, &param);
                     return param;
                 }()
