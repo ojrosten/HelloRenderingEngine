@@ -115,8 +115,16 @@ namespace avocet::opengl {
         element_array_buffer = GL_ELEMENT_ARRAY_BUFFER
     };
 
+    struct buffer_lifecycle_events_base {
+        template<std::size_t N>
+        static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
+    };
+
     template<buffer_config BufferConfig, class T>
-    struct buffer_lifecycle_events {
+    struct buffer_lifecycle_events : buffer_lifecycle_events_base {
         constexpr static auto identifier{object_identifier::buffer};
         constexpr static auto config{BufferConfig};
 
@@ -125,9 +133,6 @@ namespace avocet::opengl {
             std::optional<std::string> label;
         };
 
-        template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
-
         static void bind(const resource_handle& handle) { gl_function{glBindBuffer}(to_gl_enum(BufferConfig), handle.index()); }
 
         static void configure(const resource_handle& handle, const initializer& init) {
@@ -135,8 +140,6 @@ namespace avocet::opengl {
             gl_function{glBufferData}(to_gl_enum(config), sizeof(T) * init.buffer_data.size(), init.buffer_data.data(), GL_STATIC_DRAW);
         }
 
-        template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
     template<num_resources NumResources, class LifeEvents>
