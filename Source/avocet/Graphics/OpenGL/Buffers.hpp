@@ -146,7 +146,7 @@ namespace avocet::opengl {
         explicit generic_vertex_object(const std::array<std::optional<std::string>, N>& labels) {
             for(auto [handle, label] : std::views::zip(m_Resource.get_handles(), labels)) {
                 lifecycle_type::bind(handle);
-                add_label(label);
+                add_label(handle, label);
             }
         }
 
@@ -169,12 +169,10 @@ namespace avocet::opengl {
     private:
         using lifecycle_type = resource_type::lifecycle_type;
 
-        void add_label(const std::optional<std::string>& label) {
+        void add_label(const resource_handle& handle, const std::optional<std::string>& label) {
             if(label && object_labels_activated()) {
                 const auto& str{label.value()};
-                for(const auto& h : m_Resource.get_handles()) {
-                    gl_function{glObjectLabel}(to_gl_enum(LifeEvents::identifier), h.index(), to_gl_sizei(str.size()), str.data());
-                }
+                gl_function{glObjectLabel}(to_gl_enum(LifeEvents::identifier), handle.index(), to_gl_sizei(str.size()), str.data());
             }
         }
     };
