@@ -60,6 +60,7 @@ namespace avocet::opengl {
     template<num_resources NumResources, class LifeEvents>
         requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
     struct vertex_resource_lifecyle {
+        using initializer_type = LifeEvents::initializer;
         constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
@@ -69,7 +70,9 @@ namespace avocet::opengl {
             return to_handles(indices);
         }
 
-        static void bind(const resource_handle& h) { LifeEvents::bind(h.index()); }
+        static void bind(const resource_handle& handle) { LifeEvents::bind(handle); }
+
+        static void configure(const resource_handle& handle, const initializer_type& init) { LifeEvents::configure(handle, init); }
 
         static void destroy(const handles<N>& h) {
             LifeEvents::destroy(to_raw_indices(h));
@@ -79,13 +82,26 @@ namespace avocet::opengl {
     template<std::size_t I>
     struct index { constexpr static std::size_t value{I}; };
 
+    inline void add_label(object_identifier identifier, const resource_handle& handle, const std::optional<std::string>& label) {
+        if(label && object_labels_activated()) {
+            const auto& str{label.value()};
+            gl_function{glObjectLabel}(to_gl_enum(identifier), handle.index(), to_gl_sizei(str.size()), str.data());
+        }
+    }
+
     struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
+
+        struct initializer {
+            std::optional<std::string> label;
+        };
 
         template<std::size_t N>
         static void generate(raw_indices<N>& indices) { gl_function{glGenVertexArrays}(N, indices.data()); }
 
-        static void bind(GLuint i) { gl_function{glBindVertexArray}(i); }
+        static void bind(const resource_handle& handle) { gl_function{glBindVertexArray}(handle.index()); }
+
+        static void configure(const resource_handle& handle, const initializer& init) { add_label(identifier, handle, init.label); }
 
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
@@ -96,15 +112,25 @@ namespace avocet::opengl {
         element_array_buffer = GL_ELEMENT_ARRAY_BUFFER
     };
 
-    template<buffer_config BufferConfig>
+    template<buffer_config BufferConfig, class T>
     struct buffer_lifecycle_events {
         constexpr static auto identifier{object_identifier::buffer};
         constexpr static auto config{BufferConfig};
 
+        struct initializer {
+            std::span<T> buffer_data;
+            std::optional<std::string> label;
+        };
+
         template<std::size_t N>
         static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
 
-        static void bind(GLuint i) { gl_function{glBindBuffer}(to_gl_enum(BufferConfig), i); }
+        static void bind(const resource_handle& handle) { gl_function{glBindBuffer}(to_gl_enum(BufferConfig), handle.index()); }
+
+        static void configure(const resource_handle& handle, const initializer& init) {
+            add_label(identifier, handle, init.label);
+            gl_function{glBufferData}(to_gl_enum(config), sizeof(T) * init.buffer_data.size(), init.buffer_data.data(), GL_STATIC_DRAW);
+        }
 
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
@@ -141,12 +167,14 @@ namespace avocet::opengl {
         using resource_type = vertex_resource<NumResources, LifeEvents>;
         resource_type m_Resource;
     public:
+        using initializer_type = LifeEvents::initializer;
+
         constexpr static std::size_t N{NumResources.value};
 
-        explicit generic_vertex_object(const std::array<std::optional<std::string>, N>& labels) {
-            for(auto [handle, label] : std::views::zip(m_Resource.get_handles(), labels)) {
+        explicit generic_vertex_object(const std::array<initializer_type, N>& initializers) {
+            for(auto [handle, initializer] : std::views::zip(m_Resource.get_handles(), initializers)) {
                 lifecycle_type::bind(handle);
-                add_label(handle, label);
+                lifecycle_type::configure(handle, initializer);
             }
         }
 
@@ -168,34 +196,27 @@ namespace avocet::opengl {
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
     private:
         using lifecycle_type = resource_type::lifecycle_type;
-
-        void add_label(const resource_handle& handle, const std::optional<std::string>& label) {
-            if(label && object_labels_activated()) {
-                const auto& str{label.value()};
-                gl_function{glObjectLabel}(to_gl_enum(LifeEvents::identifier), handle.index(), to_gl_sizei(str.size()), str.data());
-            }
-        }
     };
 
     class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
+        using initializer_type = vao_lifecycle_events::initializer;
     public:
         using base_type = generic_vertex_object<num_resources{1}, vao_lifecycle_events> ;
 
         explicit vertex_attribute_object(const std::optional<std::string>& label)
-            : base_type{std::array{label}}
+            : base_type{std::array{initializer_type{label}}}
         {}
     };
 
     template<buffer_config Config, class T>
-    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> {
+    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config, T>> {
+        using initializer_type = buffer_lifecycle_events<Config, T>::initializer;
     public:
-        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> ;
+        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config, T>> ;
 
         generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
-            : base_type{std::array{label}}
-        {
-            gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * bufferData.size(), bufferData.data(), GL_STATIC_DRAW);
-        }
+            : base_type{std::array{initializer_type{bufferData, label}}}
+        {}
     protected:
         ~generic_buffer_object() = default;
 
