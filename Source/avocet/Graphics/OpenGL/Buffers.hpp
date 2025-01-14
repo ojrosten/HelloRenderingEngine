@@ -50,10 +50,13 @@ namespace avocet::opengl {
 
     template<num_resources NumResources, class T>
     inline constexpr bool has_vertex_lifecycle_events_v{
-        requires(raw_indices<NumResources.value>& indices) {
+        requires(raw_indices<NumResources.value>& indices, const resource_handle& h) {
+            typename T::initializer;
             T::generate(indices);
             T::destroy(indices);
             { T::identifier } -> std::convertible_to<object_identifier>;
+            T::bind(h);
+            T::configure(h, std::declval<typename T::initializer>());
         }
     };
 
