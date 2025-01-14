@@ -1,8 +1,8 @@
-Tests/Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.cpp, Line 31
+Tests/Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.cpp, Line 33
 Wrong buffer data
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object>]
+[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
 Checking for equivalence with:
 [std::optional<std::vector<float, std::allocator<float> > >]
 
@@ -18,11 +18,11 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.cpp, Line 32
+Tests/Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.cpp, Line 34
 Buffer which should be null
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object>]
+[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
 Checking for equivalence with:
 [std::optional<std::vector<float, std::allocator<float> > >]
 

@@ -28,8 +28,9 @@ namespace avocet::testing
 
         std::vector<GLfloat> xBuffer{0.0, 1.0, 2.0, 3.0}, yBuffer{-4.0, -5.0, 7.0};
 
-        auto x = [&xBuffer]() { return agl::vertex_buffer_object{xBuffer, agl::null_label}; };
-        auto y = [&yBuffer]() { return agl::vertex_buffer_object{yBuffer, agl::null_label}; };
+        using vbo = agl::vertex_buffer_object<GLfloat>;
+        auto x = [&xBuffer]() { return vbo{xBuffer, agl::null_label}; };
+        auto y = [&yBuffer]() { return vbo{yBuffer, agl::null_label}; };
         check(equivalence, "", x(), std::optional{xBuffer});
         check(equivalence, "", y(), std::optional{yBuffer});
 

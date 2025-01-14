@@ -14,9 +14,9 @@
 
 namespace sequoia::testing
 {
-    template<> struct value_tester<avocet::opengl::vertex_buffer_object>
+    template<class T> struct value_tester<avocet::opengl::vertex_buffer_object<T>>
     {
-        using type = avocet::opengl::vertex_buffer_object;
+        using type = avocet::opengl::vertex_buffer_object<T>;
 
         [[nodiscard]]
         static GLint get_buffer_size() {

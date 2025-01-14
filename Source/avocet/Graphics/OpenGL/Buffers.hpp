@@ -185,16 +185,15 @@ namespace avocet::opengl {
         using generic_vertex_object<num_resources{1}, vao_lifecyle_events>::generic_vertex_object;
     };
 
-    template<buffer_config Config>
+    template<buffer_config Config, class T>
     class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> {
     public:
         using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config>> ;
 
-        template<std::ranges::contiguous_range R>
-        generic_buffer_object(R&& bufferData, const std::optional<std::string>& label)
+        generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
             : base_type{label}
         {
-            gl_function{glBufferData}(to_gl_enum(Config), sizeof(std::ranges::range_value_t<R>) * bufferData.size(), bufferData.data(), GL_STATIC_DRAW);
+            gl_function{glBufferData}(to_gl_enum(Config), sizeof(T) * bufferData.size(), bufferData.data(), GL_STATIC_DRAW);
         }
     protected:
         ~generic_buffer_object() = default;
@@ -203,13 +202,15 @@ namespace avocet::opengl {
         generic_buffer_object& operator=(generic_buffer_object&&) noexcept = default;
     };
 
-    class vertex_buffer_object  : public generic_buffer_object<buffer_config::array_buffer> {
+    template<class T>
+    class vertex_buffer_object  : public generic_buffer_object<buffer_config::array_buffer, T> {
     public:
-        using generic_buffer_object<buffer_config::array_buffer>::generic_buffer_object;
+        using generic_buffer_object<buffer_config::array_buffer, T>::generic_buffer_object;
     };
 
-    class element_buffer_object : public generic_buffer_object<buffer_config::element_array_buffer> {
+    template<class T>
+    class element_buffer_object : public generic_buffer_object<buffer_config::element_array_buffer, T> {
     public:
-        using generic_buffer_object<buffer_config::element_array_buffer>::generic_buffer_object;
+        using generic_buffer_object<buffer_config::element_array_buffer, T>::generic_buffer_object;
     };
 }
