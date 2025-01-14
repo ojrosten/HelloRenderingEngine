@@ -18,21 +18,11 @@ namespace sequoia::testing
     {
         using type = avocet::opengl::vertex_buffer_object<T>;
 
-        [[nodiscard]]
-        static GLint get_buffer_size() {
-            GLint param{};
-            avocet::opengl::gl_function{glGetBufferParameteriv}(GL_ARRAY_BUFFER, GL_BUFFER_SIZE, &param);
-            return param;
-        }
-
         template<test_mode Mode, class T>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const type& actual, const std::optional<std::vector<T>>& prediction)
         {
-            bind(actual);
-
             if(prediction) {
-                std::vector<T> recoveredBuffer(get_buffer_size() / sizeof(T));
-                avocet::opengl::gl_function{glGetBufferSubData}(GL_ARRAY_BUFFER, 0, sizeof(T) * prediction->size(), recoveredBuffer.data());
+                const auto recoveredBuffer{get_buffer_sub_data(actual)};
                 check(equality, "Buffer data", logger, recoveredBuffer, *prediction);
             }
             else {

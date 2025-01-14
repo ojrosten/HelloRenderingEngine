@@ -15,6 +15,7 @@
 #include <ranges>
 #include <array>
 #include <optional>
+#include <vector>
 #include <span>
 
 namespace avocet::opengl {
@@ -222,11 +223,27 @@ namespace avocet::opengl {
         generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
             : base_type{std::array{configurator_type{bufferData, label}}}
         {}
+
+        [[nodiscard]]
+        friend std::vector<T> get_buffer_sub_data(const generic_buffer_object& buffer) {
+            bind(buffer);
+            const auto size{get_buffer_size()};
+            std::vector<T> recoveredBuffer(size / sizeof(T));
+            avocet::opengl::gl_function{glGetBufferSubData}(to_gl_enum(Config), 0, size, recoveredBuffer.data());
+            return recoveredBuffer;
+        }
     protected:
         ~generic_buffer_object() = default;
 
         generic_buffer_object(generic_buffer_object&&)            noexcept = default;
         generic_buffer_object& operator=(generic_buffer_object&&) noexcept = default;
+    private:
+        [[nodiscard]]
+        static GLint get_buffer_size() {
+            GLint param{};
+            avocet::opengl::gl_function{glGetBufferParameteriv}(to_gl_enum(Config), GL_BUFFER_SIZE, &param);
+            return param;
+        }
     };
 
     template<class T>
