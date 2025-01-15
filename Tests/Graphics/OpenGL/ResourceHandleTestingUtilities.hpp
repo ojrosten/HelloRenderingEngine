@@ -14,4 +14,12 @@
 
 namespace sequoia::testing
 {
+    template<> struct value_tester<avocet::opengl::resource_handle> {
+        using rh = avocet::opengl::resource_handle;
+
+        template<test_mode Mode>
+        static void test(equivalence_check_t, test_logger<Mode>& logger, const rh& actual, GLuint prediction) {
+            check(equality, "Wrapped Value", logger, actual.index(), prediction);
+        }
+    };
 }

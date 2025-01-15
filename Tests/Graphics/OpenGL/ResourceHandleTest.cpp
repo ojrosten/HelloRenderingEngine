@@ -19,5 +19,7 @@ namespace avocet::testing
 
     void resource_handle_test::run_tests()
     {
+        using rh = avocet::opengl::resource_handle;
+        check_semantics("", rh{42}, rh{1729}, 42, 1729, 0, 42);
     }
 }
