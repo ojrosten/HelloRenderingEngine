@@ -184,12 +184,6 @@ namespace avocet::opengl {
             }
         }
 
-        template<std::size_t I>
-            requires (I < N)
-        friend void bind(const generic_vertex_object& gvo, index<I> i) { lifecycle_type::bind(gvo.get_handles()[i.value]); }
-
-        friend void bind(const generic_vertex_object& gvo) requires (N == 1) { bind(gvo, index<0>{}); }
-
         [[nodiscard]]
         explicit operator bool() const noexcept requires (N == 1) { return get_handles()[0] == resource_handle{}; }
 
@@ -200,6 +194,12 @@ namespace avocet::opengl {
 
         generic_vertex_object(generic_vertex_object&&)            noexcept = default;
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
+
+        template<std::size_t I>
+            requires (I < N)
+        static void bind(const generic_vertex_object& gvo, index<I> i) { lifecycle_type::bind(gvo.get_handles()[i.value]); }
+
+        static void bind(const generic_vertex_object& gvo) requires (N == 1) { bind(gvo, index<0>{}); }
     private:
         using lifecycle_type = resource_type::lifecycle_type;
 
@@ -207,7 +207,7 @@ namespace avocet::opengl {
         const handles<N>& get_handles() const noexcept { return m_Resource.get_handles(); }
     };
 
-    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
+    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events>{
         using configurator_type = vao_lifecycle_events::configurator;
     public:
         using base_type = generic_vertex_object<num_resources{1}, vao_lifecycle_events> ;
@@ -215,13 +215,15 @@ namespace avocet::opengl {
         explicit vertex_attribute_object(const std::optional<std::string>& label)
             : base_type{std::array{configurator_type{label}}}
         {}
+
+        friend void bind(const vertex_attribute_object& vao) { base_type::bind(vao); }
     };
 
     template<buffer_config Config, class T>
-    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config, T>> {
-        using configurator_type = buffer_lifecycle_events<Config, T>::configurator;
+    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config, T>>{
+        using configurator_type  = buffer_lifecycle_events<Config, T>::configurator;
     public:
-        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Config, T>> ;
+        using base_type = generic_vertex_object < num_resources{1}, buffer_lifecycle_events<Config, T >>;
 
         generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
             : base_type{std::array{configurator_type{bufferData, label}}}
@@ -229,7 +231,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         friend std::vector<T> get_buffer_sub_data(const generic_buffer_object& buffer) {
-            bind(buffer);
+            base_type::bind(buffer);
             const auto size{get_buffer_size()};
             std::vector<T> recoveredBuffer(size / sizeof(T));
             avocet::opengl::gl_function{glGetBufferSubData}(to_gl_enum(Config), 0, size, recoveredBuffer.data());
