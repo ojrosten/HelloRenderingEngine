@@ -6,6 +6,7 @@ dependencies=(
 	g++-14
 	libtbb-dev
 	cmake
+	lcov
 	libwayland-dev
 	pkg-config
 	libxkbcommon-dev

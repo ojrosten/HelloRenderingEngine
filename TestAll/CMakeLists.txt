@@ -18,9 +18,12 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Debugging/OpenGL/InfiniteLoopFreeTest.cpp
                ${TestDir}/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/Debugging/OpenGL/NullFunctionPointerFreeTest.cpp
+               ${TestDir}/Graphics/OpenGL/ResourceHandleTest.cpp
+               ${TestDir}/Graphics/OpenGL/ResourceHandleTestingDiagnostics.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp
                ${TestDir}/Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/ShaderProgramLabellingFreeTest.cpp)
+               ${TestDir}/Graphics/OpenGL/ShaderProgramLabellingFreeTest.cpp
+               ${TestDir}/TestFramework/OpenGL/LabellingTestDiagnostics.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})
 
@@ -28,4 +31,3 @@ add_subdirectory(${TestingUtils}/curlew curlew)
 target_link_libraries(TestAll PRIVATE curlew)
 
 sequoia_finalize_tests(TestAll ${TestDir} Tests)
-

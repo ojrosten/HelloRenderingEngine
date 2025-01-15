@@ -11,6 +11,7 @@
 #include "avocet/Debugging/OpenGL/Errors.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
+#include "curlew/Window/RenderingSetup.hpp"
 
 namespace avocet::testing
 {

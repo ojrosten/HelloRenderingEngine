@@ -9,6 +9,7 @@
 
 #include "avocet/Debugging/OpenGL/DebugMode.hpp"
 #include "avocet/Graphics/OpenGL/GLFunction.hpp"
+#include "avocet/Utilities/OpenGL/Version.hpp"
 
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"

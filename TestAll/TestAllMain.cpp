@@ -11,9 +11,12 @@
 #include "Debugging/OpenGL/InfiniteLoopFreeTest.hpp"
 #include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
+#include "Graphics/OpenGL/ResourceHandleTest.hpp"
+#include "Graphics/OpenGL/ResourceHandleTestingDiagnostics.hpp"
 #include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
+#include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
 
@@ -24,7 +27,15 @@ int main(int argc, char** argv)
         using namespace avocet::testing;
         using namespace std::literals::chrono_literals;
 
+        std::cout << curlew::rendering_setup_summary();
+
         sequoia::testing::test_runner runner{argc, argv, "Oliver J. Rosten", "    ", {.source_folder{"avocet"}, .additional_dependency_analysis_paths{"TestingUtilities", "dependencies/sequoia/Source"}}};
+        sequoia::write_to_file(runner.proj_paths().executable().parent_path() / "RenderingSetup.txt", curlew::rendering_setup_discriminator(curlew::full_specificity()));
+
+        runner.add_test_suite(
+            "Test Framework",
+            labelling_false_negative_test{"Labelling False Negative Test"}
+        );
 
         runner.add_test_suite(
             "Errors",
@@ -32,6 +43,12 @@ int main(int argc, char** argv)
             illegal_gpu_call_free_test{"Illegal GPU Call Free Test"},
             multiple_illegal_gpu_calls_free_test{"Multiple Illegal GPU Calls Free Test"},
             infinite_loop_free_test{"Infinite Loop Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Resource Handle",
+            resource_handle_false_negative_test{"False Negative Test"},
+            resource_handle_test{"Unit Test"}
         );
 
         runner.add_test_suite(

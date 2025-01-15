@@ -9,21 +9,19 @@
 
 /*! \file */
 
-#include "curlew/TestFramework/GraphicsTestCore.hpp"
+#include "curlew/TestFramework/GraphicsLabellingTestCore.hpp"
 
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class shader_program_labelling_free_test final : public curlew::graphics_test<curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>
+    class shader_program_labelling_free_test final : public curlew::graphics_labelling_test
     {
     public:
-        using curlew::graphics_test<curlew::ogl_version_and_build_selective, curlew::specificity_flavour::none>::graphics_test;
+        using curlew::graphics_labelling_test::graphics_labelling_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
-
-        void run_tests();
 
         void labelling_tests();
     };

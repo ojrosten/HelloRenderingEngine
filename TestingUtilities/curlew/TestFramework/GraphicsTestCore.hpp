@@ -7,21 +7,12 @@
 
 #pragma once
 
+#include "curlew/Window/RenderingSetup.hpp"
+
+#include "avocet/Graphics/OpenGL/GLFunction.hpp"
+#include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
+
 #include "sequoia/TestFramework/FreeTestCore.hpp"
-#include "sequoia/Core/Logic/Bitmask.hpp"
-
-namespace curlew {
-    enum class selectivity_flavour : uint64_t { none = 0, os = 1, renderer = 2, opengl_version = 4, build = 8 };
-    enum class specificity_flavour : uint64_t { none = 0, os = 1, renderer = 2, opengl_version = 4, build = 8 };
-}
-
-inline namespace sequoia_bitmask {
-    template<>
-    struct as_bitmask<curlew::selectivity_flavour> : std::true_type {};
-
-    template<>
-    struct as_bitmask<curlew::specificity_flavour> : std::true_type {};
-}
 
 namespace curlew {
     using namespace sequoia::testing;
@@ -29,6 +20,7 @@ namespace curlew {
     constexpr inline selectivity_flavour ogl_version_and_build_selective{curlew::selectivity_flavour::opengl_version | curlew::selectivity_flavour::build};
     constexpr inline selectivity_flavour os_and_renderer_selective{curlew::selectivity_flavour::os | curlew::selectivity_flavour::renderer};
     constexpr inline specificity_flavour platform_specific{specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version};
+    constexpr inline specificity_flavour ogl_version_and_build_specific{curlew::specificity_flavour::opengl_version | curlew::specificity_flavour::build};
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
@@ -47,51 +39,33 @@ namespace curlew {
         ~gl_breaker() { *m_pFn = m_Fn; }
     };
 
-    [[nodiscard]]
-    bool is_intel(std::string_view renderer);
-
-
-    [[nodiscard]]
-    bool is_amd(std::string_view renderer);
-
-    [[nodiscard]]
-    bool is_nvidia(std::string_view renderer);
-
-    [[nodiscard]]
-    bool is_mesa(std::string_view renderer);
-
-    [[nodiscard]]
-    std::string make_discriminator(selectivity_flavour selectivity);
-
-    [[nodiscard]]
-    std::string make_discriminator(specificity_flavour specificity);
-
     template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none>
     class basic_graphics_test : public basic_test<Mode, trivial_extender>
     {
     public:
         using parallelizable_type = std::false_type;
+        using base_test_type = basic_test<Mode, trivial_extender>;
 
         using basic_test<Mode, trivial_extender>::basic_test;
 
         template<class E, class Fn>
         bool check_filtered_exception_thrown(const reporter& description, Fn&& function)
         {
-            return basic_test<Mode, trivial_extender>::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
+            return base_test_type::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
         }
 
         [[nodiscard]]
         std::string summary_discriminator() const
             requires (Selectivity != selectivity_flavour::none)
         {
-            return make_discriminator(Selectivity);
+            return rendering_setup_discriminator(Selectivity);
         }
 
         [[nodiscard]]
         std::string output_discriminator() const
             requires (Specificity != specificity_flavour::none)
         {
-            return make_discriminator(Specificity);
+            return rendering_setup_discriminator(Specificity);
         }
     protected:
         ~basic_graphics_test() = default;

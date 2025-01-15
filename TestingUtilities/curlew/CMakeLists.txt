@@ -21,7 +21,9 @@ sequoia_init()
 
 set(SourceList
     TestFramework/GraphicsTestCore.cpp
-    Window/GLFWWrappers.cpp)
+    TestFramework/GraphicsLabellingTestCore.cpp
+    Window/GLFWWrappers.cpp
+    Window/RenderingSetup.cpp)
 
 add_library(curlew STATIC ${SourceList})
 
