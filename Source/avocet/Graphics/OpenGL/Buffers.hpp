@@ -57,7 +57,7 @@ namespace avocet::opengl {
 
     template<num_resources NumResources, class LifeEvents>
         requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
-    struct vertex_resource_lifecyle {
+    struct vertex_resource_lifecycle {
         constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
@@ -72,7 +72,7 @@ namespace avocet::opengl {
         }
     };
 
-    struct vao_lifecyle_events {
+    struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
 
         template<std::size_t N>
@@ -82,7 +82,7 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
     };
 
-    struct buffer_lifecyle_events {
+    struct buffer_lifecycle_events {
         constexpr static auto identifier{object_identifier::buffer};
 
         template<std::size_t N>
@@ -113,7 +113,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
     private:
-        using lifecycle_type = vertex_resource_lifecyle<NumResources, LifeEvents>;
+        using lifecycle_type = vertex_resource_lifecycle<NumResources, LifeEvents>;
 
         handles<N> m_Handles;
     };
@@ -154,19 +154,19 @@ namespace avocet::opengl {
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
     };
 
-    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecyle_events> {
+    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
     public:
-        using generic_vertex_object<num_resources{1}, vao_lifecyle_events>::generic_vertex_object;
+        using generic_vertex_object<num_resources{1}, vao_lifecycle_events>::generic_vertex_object;
     };
 
-    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecyle_events> {
+    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events> {
     public:
-        using generic_vertex_object<num_resources{1}, buffer_lifecyle_events>::generic_vertex_object;
+        using generic_vertex_object<num_resources{1}, buffer_lifecycle_events>::generic_vertex_object;
     };
 
-    class element_buffer_object :public generic_vertex_object<num_resources{1}, buffer_lifecyle_events> {
+    class element_buffer_object :public generic_vertex_object<num_resources{1}, buffer_lifecycle_events> {
     public:
-        using generic_vertex_object<num_resources{1}, buffer_lifecyle_events>::generic_vertex_object;
+        using generic_vertex_object<num_resources{1}, buffer_lifecycle_events>::generic_vertex_object;
     };
 
     template<class Resource>
