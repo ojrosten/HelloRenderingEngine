@@ -14,6 +14,8 @@
 
 #include <array>
 #include <optional>
+#include <ranges>
+#include <span>
 
 namespace avocet::opengl {
     template<std::size_t N>
