@@ -22,7 +22,7 @@ namespace sequoia::testing
         static void test(equivalence_check_t, test_logger<Mode>& logger, const type& actual, const std::optional<std::vector<T>>& prediction)
         {
             if(prediction) {
-                const auto recoveredBuffer{actual.get_buffer_sub_data()};
+                const auto recoveredBuffer{get_buffer_sub_data(actual)};
                 check(equality, "Buffer data", logger, recoveredBuffer, *prediction);
             }
             else {

@@ -191,12 +191,6 @@ namespace avocet::opengl {
             }
         }
 
-        template<std::size_t I>
-            requires (I < N)
-        void bind(index<I>) const noexcept { lifecycle_type::bind(m_Resource.get_handles()[I]); }
-
-        void bind() const noexcept requires (N == 1) { bind(index<0>{}); }
-
         [[nodiscard]]
         explicit operator bool() const noexcept requires (N == 1) { return m_Resource.get_handles()[0] == resource_handle{}; }
 
@@ -207,6 +201,12 @@ namespace avocet::opengl {
 
         generic_vertex_object(generic_vertex_object&&)            noexcept = default;
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
+
+        template<std::size_t I>
+            requires (I < N)
+        static void do_bind(const generic_vertex_object& gvo, index<I>) { lifecycle_type::bind(gvo.m_Resource.get_handles()[I]); }
+
+        static void do_bind(const generic_vertex_object& gvo) requires (N == 1) { do_bind(gvo, index<0>{}); }
     };
 
     template<buffer_species Species, class T>
@@ -219,8 +219,8 @@ namespace avocet::opengl {
         {}
 
         [[nodiscard]]
-        std::vector<T> get_buffer_sub_data() const {
-            this->bind();
+        friend std::vector<T> get_buffer_sub_data(const generic_buffer_object& buffer) {
+            base_type::do_bind(buffer);
             const auto size{get_buffer_size()};
             std::vector<T> recoveredBuffer(size / sizeof(T));
             avocet::opengl::gl_function{glGetBufferSubData}(to_gl_enum(Species), 0, size, recoveredBuffer.data());
@@ -247,6 +247,8 @@ namespace avocet::opengl {
         explicit vertex_attribute_object(const optional_label& label)
             : base_type{{{label}}}
         {}
+
+        friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
     };
 
     template<class T>
