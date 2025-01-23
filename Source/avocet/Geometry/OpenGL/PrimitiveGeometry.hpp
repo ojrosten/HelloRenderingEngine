@@ -20,7 +20,7 @@ namespace avocet::opengl {
         };
 
         vertex_attribute_object m_VAO;
-        vertex_buffer_object m_VBO;
+        vertex_buffer_object<GLfloat> m_VBO;
     public:
         explicit triangle(const std::optional<std::string>& label);
 
@@ -41,8 +41,8 @@ namespace avocet::opengl {
         };
 
         vertex_attribute_object m_VAO;
-        vertex_buffer_object m_VBO;
-        element_buffer_object m_EBO;
+        vertex_buffer_object<GLfloat> m_VBO;
+        element_buffer_object<GLubyte> m_EBO;
     public:
         explicit quad(const std::optional<std::string>& label);
 
