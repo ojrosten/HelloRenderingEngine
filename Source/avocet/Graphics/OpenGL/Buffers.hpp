@@ -16,6 +16,7 @@
 #include <optional>
 #include <ranges>
 #include <span>
+#include <vector>
 
 namespace avocet::opengl {
     template<std::size_t N>
@@ -86,6 +87,7 @@ namespace avocet::opengl {
     };
 
     using optional_label = std::optional<std::string>;
+    inline constexpr optional_label null_label{std::nullopt};
 
     inline void add_label(object_identifier identifier, const resource_handle& h, const optional_label& label) {
         if(label && object_labels_activated()) {
@@ -131,6 +133,8 @@ namespace avocet::opengl {
 
     template<buffer_species Species, class T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
+        constexpr static buffer_species species{Species};
+
         struct configurator {
             std::span<T> buffer_data;
             optional_label label;
@@ -194,12 +198,46 @@ namespace avocet::opengl {
         void bind() const noexcept requires (N == 1) { bind(index<0>{}); }
 
         [[nodiscard]]
+        explicit operator bool() const noexcept requires (N == 1) { return m_Resource.get_handles()[0] == resource_handle{}; }
+
+        [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
     protected:
         ~generic_vertex_object() = default;
 
         generic_vertex_object(generic_vertex_object&&)            noexcept = default;
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
+    };
+
+    template<buffer_species Species, class T>
+    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T>>{
+    public:
+        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T >>;
+
+        generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
+            : base_type{{{bufferData, label}}}
+        {}
+
+        [[nodiscard]]
+        std::vector<T> get_buffer_sub_data() const {
+            this->bind();
+            const auto size{get_buffer_size()};
+            std::vector<T> recoveredBuffer(size / sizeof(T));
+            avocet::opengl::gl_function{glGetBufferSubData}(to_gl_enum(Species), 0, size, recoveredBuffer.data());
+            return recoveredBuffer;
+        }
+    protected:
+        ~generic_buffer_object() = default;
+
+        generic_buffer_object(generic_buffer_object&&)            noexcept = default;
+        generic_buffer_object& operator=(generic_buffer_object&&) noexcept = default;
+    private:
+        [[nodiscard]]
+        static GLint get_buffer_size() {
+            GLint param{};
+            avocet::opengl::gl_function{glGetBufferParameteriv}(to_gl_enum(Species), GL_BUFFER_SIZE, &param);
+            return param;
+        }
     };
 
     class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
@@ -212,22 +250,14 @@ namespace avocet::opengl {
     };
 
     template<class T>
-    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::array, T>> {
+    class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
     public:
-        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::array, T>>;
-
-        vertex_buffer_object(std::span<T> data, const optional_label& label)
-            : base_type{{{data, label}}}
-        {}
+        using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
     };
 
     template<class T>
-    class element_buffer_object :public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::element_array, T>> {
+    class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
     public:
-        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::element_array, T>>;
-
-        element_buffer_object(std::span<T> data, const optional_label& label)
-            : base_type{{{data, label}}}
-        {}
+        using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
     };
 }

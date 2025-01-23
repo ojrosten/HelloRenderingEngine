@@ -16,6 +16,8 @@
 #include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
+#include "Graphics/OpenGL/VertexBufferObjectTest.hpp"
+#include "Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -56,6 +58,12 @@ int main(int argc, char** argv)
             shader_program_file_existence_free_test{"Shader Program File Existence Free Test"},
             shader_program_broken_stages_free_test{"Shader Program Broken Stages Free Test"},
             shader_program_labelling_free_test{"Shader Program Labelling Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Vertex Buffer Object",
+            vertex_buffer_object_false_negative_test{"False Negative Test"},
+            vertex_buffer_object_test{"Unit Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
