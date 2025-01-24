@@ -4,7 +4,7 @@ Label is too short
 Comparison performed using:
 [sequoia::testing::value_tester<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >]
 Checking for equivalence with:
-[std::basic_string_view<char, std::char_traits<char> >]
+[char [29]]
 
   Lengths differ
   Obtained string is too short
@@ -26,7 +26,7 @@ Label is too long
 Comparison performed using:
 [sequoia::testing::value_tester<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >]
 Checking for equivalence with:
-[std::basic_string_view<char, std::char_traits<char> >]
+[char [27]]
 
   Lengths differ
   Obtained string is too long
@@ -48,7 +48,7 @@ Label has a typo
 Comparison performed using:
 [sequoia::testing::value_tester<std::basic_string<char, std::char_traits<char>, std::allocator<char> > >]
 Checking for equivalence with:
-[std::basic_string_view<char, std::char_traits<char> >]
+[char [28]]
 
   First difference detected at character 19:
   [char]
