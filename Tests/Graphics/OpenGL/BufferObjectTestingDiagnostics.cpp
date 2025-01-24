@@ -38,7 +38,7 @@ namespace avocet::testing
         using opt_vec = std::optional<std::vector<T>>;
         std::vector<T> xBuffer{40, 41, 42, 43};
         check(equivalence, "Buffer which should be null", Buffer{xBuffer, agl::null_label}, opt_vec{});
-        check(equivalence, "Too much buffer data",        Buffer{xBuffer, agl::null_label}, opt_vec{{}});
+        check(equivalence, "Too much buffer data",        Buffer{xBuffer, agl::null_label}, opt_vec{std::vector<T>{}});
         check(equivalence, "Incorrect buffer data",       Buffer{xBuffer, agl::null_label}, opt_vec{{40, 42, 42, 43}});
     }
 }
