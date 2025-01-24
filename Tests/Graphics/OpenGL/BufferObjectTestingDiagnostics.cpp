@@ -26,19 +26,10 @@ namespace avocet::testing
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-
-        execute<agl::vertex_buffer_object<GLfloat>>();
-        execute<agl::element_buffer_object<GLubyte>>();
     }
 
     template<class Buffer>
-        requires is_gl_buffer_v<Buffer>
-    void buffer_object_false_negative_test::execute() {
-        using T = Buffer::value_type;
-        using opt_vec = std::optional<std::vector<T>>;
-        std::vector<T> xBuffer{40, 41, 42, 43};
-        check(equivalence, "Buffer which should be null", Buffer{xBuffer, agl::null_label}, opt_vec{});
-        check(equivalence, "Too much buffer data",        Buffer{xBuffer, agl::null_label}, opt_vec{{}});
-        check(equivalence, "Incorrect buffer data",       Buffer{xBuffer, agl::null_label}, opt_vec{{40, 42, 42, 43}});
+    void buffer_object_false_negative_test::execute()
+    {
     }
 }

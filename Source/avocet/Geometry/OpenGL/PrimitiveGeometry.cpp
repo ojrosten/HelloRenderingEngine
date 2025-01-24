@@ -17,7 +17,7 @@ namespace avocet::opengl {
     }
     
     void triangle::draw() {
-        bind(m_VAO);
+        m_VAO.bind();
         gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
     }
 
@@ -31,7 +31,7 @@ namespace avocet::opengl {
     }
 
     void quad::draw() {
-        bind(m_VAO);
+        m_VAO.bind();
         gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
     }
 }

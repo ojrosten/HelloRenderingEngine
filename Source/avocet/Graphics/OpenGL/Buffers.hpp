@@ -10,18 +10,11 @@
 #include "avocet/Graphics/OpenGL/Labels.hpp"
 
 #include <array>
+#include <optional>
 #include <ranges>
 #include <span>
-#include <vector>
 
 namespace avocet::opengl {
-    template<class T>
-    concept gl_arithmetic_type = 
-           std::is_same_v<T, GLhalf> || std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble> || std::is_same_v<T, GLfixed>
-        || std::is_same_v<T, GLbyte> || std::is_same_v<T, GLubyte> || std::is_same_v<T, GLshort>  || std::is_same_v<T, GLint>
-        || std::is_same_v<T, GLuint>;
-
-
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
 
@@ -124,12 +117,10 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
-    template<buffer_species Species, gl_arithmetic_type T>
+    template<buffer_species Species, class T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
-        constexpr static buffer_species species{Species};
-
         struct configurator {
-            std::span<const T> buffer_data;
+            std::span<T> buffer_data;
             optional_label label;
         };
 
@@ -185,15 +176,10 @@ namespace avocet::opengl {
         }
 
         template<std::size_t I>
-          requires (I < N)
-        [[nodiscard]]
-        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, m_Resource.get_handles()[i.value]); }
+            requires (I < N)
+        void bind(index<I>) const noexcept { lifecycle_type::bind(m_Resource.get_handles()[I]); }
 
-        [[nodiscard]]
-        std::string extract_label() const { return extract_label(index<0>{}); }
-
-        [[nodiscard]]
-        explicit operator bool() const noexcept requires (N == 1) { return m_Resource.get_handles()[0] == resource_handle{}; }
+        void bind() const noexcept requires (N == 1) { bind(index<0>{}); }
 
         [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
@@ -202,46 +188,6 @@ namespace avocet::opengl {
 
         generic_vertex_object(generic_vertex_object&&)            noexcept = default;
         generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
-
-        template<std::size_t I>
-            requires (I < N)
-        static void do_bind(const generic_vertex_object& gvo, index<I>) { lifecycle_type::bind(gvo.m_Resource.get_handles()[I]); }
-
-        static void do_bind(const generic_vertex_object& gvo) requires (N == 1) { do_bind(gvo, index<0>{}); }
-    };
-
-    template<buffer_species Species, gl_arithmetic_type T>
-    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T>>{
-    public:
-        using base_type  = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T >>;
-        using value_type = T;
-
-        constexpr static buffer_species species{Species};
-
-        generic_buffer_object(std::span<const T> bufferData, const std::optional<std::string>& label)
-            : base_type{{{bufferData, label}}}
-        {}
-
-        [[nodiscard]]
-        friend std::vector<T> extract_buffer_sub_data(const generic_buffer_object& buffer) {
-            base_type::do_bind(buffer);
-            const auto size{get_buffer_size()};
-            std::vector<T> recoveredBuffer(size / sizeof(T));
-            avocet::opengl::gl_function{glGetBufferSubData}(to_gl_enum(Species), 0, size, recoveredBuffer.data());
-            return recoveredBuffer;
-        }
-    protected:
-        ~generic_buffer_object() = default;
-
-        generic_buffer_object(generic_buffer_object&&)            noexcept = default;
-        generic_buffer_object& operator=(generic_buffer_object&&) noexcept = default;
-    private:
-        [[nodiscard]]
-        static GLint get_buffer_size() {
-            GLint param{};
-            avocet::opengl::gl_function{glGetBufferParameteriv}(to_gl_enum(Species), GL_BUFFER_SIZE, &param);
-            return param;
-        }
     };
 
     class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
@@ -251,19 +197,25 @@ namespace avocet::opengl {
         explicit vertex_attribute_object(const optional_label& label)
             : base_type{{{label}}}
         {}
-
-        friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
     };
 
-    template<gl_arithmetic_type T>
-    class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
+    template<class T>
+    class vertex_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::array, T>> {
     public:
-        using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
+        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::array, T>>;
+
+        vertex_buffer_object(std::span<T> data, const optional_label& label)
+            : base_type{{{data, label}}}
+        {}
     };
 
-    template<gl_arithmetic_type T>
-    class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
+    template<class T>
+    class element_buffer_object :public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::element_array, T>> {
     public:
-        using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
+        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<buffer_species::element_array, T>>;
+
+        element_buffer_object(std::span<T> data, const optional_label& label)
+            : base_type{{{data, label}}}
+        {}
     };
 }
