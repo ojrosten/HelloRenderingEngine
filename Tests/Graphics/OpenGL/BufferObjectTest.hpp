@@ -10,6 +10,7 @@
 /*! \file */
 
 #include "BufferObjectTestingUtilities.hpp"
+#include "curlew/TestFramework/GraphicsLabellingTestCore.hpp"
 
 namespace avocet::testing
 {
@@ -26,7 +27,22 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+    private:
+        template<class Buffer>
+            requires is_gl_buffer_v<Buffer>
+        void execute();
+    };
 
+    class buffer_object_labelling_free_test final : public curlew::graphics_labelling_test
+    {
+    public:
+        using curlew::graphics_labelling_test::graphics_labelling_test;
+
+        [[nodiscard]]
+        std::filesystem::path source_file() const;
+
+        void labelling_tests();
+    private:
         template<class Buffer>
             requires is_gl_buffer_v<Buffer>
         void execute();

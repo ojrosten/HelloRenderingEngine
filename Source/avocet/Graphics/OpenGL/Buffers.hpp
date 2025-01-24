@@ -103,6 +103,37 @@ namespace avocet::opengl {
         }
     }
 
+    [[nodiscard]]
+    inline GLint get_max_label_length() {
+        const static GLint length{
+            [](){
+                GLint param{};
+                gl_function{glGetIntegerv}(GL_MAX_LABEL_LENGTH, &param);
+                return param;
+            }()
+        };
+
+        return length;
+    }
+
+    [[nodiscard]]
+    inline std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle) {
+        std::string label(get_max_label_length(), ' ');
+        GLsizei numChars{};
+        gl_function{glGetObjectLabel}(
+            to_gl_enum(identifier),
+            handle.index(),
+            to_gl_sizei(label.size()),
+            &numChars,
+            label.data()
+            );
+
+        label.erase(std::ranges::next(label.begin(), numChars, label.end()), label.end());
+
+        return label;
+    }
+
+
     struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
 
@@ -143,7 +174,7 @@ namespace avocet::opengl {
         constexpr static buffer_species species{Species};
 
         struct configurator {
-            std::span<T> buffer_data;
+            std::span<const T> buffer_data;
             optional_label label;
         };
 
@@ -198,6 +229,16 @@ namespace avocet::opengl {
             }
         }
 
+        template<std::size_t I>
+          requires (I < N)
+        [[nodiscard]]
+        std::string extract_label(index<I> i) const {
+            return get_object_label(LifeEvents::identifier, m_Resource.get_handles()[i.value]);
+        }
+
+        [[nodiscard]]
+        std::string extract_label() const { return extract_label(index<0>{}); }
+
         [[nodiscard]]
         explicit operator bool() const noexcept requires (N == 1) { return m_Resource.get_handles()[0] == resource_handle{}; }
 
@@ -224,12 +265,12 @@ namespace avocet::opengl {
 
         constexpr static buffer_species species{Species};
 
-        generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
+        generic_buffer_object(std::span<const T> bufferData, const std::optional<std::string>& label)
             : base_type{{{bufferData, label}}}
         {}
 
         [[nodiscard]]
-        friend std::vector<T> get_buffer_sub_data(const generic_buffer_object& buffer) {
+        friend std::vector<T> extract_buffer_sub_data(const generic_buffer_object& buffer) {
             base_type::do_bind(buffer);
             const auto size{get_buffer_size()};
             std::vector<T> recoveredBuffer(size / sizeof(T));

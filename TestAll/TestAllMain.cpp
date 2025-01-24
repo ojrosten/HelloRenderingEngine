@@ -63,7 +63,8 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Buffer Object",
             buffer_object_false_negative_test{"False Negative Test"},
-            buffer_object_test{"Unit Test"}
+            buffer_object_test{"Semantics Test"},
+            buffer_object_labelling_free_test{"Labelling Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

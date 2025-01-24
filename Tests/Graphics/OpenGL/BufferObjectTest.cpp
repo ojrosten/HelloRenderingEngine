@@ -45,4 +45,26 @@ namespace avocet::testing
         using opt_vec = std::optional<std::vector<T>>;
         check_semantics("", x(), y(), std::optional{xBuffer}, std::optional{yBuffer}, opt_vec{}, std::optional{xBuffer});
     }
+
+    [[nodiscard]]
+    std::filesystem::path buffer_object_labelling_free_test::source_file() const
+    {
+        return std::source_location::current().file_name();
+    }
+
+    void buffer_object_labelling_free_test::labelling_tests()
+    {
+        execute<agl::vertex_buffer_object<GLfloat>>();
+        execute<agl::element_buffer_object<GLubyte>>();
+    }
+
+    template<class Buffer>
+        requires is_gl_buffer_v<Buffer>
+    void buffer_object_labelling_free_test::execute()
+    {
+        using T = Buffer::value_type;
+        std::string label{"A nice buffer label"};
+        Buffer buffer{std::vector<T>{}, label};
+        check(equality, "", buffer.extract_label(), label);
+    }
 }
