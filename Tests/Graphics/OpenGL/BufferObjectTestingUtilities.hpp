@@ -14,11 +14,14 @@
 
 namespace sequoia::testing
 {
-    template<class T> struct value_tester<avocet::opengl::vertex_buffer_object<T>>
-    {
-        using type = avocet::opengl::vertex_buffer_object<T>;
+    namespace agl = avocet::opengl;
 
-        template<test_mode Mode, class T>
+    template<agl::buffer_species Species, class T>
+    struct generic_buffer_object_tester
+    {
+        using type = agl::generic_buffer_object<Species, T>;
+
+        template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const type& actual, const std::optional<std::vector<T>>& prediction)
         {
             if(prediction) {
@@ -29,5 +32,12 @@ namespace sequoia::testing
                 check("Null buffer", logger, static_cast<bool>(actual));
             }
         }
+    };
+
+    template<class T> struct value_tester<agl::vertex_buffer_object<T>> : generic_buffer_object_tester<agl::buffer_species::array, T>
+    {};
+
+    template<class T> struct value_tester<agl::element_buffer_object<T>> : generic_buffer_object_tester<agl::buffer_species::element_array, T>
+    {
     };
 }

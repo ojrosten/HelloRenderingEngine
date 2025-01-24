@@ -1,0 +1,120 @@
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
+Wrong amount of buffer data
+
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
+Checking for equivalence with:
+[std::optional<std::vector<float, std::allocator<float> > >]
+
+  Buffer data
+  [std::vector<float, std::allocator<float> >]
+  operator== returned false
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 0
+
+=======================================
+
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
+Wrong buffer element
+
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
+Checking for equivalence with:
+[std::optional<std::vector<float, std::allocator<float> > >]
+
+  Buffer data
+  [std::vector<float, std::allocator<float> >]
+  operator== returned false
+
+    Element 1 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 41
+    Predicted: 42
+
+=======================================
+
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
+Buffer which should be null
+
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
+Checking for equivalence with:
+[std::optional<std::vector<float, std::allocator<float> > >]
+
+  Null buffer
+  [bool]
+  check failed
+
+=======================================
+
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
+Wrong amount of buffer data
+
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::element_buffer_object<unsigned char> >]
+Checking for equivalence with:
+[std::optional<std::vector<unsigned char, std::allocator<unsigned char> > >]
+
+  Buffer data
+  [std::vector<unsigned char, std::allocator<unsigned char> >]
+  operator== returned false
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 0
+
+=======================================
+
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
+Wrong buffer element
+
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::element_buffer_object<unsigned char> >]
+Checking for equivalence with:
+[std::optional<std::vector<unsigned char, std::allocator<unsigned char> > >]
+
+  Buffer data
+  [std::vector<unsigned char, std::allocator<unsigned char> >]
+  operator== returned false
+
+    Element 1 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : )
+    Predicted: *
+
+=======================================
+
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
+Buffer which should be null
+
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::element_buffer_object<unsigned char> >]
+Checking for equivalence with:
+[std::optional<std::vector<unsigned char, std::allocator<unsigned char> > >]
+
+  Null buffer
+  [bool]
+  check failed
+
+=======================================
+

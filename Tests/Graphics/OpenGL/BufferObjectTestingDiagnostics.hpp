@@ -9,18 +9,18 @@
 
 /*! \file */
 
-#include "VertexBufferObjectTestingUtilities.hpp"
+#include "BufferObjectTestingUtilities.hpp"
 
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class vertex_buffer_object_test final : public move_only_test
+    class buffer_object_false_negative_test final : public move_only_false_negative_test
     {
     public:
         using parallelizable_type = std::false_type;
 
-        using move_only_test::move_only_test;
+        using move_only_false_negative_test::move_only_false_negative_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

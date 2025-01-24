@@ -7,8 +7,7 @@
 
 /*! \file */
 
-#include "VertexBufferObjectTestingDiagnostics.hpp"
-
+#include "BufferObjectTest.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
 
 namespace avocet::testing
@@ -16,21 +15,26 @@ namespace avocet::testing
     namespace agl = avocet::opengl;
 
     [[nodiscard]]
-    std::filesystem::path vertex_buffer_object_false_negative_test::source_file() const
+    std::filesystem::path vertex_buffer_object_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void vertex_buffer_object_false_negative_test::run_tests()
+    void vertex_buffer_object_test::run_tests()
     {
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
+        std::vector<GLfloat> xBuffer{0.0, 1.0, 2.0, 3.0}, yBuffer{-4.0, -5.0, 7.0};
+
         using vbo = agl::vertex_buffer_object<GLfloat>;
+        auto x = [&xBuffer]() { return vbo{xBuffer, agl::null_label}; };
+        auto y = [&yBuffer]() { return vbo{yBuffer, agl::null_label}; };
+        check(equivalence, "", x(), std::optional{xBuffer});
+        check(equivalence, "", y(), std::optional{yBuffer});
+
         using opt_vec = std::optional<std::vector<GLfloat>>;
-        std::vector<GLfloat> xBuffer{0.0, 1.0, 2.0, 3.0};
-        check(equivalence, "Wrong buffer data", vbo{xBuffer, agl::null_label}, opt_vec{{}});
-        check(equivalence, "Buffer which should be null", vbo{xBuffer, agl::null_label}, opt_vec{});
+        check_semantics("", x(), y(), std::optional{xBuffer}, std::optional{yBuffer}, opt_vec{}, std::optional{xBuffer});
     }
 }

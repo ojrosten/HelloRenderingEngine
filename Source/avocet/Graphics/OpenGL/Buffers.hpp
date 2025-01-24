@@ -212,7 +212,10 @@ namespace avocet::opengl {
     template<buffer_species Species, class T>
     class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T>>{
     public:
-        using base_type = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T >>;
+        using base_type  = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T >>;
+        using value_type = T;
+
+        constexpr static buffer_species species{Species};
 
         generic_buffer_object(std::span<T> bufferData, const std::optional<std::string>& label)
             : base_type{{{bufferData, label}}}

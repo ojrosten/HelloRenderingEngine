@@ -11,13 +11,13 @@
 #include "Debugging/OpenGL/InfiniteLoopFreeTest.hpp"
 #include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
+#include "Graphics/OpenGL/BufferObjectTest.hpp"
+#include "Graphics/OpenGL/BufferObjectTestingDiagnostics.hpp"
 #include "Graphics/OpenGL/ResourceHandleTest.hpp"
 #include "Graphics/OpenGL/ResourceHandleTestingDiagnostics.hpp"
 #include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
 #include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
-#include "Graphics/OpenGL/VertexBufferObjectTest.hpp"
-#include "Graphics/OpenGL/VertexBufferObjectTestingDiagnostics.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -61,8 +61,8 @@ int main(int argc, char** argv)
         );
 
         runner.add_test_suite(
-            "Vertex Buffer Object",
-            vertex_buffer_object_false_negative_test{"False Negative Test"},
+            "Buffer Object",
+            buffer_object_false_negative_test{"VBO False Negative Test"},
             vertex_buffer_object_test{"Unit Test"}
         );
 
