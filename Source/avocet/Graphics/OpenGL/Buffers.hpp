@@ -19,6 +19,13 @@
 #include <vector>
 
 namespace avocet::opengl {
+    template<class T>
+    concept gl_arithmetic_type = 
+           std::is_same_v<T, GLhalf> || std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble> || std::is_same_v<T, GLfixed>
+        || std::is_same_v<T, GLbyte> || std::is_same_v<T, GLubyte> || std::is_same_v<T, GLshort>  || std::is_same_v<T, GLint>
+        || std::is_same_v<T, GLuint>;
+
+
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
 
@@ -131,7 +138,7 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
-    template<buffer_species Species, class T>
+    template<buffer_species Species, gl_arithmetic_type T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         constexpr static buffer_species species{Species};
 
@@ -209,7 +216,7 @@ namespace avocet::opengl {
         static void do_bind(const generic_vertex_object& gvo) requires (N == 1) { do_bind(gvo, index<0>{}); }
     };
 
-    template<buffer_species Species, class T>
+    template<buffer_species Species, gl_arithmetic_type T>
     class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T>>{
     public:
         using base_type  = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T >>;
@@ -254,13 +261,13 @@ namespace avocet::opengl {
         friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
     };
 
-    template<class T>
+    template<gl_arithmetic_type T>
     class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
     public:
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
     };
 
-    template<class T>
+    template<gl_arithmetic_type T>
     class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
     public:
         using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
