@@ -40,4 +40,12 @@ namespace sequoia::testing
     template<class T> struct value_tester<agl::element_buffer_object<T>> : generic_buffer_object_tester<agl::buffer_species::element_array, T>
     {
     };
+
+    template<class B>
+    inline constexpr bool is_gl_buffer_v{
+        requires {
+            typename B::value_type;
+            requires std::is_same_v<B, agl::vertex_buffer_object<typename B::value_type>> || std::is_same_v<B, agl::element_buffer_object<typename B::value_type>>;
+        }
+    };
 }

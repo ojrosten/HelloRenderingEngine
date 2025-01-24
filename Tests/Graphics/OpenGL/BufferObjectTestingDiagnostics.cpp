@@ -28,6 +28,7 @@ namespace avocet::testing
     }
 
     template<class Buffer>
+        requires is_gl_buffer_v<Buffer>
     void buffer_object_false_negative_test::execute() {
         using namespace curlew;
         glfw_manager manager{};
