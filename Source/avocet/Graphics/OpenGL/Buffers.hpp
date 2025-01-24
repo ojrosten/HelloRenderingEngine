@@ -187,13 +187,18 @@ namespace avocet::opengl {
         template<std::size_t I>
           requires (I < N)
         [[nodiscard]]
-        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, m_Resource.get_handles()[i.value]); }
+        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, get_handle(i)); }
 
         [[nodiscard]]
-        std::string extract_label() const { return extract_label(index<0>{}); }
+        std::string extract_label() const requires (N == 1){ return extract_label(index<0>{}); }
+
+        template<std::size_t I>
+            requires (I < N)
+        [[nodiscard]]
+        bool is_null(index<I> i) const noexcept { return get_handle(i) == resource_handle{}; }
 
         [[nodiscard]]
-        explicit operator bool() const noexcept requires (N == 1) { return m_Resource.get_handles()[0] == resource_handle{}; }
+        bool is_null() const noexcept requires (N == 1) { return is_null(index<0>{}); }
 
         [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
@@ -205,9 +210,14 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        static void do_bind(const generic_vertex_object& gvo, index<I>) { lifecycle_type::bind(gvo.m_Resource.get_handles()[I]); }
+        static void do_bind(const generic_vertex_object& gvo, index<I> i) { lifecycle_type::bind(gvo.get_handle(i)); }
 
         static void do_bind(const generic_vertex_object& gvo) requires (N == 1) { do_bind(gvo, index<0>{}); }
+    private:
+        template<std::size_t I>
+            requires (I < N)
+        [[nodiscard]]
+        const resource_handle& get_handle(index<I>) const noexcept { return m_Resource.get_handles()[I]; }
     };
 
     template<buffer_species Species, gl_arithmetic_type T>

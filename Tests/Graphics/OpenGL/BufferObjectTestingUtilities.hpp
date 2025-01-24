@@ -29,7 +29,7 @@ namespace sequoia::testing
                 check(equality, "Buffer data", logger, recoveredBuffer, *prediction);
             }
             else {
-                check("Null buffer", logger, static_cast<bool>(actual));
+                check("Null buffer", logger, actual.is_null());
             }
         }
     };
