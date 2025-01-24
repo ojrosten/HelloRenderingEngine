@@ -22,6 +22,10 @@ namespace avocet::testing
 
     void buffer_object_test::run_tests()
     {
+        using namespace curlew;
+        glfw_manager manager{};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
         execute<agl::vertex_buffer_object<GLfloat>>();
         execute<agl::element_buffer_object<GLubyte>>();
     }
@@ -30,10 +34,6 @@ namespace avocet::testing
         requires is_gl_buffer_v<Buffer>
     void buffer_object_test::execute()
     {
-        using namespace curlew;
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-
         using T = Buffer::value_type;
         std::vector<T> xBuffer{0, 1, 2, 3}, yBuffer{4, 5, 6};
 
