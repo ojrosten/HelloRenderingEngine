@@ -62,8 +62,8 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Buffer Object",
-            buffer_object_false_negative_test{"VBO False Negative Test"},
-            vertex_buffer_object_test{"Unit Test"}
+            buffer_object_false_negative_test{"False Negative Test"},
+            buffer_object_test{"Unit Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

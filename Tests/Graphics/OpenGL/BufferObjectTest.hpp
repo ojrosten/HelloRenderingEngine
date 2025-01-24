@@ -15,7 +15,7 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class vertex_buffer_object_test final : public move_only_test
+    class buffer_object_test final : public move_only_test
     {
     public:
         using parallelizable_type = std::false_type;
@@ -26,5 +26,8 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+
+        template<class Buffer>
+        void execute();
     };
 }

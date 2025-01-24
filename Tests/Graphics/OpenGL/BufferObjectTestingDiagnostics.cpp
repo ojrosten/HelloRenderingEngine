@@ -13,22 +13,6 @@
 
 namespace avocet::testing
 {
-    namespace {
-        template<class Buffer>
-        void execute(move_only_false_negative_test& test) {
-            using namespace curlew;
-            glfw_manager manager{};
-            auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-
-            using T = Buffer::value_type;
-            using opt_vec = std::optional<std::vector<T>>;
-            std::vector<T> xBuffer{40, 41, 42, 43};
-            test.check(equivalence, test.report("Wrong amount of buffer data"), Buffer{xBuffer, agl::null_label}, opt_vec{{}});
-            test.check(equivalence, test.report("Wrong buffer element"), Buffer{xBuffer, agl::null_label}, opt_vec{{40, 42, 42, 43}});
-            test.check(equivalence, test.report("Buffer which should be null"), Buffer{xBuffer, agl::null_label}, opt_vec{});
-        }
-    }
-
     namespace agl = avocet::opengl;
 
     [[nodiscard]]
@@ -39,7 +23,21 @@ namespace avocet::testing
 
     void buffer_object_false_negative_test::run_tests()
     {
-        execute<agl::vertex_buffer_object<GLfloat>>(*this);
-        execute<agl::element_buffer_object<GLubyte>>(*this);
+        execute<agl::vertex_buffer_object<GLfloat>>();
+        execute<agl::element_buffer_object<GLubyte>>();
+    }
+
+    template<class Buffer>
+    void buffer_object_false_negative_test::execute() {
+        using namespace curlew;
+        glfw_manager manager{};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        using T = Buffer::value_type;
+        using opt_vec = std::optional<std::vector<T>>;
+        std::vector<T> xBuffer{40, 41, 42, 43};
+        check(equivalence, "Buffer which should be null", Buffer{xBuffer, agl::null_label}, opt_vec{});
+        check(equivalence, "Too much buffer data",        Buffer{xBuffer, agl::null_label}, opt_vec{{}});
+        check(equivalence, "Incorrect buffer data",       Buffer{xBuffer, agl::null_label}, opt_vec{{40, 42, 42, 43}});
     }
 }

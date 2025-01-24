@@ -1,7 +1,19 @@
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
-Wrong amount of buffer data
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 39
+Buffer which should be null
 
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
+Checking for equivalence with:
+[std::optional<std::vector<float, std::allocator<float> > >]
+
+  Null buffer
+  [bool]
+  check failed
+
+=======================================
+
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 40
+Too much buffer data
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
@@ -20,10 +32,8 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
-Wrong buffer element
-
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 41
+Incorrect buffer data
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
@@ -42,15 +52,13 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 39
 Buffer which should be null
 
-
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
+[sequoia::testing::value_tester<avocet::opengl::element_buffer_object<unsigned char> >]
 Checking for equivalence with:
-[std::optional<std::vector<float, std::allocator<float> > >]
+[std::optional<std::vector<unsigned char, std::allocator<unsigned char> > >]
 
   Null buffer
   [bool]
@@ -58,10 +66,8 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 26
-Wrong amount of buffer data
-
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 40
+Too much buffer data
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::element_buffer_object<unsigned char> >]
@@ -80,10 +86,8 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 27
-Wrong buffer element
-
+Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 41
+Incorrect buffer data
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::element_buffer_object<unsigned char> >]
@@ -99,22 +103,6 @@ Checking for equivalence with:
     operator== returned false
     Obtained : )
     Predicted: *
-
-=======================================
-
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
-Tests/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp, Line 28
-Buffer which should be null
-
-
-Comparison performed using:
-[sequoia::testing::value_tester<avocet::opengl::element_buffer_object<unsigned char> >]
-Checking for equivalence with:
-[std::optional<std::vector<unsigned char, std::allocator<unsigned char> > >]
-
-  Null buffer
-  [bool]
-  check failed
 
 =======================================
 

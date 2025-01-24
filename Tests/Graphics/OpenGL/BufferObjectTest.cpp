@@ -15,26 +15,33 @@ namespace avocet::testing
     namespace agl = avocet::opengl;
 
     [[nodiscard]]
-    std::filesystem::path vertex_buffer_object_test::source_file() const
+    std::filesystem::path buffer_object_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void vertex_buffer_object_test::run_tests()
+    void buffer_object_test::run_tests()
+    {
+        execute<agl::vertex_buffer_object<GLfloat>>();
+        execute<agl::element_buffer_object<GLubyte>>();
+    }
+
+    template<class Buffer>
+    void buffer_object_test::execute()
     {
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        std::vector<GLfloat> xBuffer{0.0, 1.0, 2.0, 3.0}, yBuffer{-4.0, -5.0, 7.0};
+        using T = Buffer::value_type;
+        std::vector<T> xBuffer{0, 1, 2, 3}, yBuffer{4, 5, 6};
 
-        using vbo = agl::vertex_buffer_object<GLfloat>;
-        auto x = [&xBuffer]() { return vbo{xBuffer, agl::null_label}; };
-        auto y = [&yBuffer]() { return vbo{yBuffer, agl::null_label}; };
+        auto x = [&xBuffer]() { return Buffer{xBuffer, agl::null_label}; };
+        auto y = [&yBuffer]() { return Buffer{yBuffer, agl::null_label}; };
         check(equivalence, "", x(), std::optional{xBuffer});
         check(equivalence, "", y(), std::optional{yBuffer});
 
-        using opt_vec = std::optional<std::vector<GLfloat>>;
+        using opt_vec = std::optional<std::vector<T>>;
         check_semantics("", x(), y(), std::optional{xBuffer}, std::optional{yBuffer}, opt_vec{}, std::optional{xBuffer});
     }
 }
