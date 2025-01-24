@@ -28,8 +28,8 @@ namespace avocet::testing
             shaderDir / "Monochrome.fs"
         };
 
-        check_object_label("Label is too short", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.fss");
-        check_object_label("Label is too long", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.f");
-        check_object_label("Label has a typo", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monocjrome.fs");
+        check(equivalence, "Label is too short", sp.extract_label(), "Identity.vs / Monochrome.fss");
+        check(equivalence, "Label is too long",  sp.extract_label(), "Identity.vs / Monochrome.f");
+        check(equivalence, "Label has a typo",   sp.extract_label(), "Identity.vs / Monocjrome.fs");
     }
 }

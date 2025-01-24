@@ -187,9 +187,7 @@ namespace avocet::opengl {
         template<std::size_t I>
           requires (I < N)
         [[nodiscard]]
-        std::string extract_label(index<I> i) const {
-            return get_object_label(LifeEvents::identifier, m_Resource.get_handles()[i.value]);
-        }
+        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, m_Resource.get_handles()[i.value]); }
 
         [[nodiscard]]
         std::string extract_label() const { return extract_label(index<0>{}); }

@@ -14,9 +14,6 @@
 #include "avocet/Graphics/OpenGL/ObjectIdentifiers.hpp"
 
 namespace curlew {
-    [[nodiscard]]
-    std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle);
-
     template<class T>
     inline constexpr bool has_labelling_tests_v{
         requires (T & t) { t.labelling_tests(); }
@@ -31,10 +28,6 @@ namespace curlew {
     {
     public:
         using labelling_test_base<Mode>::labelling_test_base;
-
-        bool check_object_label(const reporter& description, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle, std::string_view predicted) {
-            return this->check(equivalence, description, get_object_label(identifier, handle), predicted);
-        }
 
         template<class Self>
             requires has_labelling_tests_v<Self>

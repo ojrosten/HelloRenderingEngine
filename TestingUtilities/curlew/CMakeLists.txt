@@ -21,7 +21,6 @@ sequoia_init()
 
 set(SourceList
     TestFramework/GraphicsTestCore.cpp
-    TestFramework/GraphicsLabellingTestCore.cpp
     Window/GLFWWrappers.cpp
     Window/RenderingSetup.cpp)
 

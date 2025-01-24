@@ -28,6 +28,6 @@ namespace avocet::testing
             shaderDir / "Monochrome.fs"
         };
 
-        check_object_label("", agl::object_identifier::program, sp.resource().handle(), "Identity.vs / Monochrome.fs");
+        check(equivalence, "", sp.extract_label(), "Identity.vs / Monochrome.fs");
     }
 }

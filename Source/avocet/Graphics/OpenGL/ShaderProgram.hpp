@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
+#include "avocet/Graphics/OpenGL/Labels.hpp"
 
 #include <filesystem>
 
@@ -57,6 +58,9 @@ namespace avocet::opengl {
         shader_program_resource m_Resource;
     public:
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
+
+        [[nodiscard]]
+        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.handle()); }
 
         [[nodiscard]]
         const shader_program_resource& resource() const noexcept { return m_Resource; }
