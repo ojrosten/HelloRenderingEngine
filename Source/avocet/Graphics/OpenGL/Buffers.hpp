@@ -181,6 +181,9 @@ namespace avocet::opengl {
 
         explicit generic_vertex_object(const std::array<configurator_type, N>& configs) {
             for(const auto&[handle, config] : std::views::zip(m_Resource.get_handles(), configs)) {
+                if(handle == resource_handle{})
+                    throw std::runtime_error{"generic_vertex_object: null resource detected upon construction"};
+
                 lifecycle_type::bind(handle);
                 lifecycle_type::configure(handle, config);
             }
