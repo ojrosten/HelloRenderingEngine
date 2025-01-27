@@ -247,7 +247,7 @@ namespace avocet::opengl {
         {}
 
         [[nodiscard]]
-        friend std::vector<T> extract_buffer_sub_data(const generic_buffer_object& buffer) {
+        friend std::vector<T> extract_data(const generic_buffer_object& buffer) {
             base_type::do_bind(buffer);
             const auto size{get_buffer_size()};
             std::vector<T> recoveredBuffer(size / sizeof(T));
