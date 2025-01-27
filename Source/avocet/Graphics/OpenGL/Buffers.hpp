@@ -52,7 +52,13 @@ namespace avocet::opengl {
         return to_array<resource_handle, GLuint>(handles, [](const resource_handle& h){ return h.index(); });
     }
 
-    struct num_resources { std::size_t value{}; };
+    struct num_resources
+    {
+        std::size_t value{};
+
+        [[nodiscard]]
+        friend auto operator<=>(const num_resources&, const num_resources&) noexcept = default;
+    };
 
     template<num_resources NumResources, class T>
     inline constexpr bool has_vertex_lifecycle_events_v{
@@ -170,7 +176,7 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents> && (NumResources > num_resources{})
     class generic_vertex_object {
         using resource_type  = vertex_resource<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
@@ -180,7 +186,7 @@ namespace avocet::opengl {
         constexpr static std::size_t N{NumResources.value};
 
         explicit generic_vertex_object(const std::array<configurator_type, N>& configs) {
-            for(const auto&[handle, config] : std::views::zip(m_Resource.get_handles(), configs)) {
+            for(const auto&[handle, config] : std::views::zip(get_handles(), configs)) {
                 if(handle == resource_handle{})
                     throw std::runtime_error{"generic_vertex_object: null resource detected upon construction"};
 
@@ -195,12 +201,13 @@ namespace avocet::opengl {
         std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, get_handle(i)); }
 
         [[nodiscard]]
-        std::string extract_label() const requires (N == 1){ return extract_label(index<0>{}); }
+        std::string extract_label() const requires (N == 1) { return extract_label(index<0>{}); }
 
         [[nodiscard]]
         bool is_null() const noexcept {
             auto isNull{[](const resource_handle& r){ return r == resource_handle{}; }};
-            assert(std::ranges::all_of(m_Resource.get_handles(), isNull) || std::ranges::none_of(m_Resource.get_handles(), isNull));
+            assert(std::ranges::all_of(get_handles(), isNull)
+                or std::ranges::none_of(get_handles(), isNull));
             return isNull(get_handle(index<0>{}));
         }
 
@@ -218,10 +225,13 @@ namespace avocet::opengl {
 
         static void do_bind(const generic_vertex_object& gvo) requires (N == 1) { do_bind(gvo, index<0>{}); }
     private:
+        [[nodiscard]]
+        const handles<N>& get_handles() const noexcept { return m_Resource.get_handles(); }
+
         template<std::size_t I>
             requires (I < N)
         [[nodiscard]]
-        const resource_handle& get_handle(index<I>) const noexcept { return m_Resource.get_handles()[I]; }
+        const resource_handle& get_handle(index<I>) const noexcept { return get_handles()[I]; }
     };
 
     template<buffer_species Species, gl_arithmetic_type T>
