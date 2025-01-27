@@ -9,7 +9,9 @@
 
 #include "avocet/Graphics/OpenGL/Labels.hpp"
 
+#include <algorithm>
 #include <array>
+#include <cassert>
 #include <ranges>
 #include <span>
 #include <vector>
@@ -192,13 +194,12 @@ namespace avocet::opengl {
         [[nodiscard]]
         std::string extract_label() const requires (N == 1){ return extract_label(index<0>{}); }
 
-        template<std::size_t I>
-            requires (I < N)
         [[nodiscard]]
-        bool is_null(index<I> i) const noexcept { return get_handle(i) == resource_handle{}; }
-
-        [[nodiscard]]
-        bool is_null() const noexcept requires (N == 1) { return is_null(index<0>{}); }
+        bool is_null() const noexcept {
+            auto isNull{[](const resource_handle& r){ return r == resource_handle{}; }};
+            assert(std::ranges::all_of(m_Resource.get_handles(), isNull) || std::ranges::none_of(m_Resource.get_handles(), isNull));
+            return isNull(get_handle(index<0>{}));
+        }
 
         [[nodiscard]]
         friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
