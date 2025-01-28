@@ -32,17 +32,17 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">2</td>
-            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">9</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2024-12-20 19:42:55</td>
+            <td class="headerValue">2025-01-28 17:21:53</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">2</td>
-            <td class="headerCovTableEntry">2</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
           </tr>
                   <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -76,25 +76,25 @@
 <span id="L14"><span class="lineNum">      14</span>              : </span>
 <span id="L15"><span class="lineNum">      15</span>              : namespace avocet::opengl {</span>
 <span id="L16"><span class="lineNum">      16</span>              :     class resource_handle {</span>
-<span id="L17"><span class="lineNum">      17</span>              :         GLuint m_Index{};</span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC tlaBgGNC">          41 :         GLuint m_Index{};</span></span>
 <span id="L18"><span class="lineNum">      18</span>              :     public:</span>
-<span id="L19"><span class="lineNum">      19</span>              :         resource_handle() noexcept = default;</span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">          26 :         resource_handle() noexcept = default;</span></span>
 <span id="L20"><span class="lineNum">      20</span>              : </span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC tlaBgGNC">          42 :         explicit resource_handle(GLuint index) noexcept : m_Index{index} {}</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">          43 :         explicit resource_handle(GLuint index) noexcept : m_Index{index} {}</span></span>
 <span id="L22"><span class="lineNum">      22</span>              : </span>
-<span id="L23"><span class="lineNum">      23</span>              :         resource_handle(resource_handle&amp;&amp; other) noexcept : m_Index{std::exchange(other.m_Index, 0)} {}</span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">          12 :         resource_handle(resource_handle&amp;&amp; other) noexcept : m_Index{std::exchange(other.m_Index, 0)} {}</span></span>
 <span id="L24"><span class="lineNum">      24</span>              : </span>
-<span id="L25"><span class="lineNum">      25</span>              :         resource_handle&amp; operator=(resource_handle&amp;&amp; other) noexcept</span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">          15 :         resource_handle&amp; operator=(resource_handle&amp;&amp; other) noexcept</span></span>
 <span id="L26"><span class="lineNum">      26</span>              :         {</span>
-<span id="L27"><span class="lineNum">      27</span>              :             std::ranges::swap(m_Index, other.m_Index);</span>
-<span id="L28"><span class="lineNum">      28</span>              :             return *this;</span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">          15 :             std::ranges::swap(m_Index, other.m_Index);</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          15 :             return *this;</span></span>
 <span id="L29"><span class="lineNum">      29</span>              :         }</span>
 <span id="L30"><span class="lineNum">      30</span>              : </span>
 <span id="L31"><span class="lineNum">      31</span>              :         [[nodiscard]]</span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">         112 :         GLuint index() const noexcept { return m_Index; }</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">         150 :         GLuint index() const noexcept { return m_Index; }</span></span>
 <span id="L33"><span class="lineNum">      33</span>              : </span>
 <span id="L34"><span class="lineNum">      34</span>              :         [[nodiscard]]</span>
-<span id="L35"><span class="lineNum">      35</span>              :         friend bool operator==(const resource_handle&amp;, const resource_handle&amp;) noexcept = default;</span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          41 :         friend bool operator==(const resource_handle&amp;, const resource_handle&amp;) noexcept = default;</span></span>
 <span id="L36"><span class="lineNum">      36</span>              :     };</span>
 <span id="L37"><span class="lineNum">      37</span>              : }</span>
         </pre>
