@@ -197,9 +197,9 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         bool is_null() const noexcept {
-            auto pred{[](const resource_handle& h) { return h == resource_handle{}; }};
-            assert(std::ranges::all_of(get_handles(), pred) || std::ranges::none_of(get_handles(), pred));
-            return pred(get_handle(index<0>{}));
+            auto isNull{[](const resource_handle& h) { return h == resource_handle{}; }};
+            assert(std::ranges::all_of(get_handles(), isNull) || std::ranges::none_of(get_handles(), isNull));
+            return isNull(get_handle(index<0>{}));
         }
 
         [[nodiscard]]
