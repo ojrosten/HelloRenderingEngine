@@ -41,11 +41,16 @@ namespace avocet::testing
 
     void buffer_object_labelling_free_test::labelling_tests()
     {
+        execute<agl::vertex_buffer_object<GLfloat>>();
+        execute<agl::element_buffer_object<GLubyte>>();
     }
 
     template<class Buffer>
         requires is_gl_buffer_v<Buffer>
     void buffer_object_labelling_free_test::execute()
     {
+        std::string label{"This is a nice label!"};
+        Buffer buffer{{}, label};
+        check(equality, "", buffer.extract_label(), label);
     }
 }
