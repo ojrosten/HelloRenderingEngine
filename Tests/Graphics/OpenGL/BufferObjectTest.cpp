@@ -28,6 +28,7 @@ namespace avocet::testing
     }
 
     template<class Buffer>
+        requires is_gl_buffer_v<Buffer>
     void buffer_object_test::execute()
     {
     }
@@ -43,6 +44,7 @@ namespace avocet::testing
     }
 
     template<class Buffer>
+        requires is_gl_buffer_v<Buffer>
     void buffer_object_labelling_free_test::execute()
     {
     }

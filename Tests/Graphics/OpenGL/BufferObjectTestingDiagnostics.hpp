@@ -28,6 +28,7 @@ namespace avocet::testing
         void run_tests();
 
         template<class Buffer>
+            requires is_gl_buffer_v<Buffer>
         void execute();
     };
 }

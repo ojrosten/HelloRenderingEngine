@@ -14,9 +14,9 @@
 
 namespace sequoia::testing
 {
-    /*namespace agl = avocet::opengl;
+    namespace agl = avocet::opengl;
 
-    struct generic_buffer_object_tester {
+    /*struct generic_buffer_object_tester {
         template<test_mode Mode, agl::buffer_species Species, agl::gl_arithmetic_type T>
         static void test(equivalence_check_t,
                          test_logger<Mode>& logger,
@@ -41,4 +41,12 @@ namespace sequoia::testing
 
     template<agl::gl_arithmetic_type T>
     struct value_tester<agl::element_buffer_object<T>> : generic_buffer_object_tester {};*/
+
+    template<class B>
+    inline constexpr bool is_gl_buffer_v{
+        requires {
+            typename B::value_type;
+            requires std::is_same_v<B, agl::vertex_buffer_object<typename B::value_type>> || std::is_same_v<B, agl::element_buffer_object<typename B::value_type>>;
+        }
+    };
 }
