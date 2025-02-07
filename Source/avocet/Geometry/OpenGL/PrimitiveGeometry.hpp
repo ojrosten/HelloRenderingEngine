@@ -15,6 +15,7 @@ namespace avocet::opengl {
     template<class G>
     concept geometry_specification = requires{
         typename G::value_type;
+        requires gl_arithmetic_type<typename G::value_type>;
         { G::num_vertices } -> std::convertible_to<std::size_t>;
         { G::num_elements } -> std::convertible_to<std::size_t>;
         { G::vertices }     -> std::convertible_to<std::array<typename G::value_type, G::num_elements>>;
