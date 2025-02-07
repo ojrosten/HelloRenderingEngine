@@ -22,7 +22,14 @@ namespace avocet::opengl {
         vertex_attribute_object m_VAO;
         vertex_buffer_object<GLfloat> m_VBO;
     public:
-        explicit triangle(const std::optional<std::string>& label);
+        template<class Fn=std::identity>
+        explicit triangle(const std::optional<std::string>& label, Fn transformer = {})
+            : m_VAO{label}
+            , m_VBO{transformer(m_Vertices), label}
+        {
+            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+            gl_function{glEnableVertexAttribArray}(0);
+        }
 
         void draw();
     };
@@ -44,7 +51,15 @@ namespace avocet::opengl {
         vertex_buffer_object<GLfloat> m_VBO;
         element_buffer_object<GLubyte> m_EBO;
     public:
-        explicit quad(const std::optional<std::string>& label);
+        template<class Fn = std::identity>
+        explicit quad(const std::optional<std::string>& label, Fn transformer = {})
+            : m_VAO{label}
+            , m_VBO{transformer(m_Vertices), label}
+            , m_EBO{m_Indices, label}
+        {
+            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+            gl_function{glEnableVertexAttribArray}(0);
+        }
 
         void draw();
     };
