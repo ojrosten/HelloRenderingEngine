@@ -12,6 +12,21 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    enum class gl_type_constant : GLenum {
+        gl_float = GL_FLOAT
+    };
+
+    template<gl_arithmetic_type>
+    struct to_gl_type_constant;
+
+    template<gl_arithmetic_type G>
+    inline constexpr gl_type_constant to_gl_type_constant_v{to_gl_type_constant<G>::value};
+
+    template<>
+    struct to_gl_type_constant<GLfloat> {
+        constexpr static auto value{gl_type_constant::gl_float};
+    };
+
     template<class G>
     concept geometry_specification = requires{
         typename G::value_type;
@@ -67,7 +82,7 @@ namespace avocet::opengl {
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
-            gl_function{glVertexAttribPointer}(0, dimension, GL_FLOAT, GL_FALSE, dimension * sizeof(value_type), (GLvoid*)0);
+            gl_function{glVertexAttribPointer}(0, dimension, to_gl_enum(to_gl_type_constant_v<value_type>), GL_FALSE, dimension * sizeof(value_type), (GLvoid*)0);
             gl_function{glEnableVertexAttribArray}(0);
         }
 
