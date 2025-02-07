@@ -54,7 +54,7 @@ int main()
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Mandelbrot.fs"};
         //agl::triangle tri{make_label("Triangle")};
         auto expander{
-            []<class V>(V&& verts) -> V&& {
+            [](auto verts) {
                 for(auto& v : verts) v *= 2;
 
                 return verts;

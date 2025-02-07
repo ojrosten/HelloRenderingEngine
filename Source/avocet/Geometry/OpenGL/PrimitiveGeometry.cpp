@@ -8,14 +8,13 @@
 #include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
 
 namespace avocet::opengl {
-    
     void triangle::draw() {
-        bind(m_VAO);
+        bind(m_Geom);
         gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
     }
 
     void quad::draw() {
-        bind(m_VAO);
+        bind(m_Geom);
         gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
     }
 }
