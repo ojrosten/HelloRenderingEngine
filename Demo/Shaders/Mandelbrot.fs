@@ -1,15 +1,15 @@
 #version 330 core
 
-in vec3 FragPos;
+in vec3  WorldPos;
 out vec4 FragColor;
 
 void main()
 {
-	float x_0 = FragPos.x * 1.25 - 0.75,
-		  y_0 = FragPos.y,
+	float x_0 = WorldPos.x * 1.25 - 0.75,
+		  y_0 = WorldPos.y,
 		  x = 0,
 		  y = 0;
-		  
+
 	int i = 0;
 		  
     for(;i<1000; i++) {
