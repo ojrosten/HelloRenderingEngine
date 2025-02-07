@@ -17,7 +17,7 @@ namespace avocet::opengl {
         typename G::value_type;
         requires gl_arithmetic_type<typename G::value_type>;
         { G::num_vertices } -> std::convertible_to<std::size_t>;
-        { G::num_elements } -> std::convertible_to<std::size_t>;
+        { G::dimension    } -> std::convertible_to<std::size_t>;
         { G::vertices }     -> std::convertible_to<std::array<typename G::value_type, G::num_elements>>;
     };
 
@@ -28,8 +28,9 @@ namespace avocet::opengl {
     template<gl_arithmetic_type T>
     struct triangle_specification {
         using value_type = T;
+        constexpr static std::size_t dimension{3};
         constexpr static auto num_vertices{3};
-        constexpr static auto num_elements{num_vertices * 3};
+        constexpr static auto num_elements{num_vertices * dimension};
 
         constexpr static std::array<T, num_elements> vertices{
            -0.5f, -0.5f, 0.0f, // left  
@@ -41,8 +42,9 @@ namespace avocet::opengl {
     template<gl_arithmetic_type T>
     struct quad_specification {
         using value_type = T;
+        constexpr static std::size_t dimension{3};
         constexpr static auto num_vertices{4};
-        constexpr static auto num_elements{num_vertices * 3};
+        constexpr static auto num_elements{num_vertices * dimension};
 
         constexpr static std::array<T, num_elements> vertices{
             -0.5f, -0.5f, 0.0f,
@@ -56,7 +58,7 @@ namespace avocet::opengl {
     class primitive_geometry {
     public:
         using value_type = G::value_type;
-        constexpr static auto num_vertices{G::num_elements};
+        constexpr static auto dimension{G::dimension};
 
         template<class Fn = std::identity>
             requires std::is_invocable_r_v<vertices_type<G>, Fn, vertices_type<G>>
@@ -65,13 +67,13 @@ namespace avocet::opengl {
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
-            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+            gl_function{glVertexAttribPointer}(0, dimension, GL_FLOAT, GL_FALSE, dimension * sizeof(value_type), (GLvoid*)0);
             gl_function{glEnableVertexAttribArray}(0);
         }
 
         friend void bind(const primitive_geometry& pg) { bind(pg.m_VAO); }
     private:
-        std::array<value_type, num_vertices> m_Vertices;
+        vertices_type<G> m_Vertices;
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<GLfloat> m_VBO;
