@@ -125,7 +125,7 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
-    template<buffer_species Species, class T>
+    template<buffer_species Species, gl_arithmetic_type T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         struct configurator {
             std::span<const T> buffer_data;
