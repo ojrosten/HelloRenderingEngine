@@ -12,6 +12,18 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    template<class G>
+    concept geometry_specification = requires{
+        typename G::value_type;
+        { G::num_vertices } -> std::convertible_to<std::size_t>;
+        { G::num_elements } -> std::convertible_to<std::size_t>;
+        { G::vertices }     -> std::convertible_to<std::array<typename G::value_type, G::num_elements>>;
+    };
+
+    template<geometry_specification G>
+    using vertices_type = std::remove_const_t<decltype(G::vertices)>;
+
+
     template<gl_arithmetic_type T>
     struct triangle_specification {
         using value_type = T;
@@ -31,7 +43,7 @@ namespace avocet::opengl {
         constexpr static auto num_vertices{4};
         constexpr static auto num_elements{num_vertices * 3};
 
-        constexpr static std::array<GLfloat, num_elements> vertices{
+        constexpr static std::array<T, num_elements> vertices{
             -0.5f, -0.5f, 0.0f,
              0.5f, -0.5f, 0.0f,
              0.5f,  0.5f, 0.0f,
@@ -39,23 +51,16 @@ namespace avocet::opengl {
         };
     };
 
-    template<class G>
-    concept geometry_specification = requires{
-        typename G::value_type;
-        { G::num_vertices } -> std::convertible_to<std::size_t>;
-        { G::num_elements } -> std::convertible_to<std::size_t>;
-        { G::vertices }     -> std::convertible_to<std::array<typename G::value_type, G::num_elements>>;
-    };
-
-    template<geometry_specification Specification>
+    template<geometry_specification G>
     class primitive_geometry {
     public:
-        using value_type = Specification::value_type;
-        constexpr static auto num_vertices{Specification::num_elements};
+        using value_type = G::value_type;
+        constexpr static auto num_vertices{G::num_elements};
 
         template<class Fn = std::identity>
+            requires std::is_invocable_r_v<vertices_type<G>, Fn, vertices_type<G>>
         explicit primitive_geometry(const std::optional<std::string>& label, Fn transformer = {})
-            : m_Vertices{transformer(Specification::vertices)}
+            : m_Vertices{transformer(G::vertices)}
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
