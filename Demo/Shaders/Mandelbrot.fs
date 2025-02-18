@@ -1,17 +1,12 @@
 #version 330 core
 
-in vec3  WorldPos;
+in vec2  ComplexPlanePos;
 out vec4 FragColor;
-
-uniform float xOffset = -0.75;
-uniform float yOffset = 0;
-uniform float xRange = 2.5;
-uniform float yRange = 2;
 
 void main()
 {
-	float x_0 = WorldPos.x * xRange/2 + xOffset,
-		  y_0 = WorldPos.y * yRange/2 + yOffset,
+	float x_0 = ComplexPlanePos.x,
+		  y_0 = ComplexPlanePos.y,
 		  x = 0,
 		  y = 0;
 

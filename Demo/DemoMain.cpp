@@ -51,7 +51,7 @@ int main()
         auto w{manager.create_window({.width{1600}, .height{1200}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
-        agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Mandelbrot.fs"};
+        agl::shader_program shaderProgram{get_shader_dir() / "Mandelbrot.vs", get_shader_dir() / "Mandelbrot.fs"};
         //agl::triangle tri{make_label("Triangle")};
         auto expander{
             []<class V>(V&& verts) -> V&& {
