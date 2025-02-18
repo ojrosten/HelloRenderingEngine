@@ -13,11 +13,9 @@ void main()
     int i = 0;
 
     for(;i<1000; i++) {
-        float xSqd = x*x,
-              ySqd = y*y;
-        if(xSqd + ySqd > 4) break;
+        if(x*x + y*y > 4) break;
         
-        float xNext = xSqd - ySqd + x_0;
+        float xNext = x*x - y*y + x_0;
         y = 2*x*y + y_0;
         x = xNext;
     }
