@@ -6,7 +6,7 @@ out vec3 WorldPos;
 
 void main()
 {
-    gl_Position = vec4(aLocalPos, 1.0);
     WorldPos    = aLocalPos;
+    gl_Position = vec4(WorldPos, 1.0);
 }
 

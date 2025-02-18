@@ -3,10 +3,15 @@
 in vec3  WorldPos;
 out vec4 FragColor;
 
+uniform float xOffset = -0.75;
+uniform float yOffset = 0;
+uniform float xRange = 2.5;
+uniform float yRange = 2;
+
 void main()
 {
-	float x_0 = WorldPos.x * 1.25 - 0.75,
-		  y_0 = WorldPos.y,
+	float x_0 = WorldPos.x * xRange/2 + xOffset,
+		  y_0 = WorldPos.y * yRange/2 + yOffset,
 		  x = 0,
 		  y = 0;
 
