@@ -48,7 +48,7 @@ int main()
         std::cout << curlew::rendering_setup_summary();
 
         curlew::glfw_manager manager{};
-        auto w{manager.create_window({.width{1600}, .height{1200}, .name{"Hello Rendering Engine"}})};
+        auto w{manager.create_window({.width{1500}, .height{1200}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{get_shader_dir() / "Mandelbrot.vs", get_shader_dir() / "Mandelbrot.fs"};
