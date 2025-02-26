@@ -52,7 +52,19 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{get_shader_dir() / "Mandelbrot.vs", get_shader_dir() / "Mandelbrot.fs"};
-        //agl::triangle tri{make_label("Triangle")};
+        shaderProgram.use();
+
+        const auto progIndex{shaderProgram.resource().handle().index()};
+        const auto xRangeLoc{agl::gl_function{glGetUniformLocation}(progIndex, "xRange")};
+        const auto yRangeLoc{agl::gl_function{glGetUniformLocation}(progIndex, "yRange")};
+        const auto xOffsetLoc{agl::gl_function{glGetUniformLocation}(progIndex, "xOffset")};
+        const auto yOffsetLoc{agl::gl_function{glGetUniformLocation}(progIndex, "yOffset")};
+
+        agl::gl_function{glUniform1f}(xRangeLoc, 0.025f);
+        agl::gl_function{glUniform1f}(yRangeLoc, 0.02f);
+        agl::gl_function{glUniform1f}(xOffsetLoc, -1.4f);
+        agl::gl_function{glUniform1f}(yOffsetLoc, 0);
+
         agl::quad q{make_label("Quad")};
 
         while(!glfwWindowShouldClose(&w.get())) {
@@ -60,7 +72,6 @@ int main()
             glClear(GL_COLOR_BUFFER_BIT);
 
             shaderProgram.use();
-            //tri.draw();
             q.draw();
 
             glfwSwapBuffers(&w.get());
