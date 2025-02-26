@@ -21,7 +21,7 @@ void main()
         x = xNext;
     }
 
-    float col = 1.0 / (1 + n < 500 ? log(1 + log(1 + n)) : 1000);
+    float col = 1.0 / (1.0 + n < 500 ? log(1.0 + log(1.0 + n)) : 1000);
 
     FragColor = vec4(col*0.1, col*0.1, col, 1.0f);
 }
