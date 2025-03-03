@@ -49,6 +49,9 @@ namespace curlew {
         avocet::opengl::opengl_version m_OpenGLVersion{};
 
         [[nodiscard]]
+        rendering_setup attempt_to_find_rendering_setup(const avocet::opengl::opengl_version referenceVersion) const;
+      
+        [[nodiscard]]
         rendering_setup do_find_rendering_setup() const;
     public:
         glfw_manager();
