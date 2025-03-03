@@ -4,7 +4,7 @@ Buffer which should be null
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
 Checking for equivalence with:
-[std::optional<std::span<float const , -1> >]
+[std::optional<std::span<float const, 18446744073709551615> >]
 
   Null Buffer
   [bool]
@@ -18,10 +18,10 @@ Too much buffer data
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
 Checking for equivalence with:
-[std::optional<std::span<float const , -1> >]
+[std::optional<std::span<float const, 18446744073709551615> >]
 
   Buffer Data
-  [std::span<float const , -1>]
+  [std::span<float const, 18446744073709551615>]
     Container size wrong
     [unsigned long long]
     operator== returned false
@@ -36,10 +36,10 @@ Incorrect buffer data
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
 Checking for equivalence with:
-[std::optional<std::span<float const , -1> >]
+[std::optional<std::span<float const, 18446744073709551615> >]
 
   Buffer Data
-  [std::span<float const , -1>]
+  [std::span<float const, 18446744073709551615>]
     Element 1 of range incorrect
     [float]
     operator== returned false
@@ -54,10 +54,10 @@ Not enough buffer data
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<float> >]
 Checking for equivalence with:
-[std::optional<std::span<float const , -1> >]
+[std::optional<std::span<float const, 18446744073709551615> >]
 
   Buffer Data
-  [std::span<float const , -1>]
+  [std::span<float const, 18446744073709551615>]
     Container size wrong
     [unsigned long long]
     operator== returned false
@@ -72,7 +72,7 @@ Buffer which should be null
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<unsigned char> >]
 Checking for equivalence with:
-[std::optional<std::span<unsigned char const , -1> >]
+[std::optional<std::span<unsigned char const, 18446744073709551615> >]
 
   Null Buffer
   [bool]
@@ -86,10 +86,10 @@ Too much buffer data
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<unsigned char> >]
 Checking for equivalence with:
-[std::optional<std::span<unsigned char const , -1> >]
+[std::optional<std::span<unsigned char const, 18446744073709551615> >]
 
   Buffer Data
-  [std::span<unsigned char const , -1>]
+  [std::span<unsigned char const, 18446744073709551615>]
     Container size wrong
     [unsigned long long]
     operator== returned false
@@ -104,10 +104,10 @@ Incorrect buffer data
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<unsigned char> >]
 Checking for equivalence with:
-[std::optional<std::span<unsigned char const , -1> >]
+[std::optional<std::span<unsigned char const, 18446744073709551615> >]
 
   Buffer Data
-  [std::span<unsigned char const , -1>]
+  [std::span<unsigned char const, 18446744073709551615>]
     Element 1 of range incorrect
     [unsigned char]
     operator== returned false
@@ -122,10 +122,10 @@ Not enough buffer data
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::vertex_buffer_object<unsigned char> >]
 Checking for equivalence with:
-[std::optional<std::span<unsigned char const , -1> >]
+[std::optional<std::span<unsigned char const, 18446744073709551615> >]
 
   Buffer Data
-  [std::span<unsigned char const , -1>]
+  [std::span<unsigned char const, 18446744073709551615>]
     Container size wrong
     [unsigned long long]
     operator== returned false
