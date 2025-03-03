@@ -49,11 +49,12 @@ namespace curlew {
 
         [[nodiscard]]
         std::string concise_renderer(std::string_view rawRenderer) {
-            if(is_intel(rawRenderer))  return "Intel";
-            if(is_amd(rawRenderer))    return "AMD";
-            if(is_nvidia(rawRenderer)) return "NVIDIA";
-            if(is_mesa(rawRenderer))   return "Mesa";
-            if(is_apple(rawRenderer))  return "Apple";
+            if(is_intel(rawRenderer))    return "Intel";
+            if(is_amd(rawRenderer))      return "AMD";
+            if(is_nvidia(rawRenderer))   return "NVIDIA";
+            if(is_mesa(rawRenderer))     return "Mesa";
+            if(is_apple(rawRenderer))    return "Apple";
+	    if(is_llvmpipe(rawRenderer)) return "llvmpipe";
 
             return "";
         }
@@ -83,19 +84,23 @@ namespace curlew {
     }
 
     [[nodiscard]]
-    bool is_intel(std::string_view renderer) { return renderer.find("Intel") != std::string::npos; }
+    bool is_amd(std::string_view renderer)      { return renderer.find("AMD") != std::string::npos; }
 
     [[nodiscard]]
-    bool is_nvidia(std::string_view renderer) { return renderer.find("NVIDIA") != std::string::npos; }
+    bool is_apple(std::string_view renderer)    { return renderer.find("Apple") != std::string::npos; }
 
     [[nodiscard]]
-    bool is_amd(std::string_view renderer) { return renderer.find("AMD") != std::string::npos; }
+    bool is_intel(std::string_view renderer)    { return renderer.find("Intel") != std::string::npos; }
 
     [[nodiscard]]
-    bool is_mesa(std::string_view renderer) { return renderer.find("llvmpipe") != std::string::npos; }
+    bool is_llvmpipe(std::string_view renderer) { return renderer.find("llvmpipe") != std::string::npos; }
 
     [[nodiscard]]
-    bool is_apple(std::string_view renderer) { return renderer.find("Apple") != std::string::npos; }
+    bool is_mesa(std::string_view renderer)     { return renderer.find("Mesa") != std::string::npos; }
+
+    [[nodiscard]]
+    bool is_nvidia(std::string_view renderer)   { return renderer.find("NVIDIA") != std::string::npos; }
+
 
     [[nodiscard]]
     std::string rendering_setup_discriminator(selectivity_flavour selectivity) { return do_make_discriminator(selectivity); }

@@ -27,19 +27,22 @@ inline namespace sequoia_bitmask {
 
 namespace curlew {
     [[nodiscard]]
-    bool is_intel(std::string_view renderer);
-
-    [[nodiscard]]
     bool is_amd(std::string_view renderer);
 
     [[nodiscard]]
-    bool is_nvidia(std::string_view renderer);
+    bool is_apple(std::string_view renderer);
+
+    [[nodiscard]]
+    bool is_intel(std::string_view renderer);
+
+    [[nodiscard]]
+    bool is_llvmpipe(std::string_view renderer);
 
     [[nodiscard]]
     bool is_mesa(std::string_view renderer);
 
     [[nodiscard]]
-    bool is_apple(std::string_view renderer);
+    bool is_nvidia(std::string_view renderer);
 
     [[nodiscard]]
     std::string rendering_setup_discriminator(selectivity_flavour selectivity);
