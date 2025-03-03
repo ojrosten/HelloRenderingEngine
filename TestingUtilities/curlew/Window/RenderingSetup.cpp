@@ -49,12 +49,12 @@ namespace curlew {
 
         [[nodiscard]]
         std::string concise_renderer(std::string_view rawRenderer) {
-            if(is_intel(rawRenderer))    return "Intel";
             if(is_amd(rawRenderer))      return "AMD";
-            if(is_nvidia(rawRenderer))   return "NVIDIA";
-            if(is_mesa(rawRenderer))     return "Mesa";
             if(is_apple(rawRenderer))    return "Apple";
-	    if(is_llvmpipe(rawRenderer)) return "llvmpipe";
+            if(is_intel(rawRenderer))    return "Intel";
+            if(is_llvmpipe(rawRenderer)) return "llvmpipe";
+            if(is_mesa(rawRenderer))     return "Mesa";
+            if(is_nvidia(rawRenderer))   return "NVIDIA";
 
             return "";
         }
