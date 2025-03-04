@@ -91,7 +91,7 @@ namespace curlew {
     [[nodiscard]]
     rendering_setup glfw_manager::do_find_rendering_setup() const {
       const auto setup{attempt_to_find_rendering_setup(agl::opengl_version{})};
-      if(setup.version != agl::opengl_version{})
+      if((setup.version != agl::opengl_version{}) || avocet::is_apple())
           return setup;
 
       // Assume we only get here if the version is 4.6
