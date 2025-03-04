@@ -28,6 +28,14 @@ namespace avocet::opengl {
         return (version.major > 3) && (version.minor >= 3);
     }
 
+    /// <summary>
+    /// This function queries and inspects the OpenGL version to determine if
+    /// advanced debug output is supported. It only ever performs this query once,
+    /// the first time the function is called, to avoid unnecessary overhead.
+    /// Therefore, if a context with an OpenGL version < 4.3 is created, say
+    /// for the purposes of determining the maximum version actually supported,
+    /// it is inavisable to call this function within this context.
+    /// </summary>
     [[nodiscard]]
     inline bool debug_output_supported() {
         const static bool debugOutputSupported{debug_output_supported(get_opengl_version())};
