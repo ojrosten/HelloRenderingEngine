@@ -29,7 +29,10 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline bool debug_output_supported() { return debug_output_supported(get_opengl_version()); }
+    inline bool debug_output_supported() {
+        const static bool debugOutputSupported{debug_output_supported(get_opengl_version())};
+        return debugOutputSupported;
+    }
 
     [[nodiscard]]
     inline bool object_labels_activated() { return debug_output_supported(); }
