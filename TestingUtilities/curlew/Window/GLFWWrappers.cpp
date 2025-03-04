@@ -85,7 +85,7 @@ namespace curlew {
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
-        return { referenceVersion, agl::get_renderer()};
+        return { agl::get_opengl_version(), agl::get_renderer()};
     }
 
     [[nodiscard]]
