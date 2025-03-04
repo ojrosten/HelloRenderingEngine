@@ -13,9 +13,7 @@
 
 namespace avocet::opengl{
     struct opengl_version {
-        std::size_t major{4}, minor{get_min_minor_version()};
-
-        constexpr static std::size_t get_min_minor_version() noexcept { return avocet::is_windows() ? 6 : 1; }
+        std::size_t major{4}, minor{1};
 
         [[nodiscard]]
         friend auto operator<=>(const opengl_version&, const opengl_version&) noexcept = default;
