@@ -34,22 +34,16 @@ namespace avocet::opengl{
         std::size_t to_digit(const std::string& version, std::string::size_type pos) {
             return static_cast<std::size_t>(std::stoi(version.substr(pos, pos + 1)));
         }
-
-        [[nodiscard]]
-        opengl_version extract_opengl_version() {
-            const std::string version{get_opengl_version_string()};
-            const auto npos{std::string::npos};
-            if(const auto pos{version.find_first_of('.')}; pos != npos) {
-                return {to_digit(version, pos - 1), to_digit(version, pos + 1)};
-            }
-
-            throw std::runtime_error{std::format("Unable to divine OpenGL version number from: {}", version)};
-        }
     }
 
     [[nodiscard]]
-    opengl_version get_opengl_version() {
-        const opengl_version version{extract_opengl_version()};
-        return version;
+    opengl_version extract_opengl_version() {
+        const std::string version{get_opengl_version_string()};
+        const auto npos{std::string::npos};
+        if(const auto pos{version.find_first_of('.')}; pos != npos) {
+            return {to_digit(version, pos - 1), to_digit(version, pos + 1)};
+        }
+
+        throw std::runtime_error{std::format("Unable to divine OpenGL version number from: {}", version)};
     }
 }

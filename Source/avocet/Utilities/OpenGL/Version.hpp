@@ -29,5 +29,5 @@ namespace avocet::opengl{
     std::string get_opengl_version_string();
 
     [[nodiscard]]
-    opengl_version get_opengl_version();
+    opengl_version extract_opengl_version();
 }

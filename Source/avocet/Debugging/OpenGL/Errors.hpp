@@ -38,7 +38,7 @@ namespace avocet::opengl {
     /// </summary>
     [[nodiscard]]
     inline bool debug_output_supported() {
-        const static bool debugOutputSupported{debug_output_supported(get_opengl_version())};
+        const static bool debugOutputSupported{debug_output_supported(extract_opengl_version())};
         return debugOutputSupported;
     }
 
