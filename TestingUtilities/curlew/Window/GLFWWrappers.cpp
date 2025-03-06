@@ -83,9 +83,20 @@ namespace curlew {
     {}
 
     [[nodiscard]]
+    rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
+        auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
+        return { agl::extract_opengl_version(), agl::get_renderer()};
+    }
+
+    [[nodiscard]]
     rendering_setup glfw_manager::do_find_rendering_setup() const {
-        auto w{window({.hiding{window_hiding_mode::on}}, agl::opengl_version{})};
-        return { agl::get_opengl_version(), agl::get_renderer()};
+      const auto setup{attempt_to_find_rendering_setup(agl::opengl_version{})};
+      if((setup.version != agl::opengl_version{}) || avocet::is_apple())
+          return setup;
+
+      // Assume we only get here if the version is 4.6
+      // If this ever fails in practice, it can be fixed.
+      return attempt_to_find_rendering_setup(agl::opengl_version{.major{4}, .minor{6}});
     }
 
     [[nodiscard]]

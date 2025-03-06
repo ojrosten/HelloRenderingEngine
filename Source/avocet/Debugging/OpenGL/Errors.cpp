@@ -257,10 +257,7 @@ namespace avocet::opengl {
                 std::string{},
                 [](std::string message, const debug_info& info){
                     const auto separator{message.empty() ? "" : "\n\n"};
-                    if(info.severity == debug_severity::notification) {
-                        std::cerr << separator << info.message;
-                    }
-                    else {
+                    if(info.severity != debug_severity::notification) {
                         (message += separator) += info.message;
                     }
 
