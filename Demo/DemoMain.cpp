@@ -55,15 +55,29 @@ int main()
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
         shaderProgram.use();
 
-        agl::quad q{make_label("Quad")};
-        agl::triangle tri{make_label("Triangle")};
+        agl::quad q{
+            make_label("Quad"),
+            [](std::ranges::forward_range auto verts){ 
+                std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
+                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
+                return verts;
+            }
+        };
+        agl::triangle tri{
+            make_label("Triangle"),
+            [](std::ranges::forward_range auto verts){
+                std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.3f; });
+                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.3f; });
+                return verts;
+            }
+        };
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
             shaderProgram.use();
-            //tri.draw();
+            tri.draw();
             q.draw();
 
             glfwSwapBuffers(&w.get());
