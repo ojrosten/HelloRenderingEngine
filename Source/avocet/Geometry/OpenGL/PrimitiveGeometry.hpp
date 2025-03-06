@@ -29,10 +29,10 @@ namespace avocet::opengl {
 
     class quad {
         std::array<GLfloat, 12> m_Vertices{
-            -1.0f, -1.0f, 0.0f,
-             1.0f, -1.0f, 0.0f,
-             1.0f,  1.0f, 0.0f,
-            -1.0f,  1.0f, 0.0f
+            -0.5f, -0.5f, 0.0f,
+             0.5f, -0.5f, 0.0f,
+             0.5f,  0.5f, 0.0f,
+            -0.5f,  0.5f, 0.0f
         };
 
         std::array<GLubyte, 6> m_Indices{
