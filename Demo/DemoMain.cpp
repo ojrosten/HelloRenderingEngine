@@ -53,7 +53,6 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
-        shaderProgram.use();
 
         agl::quad q{
             make_label("Quad"),
