@@ -39,12 +39,11 @@ namespace avocet::opengl {
     template<geometry_specification G>
     using vertices_type = std::remove_const_t<decltype(G::vertices)>;
 
-
     template<gl_arithmetic_type T>
     struct triangle_specification {
         using value_type = T;
         constexpr static std::size_t dimension{3};
-        constexpr static auto num_vertices{3};
+        constexpr static std::size_t num_vertices{3};
         constexpr static auto num_elements{num_vertices * dimension};
 
         constexpr static std::array<T, num_elements> vertices{
@@ -58,7 +57,7 @@ namespace avocet::opengl {
     struct quad_specification {
         using value_type = T;
         constexpr static std::size_t dimension{3};
-        constexpr static auto num_vertices{4};
+        constexpr static std::size_t num_vertices{4};
         constexpr static auto num_elements{num_vertices * dimension};
 
         constexpr static std::array<T, num_elements> vertices{
