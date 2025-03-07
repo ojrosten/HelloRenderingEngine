@@ -46,10 +46,10 @@ namespace avocet::opengl {
     template<geometry_specification G>
     using vertices_type = std::remove_const_t<decltype(G::vertices)>;
 
-    template<std::size_t N>
+    template<std::size_t NumVertices>
     struct polygon_specification_base{
         constexpr static dimensionality dimension{2};
-        constexpr static auto num_vertices{N};
+        constexpr static auto num_vertices{NumVertices};
         constexpr static auto num_elements{num_vertices * dimension.value};
 
         template<gl_arithmetic_type T, std::size_t N>
