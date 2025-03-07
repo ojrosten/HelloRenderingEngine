@@ -46,21 +46,21 @@ namespace avocet::opengl {
     template<geometry_specification G>
     using vertices_type = std::remove_const_t<decltype(G::vertices)>;
 
+    template<gl_arithmetic_type T, std::size_t N>
+    using polygon_vertices_type = std::array<T, N>;
+
     template<std::size_t NumVertices>
     struct polygon_specification_base{
         constexpr static dimensionality dimension{2};
         constexpr static auto num_vertices{NumVertices};
         constexpr static auto num_elements{num_vertices * dimension.value};
-
-        template<gl_arithmetic_type T, std::size_t N>
-        using vertices_type = std::array<T, N>;
     };
 
     template<gl_arithmetic_type T>
     struct triangle_specification : polygon_specification_base<3> {
         using value_type = T;
 
-        constexpr static vertices_type<T, num_elements> vertices{
+        constexpr static polygon_vertices_type<T, num_elements> vertices{
            -0.5f, -0.5f, // left  
             0.5f, -0.5f, // right 
             0.0f,  0.5f  // top   
@@ -71,7 +71,7 @@ namespace avocet::opengl {
     struct quad_specification : polygon_specification_base<4> {
         using value_type = T;
 
-        constexpr static vertices_type<T, num_elements> vertices{
+        constexpr static polygon_vertices_type<T, num_elements> vertices{
             -0.5f, -0.5f,
              0.5f, -0.5f,
              0.5f,  0.5f,
@@ -82,7 +82,7 @@ namespace avocet::opengl {
     template<dimensionality To, geometry_specification G>
         requires (To == G::dimension)
     [[nodiscard]]
-    constexpr const std::array<typename G::value_type, G::num_elements>& embed_poly(const std::array<typename G::value_type, G::num_elements>& in) noexcept{
+    constexpr const vertices_type<G>& embed_poly(const vertices_type<G>& in) noexcept{
         return in;
     }
 
@@ -90,12 +90,12 @@ namespace avocet::opengl {
     template<dimensionality To, geometry_specification G>
         requires (To > G::dimension)
     [[nodiscard]]
-    constexpr std::array<typename G::value_type, To.value* G::num_vertices> embed_poly(const std::array<typename G::value_type, G::num_elements>& in) noexcept {
+    constexpr polygon_vertices_type<typename G::value_type, To.value* G::num_vertices> embed_poly(const vertices_type<G>& in) noexcept {
         using T = typename G::value_type;
         constexpr auto embeddingDim{To.value};
         constexpr auto intrinsicDim{G::dimension.value};
         constexpr auto numOutputElements{embeddingDim * G::num_vertices};
-        using array_t = std::array<T, numOutputElements>;
+        using array_t = polygon_vertices_type<T, numOutputElements>;
 
         return [&] <std::size_t... Is>(std::index_sequence<Is...>) {
             return array_t{(((Is + 1) % embeddingDim) ? in[(Is / embeddingDim) * intrinsicDim + (Is % embeddingDim)] : T{})...};
@@ -123,7 +123,8 @@ namespace avocet::opengl {
 
         friend void bind(const primitive_geometry& pg) { bind(pg.m_VAO); }
     private:
-        std::array<value_type, G::num_vertices * embedding_dimension.value> m_Vertices;
+        using embedded_vertices_type = polygon_vertices_type<value_type, G::num_vertices* embedding_dimension.value>;
+        embedded_vertices_type m_Vertices;
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<GLfloat> m_VBO;
