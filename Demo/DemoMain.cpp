@@ -52,21 +52,23 @@ int main()
         auto w{manager.create_window({.width{800}, .height{600}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
-        agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
+        agl::shader_program
+            quadShaderProgram{get_shader_dir() / "Identity_2D.vs", get_shader_dir() / "Monochrome.fs"},
+            triShaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad q{
+        agl::quad<agl::dimensionality{2}> q{
             make_label("Quad"),
             [](std::ranges::forward_range auto verts){ 
-                std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
-                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
+                std::ranges::for_each(std::views::stride(verts, 2), [](auto& v){ v += 0.25; });
+                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(2), [](auto& v){ v -= 0.25; });
                 return verts;
             }
         };
-        agl::triangle tri{
+        agl::triangle<agl::dimensionality{3}> tri{
             make_label("Triangle"),
             [](std::ranges::forward_range auto verts){
-                std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.3f; });
-                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.3f; });
+                std::ranges::for_each(std::views::stride(verts, 2), [](auto& v){ v -= 0.3f; });
+                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(2), [](auto& v){ v += 0.3f; });
                 return verts;
             }
         };
@@ -75,9 +77,11 @@ int main()
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            shaderProgram.use();
-            tri.draw();
+            quadShaderProgram.use();
             q.draw();
+
+            triShaderProgram.use();
+            tri.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
