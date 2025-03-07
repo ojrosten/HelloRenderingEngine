@@ -53,7 +53,7 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program
-            quadShaderProgram{get_shader_dir() / "Identity_2D.vs", get_shader_dir() / "Monochrome.fs"},
+            quadShaderProgram{get_shader_dir() / "Identity_2D.vs", get_shader_dir() / "Monochrome2.fs"},
             triShaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
 
         agl::quad<agl::dimensionality{2}> q{
