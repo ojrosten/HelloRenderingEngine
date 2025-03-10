@@ -16,10 +16,10 @@ namespace avocet::opengl {
         gl_float = GL_FLOAT
     };
 
-    template<gl_arithmetic_type>
+    template<gl_arithmetic>
     struct to_gl_type_constant;
 
-    template<gl_arithmetic_type G>
+    template<gl_arithmetic G>
     inline constexpr gl_type_constant to_gl_type_constant_v{to_gl_type_constant<G>::value};
 
     template<>
@@ -32,7 +32,7 @@ namespace avocet::opengl {
     template<class G>
     concept geometry_specification = requires{
         typename G::value_type;
-        requires gl_arithmetic_type<typename G::value_type>;
+        requires gl_floating_point<typename G::value_type>;
         { G::dimension    } -> std::convertible_to<dimensionality>;
         { G::num_vertices } -> std::convertible_to<std::size_t>;
         { G::vertices }     -> std::convertible_to<std::array<typename G::value_type, G::num_elements>>;
@@ -48,7 +48,7 @@ namespace avocet::opengl {
         constexpr static auto num_elements{num_vertices * dimension.value};
     };
 
-    template<gl_arithmetic_type T>
+    template<gl_floating_point T>
     struct triangle_specification : polygon_specification_base<dimensionality{3}, 3 > {
         using value_type = T;
 
@@ -59,7 +59,7 @@ namespace avocet::opengl {
         };
     };
 
-    template<gl_arithmetic_type T>
+    template<gl_floating_point T>
     struct quad_specification : polygon_specification_base<dimensionality{3}, 4> {
         using value_type = T;
 
