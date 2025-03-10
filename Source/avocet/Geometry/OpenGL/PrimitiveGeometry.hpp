@@ -27,13 +27,11 @@ namespace avocet::opengl {
         constexpr static auto value{gl_type_constant::gl_float};
     };
 
-    struct dimensionality { std::size_t value; };
-
     template<class G>
     concept geometry_specification = requires{
         typename G::value_type;
         requires gl_floating_point<typename G::value_type>;
-        { G::dimension    } -> std::convertible_to<dimensionality>;
+        { G::dimension    } -> std::convertible_to<std::size_t>;
         { G::num_vertices } -> std::convertible_to<std::size_t>;
         { G::vertices }     -> std::convertible_to<typename G::template vertices_type<typename G::value_type>>;
     };
@@ -41,18 +39,18 @@ namespace avocet::opengl {
     template<geometry_specification G>
     using vertices_type_of = std::remove_const_t<decltype(G::vertices)>;
 
-    template<dimensionality Dimension, std::size_t N>
+    template<std::size_t N>
     struct polygon_specification_base{
-        constexpr static auto dimension{Dimension};
+        constexpr static std::size_t dimension{3};
         constexpr static auto num_vertices{N};
-        constexpr static auto num_elements{num_vertices * dimension.value};
+        constexpr static auto num_elements{num_vertices * dimension};
 
         template<gl_floating_point T>
         using vertices_type = std::array<T, num_elements>;
     };
 
     template<gl_floating_point T>
-    struct triangle_specification : polygon_specification_base<dimensionality{3}, 3 > {
+    struct triangle_specification : polygon_specification_base<3> {
         using value_type = T;
 
         constexpr static vertices_type<T> vertices{
@@ -63,7 +61,7 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T>
-    struct quad_specification : polygon_specification_base<dimensionality{3}, 4> {
+    struct quad_specification : polygon_specification_base<4> {
         using value_type = T;
 
         constexpr static vertices_type<T> vertices{
@@ -87,7 +85,7 @@ namespace avocet::opengl {
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
-            const auto dim{static_cast<GLint>(dimension.value)};
+            const auto dim{static_cast<GLint>(dimension)};
             gl_function{glVertexAttribPointer}(0, dim, to_gl_enum(to_gl_type_constant_v<value_type>), GL_FALSE, dim * sizeof(value_type), (GLvoid*)0);
             gl_function{glEnableVertexAttribArray}(0);
         }
