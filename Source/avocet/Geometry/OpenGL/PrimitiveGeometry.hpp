@@ -39,20 +39,20 @@ namespace avocet::opengl {
     template<geometry_specification G>
     using vertices_type_of = G::vertices_type;
 
-    template<std::size_t N, gl_floating_point T>
+    template<gl_floating_point T, std::size_t NumVertices>
     struct polygon_specification_base{
         using value_type = T;
 
         constexpr static std::size_t dimension{3};
-        constexpr static std::size_t num_vertices{N};
+        constexpr static std::size_t num_vertices{NumVertices};
         constexpr static std::size_t num_elements{num_vertices * dimension};
 
         using vertices_type = std::array<T, num_elements>;
     };
 
     template<gl_floating_point T>
-    struct triangle_specification : polygon_specification_base<3, T> {
-        using vertices_type = polygon_specification_base<3, T>::vertices_type;
+    struct triangle_specification : polygon_specification_base<T, 3> {
+        using vertices_type = polygon_specification_base<T, 3>::vertices_type;
 
         constexpr static vertices_type vertices{
            -0.5, -0.5, 0.0, // left  
@@ -62,8 +62,8 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T>
-    struct quad_specification : polygon_specification_base<4, T> {
-        using vertices_type = polygon_specification_base<4, T>::vertices_type;
+    struct quad_specification : polygon_specification_base<T, 4> {
+        using vertices_type = polygon_specification_base<T, 4>::vertices_type;
 
         constexpr static vertices_type vertices{
             -0.5, -0.5, 0.0,
