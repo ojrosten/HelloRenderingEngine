@@ -31,9 +31,12 @@ namespace avocet::opengl {
     concept geometry_specification = requires{
         typename G::value_type;
         requires gl_floating_point<typename G::value_type>;
+
         { G::dimension    } -> std::convertible_to<std::size_t>;
         { G::num_vertices } -> std::convertible_to<std::size_t>;
-        { G::vertices }     -> std::convertible_to<typename G::vertices_type>;
+
+        typename G::vertices_type;
+        { G::vertices } -> std::convertible_to<typename G::vertices_type>;
     };
 
     template<geometry_specification G>
@@ -43,9 +46,9 @@ namespace avocet::opengl {
     struct polygon_specification_base{
         using value_type = T;
 
-        constexpr static std::size_t dimension{3};
-        constexpr static std::size_t num_vertices{NumVertices};
-        constexpr static std::size_t num_elements{num_vertices * dimension};
+        constexpr static std::size_t dimension{3},
+                                     num_vertices{NumVertices},
+                                     num_elements{num_vertices * dimension};
 
         using vertices_type = std::array<T, num_elements>;
     };
