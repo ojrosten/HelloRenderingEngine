@@ -35,27 +35,30 @@ namespace avocet::opengl {
         requires gl_floating_point<typename G::value_type>;
         { G::dimension    } -> std::convertible_to<dimensionality>;
         { G::num_vertices } -> std::convertible_to<std::size_t>;
-        { G::vertices }     -> std::convertible_to<std::array<typename G::value_type, G::num_elements>>;
+        { G::vertices }     -> std::convertible_to<typename G::template vertices_type<typename G::value_type>>;
     };
 
     template<geometry_specification G>
-    using vertices_type = std::remove_const_t<decltype(G::vertices)>;
+    using vertices_type_of = std::remove_const_t<decltype(G::vertices)>;
 
     template<dimensionality Dimension, std::size_t N>
     struct polygon_specification_base{
         constexpr static auto dimension{Dimension};
         constexpr static auto num_vertices{N};
         constexpr static auto num_elements{num_vertices * dimension.value};
+
+        template<gl_floating_point T>
+        using vertices_type = std::array<T, num_elements>;
     };
 
     template<gl_floating_point T>
     struct triangle_specification : polygon_specification_base<dimensionality{3}, 3 > {
         using value_type = T;
 
-        constexpr static std::array<T, num_elements> vertices{
-           -0.5f, -0.5f, 0.0f, // left  
-            0.5f, -0.5f, 0.0f, // right 
-            0.0f,  0.5f, 0.0f  // top   
+        constexpr static vertices_type<T> vertices{
+           -0.5, -0.5, 0.0, // left  
+            0.5, -0.5, 0.0, // right 
+            0.0,  0.5, 0.0  // top   
         };
     };
 
@@ -63,11 +66,11 @@ namespace avocet::opengl {
     struct quad_specification : polygon_specification_base<dimensionality{3}, 4> {
         using value_type = T;
 
-        constexpr static std::array<T, num_elements> vertices{
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f
+        constexpr static vertices_type<T> vertices{
+            -0.5, -0.5, 0.0,
+             0.5, -0.5, 0.0,
+             0.5,  0.5, 0.0,
+            -0.5,  0.5, 0.0
         };
     };
 
@@ -78,7 +81,7 @@ namespace avocet::opengl {
         constexpr static auto dimension{G::dimension};
 
         template<class Fn = std::identity>
-            requires std::is_invocable_r_v<vertices_type<G>, Fn, vertices_type<G>>
+            requires std::is_invocable_r_v<vertices_type_of<G>, Fn, vertices_type_of<G>>
         explicit primitive_geometry(const std::optional<std::string>& label, Fn transformer = {})
             : m_Vertices{transformer(G::vertices)}
             , m_VAO{label}
@@ -91,7 +94,7 @@ namespace avocet::opengl {
 
         friend void bind(const primitive_geometry& pg) { bind(pg.m_VAO); }
     private:
-        vertices_type<G> m_Vertices;
+       vertices_type_of<G> m_Vertices;
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<GLfloat> m_VBO;
