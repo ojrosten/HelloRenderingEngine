@@ -13,7 +13,8 @@
 
 namespace avocet::opengl {
     enum class gl_type_constant : GLenum {
-        gl_float = GL_FLOAT
+        gl_float  = GL_FLOAT,
+        gl_double = GL_DOUBLE
     };
 
     template<gl_arithmetic>
@@ -25,6 +26,11 @@ namespace avocet::opengl {
     template<>
     struct to_gl_type_constant<GLfloat> {
         constexpr static auto value{gl_type_constant::gl_float};
+    };
+
+    template<>
+    struct to_gl_type_constant<GLdouble> {
+        constexpr static auto value{gl_type_constant::gl_double};
     };
 
     template<class G>
@@ -93,6 +99,10 @@ namespace avocet::opengl {
         {
             const auto dim{static_cast<GLint>(dimension)};
             gl_function{glVertexAttribPointer}(0, dim, to_gl_enum(to_gl_type_constant_v<value_type>), GL_FALSE, dim * sizeof(value_type), (GLvoid*)0);
+            gl_function{glEnableVertexAttribArray}(0);
+
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(value_type), (GLvoid*)0);
+
             gl_function{glEnableVertexAttribArray}(0);
         }
 
