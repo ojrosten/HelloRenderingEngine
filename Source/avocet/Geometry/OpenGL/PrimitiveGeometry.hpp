@@ -33,7 +33,7 @@ namespace avocet::opengl {
         requires gl_floating_point<typename G::value_type>;
 
         { G::dimension    } -> std::convertible_to<std::size_t>;
-        { G::num_vertices } -> std::convertible_to<std::size_t>;
+        { G::num_vertices } -> std::same_as<const std::size_t&>;
 
         typename G::vertices_type;
         { G::vertices } -> std::convertible_to<typename G::vertices_type>;
@@ -79,7 +79,8 @@ namespace avocet::opengl {
     template<geometry_specification G>
     class primitive_geometry {
     public:
-        using value_type = G::value_type;
+        using specification_type = G;
+        using value_type         = G::value_type;
         constexpr static auto dimension{G::dimension};
 
         template<class Fn = std::identity>
@@ -99,7 +100,7 @@ namespace avocet::opengl {
         G::vertices_type m_Vertices;
 
         vertex_attribute_object m_VAO;
-        vertex_buffer_object<GLfloat> m_VBO;
+        vertex_buffer_object<value_type> m_VBO;
     };
 
     class triangle {
