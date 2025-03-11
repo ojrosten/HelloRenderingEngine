@@ -81,10 +81,11 @@ namespace avocet::opengl {
     public:
         using specification_type = G;
         using value_type         = G::value_type;
+        using vertices_type      = G::vertices_type;
         constexpr static auto dimension{G::dimension};
 
         template<class Fn = std::identity>
-            requires std::is_invocable_r_v<typename G::vertices_type, Fn, typename G::vertices_type>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         explicit primitive_geometry(const std::optional<std::string>& label, Fn transformer = {})
             : m_Vertices{transformer(G::vertices)}
             , m_VAO{label}
@@ -97,7 +98,7 @@ namespace avocet::opengl {
 
         friend void bind(const primitive_geometry& pg) { bind(pg.m_VAO); }
     private:
-        G::vertices_type m_Vertices;
+        vertices_type m_Vertices;
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<value_type> m_VBO;
