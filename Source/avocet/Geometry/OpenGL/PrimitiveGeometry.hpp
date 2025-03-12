@@ -20,8 +20,8 @@ namespace avocet::opengl {
     template<gl_arithmetic>
     struct to_gl_type_constant;
 
-    template<gl_arithmetic G>
-    inline constexpr gl_type_constant to_gl_type_constant_v{to_gl_type_constant<G>::value};
+    template<gl_arithmetic T>
+    inline constexpr gl_type_constant to_gl_type_constant_v{to_gl_type_constant<T>::value};
 
     template<>
     struct to_gl_type_constant<GLfloat> {
@@ -39,6 +39,7 @@ namespace avocet::opengl {
         requires gl_floating_point<typename G::value_type>;
 
         { G::dimension    } -> std::convertible_to<std::size_t>;
+        requires (0 < G::dimension) && (G::dimension <= 4);
         { G::num_vertices } -> std::same_as<const std::size_t&>;
 
         typename G::vertices_type;
