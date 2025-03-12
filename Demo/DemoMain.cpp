@@ -54,7 +54,7 @@ int main()
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad q{
+        agl::quad<GLfloat> q{
             make_label("Quad"),
             [](std::ranges::forward_range auto verts){ 
                 std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
@@ -62,7 +62,7 @@ int main()
                 return verts;
             }
         };
-        agl::triangle tri{
+        agl::triangle<GLfloat> tri{
             make_label("Triangle"),
             [](std::ranges::forward_range auto verts){
                 std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.3f; });

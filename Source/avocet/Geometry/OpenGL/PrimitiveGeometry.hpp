@@ -91,9 +91,9 @@ namespace avocet::opengl {
         using vertices_type      = G::vertices_type;
         constexpr static auto dimension{G::dimension};
 
-        template<class Fn = std::identity>
+        template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        explicit primitive_geometry(const std::optional<std::string>& label, Fn transformer = {})
+        primitive_geometry(const std::optional<std::string>& label, Fn transformer)
             : m_Vertices{transformer(G::vertices)}
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
@@ -114,19 +114,44 @@ namespace avocet::opengl {
         vertex_buffer_object<value_type> m_VBO;
     };
 
+    template<gl_floating_point T>
     class triangle {
-        primitive_geometry<triangle_specification<GLfloat>> m_Geom;
     public:
-        template<class Fn=std::identity>
-        explicit triangle(const std::optional<std::string>& label, Fn transformer = {})
+        using primitive_geometry_type = primitive_geometry<triangle_specification<T>>;
+        using vertices_type           = primitive_geometry_type::vertices_type;
+
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+        triangle(const std::optional<std::string>& label, Fn transformer)
             : m_Geom{label, transformer}
         {}
 
-        void draw();
+        void draw() {
+            bind(m_Geom);
+            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
+        }
+    private:
+        primitive_geometry_type m_Geom;
     };
 
+    template<gl_floating_point T>
     class quad {
-        primitive_geometry<quad_specification<GLfloat>> m_Geom;
+    public:
+        using primitive_geometry_type = primitive_geometry<quad_specification<T>>;
+        using vertices_type           = primitive_geometry_type::vertices_type;
+
+        template<class Fn>
+        quad(const std::optional<std::string>& label, Fn transformer)
+            : m_Geom{label, transformer}
+            , m_EBO{m_Indices, label}
+        {}
+
+        void draw() {
+            bind(m_Geom);
+            gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+        }
+    private:
+        primitive_geometry_type m_Geom;
 
         std::array<GLubyte, 6> m_Indices{
             0, 1, 2,
@@ -134,13 +159,5 @@ namespace avocet::opengl {
         };
 
         element_buffer_object<GLubyte> m_EBO;
-    public:
-        template<class Fn = std::identity>
-        explicit quad(const std::optional<std::string>& label, Fn transformer = {})
-            : m_Geom{label, transformer}
-            , m_EBO{m_Indices, label}
-        {}
-
-        void draw();
     };
 }
