@@ -101,7 +101,7 @@ namespace avocet::opengl {
             gl_function{glVertexAttribPointer}(0, dimension, to_gl_enum(to_gl_type_constant_v<value_type>), GL_FALSE, dimension * sizeof(value_type), (GLvoid*)0);
             gl_function{glEnableVertexAttribArray}(0);
 
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(value_type), (GLvoid*)0);
+            glVertexAttribPointer(0, 3, to_gl_enum(to_gl_type_constant_v<value_type>), GL_FALSE, 3 * sizeof(value_type), (GLvoid*)0);
 
             gl_function{glEnableVertexAttribArray}(0);
         }
