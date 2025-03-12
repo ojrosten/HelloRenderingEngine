@@ -53,8 +53,9 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
+        agl::shader_program shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad<GLfloat> q{
+        agl::quad<GLdouble> q{
             make_label("Quad"),
             [](std::ranges::forward_range auto verts){ 
                 std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
@@ -77,6 +78,7 @@ int main()
 
             shaderProgram.use();
             tri.draw();
+            shaderProgramDouble.use();
             q.draw();
 
             glfwSwapBuffers(&w.get());
