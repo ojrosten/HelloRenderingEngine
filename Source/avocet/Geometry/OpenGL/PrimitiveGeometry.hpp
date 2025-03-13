@@ -98,7 +98,12 @@ namespace avocet::opengl {
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
-            gl_function{glVertexAttribPointer}(0, dimension, to_gl_enum(to_gl_type_constant_v<value_type>), GL_FALSE, dimension * sizeof(value_type), (GLvoid*)0);
+            if constexpr(std::is_same_v<value_type, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(0, dimension, to_gl_enum(to_gl_type_constant_v<value_type>), dimension * sizeof(value_type), (GLvoid*)0);
+            }
+            else {
+                gl_function{glVertexAttribPointer}(0, dimension, to_gl_enum(to_gl_type_constant_v<value_type>), GL_FALSE, dimension * sizeof(value_type), (GLvoid*)0);
+            }
             gl_function{glEnableVertexAttribArray}(0);
         }
 
