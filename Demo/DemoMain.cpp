@@ -57,17 +57,21 @@ int main()
 
         agl::quad<GLdouble> q{
             make_label("Quad"),
-            [](std::ranges::forward_range auto verts){ 
-                std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
-                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
+            [](std::ranges::forward_range auto verts){
+              for(auto i : std::views::iota(0, std::ssize(verts))) {
+                if(!(i%3)) verts[i] += 0.25;
+                if(!((i-1)%3)) verts[i] -=0.25;
+              }
+              //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
+              //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
                 return verts;
             }
         };
         agl::triangle<GLfloat> tri{
             make_label("Triangle"),
             [](std::ranges::forward_range auto verts){
-                std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.3f; });
-                std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.3f; });
+              //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.3f; });
+              //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.3f; });
                 return verts;
             }
         };
