@@ -12,25 +12,25 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-    enum class gl_type_constant : GLenum {
+    enum class gl_type_specifier : GLenum {
         gl_float  = GL_FLOAT,
         gl_double = GL_DOUBLE
     };
 
     template<gl_arithmetic>
-    struct to_gl_type_constant;
+    struct to_gl_type_specifier;
 
     template<gl_arithmetic T>
-    inline constexpr gl_type_constant to_gl_type_constant_v{to_gl_type_constant<T>::value};
+    inline constexpr gl_type_specifier to_gl_type_specifier_v{to_gl_type_specifier<T>::value};
 
     template<>
-    struct to_gl_type_constant<GLfloat> {
-        constexpr static auto value{gl_type_constant::gl_float};
+    struct to_gl_type_specifier<GLfloat> {
+        constexpr static auto value{gl_type_specifier::gl_float};
     };
 
     template<>
-    struct to_gl_type_constant<GLdouble> {
-        constexpr static auto value{gl_type_constant::gl_double};
+    struct to_gl_type_specifier<GLdouble> {
+        constexpr static auto value{gl_type_specifier::gl_double};
     };
 
     template<class G>
@@ -94,7 +94,7 @@ namespace avocet::opengl {
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
-            const auto typeConstant{to_gl_enum(to_gl_type_constant_v<value_type>)};
+            const auto typeConstant{to_gl_enum(to_gl_type_specifier_v<value_type>)};
             const auto stride{dimension * sizeof(value_type)};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
                 gl_function{glVertexAttribLPointer}(0, dimension, typeConstant, stride, (GLvoid*)0);
