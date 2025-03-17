@@ -45,9 +45,6 @@ namespace avocet::opengl {
         { G::vertices } -> std::convertible_to<typename G::vertices_type>;
     };
 
-    template<geometry_specification G>
-    using vertices_type_of = G::vertices_type;
-
     template<gl_floating_point T, std::size_t NumVertices>
     struct geometry_specification_base{
         using value_type = T;
