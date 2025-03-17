@@ -52,7 +52,6 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
-        shaderProgram.use();
 
         agl::quad q{make_label("Quad")};
         agl::triangle tri{make_label("Triangle")};
@@ -62,8 +61,8 @@ int main()
             glClear(GL_COLOR_BUFFER_BIT);
 
             shaderProgram.use();
-            tri.draw();
             q.draw();
+            tri.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
