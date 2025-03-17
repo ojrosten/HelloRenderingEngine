@@ -60,7 +60,7 @@ int main()
             [](std::ranges::forward_range auto verts){
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                   if(!(i%3))     verts[i] += 0.25;
-                  if(!((i-1)%3)) verts[i] -=0.25;
+                  if(!((i-1)%3)) verts[i] -= 0.25;
                 }
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
                 //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
