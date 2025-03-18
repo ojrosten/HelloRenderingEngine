@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Graphics/OpenGL/Labels.hpp"
+#include "avocet/Utilities/OpenGL/TypeTraits.hpp"
 
 #include <algorithm>
 #include <array>
@@ -17,12 +18,6 @@
 #include <vector>
 
 namespace avocet::opengl {
-    template<class T>
-    concept gl_arithmetic_type = 
-           std::is_same_v<T, GLhalf> || std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble> || std::is_same_v<T, GLfixed>
-        || std::is_same_v<T, GLbyte> || std::is_same_v<T, GLubyte> || std::is_same_v<T, GLshort>  || std::is_same_v<T, GLint>
-        || std::is_same_v<T, GLuint>;
-
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
 

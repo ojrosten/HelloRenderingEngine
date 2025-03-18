@@ -53,8 +53,13 @@ int main()
         namespace agl = avocet::opengl;
         agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad q{make_label("Quad")};
-        agl::triangle tri{make_label("Triangle")};
+        agl::quad q{
+            make_label("Quad")
+        };
+
+        agl::triangle tri{
+            make_label("Triangle")
+        };
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);

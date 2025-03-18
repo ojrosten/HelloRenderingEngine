@@ -13,26 +13,51 @@
 
 namespace avocet::opengl {
     class triangle {
+    public:
+        explicit triangle(const std::optional<std::string>& label)
+            : m_VAO{label}
+            , m_VBO{m_Vertices, label}
+        {
+            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+            gl_function{glEnableVertexAttribArray}(0);
+        }
+
+        void draw() {
+            bind(m_VAO);
+            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
+        }
+    private:
         std::array<GLfloat, 9> m_Vertices{
-            -0.5f, -0.5f, 0.0f, // left  
-             0.5f, -0.5f, 0.0f, // right 
-             0.0f,  0.5f, 0.0f  // top   
+            -0.5, -0.5, 0.0, // left  
+             0.5, -0.5, 0.0, // right 
+             0.0,  0.5, 0.0  // top   
         };
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<GLfloat> m_VBO;
-    public:
-        explicit triangle(const std::optional<std::string>& label);
-
-        void draw();
     };
 
     class quad {
+    public:
+        explicit quad(const std::optional<std::string>& label)
+            : m_VAO{label}
+            , m_VBO{m_Vertices, label}
+            , m_EBO{m_Indices, label}
+        {
+            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+            gl_function{glEnableVertexAttribArray}(0);
+        }
+
+        void draw() {
+            bind(m_VAO);
+            gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+        }
+    private:
         std::array<GLfloat, 12> m_Vertices{
-            -0.5f, -0.5f, 0.0f,
-             0.5f, -0.5f, 0.0f,
-             0.5f,  0.5f, 0.0f,
-            -0.5f,  0.5f, 0.0f
+            -0.5, -0.5, 0.0,
+             0.5, -0.5, 0.0,
+             0.5,  0.5, 0.0,
+            -0.5,  0.5, 0.0
         };
 
         std::array<GLubyte, 6> m_Indices{
@@ -43,9 +68,5 @@ namespace avocet::opengl {
         vertex_attribute_object m_VAO;
         vertex_buffer_object<GLfloat> m_VBO;
         element_buffer_object<GLubyte> m_EBO;
-    public:
-        explicit quad(const std::optional<std::string>& label);
-
-        void draw();
     };
 }
