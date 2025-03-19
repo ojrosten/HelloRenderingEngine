@@ -96,9 +96,9 @@ namespace avocet::opengl {
     template<gl_floating_point T>
     class triangle {
     public:
-        using value_type = T;
+        using value_type              = T;
         using primitive_geometry_type = primitive_geometry<triangle_specification<T>>;
-        using vertices_type = primitive_geometry_type::vertices_type;
+        using vertices_type           = primitive_geometry_type::vertices_type;
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
@@ -114,36 +114,32 @@ namespace avocet::opengl {
         primitive_geometry_type m_Geometry;
     };
 
+    template<gl_floating_point T>
     class quad {
     public:
-        explicit quad(const std::optional<std::string>& label)
-            : m_VAO{label}
-            , m_VBO{m_Vertices, label}
+        using value_type              = T;
+        using primitive_geometry_type = primitive_geometry<quad_specification<T>>;
+        using vertices_type           = primitive_geometry_type::vertices_type;
+
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+        quad(Fn transformer, const std::optional<std::string>& label)
+            : m_Geometry{transformer, label}
             , m_EBO{m_Indices, label}
-        {
-            gl_function{glVertexAttribPointer}(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-            gl_function{glEnableVertexAttribArray}(0);
-        }
+        {}
 
         void draw() {
-            bind(m_VAO);
+            bind(m_Geometry);
             gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
         }
     private:
-        std::array<GLfloat, 12> m_Vertices{
-            -0.5, -0.5, 0.0,
-             0.5, -0.5, 0.0,
-             0.5,  0.5, 0.0,
-            -0.5,  0.5, 0.0
-        };
+        primitive_geometry_type m_Geometry;
 
         std::array<GLubyte, 6> m_Indices{
             0, 1, 2,
             0, 2, 3
         };
 
-        vertex_attribute_object m_VAO;
-        vertex_buffer_object<GLfloat> m_VBO;
         element_buffer_object<GLubyte> m_EBO;
     };
 }
