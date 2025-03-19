@@ -96,11 +96,13 @@ namespace avocet::opengl {
         using polygon_base_type = polygon_base<T, 4, EmbeddingDimension>;
         using vertices_type     = polygon_base_type::vertices_type;
 
+        constexpr static std::size_t num_vertices{4};
+
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         quad(Fn transformer, const std::optional<std::string>& label)
             : polygon_base<T, 4, EmbeddingDimension>{transformer, label}
-            , m_EBO{m_Indices, label}
+            , m_EBO{st_ElementIndices, label}
         {}
 
         void draw() {
@@ -108,11 +110,29 @@ namespace avocet::opengl {
             gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
         }
     private:
+        template<std::size_t I>
+        [[nodiscard]]
+        constexpr static GLubyte to_element_index() {
+            if constexpr(not (I % 3))
+                return 0;
+            else if constexpr(not ((I - 1) % 3))
+                return 1 + (I / 3);
+            else
+                return 2 + (I / 3);
+        }
 
-        std::array<GLubyte, 6> m_Indices{
-            0, 1, 2,
-            0, 2, 3
-        };
+        constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
+
+        using index_array_type = std::array<GLubyte, num_element_indices>;
+
+        [[nodiscard]]
+        constexpr static index_array_type make_indices() noexcept {
+            return [] <std::size_t... Is>(std::index_sequence<Is...>){
+                return index_array_type{to_element_index<Is>()...};
+            }(std::make_index_sequence<num_element_indices>{});
+        }
+
+        constexpr static index_array_type st_ElementIndices{make_indices()};
 
         element_buffer_object<GLubyte> m_EBO;
     };
