@@ -9,131 +9,105 @@
 
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
 
+#include <cmath>
+#include <numbers>
+
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-
-    template<class G>
-    concept geometry_specification = requires {
-        typename G::value_type;
-        requires gl_floating_point<typename G::value_type>;
-
-        { G::dimension } -> std::convertible_to<std::size_t>;
-        requires (0 < G::dimension) && (G::dimension <= 4);
-        
-        typename G::vertices_type;
-        { G::vertices } -> std::convertible_to<typename G::vertices_type>;
-    };
-
-    template<gl_floating_point T, std::size_t NumVertices>
-    struct geometry_specification_base {
-        using value_type = T;
-        constexpr static std::size_t
-            num_vertices{NumVertices},
-            dimension{3},
-            num_elements{dimension * num_vertices};
-
-        using vertices_type = std::array<T, num_elements>;
-    };
-
-    template<gl_floating_point T>
-    struct triangle_specification : geometry_specification_base<T, 3> {
-        using vertices_type = geometry_specification_base<T, 3>::vertices_type;
-
-        constexpr static vertices_type vertices{
-            -0.5, -0.5, 0.0, // left  
-             0.5, -0.5, 0.0, // right 
-             0.0,  0.5, 0.0  // top   
-        };
-    };
-
-    template<gl_floating_point T>
-    struct quad_specification : geometry_specification_base<T, 4> {
-        using vertices_type = geometry_specification_base<T, 4>::vertices_type;
-
-        constexpr static vertices_type vertices{
-            -0.5, -0.5, 0.0,
-             0.5, -0.5, 0.0,
-             0.5,  0.5, 0.0,
-            -0.5,  0.5, 0.0
-        };
-    };
-
-    template<geometry_specification G>
-    class primitive_geometry{
+    template<gl_floating_point T, std::size_t N, std::size_t EmbeddingDimension>
+       requires (2 <= EmbeddingDimension) && (EmbeddingDimension <= 4)
+    class polygon_base{
     public:
-        using geometry_specification_type = G;
-        using value_type                  = G::value_type;
-        using vertices_type               = G::vertices_type;
-        constexpr static std::size_t dimension{G::dimension};
+        constexpr static std::size_t
+            embedding_dimension{EmbeddingDimension},
+            num_vertices{N},
+            num_elements{embedding_dimension * N};
+
+        using value_type    = T;
+        using vertices_type = std::array<T, embedding_dimension * N>;
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        primitive_geometry(Fn transformer, const std::optional<std::string>& label)
-            : m_Vertices{transformer(G::vertices)}
+        polygon_base(Fn transformer, const std::optional<std::string>& label)
+            : m_Vertices{transformer(vertices())}
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto stride{dimension * sizeof(value_type)};
+            constexpr auto stride{embedding_dimension * sizeof(value_type)};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(0, dimension, typeSpecifier, stride, (GLvoid*)0);
+                gl_function{glVertexAttribLPointer}(0, embedding_dimension, typeSpecifier, stride, (GLvoid*)0);
             }
             else {
-                gl_function{glVertexAttribPointer}(0, dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
+                gl_function{glVertexAttribPointer}(0, embedding_dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
             }
             gl_function{glEnableVertexAttribArray}(0);
         }
 
-        friend void bind(const primitive_geometry& pg) { bind(pg.m_VAO); }
+    protected:
+        ~polygon_base() = default;
+
+        polygon_base(polygon_base&&)            noexcept = default;
+        polygon_base& operator=(polygon_base&&) noexcept = default;
+
+        static void do_bind(const polygon_base& pb) { bind(pb.m_VAO); }
     private:
         vertices_type m_Vertices;
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<value_type> m_VBO;
+
+        constexpr static T pi{std::numbers::pi_v<T>};
+
+        template<std::size_t I>
+        constexpr static T to_element() {
+            if constexpr(not (I % embedding_dimension))
+                return T{0.5} *std::sin(2 * pi * (I / embedding_dimension) / N);
+            else if constexpr(not ((I - 1) % embedding_dimension))
+                return T{0.5} * std::cos(2 * pi * (I/ embedding_dimension) / N);
+            else
+                return T{};
+        }
+
+        [[nodiscard]]
+        constexpr static vertices_type vertices() {
+            return [] <std::size_t... Is>(std::index_sequence<Is...>){
+                return vertices_type{to_element<Is>()...};
+            }(std::make_index_sequence<num_elements>{});
+        }
     };
 
-    template<gl_floating_point T>
-    class triangle {
+    template<gl_floating_point T, std::size_t EmbeddingDimension>
+    class triangle : polygon_base<T, 3, EmbeddingDimension> {
     public:
-        using value_type              = T;
-        using primitive_geometry_type = primitive_geometry<triangle_specification<T>>;
-        using vertices_type           = primitive_geometry_type::vertices_type;
-
-        template<class Fn>
-            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        triangle(Fn transformer, const std::optional<std::string>& label)
-            : m_Geometry{transformer, label}
-        {}
+        using polygon_base_type = polygon_base<T, 3, EmbeddingDimension>;
+        using polygon_base<T, 3, EmbeddingDimension>::polygon_base;
 
         void draw() {
-            bind(m_Geometry);
+            polygon_base_type::do_bind(*this);
             gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
         }
-    private:
-        primitive_geometry_type m_Geometry;
     };
 
-    template<gl_floating_point T>
-    class quad {
+    template<gl_floating_point T, std::size_t EmbeddingDimension>
+    class quad : polygon_base<T, 4, EmbeddingDimension> {
     public:
-        using value_type              = T;
-        using primitive_geometry_type = primitive_geometry<quad_specification<T>>;
-        using vertices_type           = primitive_geometry_type::vertices_type;
+        using polygon_base_type = polygon_base<T, 4, EmbeddingDimension>;
+        using vertices_type     = polygon_base_type::vertices_type;
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         quad(Fn transformer, const std::optional<std::string>& label)
-            : m_Geometry{transformer, label}
+            : polygon_base<T, 4, EmbeddingDimension>{transformer, label}
             , m_EBO{m_Indices, label}
         {}
 
         void draw() {
-            bind(m_Geometry);
+            polygon_base_type::do_bind(*this);
             gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
         }
     private:
-        primitive_geometry_type m_Geometry;
 
         std::array<GLubyte, 6> m_Indices{
             0, 1, 2,

@@ -48,14 +48,14 @@ int main()
         std::cout << curlew::rendering_setup_summary();
 
         curlew::glfw_manager manager{};
-        auto w{manager.create_window({.width{800}, .height{600}, .name{"Hello Rendering Engine"}})};
+        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
         agl::shader_program
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad<GLfloat> q{
+        agl::quad<GLfloat, 3> q{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
@@ -71,7 +71,7 @@ int main()
             make_label("Quad")
         };
 
-        agl::triangle<GLdouble> tri{
+        agl::triangle<GLdouble, 3> tri{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
