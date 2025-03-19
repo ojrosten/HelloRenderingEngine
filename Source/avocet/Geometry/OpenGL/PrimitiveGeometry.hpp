@@ -93,15 +93,15 @@ namespace avocet::opengl {
     template<gl_floating_point T, std::size_t EmbeddingDimension>
     class quad : polygon_base<T, 4, EmbeddingDimension> {
     public:
-        using polygon_base_type = polygon_base<T, 4, EmbeddingDimension>;
+        constexpr static std::size_t num_vertices{4};
+        using polygon_base_type = polygon_base<T, num_vertices, EmbeddingDimension>;
         using vertices_type     = polygon_base_type::vertices_type;
 
-        constexpr static std::size_t num_vertices{4};
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         quad(Fn transformer, const std::optional<std::string>& label)
-            : polygon_base<T, 4, EmbeddingDimension>{transformer, label}
+            : polygon_base_type{transformer, label}
             , m_EBO{st_ElementIndices, label}
         {}
 
