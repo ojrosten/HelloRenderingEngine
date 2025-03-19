@@ -51,13 +51,22 @@ int main()
         auto w{manager.create_window({.width{800}, .height{600}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
-        agl::shader_program shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"};
+        agl::shader_program
+            shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
+            shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
         agl::quad q{
             make_label("Quad")
         };
 
-        agl::triangle tri{
+        agl::triangle<GLdouble> tri{
+            [](auto verts) {
+                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                    if(!(i % 3)) verts[i] += 0.25;
+                }
+
+                return verts;
+            },
             make_label("Triangle")
         };
 
@@ -67,6 +76,7 @@ int main()
 
             shaderProgram.use();
             q.draw();
+            shaderProgramDouble.use();
             tri.draw();
 
             glfwSwapBuffers(&w.get());

@@ -8,4 +8,6 @@
 #include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
 
 namespace avocet::opengl {
+    static_assert(geometry_specification<triangle_specification<float>>);
+    static_assert(geometry_specification<quad_specification<double>>);
 }
