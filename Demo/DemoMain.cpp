@@ -55,7 +55,7 @@ int main()
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::polygon<GLfloat, 4, 3> q{
+        agl::polygon<GLfloat, 4, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
@@ -71,7 +71,7 @@ int main()
             make_label("Quad")
         };
 
-        agl::polygon<GLfloat, 7, 3> sept{
+        agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
@@ -87,7 +87,7 @@ int main()
             make_label("Quad")
         };
 
-        agl::triangle<GLdouble, 3> tri{
+        agl::triangle<GLdouble, agl::dimensionality{3}> tri{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
