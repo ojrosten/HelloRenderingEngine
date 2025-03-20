@@ -40,7 +40,7 @@ namespace avocet::opengl {
         constexpr static auto embedding_dimension{EmbeddingDimension};
         constexpr static std::size_t
             num_vertices{N},
-            num_elements{embedding_dimension.value * N};
+            num_components{embedding_dimension.value * N};
 
         using value_type    = T;
         using vertices_type = std::array<T, embedding_dimension.value * N>;
@@ -79,6 +79,7 @@ namespace avocet::opengl {
 
         constexpr static T pi{std::numbers::pi_v<T>};
 
+        [[nodiscard]]
         constexpr static T to_element(std::size_t i) {
             constexpr auto dim{embedding_dimension.value};
             if (not (i % dim))
@@ -91,7 +92,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         constexpr static vertices_type vertices() {
-            return make_array<T, num_elements>([](std::size_t i){ return to_element(i); });
+            return make_array<T, num_components>([](std::size_t i){ return to_element(i); });
         }
     };
 
