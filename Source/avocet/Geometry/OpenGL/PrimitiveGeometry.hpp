@@ -90,29 +90,29 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, std::size_t EmbeddingDimension>
-    class quad : polygon_base<T, 4, EmbeddingDimension> {
+    template<gl_floating_point T, std::size_t N, std::size_t EmbeddingDimension>
+    class polygon : polygon_base<T, N, EmbeddingDimension> {
     public:
-        constexpr static std::size_t num_vertices{4};
+        constexpr static std::size_t num_vertices{N};
         using polygon_base_type = polygon_base<T, num_vertices, EmbeddingDimension>;
         using vertices_type     = polygon_base_type::vertices_type;
 
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        quad(Fn transformer, const std::optional<std::string>& label)
+        polygon(Fn transformer, const std::optional<std::string>& label)
             : polygon_base_type{transformer, label}
             , m_EBO{st_ElementIndices, label}
         {}
 
         void draw() {
             polygon_base_type::do_bind(*this);
-            gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+            gl_function{glDrawElements}(GL_TRIANGLES, num_element_indices, GL_UNSIGNED_INT, nullptr);
         }
     private:
         template<std::size_t I>
         [[nodiscard]]
-        constexpr static GLubyte to_element_index() {
+        constexpr static GLuint to_element_index() {
             if constexpr(not (I % 3))
                 return 0;
             else if constexpr(not ((I - 1) % 3))
@@ -123,7 +123,7 @@ namespace avocet::opengl {
 
         constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
 
-        using index_array_type = std::array<GLubyte, num_element_indices>;
+        using index_array_type = std::array<GLuint, num_element_indices>;
 
         [[nodiscard]]
         constexpr static index_array_type make_indices() noexcept {
@@ -134,6 +134,9 @@ namespace avocet::opengl {
 
         constexpr static index_array_type st_ElementIndices{make_indices()};
 
-        element_buffer_object<GLubyte> m_EBO;
+        element_buffer_object<GLuint> m_EBO;
     };
+
+    template<gl_floating_point T, std::size_t EmbeddingDimension>
+    using quad = polygon<T, 4, EmbeddingDimension>;
 }

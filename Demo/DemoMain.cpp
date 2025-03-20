@@ -55,7 +55,7 @@ int main()
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad<GLfloat, 3> q{
+        agl::polygon<GLfloat, 7, 3> q{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
