@@ -78,18 +78,6 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, GLuint EmbeddingDimension>
-    class triangle : polygon_base<T, 3, EmbeddingDimension> {
-    public:
-        using polygon_base_type = polygon_base<T, 3, EmbeddingDimension>;
-        using polygon_base<T, 3, EmbeddingDimension>::polygon_base;
-
-        void draw() {
-            polygon_base_type::do_bind(*this);
-            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
-        }
-    };
-
     template<gl_floating_point T, GLuint N, GLuint EmbeddingDimension>
     class polygon : polygon_base<T, N, EmbeddingDimension> {
     public:
@@ -138,6 +126,22 @@ namespace avocet::opengl {
 
         element_buffer_object<GLuint> m_EBO;
     };
+
+
+    template<gl_floating_point T, GLuint EmbeddingDimension>
+    class polygon<T, 3, EmbeddingDimension> : polygon_base<T, 3, EmbeddingDimension> {
+    public:
+        using polygon_base_type = polygon_base<T, 3, EmbeddingDimension>;
+        using polygon_base<T, 3, EmbeddingDimension>::polygon_base;
+
+        void draw() {
+            polygon_base_type::do_bind(*this);
+            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
+        }
+    };
+
+    template<gl_floating_point T, GLuint EmbeddingDimension>
+    using triangle = polygon<T, 3, EmbeddingDimension>;
 
     template<gl_floating_point T, GLuint EmbeddingDimension>
     using quad = polygon<T, 4, EmbeddingDimension>;
