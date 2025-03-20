@@ -19,6 +19,7 @@ namespace avocet::opengl {
     struct array_index {};
 
     template<class T, std::size_t N, class Fn>
+        requires (N>0) && std::is_invocable_r_v<T, Fn, array_index<N-1>>
     [[nodiscard]]
     constexpr std::array<T, N> make_array(Fn f) {
         return[&] <std::size_t... Is>(std::index_sequence<Is...>){
