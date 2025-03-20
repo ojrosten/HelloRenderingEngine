@@ -15,15 +15,13 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-    template<std::size_t I>
-    struct array_index {};
 
     template<class T, std::size_t N, class Fn>
-        requires (N>0) && std::is_invocable_r_v<T, Fn, array_index<N-1>>
+        requires std::is_invocable_r_v<T, Fn, std::size_t>
     [[nodiscard]]
     constexpr std::array<T, N> make_array(Fn f) {
         return[&] <std::size_t... Is>(std::index_sequence<Is...>){
-            return std::array<T, N>{f(array_index<Is>{})...};
+            return std::array<T, N>{f(Is)...};
         }(std::make_index_sequence<N>{});
     }
 
@@ -80,20 +78,19 @@ namespace avocet::opengl {
 
         constexpr static T pi{std::numbers::pi_v<T>};
 
-        template<std::size_t I>
-        constexpr static T to_element(array_index<I>) {
+        constexpr static T to_element(std::size_t i) {
             constexpr auto dim{embedding_dimension.value};
-            if constexpr(not (I % dim))
-                return T{0.5} * std::sin(2 * pi * (I / dim) / N);
-            else if constexpr(not ((I - 1) % dim))
-                return T{0.5} * std::cos(2 * pi * (I / dim) / N);
+            if (not (i % dim))
+                return T{0.5} * std::sin(2 * pi * (i / dim) / N);
+            else if (not ((i - 1) % dim))
+                return T{0.5} * std::cos(2 * pi * (i / dim) / N);
             else
                 return T{};
         }
 
         [[nodiscard]]
         constexpr static vertices_type vertices() {
-            return make_array<T, num_elements>([]<std::size_t I>(array_index<I> i){ return to_element(i); });
+            return make_array<T, num_elements>([](std::size_t i){ return to_element(i); });
         }
     };
 
@@ -120,15 +117,16 @@ namespace avocet::opengl {
         constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
         using element_index_type = std::conditional_t<(num_element_indices < sizeof(GLubyte)), GLubyte, GLuint>;
 
-        template<std::size_t I>
         [[nodiscard]]
-        constexpr static element_index_type to_element_index(array_index<I>) noexcept {
-            if constexpr(not (I % 3))
+        constexpr static element_index_type to_element_index(std::size_t i) noexcept {
+            if (not (i % 3))
                 return 0;
-            else if constexpr(not ((I - 1) % 3))
-                return 1 + (I / 3);
-            else
-                return 2 + (I / 3);
+
+            const auto triangleIndex{static_cast<element_index_type>(i / 3)};
+            if (not ((i - 1) % 3))
+                return triangleIndex + 1;
+
+            return triangleIndex + 2;
         }
 
 
@@ -136,7 +134,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         constexpr static index_array_type make_indices() noexcept {
-            return make_array<element_index_type, num_element_indices>([]<std::size_t I>(array_index<I> i){ return to_element_index(i); });
+            return make_array<element_index_type, num_element_indices>([] (std::size_t i){ return to_element_index(i); });
         }
 
         constexpr static index_array_type st_ElementIndices{make_indices()};
