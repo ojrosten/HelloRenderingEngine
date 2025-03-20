@@ -15,6 +15,17 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    template<std::size_t I>
+    struct array_index {};
+
+    template<class T, std::size_t N, class Fn>
+    [[nodiscard]]
+    constexpr std::array<T, N> make_array(Fn f) {
+        return[&] <std::size_t... Is>(std::index_sequence<Is...>){
+            return std::array<T, N>{f(array_index<Is>{})...};
+        }(std::make_index_sequence<N>{});
+    }
+
     struct dimensionality {
         std::size_t value{};
 
@@ -69,7 +80,7 @@ namespace avocet::opengl {
         constexpr static T pi{std::numbers::pi_v<T>};
 
         template<std::size_t I>
-        constexpr static T to_element() {
+        constexpr static T to_element(array_index<I>) {
             constexpr auto dim{embedding_dimension.value};
             if constexpr(not (I % dim))
                 return T{0.5} * std::sin(2 * pi * (I / dim) / N);
@@ -81,9 +92,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         constexpr static vertices_type vertices() {
-            return [] <std::size_t... Is>(std::index_sequence<Is...>){
-                return vertices_type{to_element<Is>()...};
-            }(std::make_index_sequence<num_elements>{});
+            return make_array<T, num_elements>([]<std::size_t I>(array_index<I> i){ return to_element(i); });
         }
     };
 
@@ -112,7 +121,7 @@ namespace avocet::opengl {
 
         template<std::size_t I>
         [[nodiscard]]
-        constexpr static element_index_type to_element_index() noexcept {
+        constexpr static element_index_type to_element_index(array_index<I>) noexcept {
             if constexpr(not (I % 3))
                 return 0;
             else if constexpr(not ((I - 1) % 3))
@@ -126,9 +135,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         constexpr static index_array_type make_indices() noexcept {
-            return [] <GLuint... Is>(std::index_sequence<Is...>){
-                return index_array_type{to_element_index<Is>()...};
-            }(std::make_index_sequence<num_element_indices>{});
+            return make_array<element_index_type, num_element_indices>([]<std::size_t I>(array_index<I> i){ return to_element_index(i); });
         }
 
         constexpr static index_array_type st_ElementIndices{make_indices()};
