@@ -15,11 +15,11 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-    template<gl_floating_point T, std::size_t N, std::size_t EmbeddingDimension>
+    template<gl_floating_point T, GLuint N, GLuint EmbeddingDimension>
        requires (2 <= EmbeddingDimension) && (EmbeddingDimension <= 4)
     class polygon_base{
     public:
-        constexpr static std::size_t
+        constexpr static GLuint
             embedding_dimension{EmbeddingDimension},
             num_vertices{N},
             num_elements{embedding_dimension * N};
@@ -63,9 +63,9 @@ namespace avocet::opengl {
         template<std::size_t I>
         constexpr static T to_element() {
             if constexpr(not (I % embedding_dimension))
-                return T{0.5} *std::sin(2 * pi * (I / embedding_dimension) / N);
+                return T{0.5} * std::sin(2 * pi * (I / embedding_dimension) / N);
             else if constexpr(not ((I - 1) % embedding_dimension))
-                return T{0.5} * std::cos(2 * pi * (I/ embedding_dimension) / N);
+                return T{0.5} * std::cos(2 * pi * (I / embedding_dimension) / N);
             else
                 return T{};
         }
@@ -78,7 +78,7 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, std::size_t EmbeddingDimension>
+    template<gl_floating_point T, GLuint EmbeddingDimension>
     class triangle : polygon_base<T, 3, EmbeddingDimension> {
     public:
         using polygon_base_type = polygon_base<T, 3, EmbeddingDimension>;
@@ -90,10 +90,10 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, std::size_t N, std::size_t EmbeddingDimension>
+    template<gl_floating_point T, GLuint N, GLuint EmbeddingDimension>
     class polygon : polygon_base<T, N, EmbeddingDimension> {
     public:
-        constexpr static std::size_t num_vertices{N};
+        constexpr static GLuint num_vertices{N};
         using polygon_base_type = polygon_base<T, num_vertices, EmbeddingDimension>;
         using vertices_type     = polygon_base_type::vertices_type;
 
@@ -107,12 +107,15 @@ namespace avocet::opengl {
 
         void draw() {
             polygon_base_type::do_bind(*this);
-            gl_function{glDrawElements}(GL_TRIANGLES, num_element_indices, GL_UNSIGNED_INT, nullptr);
+            gl_function{glDrawElements}(GL_TRIANGLES, num_element_indices, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
     private:
+        constexpr static GLuint num_element_indices{(num_vertices - 2) * 3};
+        using element_index_type = std::conditional_t<(num_element_indices < sizeof(GLubyte)), GLubyte, GLuint>;
+
         template<std::size_t I>
         [[nodiscard]]
-        constexpr static GLuint to_element_index() {
+        constexpr static element_index_type to_element_index() {
             if constexpr(not (I % 3))
                 return 0;
             else if constexpr(not ((I - 1) % 3))
@@ -121,13 +124,12 @@ namespace avocet::opengl {
                 return 2 + (I / 3);
         }
 
-        constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
 
-        using index_array_type = std::array<GLuint, num_element_indices>;
+        using index_array_type = std::array<element_index_type, num_element_indices>;
 
         [[nodiscard]]
         constexpr static index_array_type make_indices() noexcept {
-            return [] <std::size_t... Is>(std::index_sequence<Is...>){
+            return [] <GLuint... Is>(std::index_sequence<Is...>){
                 return index_array_type{to_element_index<Is>()...};
             }(std::make_index_sequence<num_element_indices>{});
         }
@@ -137,6 +139,6 @@ namespace avocet::opengl {
         element_buffer_object<GLuint> m_EBO;
     };
 
-    template<gl_floating_point T, std::size_t EmbeddingDimension>
+    template<gl_floating_point T, GLuint EmbeddingDimension>
     using quad = polygon<T, 4, EmbeddingDimension>;
 }

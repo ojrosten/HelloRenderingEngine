@@ -55,15 +55,31 @@ int main()
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::polygon<GLfloat, 7, 3> q{
+        agl::polygon<GLfloat, 4, 3> q{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
                 //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))       verts[i] += 0.25;
-                    if(!((i - 1) % 3)) verts[i] -= 0.25;
+                    if(!(i % 3))       verts[i] += 0.5;
+                    if(!((i - 1) % 3)) verts[i] += 0.5;
+                }
+
+                return verts;
+            },
+            make_label("Quad")
+        };
+
+        agl::polygon<GLfloat, 7, 3> sept{
+            [](std::ranges::random_access_range auto verts) {
+                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
+                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
+                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
+
+                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                    if(!(i % 3))       verts[i] += 0.5;
+                    if(!((i - 1) % 3)) verts[i] -= 0.5;
                 }
 
                 return verts;
@@ -93,6 +109,7 @@ int main()
 
             shaderProgram.use();
             q.draw();
+            sept.draw();
             shaderProgramDouble.use();
             tri.draw();
 
