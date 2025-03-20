@@ -10,6 +10,7 @@
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
 
 #include <cmath>
+#include <limits>
 #include <numbers>
 
 #include "glad/gl.h"
@@ -115,6 +116,7 @@ namespace avocet::opengl {
         }
     private:
         constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
+        static_assert(num_element_indices < std::numeric_limits<GLuint>::max());
         using element_index_type = std::conditional_t<(num_element_indices < sizeof(GLubyte)), GLubyte, GLuint>;
 
         [[nodiscard]]
