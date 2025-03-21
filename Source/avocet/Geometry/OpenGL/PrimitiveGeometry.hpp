@@ -93,9 +93,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        constexpr static vertices_type vertices() {
-            return make_array<T, num_components>([](std::size_t i){ return to_coordinate(i); });
-        }
+        constexpr static vertices_type vertices() { return make_array<T, num_components>(to_coordinate); }
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality EmbeddingDimension>
@@ -139,7 +137,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         constexpr static index_array_type make_indices() noexcept {
-            return make_array<element_index_type, num_element_indices>([] (std::size_t i){ return to_element_index(i); });
+            return make_array<element_index_type, num_element_indices>(to_element_index);
         }
 
         constexpr static index_array_type st_ElementIndices{make_indices()};
