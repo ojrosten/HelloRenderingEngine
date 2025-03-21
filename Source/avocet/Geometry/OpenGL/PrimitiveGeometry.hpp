@@ -86,10 +86,11 @@ namespace avocet::opengl {
             const T theta_n = offset + 2 * pi * (i / dim) / N;
             if (not (i % dim))
                 return -T{0.5} * std::sin(theta_n);
-            else if (not ((i - 1) % dim))
+
+            if (not ((i - 1) % dim))
                 return  T{0.5} * std::cos(theta_n);
-            else
-                return  T{};
+
+            return  T{};
         }
 
         [[nodiscard]]
