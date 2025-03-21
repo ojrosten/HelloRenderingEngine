@@ -80,7 +80,7 @@ namespace avocet::opengl {
         constexpr static T pi{std::numbers::pi_v<T>};
 
         [[nodiscard]]
-        constexpr static T to_element(std::size_t i) {
+        constexpr static T to_coordinates(std::size_t i) {
             constexpr auto dim{embedding_dimension.value};
             if (not (i % dim))
                 return -T{0.5} * std::sin(2 * pi * (i / dim) / N);
@@ -92,7 +92,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         constexpr static vertices_type vertices() {
-            return make_array<T, num_components>([](std::size_t i){ return to_element(i); });
+            return make_array<T, num_components>([](std::size_t i){ return to_coordinates(i); });
         }
     };
 
