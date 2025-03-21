@@ -83,7 +83,7 @@ namespace avocet::opengl {
         constexpr static T to_element(std::size_t i) {
             constexpr auto dim{embedding_dimension.value};
             if (not (i % dim))
-                return T{0.5} * std::sin(2 * pi * (i / dim) / N);
+                return -T{0.5} * std::sin(2 * pi * (i / dim) / N);
             else if (not ((i - 1) % dim))
                 return T{0.5} * std::cos(2 * pi * (i / dim) / N);
             else
