@@ -88,6 +88,22 @@ int main()
             make_label("Septagon")
         };
 
+        agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
+            [](std::ranges::random_access_range auto verts) {
+                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
+                //std::ranges::for_each(std::views::stride(verts, 2), [](auto& v){ v += 0.25; });
+                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(2), [](auto& v){ v -= 0.25; });
+
+                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                    if(!(i % 2))       verts[i] -= 0.5;
+                    if(!((i - 1) % 2)) verts[i] -= 0.5;
+                }
+
+                return verts;
+            },
+            make_label("Hexagon")
+        };
+
         agl::triangle<GLdouble, agl::dimensionality{3}> tri{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
@@ -111,6 +127,7 @@ int main()
             shaderProgram.use();
             q.draw();
             shaderProgram2D.use();
+            hex.draw();
             sept.draw();
             shaderProgramDouble.use();
             tri.draw();
