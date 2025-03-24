@@ -119,7 +119,10 @@ namespace avocet::opengl {
     private:
         constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
         static_assert(num_element_indices < std::numeric_limits<GLuint>::max());
-        using element_index_type = std::conditional_t<(num_element_indices < sizeof(GLubyte)), GLubyte, GLuint>;
+        using element_index_type
+            = std::conditional_t<    (num_element_indices < sizeof(GLubyte)),  GLubyte,
+                  std::conditional_t<(num_element_indices < sizeof(GLushort)), GLushort, 
+                                                                               GLuint>>;
 
         [[nodiscard]]
         constexpr static element_index_type to_element_index(std::size_t i) noexcept {

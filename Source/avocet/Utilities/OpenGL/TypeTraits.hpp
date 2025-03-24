@@ -29,6 +29,7 @@ namespace avocet::opengl {
         gl_byte   = GL_BYTE,
         gl_ubyte  = GL_UNSIGNED_BYTE,
         gl_short  = GL_SHORT,
+        gl_ushort = GL_UNSIGNED_SHORT,
         gl_int    = GL_INT,
         gl_uint   = GL_UNSIGNED_INT,
     };
@@ -62,6 +63,11 @@ namespace avocet::opengl {
     template<>
     struct to_gl_type_specifier<GLshort> {
         constexpr static auto value{gl_type_specifier::gl_short};
+    };
+
+    template<>
+    struct to_gl_type_specifier<GLushort> {
+        constexpr static auto value{gl_type_specifier::gl_ushort};
     };
 
     template<>
