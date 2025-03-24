@@ -133,7 +133,7 @@ namespace avocet::opengl {
         static_assert(num_element_indices < std::numeric_limits<GLuint>::max());
         using element_index_type
             = std::conditional_t<    (num_element_indices < sizeof(GLubyte)),  GLubyte,
-                  std::conditional_t<(num_element_indices < sizeof(GLushort)), GLushort, 
+                  std::conditional_t<(num_element_indices < sizeof(GLushort)), GLushort,
                                                                                GLuint>>;
 
         [[nodiscard]]
