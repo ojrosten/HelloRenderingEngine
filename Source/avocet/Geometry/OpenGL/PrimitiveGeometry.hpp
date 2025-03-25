@@ -71,18 +71,6 @@ namespace avocet::opengl {
         polygon_base& operator=(polygon_base&&) noexcept = default;
 
         static void do_bind(const polygon_base& pb) { bind(pb.m_VAO); }
-
-        template<class T, std::size_t Sz, class Fn>
-            requires std::is_invocable_r_v<T, Fn, std::size_t>
-        [[nodiscard]]
-        constexpr static auto make_container(Fn f) {
-            if constexpr(N < 256)
-                return make_array<T, Sz>(f);
-            else
-            {
-                return std::views::iota(0u, Sz) | std::views::transform(f) | std::ranges::to<std::vector>();
-            }
-        }
     private:
         vertices_type m_Vertices;
 
@@ -106,7 +94,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        constexpr static vertices_type vertices() { return make_container<T, num_components>(to_coordinate); }
+        constexpr static vertices_type vertices() { return make_array<T, num_components>(to_coordinate); }
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality EmbeddingDimension>
@@ -147,12 +135,7 @@ namespace avocet::opengl {
             return triangleIndex + 2;
         }
 
-        [[nodiscard]]
-        constexpr static index_array_type make_indices() noexcept {
-            return polygon_base_type::template make_container<element_index_type, num_element_indices>(to_element_index);
-        }
-
-        constexpr static index_array_type st_ElementIndices{make_indices()};
+        constexpr static index_array_type st_ElementIndices{make_array<element_index_type, num_element_indices>(to_element_index)};
 
         element_buffer_object<element_index_type> m_EBO;
     };
