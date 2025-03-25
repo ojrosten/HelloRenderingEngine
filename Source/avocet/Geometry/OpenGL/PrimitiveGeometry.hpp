@@ -34,7 +34,7 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality EmbeddingDimension>
-        requires (dimensionality{2} <= EmbeddingDimension) && (EmbeddingDimension <= dimensionality{4})
+        requires (N <= 87) && (dimensionality{2} <= EmbeddingDimension) && (EmbeddingDimension <= dimensionality{4})
     class polygon_base{
     public:
         constexpr static auto embedding_dimension{EmbeddingDimension};
@@ -43,7 +43,7 @@ namespace avocet::opengl {
             num_components{embedding_dimension.value * N};
 
         using value_type    = T;
-        using vertices_type = std::conditional_t<N < 256, std::array<T, embedding_dimension.value * N>, std::vector<T>>;
+        using vertices_type = std::array<T, embedding_dimension.value * N>;
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
@@ -130,11 +130,10 @@ namespace avocet::opengl {
         }
     private:
         constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
-        static_assert(num_element_indices < std::numeric_limits<GLuint>::max());
-        using element_index_type
-            = std::conditional_t<    (num_element_indices < sizeof(GLubyte)),  GLubyte,
-                  std::conditional_t<(num_element_indices < sizeof(GLushort)), GLushort,
-                                                                               GLuint>>;
+        using element_index_type = GLubyte;
+        using index_array_type   = std::array<element_index_type, num_element_indices>;
+
+        static_assert(num_element_indices < std::numeric_limits<element_index_type>::max());
 
         [[nodiscard]]
         constexpr static element_index_type to_element_index(std::size_t i) noexcept {
@@ -148,14 +147,12 @@ namespace avocet::opengl {
             return triangleIndex + 2;
         }
 
-        using index_array_type = std::conditional_t<num_element_indices < 256, std::array<element_index_type, num_element_indices>, std::vector<element_index_type>>;
-
         [[nodiscard]]
         constexpr static index_array_type make_indices() noexcept {
             return polygon_base_type::template make_container<element_index_type, num_element_indices>(to_element_index);
         }
 
-        const inline static index_array_type st_ElementIndices{make_indices()};
+        constexpr static index_array_type st_ElementIndices{make_indices()};
 
         element_buffer_object<element_index_type> m_EBO;
     };
