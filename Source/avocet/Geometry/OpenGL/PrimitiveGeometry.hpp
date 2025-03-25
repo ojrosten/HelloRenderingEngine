@@ -136,7 +136,7 @@ namespace avocet::opengl {
         static_assert(num_element_indices < std::numeric_limits<element_index_type>::max());
 
         [[nodiscard]]
-        constexpr static element_index_type to_element_index(std::size_t i) noexcept {
+        constexpr static element_index_type to_element_index(element_index_type i) noexcept {
             if (not (i % 3))
                 return 0;
 
