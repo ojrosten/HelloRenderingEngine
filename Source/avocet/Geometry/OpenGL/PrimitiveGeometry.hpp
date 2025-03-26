@@ -98,12 +98,10 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality EmbeddingDimension>
-    class polygon : polygon_base<T, N, EmbeddingDimension> {
+    class polygon : public polygon_base<T, N, EmbeddingDimension> {
     public:
-        constexpr static std::size_t num_vertices{N};
-        using polygon_base_type = polygon_base<T, num_vertices, EmbeddingDimension>;
+        using polygon_base_type = polygon_base<T, N, EmbeddingDimension>;
         using vertices_type     = polygon_base_type::vertices_type;
-
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
@@ -117,7 +115,7 @@ namespace avocet::opengl {
             gl_function{glDrawElements}(GL_TRIANGLES, num_element_indices, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
     private:
-        constexpr static std::size_t num_element_indices{(num_vertices - 2) * 3};
+        constexpr static std::size_t num_element_indices{(N - 2) * 3};
         using element_index_type = GLubyte;
         using index_array_type   = std::array<element_index_type, num_element_indices>;
 
@@ -142,7 +140,7 @@ namespace avocet::opengl {
 
 
     template<gl_floating_point T, dimensionality EmbeddingDimension>
-    class polygon<T, 3, EmbeddingDimension> : polygon_base<T, 3, EmbeddingDimension> {
+    class polygon<T, 3, EmbeddingDimension> : public polygon_base<T, 3, EmbeddingDimension> {
     public:
         using polygon_base_type = polygon_base<T, 3, EmbeddingDimension>;
         using polygon_base<T, 3, EmbeddingDimension>::polygon_base;
