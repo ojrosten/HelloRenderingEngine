@@ -33,11 +33,11 @@ namespace avocet::opengl {
         friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
-    template<gl_floating_point T, std::size_t N, dimensionality EmbeddingDimension>
-        requires (N <= 87) && (dimensionality{2} <= EmbeddingDimension) && (EmbeddingDimension <= dimensionality{4})
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
+        requires (N <= 87) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
     class polygon_base{
     public:
-        constexpr static auto embedding_dimension{EmbeddingDimension};
+        constexpr static auto embedding_dimension{ArenaDimension};
         constexpr static std::size_t
             num_vertices{N},
             num_components{embedding_dimension.value * N};
@@ -101,10 +101,10 @@ namespace avocet::opengl {
         constexpr static vertices_type vertices() { return make_array<T, num_components>(to_coordinate); }
     };
 
-    template<gl_floating_point T, std::size_t N, dimensionality EmbeddingDimension>
-    class polygon : public polygon_base<T, N, EmbeddingDimension> {
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
+    class polygon : public polygon_base<T, N, ArenaDimension> {
     public:
-        using polygon_base_type = polygon_base<T, N, EmbeddingDimension>;
+        using polygon_base_type = polygon_base<T, N, ArenaDimension>;
         using vertices_type     = polygon_base_type::vertices_type;
 
         template<class Fn>
@@ -143,11 +143,11 @@ namespace avocet::opengl {
     };
 
 
-    template<gl_floating_point T, dimensionality EmbeddingDimension>
-    class polygon<T, 3, EmbeddingDimension> : public polygon_base<T, 3, EmbeddingDimension> {
+    template<gl_floating_point T, dimensionality ArenaDimension>
+    class polygon<T, 3, ArenaDimension> : public polygon_base<T, 3, ArenaDimension> {
     public:
-        using polygon_base_type = polygon_base<T, 3, EmbeddingDimension>;
-        using polygon_base<T, 3, EmbeddingDimension>::polygon_base;
+        using polygon_base_type = polygon_base<T, 3, ArenaDimension>;
+        using polygon_base<T, 3, ArenaDimension>::polygon_base;
 
         void draw() {
             polygon_base_type::do_bind(*this);
@@ -155,9 +155,9 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, dimensionality EmbeddingDimension>
-    using triangle = polygon<T, 3, EmbeddingDimension>;
+    template<gl_floating_point T, dimensionality ArenaDimension>
+    using triangle = polygon<T, 3, ArenaDimension>;
 
-    template<gl_floating_point T, dimensionality EmbeddingDimension>
-    using quad = polygon<T, 4, EmbeddingDimension>;
+    template<gl_floating_point T, dimensionality ArenaDimension>
+    using quad = polygon<T, 4, ArenaDimension>;
 }
