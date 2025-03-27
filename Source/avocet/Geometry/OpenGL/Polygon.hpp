@@ -109,12 +109,14 @@ namespace avocet::opengl {
 
         void draw() {
             polygon_base_type::do_bind(*this);
-            gl_function{glDrawElements}(GL_TRIANGLES, num_element_indices, GL_UNSIGNED_BYTE, nullptr);
+            gl_function{glDrawElements}(GL_TRIANGLES, num_element_indices, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
     private:
         constexpr static std::size_t num_element_indices{3 * (N - 2)};
         using element_index_type = GLubyte;
         using element_array_type = std::array<element_index_type, num_element_indices>;
+
+        static_assert(num_element_indices < std::numeric_limits<element_index_type>::max());
 
         [[nodiscard]]
         constexpr static element_index_type get_element_index(std::size_t i) noexcept {
