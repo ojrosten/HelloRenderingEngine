@@ -8,6 +8,8 @@
 #pragma once
 
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
+#include <cmath>
+#include <numbers>
 
 #include "glad/gl.h"
 
