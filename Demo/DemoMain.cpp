@@ -59,7 +59,7 @@ int main()
         constexpr GLfloat scale{2.0};
 
         agl::triangle<GLfloat, agl::dimensionality{3}> tri{
-            [](std::ranges::random_access_range auto verts) {
+	    [&centre, &scale](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     if(!(i % 3))       (verts[i] *= scale) += centre[0];
                     if(!((i - 1) % 3)) (verts[i] *= scale) += centre[1];
