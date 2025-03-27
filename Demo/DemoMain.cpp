@@ -9,7 +9,7 @@
 #include "curlew/Window/RenderingSetup.hpp"
 
 #include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
-#include "avocet/Geometry/OpenGL/PrimitiveGeometry.hpp"
+#include "avocet/Geometry/OpenGL/Polygon.hpp"
 
 #include "sequoia/FileSystem/FileSystem.hpp"
 
@@ -48,7 +48,7 @@ int main()
         std::cout << curlew::rendering_setup_summary();
 
         curlew::glfw_manager manager{};
-        auto w{manager.create_window({.width{800}, .height{600}, .name{"Hello Rendering Engine"}})};
+        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
         agl::shader_program
@@ -62,8 +62,8 @@ int main()
                 //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))       verts[i] += 0.25;
-                    if(!((i - 1) % 3)) verts[i] -= 0.25;
+                    if(!(i % 3))       verts[i] += 0.5;
+                    if(!((i - 1) % 3)) verts[i] -= 0.5;
                 }
 
                 return verts;
@@ -78,8 +78,8 @@ int main()
                 //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.25; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))     verts[i] -= 0.25;
-                    if(!((i-1) % 3)) verts[i] += 0.25;
+                    if(!(i % 3))     verts[i] -= 0.5;
+                    if(!((i-1) % 3)) verts[i] += 0.5;
                 }
 
                 return verts;

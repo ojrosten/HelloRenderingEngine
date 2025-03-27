@@ -22,8 +22,16 @@ namespace avocet::opengl {
     concept gl_floating_point = std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble>;
 
     enum class gl_type_specifier : GLenum {
+        gl_half   = GL_HALF_FLOAT,
         gl_float  = GL_FLOAT,
-        gl_double = GL_DOUBLE
+        gl_double = GL_DOUBLE,
+        gl_fixed  = GL_FIXED,
+        gl_byte   = GL_BYTE,
+        gl_ubyte  = GL_UNSIGNED_BYTE,
+        gl_short  = GL_SHORT,
+        gl_ushort = GL_UNSIGNED_SHORT,
+        gl_int    = GL_INT,
+        gl_uint   = GL_UNSIGNED_INT,
     };
 
     template<gl_arithmetic_type T>
@@ -40,5 +48,35 @@ namespace avocet::opengl {
     template<>
     struct to_gl_type_specifier<GLdouble> {
         constexpr static auto value{gl_type_specifier::gl_double};
+    };
+
+    template<>
+    struct to_gl_type_specifier<GLbyte> {
+        constexpr static auto value{gl_type_specifier::gl_byte};
+    };
+
+    template<>
+    struct to_gl_type_specifier<GLubyte> {
+        constexpr static auto value{gl_type_specifier::gl_ubyte};
+    };
+
+    template<>
+    struct to_gl_type_specifier<GLshort> {
+        constexpr static auto value{gl_type_specifier::gl_short};
+    };
+
+    template<>
+    struct to_gl_type_specifier<GLushort> {
+        constexpr static auto value{gl_type_specifier::gl_ushort};
+    };
+
+    template<>
+    struct to_gl_type_specifier<GLint> {
+        constexpr static auto value{gl_type_specifier::gl_int};
+    };
+
+    template<>
+    struct to_gl_type_specifier<GLuint> {
+        constexpr static auto value{gl_type_specifier::gl_uint};
     };
 }
