@@ -56,7 +56,7 @@ int main()
             shaderProgram2D{get_shader_dir() / "Identity2D.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad < GLfloat, agl::dimensionality{3} > q{
+        agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
@@ -72,7 +72,7 @@ int main()
             make_label("Quad")
         };
 
-        agl::triangle<GLdouble, agl::dimensionality{3}> tri{
+        agl::triangle<GLfloat, agl::dimensionality{3}> tri{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
@@ -88,7 +88,7 @@ int main()
             make_label("Triangle")
         };
 
-        agl::polygon < GLfloat, 7, agl::dimensionality{2} > sept{
+        agl::polygon<GLfloat, 7, agl::dimensionality{2}> sept{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
@@ -104,7 +104,7 @@ int main()
             make_label("Septagon")
         };
 
-        agl::polygon < GLfloat, 6, agl::dimensionality{3} > hex{
+        agl::polygon<GLfloat, 6, agl::dimensionality{3}> hex{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
@@ -124,11 +124,11 @@ int main()
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            shaderProgram.use();
-            q.draw();
-            hex.draw();
             shaderProgramDouble.use();
+            q.draw();
+            shaderProgram.use();
             tri.draw();
+            hex.draw();
             shaderProgram2D.use();
             sept.draw();
 

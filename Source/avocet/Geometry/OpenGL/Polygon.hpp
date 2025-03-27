@@ -61,7 +61,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        friend constexpr auto operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept {
+        friend constexpr bool operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept {
             return lhs.m_Vertices == rhs.m_Vertices;
         }
     protected:
