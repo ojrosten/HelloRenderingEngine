@@ -51,86 +51,38 @@ int main()
         auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
+
         agl::shader_program
-            shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
-            shaderProgram2D{get_shader_dir() / "Identity2D.vs", get_shader_dir() / "Monochrome.fs"},
-            shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
+            discShaderProgram{get_shader_dir() / "Disc.vs", get_shader_dir() / "Disc.fs"};
 
-        agl::quad < GLfloat, agl::dimensionality{3} > q{
-            [](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.25; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.25; });
+        const std::array<GLfloat, 2> centre{0.2f, 0.3f};
+        const GLfloat scale{2.0};
 
+        agl::triangle<GLfloat, agl::dimensionality{3}> tri{
+            [&centre](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))       verts[i] += 0.5;
-                    if(!((i - 1) % 3)) verts[i] -= 0.5;
+                    if(!(i % 3))       (verts[i] *= scale) += centre[0];
+                    if(!((i - 1) % 3)) (verts[i] *= scale) += centre[1];
                 }
 
                 return verts;
             },
-            make_label("Quad")
+            make_label("Disc")
         };
 
-        agl::triangle<GLdouble, agl::dimensionality{3}> tri{
-            [](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.25; });
+        discShaderProgram.use();
 
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))     verts[i] -= 0.5;
-                    if(!((i-1) % 3)) verts[i] += 0.5;
-                }
-
-                return verts;
-            },
-            make_label("Triangle")
-        };
-
-        agl::polygon < GLfloat, 7, agl::dimensionality{2} > sept{
-            [](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.25; });
-
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 2))     verts[i] += 0.5;
-                    if(!((i-1) % 2)) verts[i] += 0.5;
-                }
-
-                return verts;
-            },
-            make_label("Septagon")
-        };
-
-        agl::polygon < GLfloat, 6, agl::dimensionality{3} > hex{
-            [](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.25; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.25; });
-
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))     verts[i] -= 0.5;
-                    if(!((i-1) % 3)) verts[i] -= 0.5;
-                }
-
-                return verts;
-            },
-            make_label("Hexagon")
-        };
+        const auto centreLoc{agl::gl_function{glGetUniformLocation}(discShaderProgram.resource().handle().index(), "centre")};
+        const auto radiusLoc{agl::gl_function{glGetUniformLocation}(discShaderProgram.resource().handle().index(), "radius")};
+        agl::gl_function{glUniform2f}(centreLoc, centre[0], centre[1]);
+        agl::gl_function{glUniform1f}(radiusLoc, 0.25*scale);
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            shaderProgram.use();
-            q.draw();
-            hex.draw();
-            shaderProgramDouble.use();
+            discShaderProgram.use();
             tri.draw();
-            shaderProgram2D.use();
-            sept.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
