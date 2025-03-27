@@ -55,11 +55,11 @@ int main()
         agl::shader_program
             discShaderProgram{get_shader_dir() / "Disc.vs", get_shader_dir() / "Disc.fs"};
 
-        const std::array<GLfloat, 2> centre{0.2f, 0.3f};
-        const GLfloat scale{2.0};
+        constexpr std::array<GLfloat, 2> centre{0.2f, 0.3f};
+        constexpr GLfloat scale{2.0};
 
         agl::triangle<GLfloat, agl::dimensionality{3}> tri{
-            [&centre](std::ranges::random_access_range auto verts) {
+            [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     if(!(i % 3))       (verts[i] *= scale) += centre[0];
                     if(!((i - 1) % 3)) (verts[i] *= scale) += centre[1];
