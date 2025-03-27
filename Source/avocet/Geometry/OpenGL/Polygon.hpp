@@ -59,6 +59,11 @@ namespace avocet::opengl {
             }
             gl_function{glEnableVertexAttribArray}(0);
         }
+
+        [[nodiscard]]
+        friend constexpr auto operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept {
+            return lhs.m_Vertices == rhs.m_Vertices;
+        }
     protected:
         ~polygon_base() = default;
 
