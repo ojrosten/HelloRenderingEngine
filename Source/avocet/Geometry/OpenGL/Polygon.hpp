@@ -9,6 +9,7 @@
 
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
 #include <cmath>
+#include <limits>
 #include <numbers>
 
 #include "glad/gl.h"
