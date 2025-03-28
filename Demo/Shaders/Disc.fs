@@ -12,5 +12,5 @@ void main()
     if(length(ClipPos - centre) > radius)
       discard;
 
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    FragColor = vec4(1 - length(vec2(0,1) - ClipPos), 1 - length(vec2(-1,0) - ClipPos), 1 - length(vec2(1,0) - ClipPos), 1.0f);
 }
