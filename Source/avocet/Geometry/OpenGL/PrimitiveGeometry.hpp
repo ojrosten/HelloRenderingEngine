@@ -119,11 +119,11 @@ namespace avocet::opengl {
             gl_function{glDrawElements}(GL_TRIANGLES, num_element_indices, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
     private:
-        constexpr static std::size_t num_element_indices{(N - 2) * 3};
+        constexpr static std::size_t num_element_indices{3 * (N - 2)};
         using element_index_type = GLubyte;
         using index_array_type   = std::array<element_index_type, num_element_indices>;
 
-        static_assert(num_element_indices < std::numeric_limits<element_index_type>::max());
+        static_assert(num_element_indices <= std::numeric_limits<element_index_type>::max());
 
         [[nodiscard]]
         constexpr static element_index_type to_element_index(element_index_type i) noexcept {
