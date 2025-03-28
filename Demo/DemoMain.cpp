@@ -58,11 +58,11 @@ int main()
         constexpr std::array<GLfloat, 2> centre{0.2f, 0.3f};
         constexpr GLfloat scale{2.0};
 
-        agl::triangle<GLfloat, agl::dimensionality{3}> tri{
+        agl::triangle<GLfloat, agl::dimensionality{2}> tri{
             [&centre, &scale](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))       (verts[i] *= scale) += centre[0];
-                    if(!((i - 1) % 3)) (verts[i] *= scale) += centre[1];
+                    if(!(i % 2))       (verts[i] *= scale) += centre[0];
+                    if(!((i - 1) % 2)) (verts[i] *= scale) += centre[1];
                 }
 
                 return verts;
