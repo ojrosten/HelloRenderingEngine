@@ -8,6 +8,8 @@
 #pragma once
 
 #include "avocet/Graphics/OpenGL/Buffers.hpp"
+#include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
+
 #include <cmath>
 #include <limits>
 #include <numbers>
