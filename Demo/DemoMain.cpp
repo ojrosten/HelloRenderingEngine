@@ -55,7 +55,7 @@ int main()
         agl::shader_program
             discShaderProgram{get_shader_dir() / "Disc.vs", get_shader_dir() / "Disc.fs"};
 
-        constexpr std::array<GLfloat, 2> centre{0.2f, 0.3f};
+        constexpr std::array<GLfloat, 2> centre{0.05f, 0.1f};
         constexpr GLfloat scale{2.0};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> tri{
