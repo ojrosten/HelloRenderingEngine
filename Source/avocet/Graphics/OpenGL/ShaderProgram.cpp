@@ -195,4 +195,17 @@ namespace avocet::opengl {
 
         shader_program_checker{m_Resource}.check();
     }
+
+    [[nodiscard]]
+    GLint shader_program::extract_uniform_location(std::string_view name) {
+        if(m_Uniforms.contains(name))
+            return m_Uniforms.find(name)->second;
+
+        const auto location{gl_function{glGetUniformLocation}(resource().handle().index(), name.data())};
+        if(location == -1)
+            throw std::runtime_error{std::format("shader program {}: Uniform \"{}\" not found", extract_label(), name)};
+
+        m_Uniforms.emplace(std::string{name}, location);
+        return location;
+    }
 }

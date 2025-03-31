@@ -10,7 +10,9 @@
 #include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 #include "avocet/Graphics/OpenGL/Labels.hpp"
 
+#include <array>
 #include <filesystem>
+#include <map>
 
 namespace avocet::opengl {
     template<class T>
@@ -54,8 +56,32 @@ namespace avocet::opengl {
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
 
+    // HT https://ctrpeach.io/posts/cpp20-string-literal-template-parameters/
+    template<size_t N>
+    struct string_literal {
+        consteval string_literal(const char(&str)[N]) {
+            std::ranges::copy_n(str, N, value);
+        }
+
+        char value[N];
+    };
+
     class shader_program {
         shader_program_resource m_Resource;
+        std::map<std::string, GLint, std::ranges::less> m_Uniforms;
+
+        [[nodiscard]]
+        GLint extract_uniform_location(std::string_view name);
+
+        template<string_literal Name>
+        [[nodiscard]]
+        GLint extract_uniform_location() {
+            const static auto loc{gl_function{glGetUniformLocation}(resource().handle().index(), Name.value)};
+            if(loc == -1)
+                throw std::runtime_error{std::format("shader program {}: Uniform \"{}\" not found", extract_label(), Name.value)};
+
+            return loc;
+        }
     public:
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
@@ -66,6 +92,16 @@ namespace avocet::opengl {
         const shader_program_resource& resource() const noexcept { return m_Resource; }
 
         void use() { glUseProgram(m_Resource.handle().index()); }
+
+        void set_uniform(std::string_view name, GLfloat val) { gl_function{glUniform1f}(extract_uniform_location(name), val); }
+
+        void set_uniform(std::string_view name, const std::array<GLfloat, 2> val) { gl_function{glUniform2f}(extract_uniform_location(name), val[0], val[1]); }
+
+        template<string_literal Name>
+        void set_uniform(GLfloat val) { gl_function{glUniform1f}(extract_uniform_location<Name>(), val); }
+
+        template<string_literal Name>
+        void set_uniform(const std::array<GLfloat, 2>& val) { gl_function{glUniform2f}(extract_uniform_location<Name>(), val[0], val[1]); };
 
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;

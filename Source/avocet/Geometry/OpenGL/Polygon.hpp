@@ -121,7 +121,7 @@ namespace avocet::opengl {
         using element_index_type = GLubyte;
         using element_array_type = std::array<element_index_type, num_element_indices>;
 
-        static_assert(num_element_indices < std::numeric_limits<element_index_type>::max());
+        static_assert(num_element_indices <= std::numeric_limits<element_index_type>::max());
 
         [[nodiscard]]
         constexpr static element_index_type get_element_index(std::size_t i) noexcept {

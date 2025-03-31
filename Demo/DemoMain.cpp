@@ -56,7 +56,7 @@ int main()
             discShaderProgram{get_shader_dir() / "Disc.vs", get_shader_dir() / "Disc.fs"};
 
         constexpr std::array<GLfloat, 2> centre{0.05f, 0.1f};
-        constexpr GLfloat scale{2.0};
+        constexpr GLfloat scale{4.0};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> tri{
             [&centre, &scale](std::ranges::random_access_range auto verts) {
@@ -71,11 +71,10 @@ int main()
         };
 
         discShaderProgram.use();
-
-        const auto centreLoc{agl::gl_function{glGetUniformLocation}(discShaderProgram.resource().handle().index(), "centre")};
-        const auto radiusLoc{agl::gl_function{glGetUniformLocation}(discShaderProgram.resource().handle().index(), "radius")};
-        agl::gl_function{glUniform2f}(centreLoc, centre[0], centre[1]);
-        agl::gl_function{glUniform1f}(radiusLoc, 0.25*scale);
+        discShaderProgram.set_uniform<"radius">(0.25 * scale);
+        //discShaderProgram.set_uniform<"centre">(centre);
+        //discShaderProgram.set_uniform("radius", 0.25 * scale);
+        discShaderProgram.set_uniform("centre", centre);
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
