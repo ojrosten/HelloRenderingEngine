@@ -56,32 +56,12 @@ namespace avocet::opengl {
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
 
-    // HT https://ctrpeach.io/posts/cpp20-string-literal-template-parameters/
-    template<size_t N>
-    struct string_literal {
-        consteval string_literal(const char(&str)[N]) {
-            std::ranges::copy_n(str, N, value);
-        }
-
-        char value[N];
-    };
-
     class shader_program {
         shader_program_resource m_Resource;
         std::map<std::string, GLint, std::ranges::less> m_Uniforms;
 
         [[nodiscard]]
         GLint extract_uniform_location(std::string_view name);
-
-        template<string_literal Name>
-        [[nodiscard]]
-        GLint extract_uniform_location() {
-            const static auto loc{gl_function{glGetUniformLocation}(resource().handle().index(), Name.value)};
-            if(loc == -1)
-                throw std::runtime_error{std::format("shader program {}: Uniform \"{}\" not found", extract_label(), Name.value)};
-
-            return loc;
-        }
 
         class program_tracker {
             inline static GLuint st_Previous{};
@@ -112,16 +92,6 @@ namespace avocet::opengl {
             do_set_uniform(name, glUniform2f, val[0], val[1]);
         }
 
-        template<string_literal Name>
-        void set_uniform(GLfloat val) {
-            do_set_uniform<Name>(glUniform1f, val);
-        }
-
-        template<string_literal Name>
-        void set_uniform(const std::array<GLfloat, 2>& val) {
-            do_set_uniform<Name>(glUniform2f, val[0], val[1]);
-        };
-
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
@@ -129,12 +99,6 @@ namespace avocet::opengl {
         void do_set_uniform(std::string_view name, void(*glFn)(GLint, Args...), Args... args) {
             use();
             gl_function{glFn}(extract_uniform_location(name), args...);
-        }
-
-        template<string_literal Name, class... Args>
-        void do_set_uniform(void(*glFn)(GLint, Args...), Args... args) {
-            use();
-            gl_function{glFn}(extract_uniform_location<Name>(), args...);
         }
     };
 }
