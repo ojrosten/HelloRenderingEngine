@@ -12,7 +12,7 @@
 
 #include <array>
 #include <filesystem>
-#include <map>
+#include <unordered_map>
 
 namespace avocet::opengl {
     template<class T>
@@ -56,9 +56,28 @@ namespace avocet::opengl {
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
 
+    struct string_hash {
+        using is_transparent = void;
+
+        [[nodiscard]]
+        size_t operator()(const char* txt) const {
+            return std::hash<std::string_view>{}(txt);
+        }
+
+        [[nodiscard]]
+        size_t operator()(std::string_view txt) const {
+            return std::hash<std::string_view>{}(txt);
+        }
+
+        [[nodiscard]]
+        size_t operator()(const std::string& txt) const {
+            return std::hash<std::string>{}(txt);
+        }
+    };
+
     class shader_program {
         shader_program_resource m_Resource;
-        std::map<std::string, GLint, std::ranges::less> m_Uniforms;
+        std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to> m_Uniforms;
 
         [[nodiscard]]
         GLint extract_uniform_location(std::string_view name);
