@@ -82,6 +82,17 @@ namespace avocet::opengl {
 
             return loc;
         }
+
+        class program_tracker {
+            inline static GLuint st_Previous{};
+        public:
+            static void utilize(shader_program& sp) {
+                if(const auto index{sp.resource().handle().index()}; index != st_Previous) {
+                    gl_function{glUseProgram}(index);
+                    st_Previous = index;
+                }
+            }
+        };
     public:
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
@@ -91,17 +102,29 @@ namespace avocet::opengl {
         [[nodiscard]]
         const shader_program_resource& resource() const noexcept { return m_Resource; }
 
-        void use() { glUseProgram(m_Resource.handle().index()); }
+        void use() { program_tracker::utilize(*this); }
 
-        void set_uniform(std::string_view name, GLfloat val) { gl_function{glUniform1f}(extract_uniform_location(name), val); }
+        void set_uniform(std::string_view name, GLfloat val) {
+            use();
+            gl_function{glUniform1f}(extract_uniform_location(name), val);
+        }
 
-        void set_uniform(std::string_view name, const std::array<GLfloat, 2> val) { gl_function{glUniform2f}(extract_uniform_location(name), val[0], val[1]); }
+        void set_uniform(std::string_view name, const std::array<GLfloat, 2> val) {
+            use();
+            gl_function{glUniform2f}(extract_uniform_location(name), val[0], val[1]);
+        }
 
         template<string_literal Name>
-        void set_uniform(GLfloat val) { gl_function{glUniform1f}(extract_uniform_location<Name>(), val); }
+        void set_uniform(GLfloat val) {
+            use();
+            gl_function{glUniform1f}(extract_uniform_location<Name>(), val);
+        }
 
         template<string_literal Name>
-        void set_uniform(const std::array<GLfloat, 2>& val) { gl_function{glUniform2f}(extract_uniform_location<Name>(), val[0], val[1]); };
+        void set_uniform(const std::array<GLfloat, 2>& val) {
+            use();
+            gl_function{glUniform2f}(extract_uniform_location<Name>(), val[0], val[1]);
+        };
 
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;

@@ -70,7 +70,6 @@ int main()
             make_label("Disc")
         };
 
-        discShaderProgram.use();
         discShaderProgram.set_uniform<"radius">(0.25 * scale);
         //discShaderProgram.set_uniform<"centre">(centre);
         //discShaderProgram.set_uniform("radius", 0.25 * scale);
