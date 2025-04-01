@@ -99,27 +99,6 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T>
-    class triangle {
-    public:
-        using value_type              = T;
-        using primitive_geometry_type = primitive_geometry<triangle_specification<T>>;
-        using vertices_type           = primitive_geometry_type::vertices_type;
-
-        template<class Fn>
-            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        triangle(Fn transformer, const std::optional<std::string>& label)
-            : m_Geometry{transformer, label}
-        {}
-
-        void draw() {
-            bind(m_Geometry);
-            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
-        }
-    private:
-        primitive_geometry_type m_Geometry;
-    };
-
-    template<gl_floating_point T>
     class quad {
     public:
         using value_type              = T;
@@ -146,5 +125,27 @@ namespace avocet::opengl {
         };
 
         element_buffer_object<GLubyte> m_EBO;
+    };
+
+    template<gl_floating_point T>
+    class triangle {
+    public:
+        using value_type = T;
+        using primitive_geometry_type = primitive_geometry<triangle_specification<T>>;
+        using vertices_type = primitive_geometry_type::vertices_type;
+
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+        triangle(Fn transformer, const std::optional<std::string>& label)
+            : m_Geometry{transformer, label}
+        {
+        }
+
+        void draw() {
+            bind(m_Geometry);
+            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
+        }
+    private:
+        primitive_geometry_type m_Geometry;
     };
 }
