@@ -110,6 +110,8 @@ namespace avocet::opengl {
         constexpr static auto num_element_indices{3 * (N - 2)};
         using element_array_type = std::array<element_index_type, num_element_indices>;
 
+        static_assert(num_element_indices <= std::numeric_limits<element_index_type>::max());
+
         [[nodiscard]]
         constexpr static element_index_type to_element_index(std::size_t i) noexcept {
             const auto remainder{i % 3};
