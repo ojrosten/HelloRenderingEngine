@@ -57,6 +57,11 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const polygon_base&, const polygon_base&) noexcept = default;
     protected:
+        ~polygon_base() = default;
+
+        polygon_base(polygon_base&&)            noexcept = default;
+        polygon_base& operator=(polygon_base&&) noexcept = default;
+
         static void do_bind(const polygon_base& pg) { bind(pg.m_VAO); }
     private:
         vertices_type m_Vertices;
