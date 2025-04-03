@@ -53,9 +53,10 @@ int main()
         namespace agl = avocet::opengl;
         agl::shader_program
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
+            shaderProgram2D{get_shader_dir() / "Identity2D.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad<GLdouble> q{
+        agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.5; });
@@ -71,7 +72,7 @@ int main()
             make_label("Quad")
         };
 
-        agl::triangle<GLfloat> tri{
+        agl::triangle<GLfloat, agl::dimensionality{3}> tri{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.5; });
@@ -87,6 +88,38 @@ int main()
             make_label("Triangle")
         };
 
+        agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
+            [](std::ranges::random_access_range auto verts) {
+                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
+                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.5; });
+                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.5; });
+
+                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                    if(!(i % 3))     verts[i] += 0.5;
+                    if(!((i-1) % 3)) verts[i] += 0.5;
+                }
+
+                return verts;
+            },
+            make_label("Septagon")
+        };
+
+        agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
+            [](std::ranges::random_access_range auto verts) {
+                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
+                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.5; });
+                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.5; });
+
+                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                    if(!(i % 2))     verts[i] -= 0.5;
+                    if(!((i-1) % 2)) verts[i] -= 0.5;
+                }
+
+                return verts;
+            },
+            make_label("Hexagon")
+        };
+
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -95,6 +128,9 @@ int main()
             q.draw();
             shaderProgram.use();
             tri.draw();
+            sept.draw();
+            shaderProgram2D.use();
+            hex.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();

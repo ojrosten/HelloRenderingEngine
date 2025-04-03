@@ -17,69 +17,33 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    struct dimensionality{
+        std::size_t value{};
 
-    template<class G>
-    concept geometry_specification = requires {
-        typename G::value_type;
-        requires gl_floating_point<typename G::value_type>;
-
-        { G::dimension } -> std::convertible_to<std::size_t>;
-        requires (0 < G::dimension) && (G::dimension <= 4);
-        
-        typename G::vertices_type;
-        { G::vertices } -> std::convertible_to<typename G::vertices_type>;
+        [[nodiscard]]
+        constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
-    template<gl_floating_point T, std::size_t NumVertices>
-    struct geometry_specification_base {
-        using value_type = T;
-        constexpr static std::size_t
-            num_vertices{NumVertices},
-            dimension{3},
-            num_elements{dimension * num_vertices};
-
-        using vertices_type = std::array<T, num_elements>;
-    };
-
-    template<gl_floating_point T>
-    struct triangle_specification : geometry_specification_base<T, 3> {
-        using vertices_type = geometry_specification_base<T, 3>::vertices_type;
-
-        constexpr static vertices_type vertices{
-            -0.5, -0.5, 0.0, // left  
-             0.5, -0.5, 0.0, // right 
-             0.0,  0.5, 0.0  // top   
-        };
-    };
-
-    template<gl_floating_point T>
-    struct quad_specification : geometry_specification_base<T, 4> {
-        using vertices_type = geometry_specification_base<T, 4>::vertices_type;
-
-        constexpr static vertices_type vertices{
-            -0.5, -0.5, 0.0,
-             0.5, -0.5, 0.0,
-             0.5,  0.5, 0.0,
-            -0.5,  0.5, 0.0
-        };
-    };
-
-    template<geometry_specification G>
-    class primitive_geometry{
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
+        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
+    class polygon_base{
     public:
-        using geometry_specification_type = G;
-        using value_type                  = G::value_type;
-        using vertices_type               = G::vertices_type;
-        constexpr static std::size_t dimension{G::dimension};
+        using value_type = T;
+        constexpr static auto num_vertices{N};
+        constexpr static auto arena_dimension{ArenaDimension};
+        constexpr static auto num_coordinates{N * arena_dimension.value};
+
+        using vertices_type = std::array<T, num_coordinates>;
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        primitive_geometry(Fn transformer, const std::optional<std::string>& label)
-            : m_Vertices{transformer(G::vertices)}
+        polygon_base(Fn transformer, const std::optional<std::string>& label)
+            : m_Vertices{transformer(vertices())}
             , m_VAO{label}
             , m_VBO{m_Vertices, label}
         {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
+            constexpr auto dimension{arena_dimension.value};
             constexpr auto stride{dimension * sizeof(value_type)};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
                 gl_function{glVertexAttribLPointer}(0, dimension, typeSpecifier, stride, (GLvoid*)0);
@@ -90,62 +54,102 @@ namespace avocet::opengl {
             gl_function{glEnableVertexAttribArray}(0);
         }
 
-        friend void bind(const primitive_geometry& pg) { bind(pg.m_VAO); }
+        [[nodiscard]]
+        friend bool operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept {
+            return lhs.m_Vertices == rhs.m_Vertices;
+        }
+    protected:
+        ~polygon_base() = default;
+
+        polygon_base(polygon_base&&)            noexcept = default;
+        polygon_base& operator=(polygon_base&&) noexcept = default;
+
+        static void do_bind(const polygon_base& pg) { bind(pg.m_VAO); }
     private:
         vertices_type m_Vertices;
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<value_type> m_VBO;
-    };
 
-    template<gl_floating_point T>
-    class quad {
-    public:
-        using value_type              = T;
-        using primitive_geometry_type = primitive_geometry<quad_specification<T>>;
-        using vertices_type           = primitive_geometry_type::vertices_type;
+        [[nodiscard]]
+        constexpr static T to_coordinate(std::size_t i) {
+            constexpr T
+                pi{std::numbers::pi_v<T>},
+                offset{N % 2 ? 0 : pi / N};
 
-        template<class Fn>
-            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        quad(Fn transformer, const std::optional<std::string>& label)
-            : m_Geometry{transformer, label}
-            , m_EBO{m_Indices, label}
-        {}
+            constexpr auto dim{arena_dimension.value};
+            const auto n{i / dim};
+            const auto theta_n{offset + 2 * pi * n / N};
 
-        void draw() {
-            bind(m_Geometry);
-            gl_function{glDrawElements}(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+            if(const auto remainder{i % dim}; remainder == 0)
+                return -T{0.5}*std::sin(theta_n);
+            else if(remainder == 1)
+                return T{0.5}*std::cos(theta_n);
+
+            return T{};
         }
-    private:
-        primitive_geometry_type m_Geometry;
 
-        std::array<GLubyte, 6> m_Indices{
-            0, 1, 2,
-            0, 2, 3
-        };
-
-        element_buffer_object<GLubyte> m_EBO;
+        [[nodiscard]]
+        constexpr static vertices_type vertices() { return sequoia::utilities::make_array<T, num_coordinates>(to_coordinate); }
     };
 
-    template<gl_floating_point T>
-    class triangle {
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
+        requires (N <= 87)
+    class polygon : public polygon_base<T, N, ArenaDimension> {
     public:
-        using value_type = T;
-        using primitive_geometry_type = primitive_geometry<triangle_specification<T>>;
-        using vertices_type = primitive_geometry_type::vertices_type;
+        using polygon_base_type = polygon_base<T, N, ArenaDimension>;
+        using vertices_type     = polygon_base_type::vertices_type;
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        triangle(Fn transformer, const std::optional<std::string>& label)
-            : m_Geometry{transformer, label}
+        polygon(Fn transformer, const std::optional<std::string>& label)
+            : polygon_base_type{transformer, label}
+            , m_EBO{st_Indices, label}
         {
         }
 
         void draw() {
-            bind(m_Geometry);
-            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
+            polygon_base_type::do_bind(*this);
+            gl_function{glDrawElements}(GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
     private:
-        primitive_geometry_type m_Geometry;
+        using element_index_type = GLubyte;
+        constexpr static auto num_elements{3 * (N - 2)};
+        using element_array_type = std::array<element_index_type, num_elements>;
+
+        static_assert(num_elements <= std::numeric_limits<element_index_type>::max());
+
+        [[nodiscard]]
+        constexpr static element_index_type to_element_index(std::size_t i) noexcept {
+            const auto remainder{i % 3};
+            if(!remainder)
+                return 0;
+
+            return static_cast<element_index_type>(i / 3 + remainder);
+        }
+
+        constexpr static element_array_type st_Indices{
+            sequoia::utilities::make_array<element_index_type, num_elements>(to_element_index)
+        };
+
+        element_buffer_object<element_index_type> m_EBO;
     };
+
+    template<gl_floating_point T, dimensionality ArenaDimension>
+    class polygon<T, 3, ArenaDimension> : public polygon_base<T, 3, ArenaDimension> {
+    public:
+        using polygon_base_type = polygon_base<T, 3, ArenaDimension>;
+        using polygon_base<T, 3, ArenaDimension>::polygon_base;
+
+        void draw() {
+            polygon_base_type::do_bind(*this);
+            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
+        }
+    };
+
+    template<gl_floating_point T, dimensionality ArenaDimension>
+    using triangle = polygon<T, 3, ArenaDimension>;
+
+    template<gl_floating_point T, dimensionality ArenaDimension>
+    using quad = polygon<T, 4, ArenaDimension>;
 }
