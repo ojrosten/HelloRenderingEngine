@@ -91,7 +91,7 @@ int main()
         agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.5; });
+                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.5; });
                 //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.5; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
@@ -107,8 +107,8 @@ int main()
         agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.5; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.5; });
+                //std::ranges::for_each(std::views::stride(verts, 2), [](auto& v){ v -= 0.5; });
+                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(2), [](auto& v){ v -= 0.5; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     if(!(i % 2))     verts[i] -= 0.5;
