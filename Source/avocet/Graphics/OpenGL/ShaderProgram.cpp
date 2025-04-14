@@ -158,8 +158,8 @@ namespace avocet::opengl {
         class [[nodiscard]] shader_attacher {
             GLuint m_ProgIndex{}, m_ShaderIndex{};
         public:
-            shader_attacher(const shader_program& program, const shader_compiler& shader)
-                : m_ProgIndex{program.resource().handle().index()}
+            shader_attacher(const shader_program_resource& progResource, const shader_compiler& shader)
+                : m_ProgIndex{progResource.handle().index()}
                 , m_ShaderIndex{shader.resource().handle().index()}
             {
                 gl_function{glAttachShader}(m_ProgIndex, m_ShaderIndex);
@@ -180,7 +180,7 @@ namespace avocet::opengl {
         const auto progIndex{m_Resource.handle().index()};
 
         {
-            shader_attacher verteAttacher{*this, vertexShader}, fragmentAttacher{*this, fragmentShader};
+            shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
             gl_function{glLinkProgram}(progIndex);
 
             if(object_labels_activated()) {
@@ -201,7 +201,7 @@ namespace avocet::opengl {
         if(m_Uniforms.contains(name))
             return m_Uniforms.find(name)->second;
 
-        const auto location{gl_function{glGetUniformLocation}(resource().handle().index(), name.data())};
+        const auto location{gl_function{glGetUniformLocation}(m_Resource.handle().index(), name.data())};
         if(location == -1)
             throw std::runtime_error{std::format("shader program {}: Uniform \"{}\" not found", extract_label(), name)};
 

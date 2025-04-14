@@ -71,30 +71,11 @@ namespace avocet::opengl {
     };
 
     class shader_program {
-        shader_program_resource m_Resource;
-        std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to> m_Uniforms;
-
-        [[nodiscard]]
-        GLint extract_uniform_location(std::string_view name);
-
-        class program_tracker {
-            inline static GLuint st_Previous{};
-        public:
-            static void utilize(shader_program& sp) {
-                if(const auto index{sp.resource().handle().index()}; index != st_Previous) {
-                    gl_function{glUseProgram}(index);
-                    st_Previous = index;
-                }
-            }
-        };
     public:
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.handle()); }
-
-        [[nodiscard]]
-        const shader_program_resource& resource() const noexcept { return m_Resource; }
 
         void use() { program_tracker::utilize(*this); }
 
@@ -109,6 +90,23 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
+        shader_program_resource m_Resource;
+        std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to> m_Uniforms;
+
+        [[nodiscard]]
+        GLint extract_uniform_location(std::string_view name);
+
+        class program_tracker {
+            inline static GLuint st_Previous{};
+        public:
+            static void utilize(shader_program& sp) {
+                if(const auto index{sp.m_Resource.handle().index()}; index != st_Previous) {
+                    gl_function{glUseProgram}(index);
+                    st_Previous = index;
+                }
+            }
+        };
+
         template<class... Args>
         void do_set_uniform(std::string_view name, void(*glFn)(GLint, Args...), Args... args) {
             use();
