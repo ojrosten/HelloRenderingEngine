@@ -97,7 +97,7 @@ namespace avocet::opengl {
         GLint extract_uniform_location(std::string_view name);
 
         class program_tracker {
-            inline static GLuint st_Current{};
+            inline static thread_local GLuint st_Current{};
         public:
             static void utilize(shader_program& sp) {
                 if(const auto index{sp.m_Resource.handle().index()}; index != st_Current) {
