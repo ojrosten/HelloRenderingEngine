@@ -53,10 +53,12 @@ int main()
         namespace agl = avocet::opengl;
 
         agl::shader_program
+            shaderProgram3D{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
+            shaderProgramDouble3D{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"},
             discShaderProgram{get_shader_dir() / "Disc.vs", get_shader_dir() / "Disc.fs"};
 
-        constexpr std::array<GLfloat, 2> centre{0.05f, 0.1f};
-        constexpr GLfloat scale{4.0};
+        constexpr std::array<GLfloat, 2> centre{0.5f, 0.5f};
+        constexpr GLfloat scale{1.0};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> tri{
             [&centre, &scale](std::ranges::random_access_range auto verts) {
@@ -70,6 +72,30 @@ int main()
             make_label("Disc")
         };
 
+        agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
+            [](std::ranges::random_access_range auto verts) {
+                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                    if(!(i % 3))       verts[i] += 0.5;
+                    if(!((i - 1) % 3)) verts[i] -= 0.5;
+                }
+
+                return verts;
+            },
+            make_label("Sept")
+        };
+
+        agl::polygon<GLdouble, 6, agl::dimensionality{3}> hex{
+            [](std::ranges::random_access_range auto verts) {
+                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                    if(!(i % 3))       verts[i] -= 0.5;
+                    if(!((i - 1) % 3)) verts[i] -= 0.5;
+                }
+
+                return verts;
+            },
+            make_label("Hex")
+        };
+
         discShaderProgram.set_uniform("radius", 0.25 * scale);
         discShaderProgram.set_uniform("centre", centre);
 
@@ -79,6 +105,10 @@ int main()
 
             discShaderProgram.use();
             tri.draw();
+            shaderProgram3D.use();
+            sept.draw();
+            shaderProgramDouble3D.use();
+            hex.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
