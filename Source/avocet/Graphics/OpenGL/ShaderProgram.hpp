@@ -11,6 +11,8 @@
 #include "avocet/Graphics/OpenGL/Labels.hpp"
 
 #include <filesystem>
+#include <unordered_map>
+#include <span>
 
 namespace avocet::opengl {
     template<class T>
