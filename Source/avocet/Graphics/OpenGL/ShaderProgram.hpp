@@ -13,6 +13,7 @@
 #include <array>
 #include <filesystem>
 #include <unordered_map>
+#include <span>
 
 namespace avocet::opengl {
     template<class T>
@@ -83,7 +84,7 @@ namespace avocet::opengl {
             do_set_uniform(name, glUniform1f, val);
         }
 
-        void set_uniform(std::string_view name, const std::array<GLfloat, 2> val) {
+        void set_uniform(std::string_view name, std::span<const GLfloat, 2> val) {
             do_set_uniform(name, glUniform2f, val[0], val[1]);
         }
 
