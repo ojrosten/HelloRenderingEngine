@@ -57,7 +57,6 @@ namespace avocet::opengl {
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
 
     class shader_program {
-        shader_program_resource m_Resource;
     public:
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
@@ -71,5 +70,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
+    private:
+        shader_program_resource m_Resource;
     };
 }
