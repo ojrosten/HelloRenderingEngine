@@ -56,20 +56,63 @@ namespace avocet::opengl {
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
 
+    struct string_hash {
+        using is_transparent = void;
+
+        [[nodiscard]]
+        std::size_t operator()(const std::string& txt) const noexcept {
+            return std::hash<std::string>{}(txt);
+        }
+
+        [[nodiscard]]
+        std::size_t operator()(const std::string_view& txt) const noexcept {
+            return std::hash<std::string_view>{}(txt);
+        }
+    };
+
     class shader_program {
-        shader_program_resource m_Resource;
     public:
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.handle()); }
 
-        [[nodiscard]]
-        const shader_program_resource& resource() const noexcept { return m_Resource; }
+        void use() { program_tracker::utilize(m_Resource); }
 
-        void use() { glUseProgram(m_Resource.handle().index()); }
+        void set_uniform(std::string_view name, GLfloat val) {
+            do_set_uniform(name, glUniform1f, val);
+        }
+
+        void set_uniform(std::string_view name, std::span<const GLfloat, 2> vals) {
+            do_set_uniform(name, glUniform2f, vals[0], vals[1]);
+        }
 
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
+    private:
+        shader_program_resource m_Resource;
+        using map_t = std::unordered_map<std::string, GLuint, string_hash, std::ranges::equal_to>;
+        map_t m_Uniforms;
+
+        class program_tracker {
+            inline static GLuint st_Current{};
+        public:
+            static void utilize(shader_program_resource& spr) {
+                const auto index{spr.handle().index()};
+                if(index != st_Current) {
+                    gl_function{glUseProgram}(index);
+                    st_Current = index;
+                }
+            }
+        };
+
+        [[nodiscard]]
+        GLint extract_uniform_location(std::string_view name);
+
+        template<class... Args>
+        void do_set_uniform(std::string_view name, void(*fptr)(GLint, Args...), Args... args) {
+            use();
+            gl_function{fptr}(extract_uniform_location(name), args...);
+        }
     };
 }
