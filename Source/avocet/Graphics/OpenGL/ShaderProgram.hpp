@@ -91,7 +91,7 @@ namespace avocet::opengl {
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
         shader_program_resource m_Resource;
-        using map_t = std::unordered_map<std::string, GLuint, string_hash, std::ranges::equal_to>;
+        using map_t = std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to>;
         map_t m_Uniforms;
 
         class program_tracker {
