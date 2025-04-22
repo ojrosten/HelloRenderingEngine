@@ -49,9 +49,9 @@ namespace avocet::opengl {
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
-        static resource_handle create() { return resource_handle{glCreateProgram()}; }
+        static resource_handle create() { return resource_handle{gl_function{glCreateProgram}()}; }
 
-        static void destroy(const resource_handle& handle) { glDeleteProgram(handle.index()); }
+        static void destroy(const resource_handle& handle) { gl_function{glDeleteProgram}(handle.index()); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
@@ -66,7 +66,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         const shader_program_resource& resource() const noexcept { return m_Resource; }
 
-        void use() { glUseProgram(m_Resource.handle().index()); }
+        void use() { gl_function{glUseProgram}(m_Resource.handle().index()); }
 
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
