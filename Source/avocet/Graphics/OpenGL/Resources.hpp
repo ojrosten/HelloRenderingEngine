@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <filesystem>
 #include <ranges>
 #include <span>
 #include <vector>
@@ -49,7 +50,7 @@ namespace avocet::opengl {
     struct num_resources { std::size_t value{}; };
 
     template<num_resources NumResources, class T>
-    inline constexpr bool has_vertex_lifecycle_events_v{
+    inline constexpr bool has_resource_lifecycle_events_v{
         requires(raw_indices<NumResources.value>& indices, const resource_handle& h) {
             T::generate(indices);
             T::destroy(indices);
@@ -61,7 +62,7 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+        requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
     struct vertex_resource_lifecycle {
         using configurator_type = LifeEvents::configurator;
 
@@ -135,11 +136,30 @@ namespace avocet::opengl {
         }
     };
 
+    struct texture_lifecycle_events {
+        constexpr static auto identifier{object_identifier::texture};
+
+        struct configurator {
+            std::filesystem::path path;
+            optional_label label;
+        };
+
+        template<std::size_t N>
+        static void generate(raw_indices<N>& indices) { gl_function{glGenTextures}(N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteTextures}(N, indices.data()); }
+
+        static void bind(const resource_handle& h) { gl_function{glBindTexture}(GL_TEXTURE_2D, h.index()); }
+
+        static void configure(const resource_handle& h, const configurator& config);
+    };
+
     template<std::size_t I>
     struct index { constexpr static std::size_t value{I}; };
 
     template<num_resources NumResources, class LifeEvents>
-        requires has_vertex_lifecycle_events_v<NumResources, LifeEvents>
+        requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
     class vertex_resource{
     public:
         using lifecycle_type = vertex_resource_lifecycle<NumResources, LifeEvents>;
@@ -162,8 +182,8 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-        requires (NumResources.value > 0) && has_vertex_lifecycle_events_v<NumResources, LifeEvents>
-    class generic_vertex_object {
+        requires (NumResources.value > 0) && has_resource_lifecycle_events_v<NumResources, LifeEvents>
+    class generic_resource {
         using resource_type  = vertex_resource<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
         resource_type m_Resource;
@@ -171,10 +191,10 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        explicit generic_vertex_object(const std::array<configurator_type, N>& configs) {
+        explicit generic_resource(const std::array<configurator_type, N> configs) {
             for(const auto&[handle, config] : std::views::zip(get_handles(), configs)) {
                 if(handle == resource_handle{})
-                    throw std::runtime_error{"generic_vertex_object  - null resource"};
+                    throw std::runtime_error{"generic_resource  - null resource"};
 
                 lifecycle_type::bind(handle);
                 lifecycle_type::configure(handle, config);
@@ -197,18 +217,18 @@ namespace avocet::opengl {
         std::string extract_label() const requires (N == 1) { return extract_label(index<0>{}); }
 
         [[nodiscard]]
-        friend bool operator==(const generic_vertex_object&, const generic_vertex_object&) noexcept = default;
+        friend bool operator==(const generic_resource&, const generic_resource&) noexcept = default;
     protected:
-        ~generic_vertex_object() = default;
+        ~generic_resource() = default;
 
-        generic_vertex_object(generic_vertex_object&&)            noexcept = default;
-        generic_vertex_object& operator=(generic_vertex_object&&) noexcept = default;
+        generic_resource(generic_resource&&)            noexcept = default;
+        generic_resource& operator=(generic_resource&&) noexcept = default;
 
         template<std::size_t I>
             requires (I < N)
-        static void do_bind(const generic_vertex_object& gbo, index<I> i) { lifecycle_type::bind(gbo.get_handle(i)); }
+        static void do_bind(const generic_resource& gbo, index<I> i) { lifecycle_type::bind(gbo.get_handle(i)); }
 
-        static void do_bind(const generic_vertex_object& gbo) requires (N == 1) { do_bind(gbo, index<0>{}); }
+        static void do_bind(const generic_resource& gbo) requires (N == 1) { do_bind(gbo, index<0>{}); }
     private:
         [[nodiscard]]
         const handles<N>& get_handles() const noexcept { return m_Resource.get_handles(); }
@@ -218,9 +238,9 @@ namespace avocet::opengl {
         const resource_handle& get_handle(index<I>) const noexcept { return get_handles()[I]; }
     };
 
-    class vertex_attribute_object : public generic_vertex_object<num_resources{1}, vao_lifecycle_events> {
+    class vertex_attribute_object : public generic_resource<num_resources{1}, vao_lifecycle_events> {
     public:
-        using base_type = generic_vertex_object<num_resources{1}, vao_lifecycle_events>;
+        using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         explicit vertex_attribute_object(const optional_label& label)
             : base_type{{{label}}}
@@ -230,12 +250,12 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, gl_arithmetic_type T>
-    class generic_buffer_object : public generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T>>
+    class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
     {
     public:
         constexpr static auto species{Species};
         using value_type = T;
-        using base_type  = generic_vertex_object<num_resources{1}, buffer_lifecycle_events<Species, T>>;
+        using base_type  = generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>;
 
         generic_buffer_object(std::span<const T> data, const optional_label& label)
             : base_type{{{data, label}}}
@@ -265,8 +285,33 @@ namespace avocet::opengl {
     };
 
     template<gl_arithmetic_type T>
-    class element_buffer_object :public generic_buffer_object<buffer_species::element_array, T> {
+    class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
     public:
         using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
+    };
+
+    template<num_resources NumResources>
+    class texture_object : public generic_resource<NumResources, texture_lifecycle_events> {
+    public:
+        using base_type         = generic_resource<NumResources, texture_lifecycle_events>;
+        using configurator_type = base_type::configurator_type;
+        constexpr static auto N{base_type::N};
+
+        texture_object(std::span<const configurator_type, N> textureConfig)
+            : base_type{textureConfig}
+        {}
+
+        friend void bind(const texture_object& texObj) {
+            [] <std::size_t... Is>(std::index_sequence<Is...>){
+                (activate_and_bind<Is>(texObj), ...);
+            }(std::make_index_sequence<N>{});
+        }
+
+    private:
+        template<std::size_t I>
+        static void activate_and_bind(const texture_object& texObj) {
+            gl_function{glActiveTexture}(GL_TEXTURE0 + I);
+            do_bind(texObj, index<I>{});
+        }
     };
 }
