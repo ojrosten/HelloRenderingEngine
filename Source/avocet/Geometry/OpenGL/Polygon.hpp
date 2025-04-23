@@ -9,6 +9,7 @@
 
 #include "avocet/Graphics/OpenGL/Resources.hpp"
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
+#include "sequoia/PlatformSpecific/Preprocessor.hpp"
 
 #include <cmath>
 #include <limits>
@@ -24,14 +25,7 @@ namespace avocet::opengl {
         constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
-    struct texture_count{
-        std::size_t value{};
-
-        [[nodiscard]]
-        constexpr friend auto operator<=>(const texture_count&, const texture_count&) noexcept = default;
-    };
-
-    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, texture_count NumTextures>
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, num_resources NumTextures>
         requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
     class polygon_base{
     public:
@@ -42,7 +36,11 @@ namespace avocet::opengl {
         constexpr static bool textured{num_textures.value > 0};
         constexpr static std::size_t texture_coords_per_vertex{textured ? 2 : 0};
         constexpr static auto num_coordinates{N * (arena_dimension.value + texture_coords_per_vertex)};
+    private:
+        struct null_texture { using configurator_type = void; };
 
+        using texture_t = std::conditional_t<textured, texture_object<NumTextures, texture_flavour::texture_2d>, null_texture>;
+    public:
         using vertices_type = std::array<T, num_coordinates>;
 
         template<class Fn>
@@ -61,39 +59,55 @@ namespace avocet::opengl {
                 gl_function{glVertexAttribPointer}(0, dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
             }
             gl_function{glEnableVertexAttribArray}(0);
+        }
 
-            if constexpr(textured) {
-                if constexpr(std::is_same_v<value_type, GLdouble>) {
-                    gl_function{glVertexAttribLPointer}(1, 2, typeSpecifier, stride, (GLvoid*)(dimension * sizeof(value_type)));
-                }
-                else {
-                    gl_function{glVertexAttribPointer}(1, 2, typeSpecifier, GL_FALSE, stride, (GLvoid*)(dimension * sizeof(value_type)));
-                }
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (textured)
+        polygon_base(Fn transformer, std::span<const typename texture_t::configurator_type, NumTextures.value> textureConfig, const std::optional<std::string>& label)
+            : m_VAO{label}
+            , m_VBO{transformer(vertices()), label}
+            , m_Texture{textureConfig}
+        {
+            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
+            constexpr auto dimension{arena_dimension.value};
+            constexpr auto stride{(dimension + texture_coords_per_vertex) * sizeof(value_type)};
+            if constexpr(std::is_same_v<value_type, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(0, dimension, typeSpecifier, stride, (GLvoid*)0);
+            }
+            else {
+                gl_function{glVertexAttribPointer}(0, dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
+            }
+            gl_function{glEnableVertexAttribArray}(0);
+
+            if constexpr(std::is_same_v<value_type, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(1, 2, typeSpecifier, stride, (GLvoid*)(dimension * sizeof(value_type)));
+            }
+            else {
+                gl_function{glVertexAttribPointer}(1, 2, typeSpecifier, GL_FALSE, stride, (GLvoid*)(dimension * sizeof(value_type)));
             }
 
             gl_function{glEnableVertexAttribArray}(1);
         }
 
-        /*template<class Fn>
-            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (textured)
-        polygon_base(Fn transformer, std::span<const std:filesystem::path, num_textures.value>, const std::optional<std::string>& label)
-            :
-        {
-        }*/
-
         [[nodiscard]]
-        friend bool operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept = default;
+        friend bool operator==(const polygon_base&, const polygon_base&) noexcept = default;
     protected:
         ~polygon_base() = default;
 
         polygon_base(polygon_base&&)            noexcept = default;
         polygon_base& operator=(polygon_base&&) noexcept = default;
 
-        static void do_bind(const polygon_base& pg) { bind(pg.m_VAO); }
+        static void do_bind(const polygon_base& pg) {
+            bind(pg.m_VAO);
+            if constexpr(textured) {
+                bind_for_rendering(m_Texture);
+            }
+        }
     private:
         vertex_attribute_object m_VAO;
         vertex_buffer_object<value_type> m_VBO;
-        //std::array<texture_object, num_textures.value> m_Textures;
+
+        SEQUOIA_NO_UNIQUE_ADDRESS texture_t m_Texture;
 
         [[nodiscard]]
         constexpr static T to_coordinate(std::size_t i) {
@@ -123,9 +137,9 @@ namespace avocet::opengl {
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
         requires (N <= 87)
-    class polygon : public polygon_base<T, N, ArenaDimension, texture_count{0}> {
+    class polygon : public polygon_base<T, N, ArenaDimension, num_resources{0}> {
     public:
-        using polygon_base_type = polygon_base<T, N, ArenaDimension, texture_count{0}>;
+        using polygon_base_type = polygon_base<T, N, ArenaDimension, num_resources{0}>;
         using vertices_type     = polygon_base_type::vertices_type;
 
         template<class Fn>
@@ -164,10 +178,10 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, dimensionality ArenaDimension>
-    class polygon<T, 3, ArenaDimension> : public polygon_base<T, 3, ArenaDimension, texture_count{0} > {
+    class polygon<T, 3, ArenaDimension> : public polygon_base<T, 3, ArenaDimension, num_resources{0}> {
     public:
-        using polygon_base_type = polygon_base<T, 3, ArenaDimension, texture_count{0}>;
-        using polygon_base<T, 3, ArenaDimension, texture_count{0}>::polygon_base;
+        using polygon_base_type = polygon_base<T, 3, ArenaDimension, num_resources{0}>;
+        using polygon_base<T, 3, ArenaDimension, num_resources{0}>::polygon_base;
 
         void draw() {
             polygon_base_type::do_bind(*this);
