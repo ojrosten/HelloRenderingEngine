@@ -71,19 +71,13 @@ namespace avocet::opengl {
 
             throw std::runtime_error{std::format("stbi_load: number of channels = {} not currently supported", numChannels)};
         }
-
-
-        void load(const image_configuration& config) {
-            image_loader loader{config.file, config.flip};
-            const auto& im{loader.get_image()};
-            const auto format{to_format(config.colour_space, im.num_channels)};
-
-            gl_function{glTexImage2D}(GL_TEXTURE_2D, 0, format.internal_format, im.width, im.height, 0, format.format, GL_UNSIGNED_BYTE, &im.data);
-        }
     }
 
-    void texture_lifecycle_events::configure(const resource_handle& h, const configurator& config) {
-        add_label(identifier, h, config.label);
-        load(config.image_config);
+    void load_to_texture(const image_configuration& config, texture_flavour textureFlavour) {
+        image_loader loader{config.file, config.flip};
+        const auto& im{loader.get_image()};
+        const auto format{to_format(config.colour_space, im.num_channels)};
+
+        gl_function{glTexImage2D}(to_gl_enum(textureFlavour), 0, format.internal_format, im.width, im.height, 0, format.format, GL_UNSIGNED_BYTE, &im.data);
     }
 }

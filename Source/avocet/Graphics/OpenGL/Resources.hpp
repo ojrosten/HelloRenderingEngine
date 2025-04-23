@@ -151,7 +151,14 @@ namespace avocet::opengl {
         friend bool operator==(const image_configuration&, const image_configuration&) = default;
     };
 
-    struct texture_lifecycle_events {
+    enum class texture_flavour : GLenum {
+        texture_2d = GL_TEXTURE_2D
+    };
+
+
+    void load_to_texture(const image_configuration& config, texture_flavour textureFlavour);
+
+    struct common_texture_lifecycle_events {
         constexpr static auto identifier{object_identifier::texture};
 
         struct configurator {
@@ -164,10 +171,18 @@ namespace avocet::opengl {
 
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteTextures}(N, indices.data()); }
+    };
 
-        static void bind(const resource_handle& h) { gl_function{glBindTexture}(GL_TEXTURE_2D, h.index()); }
+    template<texture_flavour Flavour>
+    struct texture_lifecycle_events : common_texture_lifecycle_events {
+        constexpr static auto flavour{Flavour};
 
-        static void configure(const resource_handle& h, const configurator& config);
+        static void bind(const resource_handle& h) { gl_function{glBindTexture}(to_gl_enum(Flavour), h.index()); }
+
+        static void configure(const resource_handle& h, const configurator& config) {
+            add_label(identifier, h, config.label);
+            load_to_texture(config.image_config, flavour);
+        }
     };
 
     template<std::size_t I>
@@ -305,10 +320,10 @@ namespace avocet::opengl {
         using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
     };
 
-    template<num_resources NumResources>
-    class texture_object : public generic_resource<NumResources, texture_lifecycle_events> {
+    template<num_resources NumResources, texture_flavour Flavour>
+    class texture_object : public generic_resource<NumResources, texture_lifecycle_events<Flavour>> {
     public:
-        using base_type         = generic_resource<NumResources, texture_lifecycle_events>;
+        using base_type         = generic_resource<NumResources, texture_lifecycle_events<Flavour>>;
         using configurator_type = base_type::configurator_type;
         constexpr static auto N{base_type::N};
 
