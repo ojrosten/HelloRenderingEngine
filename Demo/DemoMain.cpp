@@ -73,6 +73,9 @@ int main()
             make_label("Quad")
         };
 
+        constexpr GLfloat radius{0.4f};
+        constexpr std::array<GLfloat, 2> centre{-0.5, 0.5};
+
         agl::triangle<GLfloat, agl::dimensionality{2}> disc{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
@@ -80,14 +83,18 @@ int main()
                 //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.5; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 2))     verts[i] -= 0.5;
-                    if(!((i-1) % 2)) verts[i] += 0.5;
+                    constexpr auto scale{2 * radius / 0.5};
+                    (verts[i] *= scale) += centre[i % 2];
                 }
 
                 return verts;
             },
             make_label("Disc")
         };
+
+        discShaderProgram.set_uniform("radius", radius);
+        discShaderProgram.set_uniform("centre", centre);
+
 
         agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
             [](std::ranges::random_access_range auto verts) {
