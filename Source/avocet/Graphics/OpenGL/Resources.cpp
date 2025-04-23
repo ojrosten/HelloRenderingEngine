@@ -38,7 +38,7 @@ namespace avocet::opengl {
                 if(auto pData{stbi_load(texture.generic_string().c_str(), &width, &height, &numChannels, 0)}; pData != nullptr)
                     return {.data{*pData}, .width{width}, .height{height}, .num_channels{numChannels}};
 
-                throw std::runtime_error{std::format("Faialed to load image {}", texture.generic_string())};
+                throw std::runtime_error{std::format("Failed to load image {}", texture.generic_string())};
             }
         public:
             image_loader(const fs::path& texture, vertical_flip flip)
@@ -59,11 +59,14 @@ namespace avocet::opengl {
             switch(numChannels)
             {
             case 1:
-                return {.internal_format{GL_RED}, .format{GL_RED}};
+                return {.internal_format{GL_RED},
+                        .format{GL_RED}};
             case 3:
-                return {.internal_format{isLinear ? GL_RGB : GL_SRGB},        .format{GL_RGB}};
+                return {.internal_format{isLinear ? GL_RGB  : GL_SRGB},
+                        .format{GL_RGB}};
             case 4:
-                return {.internal_format{isLinear ? GL_RGBA : GL_SRGB_ALPHA}, .format{GL_RGBA}};
+                return {.internal_format{isLinear ? GL_RGBA : GL_SRGB_ALPHA},
+                        .format{GL_RGBA}};
             }
 
             throw std::runtime_error{std::format("stbi_load: number of channels = {} not currently supported", numChannels)};
