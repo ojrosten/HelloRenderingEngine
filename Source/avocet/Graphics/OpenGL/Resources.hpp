@@ -136,11 +136,26 @@ namespace avocet::opengl {
         }
     };
 
+
+    enum class vertical_flip : bool { no, yes };
+
+    enum class colour_space_flavour : bool { linear, gamma };
+
+    struct image_configuration
+    {
+        std::filesystem::path file{};
+        vertical_flip flip{};
+        colour_space_flavour colour_space{colour_space_flavour::gamma};
+
+        [[nodiscard]]
+        friend bool operator==(const image_configuration&, const image_configuration&) = default;
+    };
+
     struct texture_lifecycle_events {
         constexpr static auto identifier{object_identifier::texture};
 
         struct configurator {
-            std::filesystem::path path;
+            image_configuration image_config;
             optional_label label;
         };
 
