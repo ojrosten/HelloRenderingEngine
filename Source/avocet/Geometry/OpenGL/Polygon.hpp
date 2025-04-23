@@ -48,9 +48,8 @@ namespace avocet::opengl {
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!textured)
         polygon_base(Fn transformer, const std::optional<std::string>& label)
-            : m_Vertices{transformer(vertices())}
-            , m_VAO{label}
-            , m_VBO{m_Vertices, label}
+            : m_VAO{label}
+            , m_VBO{transformer(vertices()), label}
         {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
             constexpr auto dimension{arena_dimension.value};
@@ -83,9 +82,7 @@ namespace avocet::opengl {
         }*/
 
         [[nodiscard]]
-        friend bool operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept {
-            return lhs.m_Vertices == rhs.m_Vertices;
-        }
+        friend bool operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept = default;
     protected:
         ~polygon_base() = default;
 
@@ -94,8 +91,6 @@ namespace avocet::opengl {
 
         static void do_bind(const polygon_base& pg) { bind(pg.m_VAO); }
     private:
-        vertices_type m_Vertices;
-
         vertex_attribute_object m_VAO;
         vertex_buffer_object<value_type> m_VBO;
         //std::array<texture_object, num_textures.value> m_Textures;
