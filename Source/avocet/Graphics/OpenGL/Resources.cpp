@@ -26,7 +26,6 @@ namespace avocet::opengl {
         {
             std::span<unsigned char> data;
             int width{}, height{}, num_channels{};
-            image_format format{};
         };
 
         class [[nodiscard]] image_loader{
