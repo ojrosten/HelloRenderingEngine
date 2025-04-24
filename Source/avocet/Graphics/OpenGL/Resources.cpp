@@ -7,6 +7,8 @@
 
 #include "avocet/Graphics/OpenGL/Resources.hpp"
 
+#include <span>
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -22,7 +24,7 @@ namespace avocet::opengl {
 
         struct image
         {
-            unsigned char& data;
+            std::span<unsigned char> data;
             int width{}, height{}, num_channels{};
             image_format format{};
         };
@@ -36,7 +38,7 @@ namespace avocet::opengl {
                 int width{}, height{}, numChannels{};
 
                 if(auto pData{stbi_load(texture.generic_string().c_str(), &width, &height, &numChannels, 0)}; pData != nullptr)
-                    return {.data{*pData}, .width{width}, .height{height}, .num_channels{numChannels}};
+                    return {.data{std::span{pData, width * height * numChannels * sizeof(unsigned char)}}, .width{width}, .height{height}, .num_channels{numChannels}};
 
                 throw std::runtime_error{std::format("Failed to load image {}", texture.generic_string())};
             }
@@ -49,7 +51,7 @@ namespace avocet::opengl {
             [[nodiscard]]
             const image& get_image() const noexcept { return m_Image; }
 
-            ~image_loader() { stbi_image_free(&m_Image.data); }
+            ~image_loader() { stbi_image_free(m_Image.data.data()); }
         };
 
         [[nodiscard]]
@@ -78,7 +80,7 @@ namespace avocet::opengl {
         const auto& im{loader.get_image()};
         const auto format{to_format(config.colour_space, im.num_channels)};
 
-        gl_function{glTexImage2D}(to_gl_enum(textureFlavour), 0, format.internal_format, im.width, im.height, 0, format.format, GL_UNSIGNED_BYTE, &im.data);
+        gl_function{glTexImage2D}(to_gl_enum(textureFlavour), 0, format.internal_format, im.width, im.height, 0, format.format, GL_UNSIGNED_BYTE, im.data.data());
         glGenerateMipmap(to_gl_enum(textureFlavour));
     }
 }
