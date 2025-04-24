@@ -67,7 +67,7 @@ int main()
         agl::shader_program
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
-            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Monochrome.fs"},
+            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}, agl::num_resources{0}> q{
@@ -136,6 +136,8 @@ int main()
             {agl::common_texture_lifecycle_events::configurator{.image_config{.file{get_image_dir() / "PrincessTwilightSparkle.png"}}}},
             make_label("Hexagon")
         };
+
+        shaderProgram2D.set_uniform("image", 0);
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
