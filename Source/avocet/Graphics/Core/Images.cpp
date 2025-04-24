@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/Graphics/Core/Images.hpp"
+#include <format>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
