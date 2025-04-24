@@ -5,10 +5,7 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "avocet/Graphics/OpenGL/Resources.hpp"
-
-#include "avocet/Graphics/Core/Images.hpp"
-
+#include "avocet/Graphics/OpenGL/Textures.hpp"
 
 namespace avocet::opengl {
     namespace {

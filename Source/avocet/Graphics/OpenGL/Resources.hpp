@@ -7,18 +7,13 @@
 
 #pragma once
 
-#include "avocet/Graphics/OpenGL/Labels.hpp"
-#include "avocet/Utilities/OpenGL/TypeTraits.hpp"
-
-#include "avocet/Graphics/Core/Images.hpp"
+#include "avocet/Graphics/OpenGL/ResourceHandle.hpp"
 
 #include <algorithm>
 #include <array>
 #include <cassert>
-#include <filesystem>
 #include <ranges>
 #include <span>
-#include <vector>
 
 namespace avocet::opengl {
     template<std::size_t N>
@@ -51,6 +46,9 @@ namespace avocet::opengl {
 
     struct num_resources { std::size_t value{}; };
 
+    template<std::size_t I>
+    struct index { constexpr static std::size_t value{I}; };
+
     template<num_resources NumResources, class T>
     inline constexpr bool has_resource_lifecycle_events_v{
         requires(raw_indices<NumResources.value>& indices, const resource_handle& h) {
@@ -65,7 +63,7 @@ namespace avocet::opengl {
 
     template<num_resources NumResources, class LifeEvents>
         requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
-    struct vertex_resource_lifecycle {
+    struct resource_lifecycle {
         using configurator_type = LifeEvents::configurator;
 
         constexpr static std::size_t N{NumResources.value};
@@ -88,112 +86,25 @@ namespace avocet::opengl {
         }
     };
 
-    struct vao_lifecycle_events {
-        constexpr static auto identifier{object_identifier::vertex_array};
-
-        struct configurator {
-            optional_label label;
-        };
-
-        template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenVertexArrays}(N, indices.data()); }
-
-        template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
-
-        static void bind(const resource_handle& h) { gl_function{glBindVertexArray}(h.index()); }
-
-        static void configure(const resource_handle& h, const configurator& config) {
-            add_label(identifier, h, config.label);
-        }
-    };
-
-    enum class buffer_species : GLenum {
-        array         = GL_ARRAY_BUFFER,
-        element_array = GL_ELEMENT_ARRAY_BUFFER
-    };
-
-    struct common_buffer_lifecycle_events {
-        constexpr static auto identifier{object_identifier::buffer};
-
-        template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
-
-        template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
-    };
-
-    template<buffer_species Species, gl_arithmetic_type T>
-    struct buffer_lifecycle_events : common_buffer_lifecycle_events {
-        struct configurator {
-            std::span<const T> buffer_data;
-            optional_label label;
-        };
-
-        static void bind(const resource_handle& h) { gl_function{glBindBuffer}(to_gl_enum(Species), h.index()); }
-
-        static void configure(const resource_handle& h, const configurator& config) {
-            add_label(identifier, h, config.label);
-            gl_function{glBufferData}(to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
-        }
-    };
-
-    enum class texture_flavour : GLenum {
-        texture_2d = GL_TEXTURE_2D
-    };
-
-
-    void load_to_texture(const image_configuration& config, texture_flavour textureFlavour);
-
-    struct common_texture_lifecycle_events {
-        constexpr static auto identifier{object_identifier::texture};
-
-        struct configurator {
-            image_configuration image_config;
-            optional_label label;
-        };
-
-        template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenTextures}(N, indices.data()); }
-
-        template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteTextures}(N, indices.data()); }
-    };
-
-    template<texture_flavour Flavour>
-    struct texture_lifecycle_events : common_texture_lifecycle_events {
-        constexpr static auto flavour{Flavour};
-
-        static void bind(const resource_handle& h) { gl_function{glBindTexture}(to_gl_enum(Flavour), h.index()); }
-
-        static void configure(const resource_handle& h, const configurator& config) {
-            add_label(identifier, h, config.label);
-            load_to_texture(config.image_config, flavour);
-        }
-    };
-
-    template<std::size_t I>
-    struct index { constexpr static std::size_t value{I}; };
-
     template<num_resources NumResources, class LifeEvents>
         requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
-    class vertex_resource{
+    class resource_wrapper{
     public:
-        using lifecycle_type = vertex_resource_lifecycle<NumResources, LifeEvents>;
+        using lifecycle_type = resource_lifecycle<NumResources, LifeEvents>;
 
         constexpr static std::size_t N{NumResources.value};
 
-        vertex_resource() : m_Handles{lifecycle_type::generate()} {}
-        ~vertex_resource() { lifecycle_type::destroy(m_Handles); }
+        resource_wrapper() : m_Handles{lifecycle_type::generate()} {}
+        ~resource_wrapper() { lifecycle_type::destroy(m_Handles); }
 
-        vertex_resource(vertex_resource&&) noexcept = default;
-        vertex_resource& operator=(vertex_resource&&) noexcept = default;
+        resource_wrapper(resource_wrapper&&)           noexcept = default;
+        resource_wrapper& operator=(resource_wrapper&&) noexcept = default;
 
         [[nodiscard]]
         const handles<N>& get_handles() const noexcept { return m_Handles; }
 
         [[nodiscard]]
-        friend bool operator==(const vertex_resource&, const vertex_resource&) noexcept = default;
+        friend bool operator==(const resource_wrapper&, const resource_wrapper&) noexcept = default;
     private:
         handles<N> m_Handles;
     };
@@ -201,7 +112,7 @@ namespace avocet::opengl {
     template<num_resources NumResources, class LifeEvents>
         requires (NumResources.value > 0) && has_resource_lifecycle_events_v<NumResources, LifeEvents>
     class generic_resource {
-        using resource_type  = vertex_resource<NumResources, LifeEvents>;
+        using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
         resource_type m_Resource;
     public:
@@ -209,7 +120,7 @@ namespace avocet::opengl {
         constexpr static std::size_t N{NumResources.value};
 
         explicit generic_resource(const std::array<configurator_type, N>& configs) {
-            for(const auto&[handle, config] : std::views::zip(get_handles(), configs)) {
+            for(const auto& [handle, config] : std::views::zip(get_handles(), configs)) {
                 if(handle == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
@@ -253,82 +164,5 @@ namespace avocet::opengl {
         template<std::size_t I>
             requires (I < N)
         const resource_handle& get_handle(index<I>) const noexcept { return get_handles()[I]; }
-    };
-
-    class vertex_attribute_object : public generic_resource<num_resources{1}, vao_lifecycle_events> {
-    public:
-        using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
-
-        explicit vertex_attribute_object(const optional_label& label)
-            : base_type{{{label}}}
-        {}
-
-        friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
-    };
-
-    template<buffer_species Species, gl_arithmetic_type T>
-    class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
-    {
-    public:
-        constexpr static auto species{Species};
-        using value_type = T;
-        using base_type  = generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>;
-
-        generic_buffer_object(std::span<const T> data, const optional_label& label)
-            : base_type{{{data, label}}}
-        {}
-
-        [[nodiscard]]
-        friend std::vector<T> extract_data(const generic_buffer_object& gbo) {
-            base_type::do_bind(gbo);
-            const auto size{get_buffer_size()};
-            std::vector<T> buffer(size / sizeof(T));
-            gl_function{glGetBufferSubData}(to_gl_enum(Species), 0, size, buffer.data());
-            return buffer;
-        }
-    private:
-        [[nodiscard]]
-        static GLint get_buffer_size() {
-            GLint param{};
-            gl_function{glGetBufferParameteriv}(to_gl_enum(Species), GL_BUFFER_SIZE, &param);
-            return param;
-        }
-    };
-
-    template<gl_arithmetic_type T>
-    class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
-    public:
-        using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
-    };
-
-    template<gl_arithmetic_type T>
-    class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
-    public:
-        using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
-    };
-
-    template<num_resources NumResources, texture_flavour Flavour>
-    class texture_object : public generic_resource<NumResources, texture_lifecycle_events<Flavour>> {
-    public:
-        using base_type         = generic_resource<NumResources, texture_lifecycle_events<Flavour>>;
-        using configurator_type = base_type::configurator_type;
-        constexpr static auto N{base_type::N};
-
-        texture_object(const std::array<configurator_type, N>& textureConfig)
-            : base_type{textureConfig}
-        {}
-
-        friend void bind_for_rendering(const texture_object& texObj) {
-            [&] <std::size_t... Is>(std::index_sequence<Is...>){
-                (texture_object::activate_and_bind<Is>(texObj), ...);
-            }(std::make_index_sequence<N>{});
-        }
-
-    private:
-        template<std::size_t I>
-        static void activate_and_bind(const texture_object& texObj) {
-            gl_function{glActiveTexture}(GL_TEXTURE0 + I);
-            base_type::do_bind(texObj, index<I>{});
-        }
     };
 }
