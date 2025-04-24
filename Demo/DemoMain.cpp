@@ -57,7 +57,7 @@ int main()
             shaderProgram2D{get_shader_dir() / "Identity2D.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
-        agl::quad<GLdouble, agl::dimensionality{3}> q{
+        agl::quad<GLdouble, agl::dimensionality{3}, agl::num_resources{0}> q{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.5; });
@@ -75,12 +75,8 @@ int main()
 
         constexpr GLfloat radius{0.5};
         constexpr std::array<GLfloat, 2> centre{-0.5, 0.5};
-        agl::triangle<GLfloat, agl::dimensionality{2}> disc{
+        agl::triangle<GLfloat, agl::dimensionality{2}, agl::num_resources{0}> disc{
             [&radius,&centre](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v -= 0.5; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.5; });
-
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     constexpr auto scale{2 * radius / 0.5};
                     (verts[i] *= scale) += centre[i%2];
@@ -95,7 +91,7 @@ int main()
         discShaderProgram.set_uniform("centre", centre);
 
 
-        agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
+        agl::polygon<GLfloat, 7, agl::dimensionality{3}, agl::num_resources{0}> sept{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.5; });
@@ -111,7 +107,7 @@ int main()
             make_label("Septagon")
         };
 
-        agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
+        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::num_resources{0}> hex{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 2), [](auto& v){ v -= 0.5; });

@@ -135,11 +135,11 @@ namespace avocet::opengl {
         constexpr static vertices_type vertices() { return sequoia::utilities::make_array<T, num_coordinates>(to_coordinate); }
     };
 
-    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, num_resources NumTextures>
         requires (N <= 87)
-    class polygon : public polygon_base<T, N, ArenaDimension, num_resources{0}> {
+    class polygon : public polygon_base<T, N, ArenaDimension, NumTextures> {
     public:
-        using polygon_base_type = polygon_base<T, N, ArenaDimension, num_resources{0}>;
+        using polygon_base_type = polygon_base<T, N, ArenaDimension, NumTextures>;
         using vertices_type     = polygon_base_type::vertices_type;
 
         template<class Fn>
@@ -177,11 +177,11 @@ namespace avocet::opengl {
         element_buffer_object<element_index_type> m_EBO;
     };
 
-    template<gl_floating_point T, dimensionality ArenaDimension>
-    class polygon<T, 3, ArenaDimension> : public polygon_base<T, 3, ArenaDimension, num_resources{0}> {
+    template<gl_floating_point T, dimensionality ArenaDimension, num_resources NumTextures>
+    class polygon<T, 3, ArenaDimension, NumTextures> : public polygon_base<T, 3, ArenaDimension, NumTextures> {
     public:
-        using polygon_base_type = polygon_base<T, 3, ArenaDimension, num_resources{0}>;
-        using polygon_base<T, 3, ArenaDimension, num_resources{0}>::polygon_base;
+        using polygon_base_type = polygon_base<T, 3, ArenaDimension, NumTextures>;
+        using polygon_base<T, 3, ArenaDimension, NumTextures>::polygon_base;
 
         void draw() {
             polygon_base_type::do_bind(*this);
@@ -189,9 +189,9 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, dimensionality ArenaDimension>
-    using triangle = polygon<T, 3, ArenaDimension>;
+    template<gl_floating_point T, dimensionality ArenaDimension, num_resources NumTextures>
+    using triangle = polygon<T, 3, ArenaDimension, NumTextures>;
 
-    template<gl_floating_point T, dimensionality ArenaDimension>
-    using quad = polygon<T, 4, ArenaDimension>;
+    template<gl_floating_point T, dimensionality ArenaDimension, num_resources NumTextures>
+    using quad = polygon<T, 4, ArenaDimension, NumTextures>;
 }
