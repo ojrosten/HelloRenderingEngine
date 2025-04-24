@@ -221,7 +221,7 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        explicit generic_resource(const std::array<configurator_type, N> configs) {
+        explicit generic_resource(const std::array<configurator_type, N>& configs) {
             for(const auto&[handle, config] : std::views::zip(get_handles(), configs)) {
                 if(handle == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
@@ -327,13 +327,13 @@ namespace avocet::opengl {
         using configurator_type = base_type::configurator_type;
         constexpr static auto N{base_type::N};
 
-        texture_object(std::span<const configurator_type, N> textureConfig)
+        texture_object(const std::array<configurator_type, N>& textureConfig)
             : base_type{textureConfig}
         {}
 
-        friend void bind(const texture_object& texObj) {
-            [] <std::size_t... Is>(std::index_sequence<Is...>){
-                (activate_and_bind<Is>(texObj), ...);
+        friend void bind_for_rendering(const texture_object& texObj) {
+            [&] <std::size_t... Is>(std::index_sequence<Is...>){
+                (texture_object::activate_and_bind<Is>(texObj), ...);
             }(std::make_index_sequence<N>{});
         }
 
@@ -341,7 +341,7 @@ namespace avocet::opengl {
         template<std::size_t I>
         static void activate_and_bind(const texture_object& texObj) {
             gl_function{glActiveTexture}(GL_TEXTURE0 + I);
-            do_bind(texObj, index<I>{});
+            base_type::do_bind(texObj, index<I>{});
         }
     };
 }

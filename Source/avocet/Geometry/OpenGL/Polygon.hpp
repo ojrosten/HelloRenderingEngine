@@ -63,7 +63,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (textured)
-        polygon_base(Fn transformer, std::span<const typename texture_t::configurator_type, NumTextures.value> textureConfig, const std::optional<std::string>& label)
+        polygon_base(Fn transformer, std::array<typename texture_t::configurator_type, NumTextures.value> textureConfig, const std::optional<std::string>& label)
             : m_VAO{label}
             , m_VBO{transformer(vertices()), label}
             , m_Texture{textureConfig}
@@ -100,7 +100,7 @@ namespace avocet::opengl {
         static void do_bind(const polygon_base& pg) {
             bind(pg.m_VAO);
             if constexpr(textured) {
-                bind_for_rendering(m_Texture);
+                bind_for_rendering(pg.m_Texture);
             }
         }
     private:
@@ -115,11 +115,11 @@ namespace avocet::opengl {
                 pi{std::numbers::pi_v<T>},
                 offset{N % 2 ? 0 : pi / N};
 
-            constexpr auto dim{arena_dimension.value};
+            constexpr auto dim{arena_dimension.value + texture_coords_per_vertex};
             const auto n{i / dim};
             const auto theta_n{offset + 2 * pi * n / N};
 
-            if(const auto remainder{i % (dim + texture_coords_per_vertex)}; remainder == 0)
+            if(const auto remainder{i % dim}; remainder == 0)
                 return -T{0.5}*std::sin(theta_n);
             else if(remainder == 1)
                 return T{0.5}*std::cos(theta_n);
@@ -141,14 +141,22 @@ namespace avocet::opengl {
     public:
         using polygon_base_type = polygon_base<T, N, ArenaDimension, NumTextures>;
         using vertices_type     = polygon_base_type::vertices_type;
+        constexpr static bool textured{polygon_base_type::textured};
 
         template<class Fn>
-            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!textured)
         polygon(Fn transformer, const std::optional<std::string>& label)
             : polygon_base_type{transformer, label}
             , m_EBO{st_Indices, label}
         {
         }
+
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (textured)
+        polygon(Fn transformer, const std::array<common_texture_lifecycle_events::configurator, NumTextures.value>& textureConfig, const std::optional<std::string>& label)
+            : polygon_base_type{transformer, textureConfig, label}
+            , m_EBO{st_Indices, label}
+        {}
 
         void draw() {
             polygon_base_type::do_bind(*this);

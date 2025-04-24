@@ -36,6 +36,19 @@ namespace {
     }
 
     [[nodiscard]]
+    fs::path get_image_dir() {
+        if(const fs::path file{std::source_location::current().file_name()}; file.is_absolute()) {
+            if(const auto dir{file.parent_path() / "Images"}; fs::exists(dir)) {
+                return dir;
+            }
+            else
+                throw std::runtime_error{std::format("Unable to find images directory {}", dir.generic_string())};
+        }
+
+        throw std::runtime_error{"Relative paths not supported"};
+    }    
+
+    [[nodiscard]]
     std::string make_label(std::string_view name, std::source_location loc = std::source_location::current()) {
         return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
@@ -54,7 +67,7 @@ int main()
         agl::shader_program
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
-            shaderProgram2D{get_shader_dir() / "Identity2D.vs", get_shader_dir() / "Monochrome.fs"},
+            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Monochrome.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}, agl::num_resources{0}> q{
@@ -107,19 +120,20 @@ int main()
             make_label("Septagon")
         };
 
-        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::num_resources{0}> hex{
+        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::num_resources{1}> hex{
             [](std::ranges::random_access_range auto verts) {
                 // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
                 //std::ranges::for_each(std::views::stride(verts, 2), [](auto& v){ v -= 0.5; });
                 //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(2), [](auto& v){ v -= 0.5; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 2))     verts[i] -= 0.5;
-                    if(!((i-1) % 2)) verts[i] -= 0.5;
+                    if(!(i % 4))     verts[i] -= 0.5;
+                    if(!((i-1) % 4)) verts[i] -= 0.5;
                 }
 
                 return verts;
             },
+            {agl::common_texture_lifecycle_events::configurator{.image_config{.file{get_image_dir() / "PrincessTwilightSparkle.png"}}}},
             make_label("Hexagon")
         };
 
