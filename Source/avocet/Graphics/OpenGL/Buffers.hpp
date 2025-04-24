@@ -13,6 +13,8 @@
 
 #include "avocet/Graphics/Core/Images.hpp"
 
+#include <vector>
+
 namespace avocet::opengl {
     struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
