@@ -10,6 +10,8 @@
 #include "avocet/Graphics/OpenGL/Labels.hpp"
 #include "avocet/Utilities/OpenGL/TypeTraits.hpp"
 
+#include "avocet/Graphics/Core/Images.hpp"
+
 #include <algorithm>
 #include <array>
 #include <cassert>
@@ -134,21 +136,6 @@ namespace avocet::opengl {
             add_label(identifier, h, config.label);
             gl_function{glBufferData}(to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
         }
-    };
-
-
-    enum class vertical_flip : bool { no, yes };
-
-    enum class colour_space_flavour : bool { linear, gamma };
-
-    struct image_configuration
-    {
-        std::filesystem::path file{};
-        vertical_flip flip{};
-        colour_space_flavour colour_space{colour_space_flavour::gamma};
-
-        [[nodiscard]]
-        friend bool operator==(const image_configuration&, const image_configuration&) = default;
     };
 
     enum class texture_flavour : GLenum {
