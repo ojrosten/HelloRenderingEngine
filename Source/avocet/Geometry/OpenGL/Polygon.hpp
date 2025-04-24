@@ -42,6 +42,19 @@ namespace avocet::opengl {
         struct null_texture { using configurator_type = void; };
 
         using texture_t = std::conditional_t<textured, texture_object<NumTextures, texture_flavour::texture_2d>, null_texture>;
+        constexpr static auto dimension{arena_dimension.value};
+
+        static void set_attribute_ptr(GLuint index, GLint components, std::ptrdiff_t offset) {
+            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
+            constexpr auto stride{(dimension + texture_coords_per_vertex) * sizeof(value_type)};
+            if constexpr(std::is_same_v<value_type, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(index, components, typeSpecifier, stride, (GLvoid*)offset);
+            }
+            else {
+                gl_function{glVertexAttribPointer}(index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)offset);
+            }
+            gl_function{glEnableVertexAttribArray}(index);
+        }
     public:
         using vertices_type = std::array<T, num_coordinates>;
 
@@ -51,16 +64,7 @@ namespace avocet::opengl {
             : m_VAO{label}
             , m_VBO{transformer(vertices()), label}
         {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto dimension{arena_dimension.value};
-            constexpr auto stride{(dimension + texture_coords_per_vertex) * sizeof(value_type)};
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(0, dimension, typeSpecifier, stride, (GLvoid*)0);
-            }
-            else {
-                gl_function{glVertexAttribPointer}(0, dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
-            }
-            gl_function{glEnableVertexAttribArray}(0);
+            set_attribute_ptr(0, dimension, 0);
         }
 
         template<class Fn>
@@ -70,25 +74,8 @@ namespace avocet::opengl {
             , m_VBO{transformer(vertices()), label}
             , m_Texture{textureConfig}
         {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto dimension{arena_dimension.value};
-            constexpr auto stride{(dimension + texture_coords_per_vertex) * sizeof(value_type)};
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(0, dimension, typeSpecifier, stride, (GLvoid*)0);
-            }
-            else {
-                gl_function{glVertexAttribPointer}(0, dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
-            }
-            gl_function{glEnableVertexAttribArray}(0);
-
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(1, 2, typeSpecifier, stride, (GLvoid*)(dimension * sizeof(value_type)));
-            }
-            else {
-                gl_function{glVertexAttribPointer}(1, 2, typeSpecifier, GL_FALSE, stride, (GLvoid*)(dimension * sizeof(value_type)));
-            }
-
-            gl_function{glEnableVertexAttribArray}(1);
+            set_attribute_ptr(0, dimension, 0);
+            set_attribute_ptr(1, 2, dimension * sizeof(value_type));
         }
 
         [[nodiscard]]
