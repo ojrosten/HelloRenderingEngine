@@ -27,6 +27,9 @@ namespace avocet::opengl {
             case 1:
                 return {.internal_format{GL_RED},
                         .format{GL_RED}};
+            case 2:
+                return {.internal_format{GL_RG},
+                        .format{GL_RG}};
             case 3:
                 return {.internal_format{isLinear ? GL_RGB  : GL_SRGB},
                         .format{GL_RGB}};
@@ -35,7 +38,7 @@ namespace avocet::opengl {
                         .format{GL_RGBA}};
             }
 
-            throw std::runtime_error{std::format("stbi_load: number of channels = {} not currently supported", numChannels)};
+            throw std::runtime_error{std::format("{} channels requested, but it must be in the range [1,4]", numChannels)};
         }
     }
 
