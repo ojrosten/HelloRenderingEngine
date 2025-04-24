@@ -86,7 +86,7 @@ int main()
             make_label("Quad")
         };
 
-        constexpr GLfloat radius{0.5};
+        constexpr GLfloat radius{0.4f};
         constexpr std::array<GLfloat, 2> centre{-0.5, 0.5};
         agl::triangle<GLfloat, agl::dimensionality{2}, agl::num_resources{0}> disc{
             [&radius,&centre](std::ranges::random_access_range auto verts) {
@@ -133,7 +133,7 @@ int main()
 
                 return verts;
             },
-            {agl::common_texture_lifecycle_events::configurator{.image_config{.file{get_image_dir() / "PrincessTwilightSparkle.png"}}}},
+            {agl::common_texture_lifecycle_events::configurator{.image_config{.file{get_image_dir() / "PrincessTwilightSparkle.png"}, .flip{agl::vertical_flip::yes}}}},
             make_label("Hexagon")
         };
 

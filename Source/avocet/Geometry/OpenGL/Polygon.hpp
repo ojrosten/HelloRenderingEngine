@@ -115,17 +115,18 @@ namespace avocet::opengl {
                 pi{std::numbers::pi_v<T>},
                 offset{N % 2 ? 0 : pi / N};
 
-            constexpr auto dim{arena_dimension.value + texture_coords_per_vertex};
-            const auto n{i / dim};
+            constexpr auto dim{arena_dimension.value};
+            constexpr auto coordsPerVert{dim + texture_coords_per_vertex};
+            const auto n{i / coordsPerVert};
             const auto theta_n{offset + 2 * pi * n / N};
 
-            if(const auto remainder{i % dim}; remainder == 0)
+            if(const auto remainder{i % coordsPerVert}; remainder == 0)
                 return -T{0.5}*std::sin(theta_n);
             else if(remainder == 1)
                 return T{0.5}*std::cos(theta_n);
             else if(remainder == dim)
                 return T{0.5}*(T{1.0} - std::sin(theta_n));
-            else if(remainder == (dim+1))
+            else if(remainder == (dim + 1))
                 return T{0.5}*(T{1.0} + std::cos(theta_n));
 
             return T{};

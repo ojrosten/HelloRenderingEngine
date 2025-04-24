@@ -79,5 +79,6 @@ namespace avocet::opengl {
         const auto format{to_format(config.colour_space, im.num_channels)};
 
         gl_function{glTexImage2D}(to_gl_enum(textureFlavour), 0, format.internal_format, im.width, im.height, 0, format.format, GL_UNSIGNED_BYTE, &im.data);
+        glGenerateMipmap(to_gl_enum(textureFlavour));
     }
 }
