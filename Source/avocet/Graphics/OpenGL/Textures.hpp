@@ -29,13 +29,13 @@ namespace avocet::opengl {
 
     template<texture_flavour Flavour>
     struct default_texture_parameter_setter {
-        void operator()() const = delete;
+        void operator()()= delete;
     };
 
 
     template<>
     struct default_texture_parameter_setter<texture_flavour::texture_2d> {
-        void operator()() const {
+        void operator()() {
             gl_function{glGenerateMipmap}(to_gl_enum(texture_flavour::texture_2d));
             gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
             gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
