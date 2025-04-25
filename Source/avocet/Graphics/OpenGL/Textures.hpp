@@ -26,13 +26,14 @@ namespace avocet::opengl {
 
     void load_to_texture(const image_configuration& config, texture_flavour textureFlavour);
 
+    template<texture_flavour Flavour>
+    struct texture_configuration {
+        image_configuration image_config;
+        optional_label label;
+    };
+
     struct common_texture_lifecycle_events {
         constexpr static auto identifier{object_identifier::texture};
-
-        struct configurator {
-            image_configuration image_config;
-            optional_label label;
-        };
 
         template<std::size_t N>
         static void generate(raw_indices<N>& indices) { gl_function{glGenTextures}(N, indices.data()); }
@@ -44,6 +45,8 @@ namespace avocet::opengl {
     template<texture_flavour Flavour>
     struct texture_lifecycle_events : common_texture_lifecycle_events {
         constexpr static auto flavour{Flavour};
+
+        using configurator = texture_configuration<flavour>;
 
         static void bind(const resource_handle& h) { gl_function{glBindTexture}(to_gl_enum(Flavour), h.index()); }
 

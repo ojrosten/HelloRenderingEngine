@@ -143,7 +143,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (textured)
-        polygon(Fn transformer, const std::array<common_texture_lifecycle_events::configurator, NumTextures.value>& textureConfig, const std::optional<std::string>& label)
+        polygon(Fn transformer, const std::array<texture_configuration<texture_flavour::texture_2d>, NumTextures.value>& textureConfig, const std::optional<std::string>& label)
             : polygon_base_type{transformer, textureConfig, label}
             , m_EBO{st_Indices, label}
         {}

@@ -133,7 +133,7 @@ int main()
 
                 return verts;
             },
-            {agl::common_texture_lifecycle_events::configurator{.image_config{get_image_dir() / "PrincessTwilightSparkle.png", avocet::vertically_flipped::yes, avocet::colour_space_flavour::gamma}}},
+            {agl::texture_configuration<agl::texture_flavour::texture_2d>{.image_config{get_image_dir() / "PrincessTwilightSparkle.png", avocet::vertically_flipped::yes, avocet::colour_space_flavour::gamma}}},
             make_label("Hexagon")
         };
 
