@@ -14,14 +14,14 @@
 namespace avocet {
     namespace fs = std::filesystem;
 
-    image_loader::image_loader(const fs::path& texture, vertical_flip flip)
+    image_loader::image_loader(const fs::path& texture, vertically_flipped flip)
         : m_Image{make(texture, flip)}
     {}
 
     image_loader::~image_loader() { stbi_image_free(m_Image.data.data()); }
 
     [[nodiscard]]
-    image image_loader::make(const fs::path& texture, vertical_flip flip) {
+    image image_loader::make(const fs::path& texture, vertically_flipped flip) {
         stbi_set_flip_vertically_on_load(static_cast<bool>(flip));
         int width{}, height{}, numChannels{};
 
