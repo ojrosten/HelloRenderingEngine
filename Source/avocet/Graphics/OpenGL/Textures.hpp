@@ -15,6 +15,7 @@
 
 #include <array>
 #include <filesystem>
+#include <functional>
 #include <ranges>
 #include <span>
 #include <vector>
@@ -24,13 +25,39 @@ namespace avocet::opengl {
         texture_2d = GL_TEXTURE_2D
     };
 
-    void load_to_texture(const image_configuration& config, texture_flavour textureFlavour);
+    template<texture_flavour Flavour>
+    struct default_texture_parameter_setter {
+        void operator()() const = delete;
+    };
+
+
+    template<>
+    struct default_texture_parameter_setter<texture_flavour::texture_2d> {
+        void operator()() const {
+            gl_function{glGenerateMipmap}(to_gl_enum(texture_flavour::texture_2d));
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        };
+    };
 
     template<texture_flavour Flavour>
     struct texture_configuration {
+        constexpr static auto flavour{Flavour};
+
         image_configuration image_config;
-        optional_label label;
+        std::function<void()> parameter_setter{default_texture_parameter_setter<Flavour>{}};
+        optional_label label{};
     };
+
+    void load_to_texture(const image_configuration& config, texture_flavour textureFlavour);
+
+    template<texture_flavour Flavour>
+    void load_to_texture(const texture_configuration<Flavour>& config) {
+        load_to_texture(config.image_config, Flavour);
+        config.parameter_setter();
+    }
 
     struct common_texture_lifecycle_events {
         constexpr static auto identifier{object_identifier::texture};
@@ -52,7 +79,7 @@ namespace avocet::opengl {
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
-            load_to_texture(config.image_config, flavour);
+            load_to_texture(config);
         }
     };
 

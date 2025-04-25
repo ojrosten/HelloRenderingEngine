@@ -129,6 +129,8 @@ int main()
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     if(!(i % 4))     verts[i] -= 0.5;
                     if(!((i-1) % 4)) verts[i] -= 0.5;
+                    if(!((i - 2) % 4)) verts[i] *= 2.0;
+                    if(!((i - 3) % 4)) verts[i] *= 2.0;
                 }
 
                 return verts;
