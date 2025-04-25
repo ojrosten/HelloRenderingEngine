@@ -58,7 +58,7 @@ namespace avocet::opengl {
     template<texture_flavour Flavour>
     void load_to_texture(const texture_configuration<Flavour>& config) {
         load_to_texture(config.image_config, Flavour);
-        config.parameter_setter();
+        if(config.parameter_setter) config.parameter_setter();
     }
 
     struct common_texture_lifecycle_events {
