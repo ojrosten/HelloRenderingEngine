@@ -18,15 +18,15 @@ namespace avocet {
         : m_Image{make(texture, flip)}
     {}
 
-    image_loader::~image_loader() { stbi_image_free(m_Image.data.data()); }
+    image_loader::~image_loader() { stbi_image_free(m_Image.span().data()); }
 
     [[nodiscard]]
-    image image_loader::make(const fs::path& texture, vertically_flipped flip) {
+    image_view image_loader::make(const fs::path& texture, vertically_flipped flip) {
         stbi_set_flip_vertically_on_load(static_cast<bool>(flip));
         int width{}, height{}, numChannels{};
 
         if(auto pData{stbi_load(texture.generic_string().c_str(), &width, &height, &numChannels, 0)}; pData != nullptr)
-            return {.data{std::span{pData, width * height * numChannels * sizeof(unsigned char)}}, .width{width}, .height{height}, .num_channels{numChannels}};
+            return {pData, width, height, numChannels};
 
         throw std::runtime_error{std::format("Failed to load image {}", texture.generic_string())};
     }

@@ -42,23 +42,57 @@ namespace avocet {
         friend bool operator==(const image_configuration&, const image_configuration&) = default;
     };
 
-    struct image
+    class image_view
     {
-        std::span<unsigned char> data;
-        int width{}, height{}, num_channels{};
+    public:
+        using data_type = unsigned char;
+
+        image_view(data_type* ptr, int width, int height, int numChannels)
+            : m_Data{ptr}
+            , m_Width{to_unsigned(width, "width")}
+            , m_Height{to_unsigned(height, "height")}
+            , m_NumChannels{to_unsigned(numChannels, "channels")}
+        {}
+
+        [[nodiscard]]
+        std::size_t width() const noexcept { return m_Width; }
+
+        [[nodiscard]]
+        std::size_t height() const noexcept { return m_Height; }
+
+        std::size_t num_channels() const noexcept { return m_NumChannels; }
+
+        [[nodiscard]]
+        std::span<const data_type> span() const noexcept { return {m_Data, size()}; }
+
+        [[nodiscard]]
+        std::span<data_type> span() noexcept { return {m_Data, size()}; }
+    private:
+        data_type* m_Data;
+        std::size_t m_Width{}, m_Height{}, m_NumChannels{};
+
+        [[nodiscard]]
+        static std::size_t to_unsigned(int val, std::string_view name) {
+            if(val < 0) throw std::runtime_error{std::format("image_view: {} = {}, but it should be positive", name, val)};
+
+            return static_cast<std::size_t>(val);
+        }
+
+        [[nodiscard]]
+        std::size_t size() const noexcept { return width() * height() * num_channels() * sizeof(data_type);  }
     };
 
     class [[nodiscard]] image_loader{
-        image m_Image;
+        image_view m_Image;
 
         [[nodiscard]]
-        static image make(const std::filesystem::path& texture, vertically_flipped flip);
+        static image_view make(const std::filesystem::path& texture, vertically_flipped flip);
     public:
         image_loader(const std::filesystem::path& texture, vertically_flipped flip);
 
         ~image_loader();
 
         [[nodiscard]]
-        const image& get_image() const noexcept { return m_Image; }
+        image_view get_image() const noexcept { return m_Image; }
     };
 }
