@@ -73,11 +73,11 @@ namespace avocet::opengl {
     struct texture_lifecycle_events : common_texture_lifecycle_events {
         constexpr static auto flavour{Flavour};
 
-        using configurator = texture_configuration<flavour>;
+        using configuration = texture_configuration<flavour>;
 
         static void bind(const resource_handle& h) { gl_function{glBindTexture}(to_gl_enum(Flavour), h.index()); }
 
-        static void configure(const resource_handle& h, const configurator& config) {
+        static void configure(const resource_handle& h, const configuration& config) {
             add_label(identifier, h, config.label);
             load_to_texture(config);
         }

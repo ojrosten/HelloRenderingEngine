@@ -57,15 +57,15 @@ namespace avocet::opengl {
             T::destroy(indices);
             { T::identifier } -> std::convertible_to<object_identifier>;
             T::bind(h);
-            typename T::configurator;
-            T::configure(h, std::declval<typename T::configurator>());
+            typename T::configuration;
+            T::configure(h, std::declval<typename T::configuration>());
         }
     };
 
     template<num_resources NumResources, class LifeEvents>
         requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
     struct resource_lifecycle {
-        using configurator_type = LifeEvents::configurator;
+        using configurator_type = LifeEvents::configuration;
 
         constexpr static std::size_t N{NumResources.value};
 
