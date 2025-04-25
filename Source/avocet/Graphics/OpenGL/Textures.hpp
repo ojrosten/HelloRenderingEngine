@@ -13,6 +13,8 @@
 #include "avocet/Graphics/OpenGL/Resources.hpp"
 #include "avocet/Utilities/OpenGL/TypeTraits.hpp"
 
+#include "sequoia/FileSystem/FileSystem.hpp"
+
 #include <array>
 #include <filesystem>
 #include <functional>
@@ -48,7 +50,7 @@ namespace avocet::opengl {
 
         image_configuration image_config;
         std::function<void()> parameter_setter{default_texture_parameter_setter<Flavour>{}};
-        optional_label label{};
+        optional_label label{sequoia::back(image_config.file()).generic_string()};
     };
 
     void load_to_texture(const image_configuration& config, texture_flavour textureFlavour);
