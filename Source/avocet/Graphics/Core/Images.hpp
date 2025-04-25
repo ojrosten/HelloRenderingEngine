@@ -8,7 +8,9 @@
 #pragma once
 
 #include <filesystem>
+#include <format>
 #include <span>
+#include <source_location>
 
 namespace avocet {
 
@@ -22,11 +24,14 @@ namespace avocet {
         vertically_flipped m_Flip{};
         colour_space_flavour m_ColourSpace{colour_space_flavour::gamma};
     public:
-        image_configuration(std::filesystem::path textureFile, vertically_flipped flip, colour_space_flavour colourSpace)
+        image_configuration(std::filesystem::path textureFile, vertically_flipped flip, colour_space_flavour colourSpace, std::source_location loc=std::source_location::current())
             : m_File{std::move(textureFile)}
             , m_Flip{flip}
             , m_ColourSpace{colourSpace}
-        {}
+        {
+            if(!std::filesystem::exists(m_File))
+                throw std::runtime_error{std::format("image_configuration: file {} requested from {}, line {} does not exist", m_File.generic_string(), loc.file_name(), loc.line())};
+        }
 
         [[nodiscard]]
         const std::filesystem::path& file() const noexcept { return m_File; }
