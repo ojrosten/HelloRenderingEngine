@@ -40,8 +40,7 @@ namespace avocet::opengl {
     }
 
     void load_to_texture(const image_configuration& config, texture_flavour textureFlavour) {
-        image_loader loader{config.file(), config.flipped()};
-        const auto& im{loader.get_image()};
+        image im{config.file(), config.flipped()};
         const auto format{to_format(config.colour_space(), im.num_channels())};
 
         gl_function{glTexImage2D}(to_gl_enum(textureFlavour), 0, format.internal_format, static_cast<int>(im.width()), static_cast<int>(im.height()), 0, format.format, GL_UNSIGNED_BYTE, im.span().data());

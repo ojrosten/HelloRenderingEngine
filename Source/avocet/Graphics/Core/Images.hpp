@@ -9,6 +9,7 @@
 
 #include <filesystem>
 #include <format>
+#include <memory>
 #include <span>
 #include <source_location>
 
@@ -47,19 +48,44 @@ namespace avocet {
         friend bool operator==(const image_configuration&, const image_configuration&) = default;
     };
 
-    class image_view
-    {
-    public:
+    class image {
         using data_type = unsigned char;
 
-        image_view(data_type* ptr, std::size_t width, std::size_t height, std::size_t numChannels)
+        struct file_deleter{
+            void operator()(data_type* ptr) const;
+        };
+
+        [[nodiscard]]
+        static std::size_t to_unsigned(int val, std::string_view name) {
+            if(val < 0) throw std::runtime_error{std::format("image_view: {} = {}, but it should be positive", name, val)};
+
+            return static_cast<std::size_t>(val);
+        }
+
+        [[nodiscard]]
+        static image make(const std::filesystem::path& texture, vertically_flipped flip);
+
+        std::size_t m_Width{}, m_Height{}, m_NumChannels;
+        std::unique_ptr<data_type, file_deleter> m_Data;
+
+        [[nodiscard]]
+        std::size_t size() const noexcept { return width() * height() * num_channels() * sizeof(data_type); }
+
+        image(data_type* ptr, std::size_t width, std::size_t height, std::size_t numChannels)
             : m_Width{width}
             , m_Height{height}
-            , m_Data{ptr, m_Width * m_Height * numChannels * sizeof(data_type)}
-        {}
+            , m_NumChannels{numChannels}
+            , m_Data{ptr}
+        {
+        }
 
-        image_view(data_type* ptr, int width, int height, int numChannels)
-            : image_view{ptr, to_unsigned(width, "width"), to_unsigned(height, "height"), to_unsigned(numChannels, "channels")}
+        image(data_type* ptr, int width, int height, int numChannels)
+            : image{ptr, to_unsigned(width, "width"), to_unsigned(height, "height"), to_unsigned(numChannels, "channels")}
+        {
+        }
+    public:
+        image(const std::filesystem::path& texture, vertically_flipped flip)
+            : image{make(texture, flip)}
         {}
 
         [[nodiscard]]
@@ -68,44 +94,23 @@ namespace avocet {
         [[nodiscard]]
         std::size_t height() const noexcept { return m_Height; }
 
-        std::size_t num_channels() const noexcept { return m_Data.size() / (width() * height() * sizeof(data_type)); }
+        std::size_t num_channels() const noexcept { return m_NumChannels; }
 
         [[nodiscard]]
-        std::span<const data_type> span() const noexcept { return m_Data; }
+        std::span<const data_type> span() const noexcept { return {m_Data.get(), size()}; }
 
         [[nodiscard]]
-        std::span<data_type> span() noexcept { return m_Data; }
+        std::span<data_type> span() noexcept { return {m_Data.get(), size()}; }
 
         [[nodiscard]]
-        friend bool operator==(const image_view& lhs, const image_view& rhs) noexcept {
-            return (lhs.width() == rhs.width()) && (lhs.height() == rhs.height()) && std::ranges::equal(lhs.span(), rhs.span());
-        }
-    private:
-        std::size_t m_Width{}, m_Height{};
-        std::span<data_type> m_Data;
-
-        [[nodiscard]]
-        static std::size_t to_unsigned(int val, std::string_view name) {
-            if(val < 0) throw std::runtime_error{std::format("image_view: {} = {}, but it should be positive", name, val)};
-
-            return static_cast<std::size_t>(val);
+        friend bool operator==(const image& lhs, const image& rhs) noexcept {
+            return (lhs.width() == rhs.width())
+                && (lhs.height() == rhs.height())
+                && (lhs.num_channels() == rhs.num_channels())
+                && std::ranges::equal(lhs.span(), rhs.span());
         }
     };
 
-    class [[nodiscard]] image_loader{
-        image_view m_Image;
-
-        [[nodiscard]]
-        static image_view make(const std::filesystem::path& texture, vertically_flipped flip);
-    public:
-        image_loader(const std::filesystem::path& texture, vertically_flipped flip);
-
-        ~image_loader();
-
-        [[nodiscard]]
-        image_view get_image() const noexcept { return m_Image; }
-
-        [[nodiscard]]
-        friend bool operator==(const image_loader&, const image_loader&) noexcept = default;
-    };
+    [[nodiscard]]
+    inline image load_texture(const std::filesystem::path& texture, vertically_flipped flip) { return {texture, flip}; }
 }
