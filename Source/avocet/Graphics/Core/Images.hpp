@@ -52,10 +52,15 @@ namespace avocet {
     public:
         using data_type = unsigned char;
 
+        image_view(data_type* ptr, std::size_t width, std::size_t height, std::size_t numChannels)
+            : m_Width{width}
+            , m_Height{height}
+            , m_Data{ptr, m_Width * m_Height * numChannels * sizeof(data_type)}
+        {
+        }
+
         image_view(data_type* ptr, int width, int height, int numChannels)
-            : m_Width{to_unsigned(width, "width")}
-            , m_Height{to_unsigned(height, "height")}
-            , m_Data{ptr, m_Width * m_Height * to_unsigned(numChannels, "channels") * sizeof(data_type)}
+            : image_view{ptr, to_unsigned(width, "width"), to_unsigned(height, "height"), to_unsigned(numChannels, "channels")}
         {}
 
         [[nodiscard]]
@@ -71,6 +76,11 @@ namespace avocet {
 
         [[nodiscard]]
         std::span<data_type> span() noexcept { return m_Data; }
+
+        [[nodiscard]]
+        friend bool operator==(const image_view& lhs, const image_view& rhs) noexcept {
+            return (lhs.width() == rhs.width()) && (lhs.height() == rhs.height()) && std::ranges::equal(lhs.span(), rhs.span());
+        }
     private:
         std::size_t m_Width{}, m_Height{};
         std::span<data_type> m_Data;
@@ -81,9 +91,6 @@ namespace avocet {
 
             return static_cast<std::size_t>(val);
         }
-
-        [[nodiscard]]
-        std::size_t size() const noexcept { return width() * height() * num_channels() * sizeof(data_type);  }
     };
 
     class [[nodiscard]] image_loader{
