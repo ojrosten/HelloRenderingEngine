@@ -56,8 +56,7 @@ namespace avocet {
             : m_Width{width}
             , m_Height{height}
             , m_Data{ptr, m_Width * m_Height * numChannels * sizeof(data_type)}
-        {
-        }
+        {}
 
         image_view(data_type* ptr, int width, int height, int numChannels)
             : image_view{ptr, to_unsigned(width, "width"), to_unsigned(height, "height"), to_unsigned(numChannels, "channels")}
@@ -105,5 +104,8 @@ namespace avocet {
 
         [[nodiscard]]
         image_view get_image() const noexcept { return m_Image; }
+
+        [[nodiscard]]
+        friend bool operator==(const image_loader&, const image_loader&) noexcept = default;
     };
 }
