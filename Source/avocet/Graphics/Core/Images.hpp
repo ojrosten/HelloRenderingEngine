@@ -53,10 +53,9 @@ namespace avocet {
         using data_type = unsigned char;
 
         image_view(data_type* ptr, int width, int height, int numChannels)
-            : m_Data{ptr}
-            , m_Width{to_unsigned(width, "width")}
+            : m_Width{to_unsigned(width, "width")}
             , m_Height{to_unsigned(height, "height")}
-            , m_NumChannels{to_unsigned(numChannels, "channels")}
+            , m_Data{ptr, m_Width * m_Height * to_unsigned(numChannels, "channels") * sizeof(data_type)}
         {}
 
         [[nodiscard]]
@@ -65,16 +64,16 @@ namespace avocet {
         [[nodiscard]]
         std::size_t height() const noexcept { return m_Height; }
 
-        std::size_t num_channels() const noexcept { return m_NumChannels; }
+        std::size_t num_channels() const noexcept { return m_Data.size() / (width() * height() * sizeof(data_type)); }
 
         [[nodiscard]]
-        std::span<const data_type> span() const noexcept { return {m_Data, size()}; }
+        std::span<const data_type> span() const noexcept { return m_Data; }
 
         [[nodiscard]]
-        std::span<data_type> span() noexcept { return {m_Data, size()}; }
+        std::span<data_type> span() noexcept { return m_Data; }
     private:
-        data_type* m_Data;
-        std::size_t m_Width{}, m_Height{}, m_NumChannels{};
+        std::size_t m_Width{}, m_Height{};
+        std::span<data_type> m_Data;
 
         [[nodiscard]]
         static std::size_t to_unsigned(int val, std::string_view name) {
