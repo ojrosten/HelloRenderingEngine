@@ -20,7 +20,7 @@ namespace avocet {
         int width{}, height{}, numChannels{};
 
         if(auto pData{stbi_load(texture.generic_string().c_str(), &width, &height, &numChannels, 0)}; pData != nullptr)
-            return {pData, width, height, numChannels};
+            return {width, height, numChannels, pData};
 
         throw std::runtime_error{std::format("Failed to load image {}", texture.generic_string())};
     }

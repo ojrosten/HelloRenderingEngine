@@ -71,18 +71,13 @@ namespace avocet {
         [[nodiscard]]
         std::size_t size() const noexcept { return width() * height() * num_channels() * sizeof(data_type); }
 
-        image(data_type* ptr, std::size_t width, std::size_t height, std::size_t numChannels)
-            : m_Width{width}
-            , m_Height{height}
-            , m_NumChannels{numChannels}
+        image(int width, int height, int numChannels, data_type* ptr)
+            : m_Width{to_unsigned(width, "width")}
+            , m_Height{to_unsigned(height, "height")}
+            , m_NumChannels{to_unsigned(numChannels, "channels")}
             , m_Data{ptr}
-        {
-        }
+        {}
 
-        image(data_type* ptr, int width, int height, int numChannels)
-            : image{ptr, to_unsigned(width, "width"), to_unsigned(height, "height"), to_unsigned(numChannels, "channels")}
-        {
-        }
     public:
         image(const std::filesystem::path& texture, vertically_flipped flip)
             : image{make(texture, flip)}
