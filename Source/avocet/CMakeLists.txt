@@ -8,7 +8,7 @@ sequoia_init()
 
 set(SourceList
     Debugging/OpenGL/Errors.cpp
-    Graphics/Core/Images.cpp
+    Graphics/Core/Image.cpp
     Graphics/OpenGL/Textures.cpp
     Graphics/OpenGL/ShaderProgram.cpp
     Utilities/OpenGL/Version.cpp)

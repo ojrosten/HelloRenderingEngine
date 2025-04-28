@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/Graphics/Core/Images.hpp"
+#include "avocet/Graphics/Core/Image.hpp"
 
 #include "avocet/Graphics/OpenGL/Labels.hpp"
 #include "avocet/Graphics/OpenGL/Resources.hpp"

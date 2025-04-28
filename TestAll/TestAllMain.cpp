@@ -11,6 +11,8 @@
 #include "Debugging/OpenGL/InfiniteLoopFreeTest.hpp"
 #include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
+#include "Graphics/Core/ImageTest.hpp"
+#include "Graphics/Core/ImageTestingDiagnostics.hpp"
 #include "Graphics/OpenGL/BufferObjectTest.hpp"
 #include "Graphics/OpenGL/BufferObjectTestingDiagnostics.hpp"
 #include "Graphics/OpenGL/ResourceHandleTest.hpp"
@@ -65,6 +67,12 @@ int main(int argc, char** argv)
             buffer_object_false_negative_test{"False Negative Test"},
             buffer_object_test{"Semantics Test"},
             buffer_object_labelling_free_test{"Labelling Test"}
+        );
+
+        runner.add_test_suite(
+            "Image",
+            image_false_negative_test{"False Negative Test"},
+            image_test{"Unit Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

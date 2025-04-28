@@ -11,8 +11,6 @@
 #include "avocet/Graphics/OpenGL/Resources.hpp"
 #include "avocet/Utilities/OpenGL/TypeTraits.hpp"
 
-#include "avocet/Graphics/Core/Images.hpp"
-
 #include <vector>
 
 namespace avocet::opengl {
