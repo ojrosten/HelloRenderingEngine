@@ -7,3 +7,12 @@ image absent.png not found
 
 =======================================
 
+Tests/Graphics/Core/ImageTest.cpp, Line 26
+File not an image
+
+Expected Exception Type:
+[std::runtime_error]
+Failed to load image C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Graphics/Core/ImageTest/not_an_image.txt
+
+=======================================
+
