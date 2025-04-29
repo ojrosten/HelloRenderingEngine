@@ -15,3 +15,14 @@ androids with mechanical brains, this project may appeal to you!
 The various dependencies have their own licenses, some of which are more permissive.
 
 Images are licensed under Creative Commons [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/)
+
+## Dependencies:
+
+[assimp](https://github.com/assimp/assimp)  
+[glad](https://glad.dav1d.de/)  
+[glfw](https://www.glfw.org/)  
+[sequoia](https://github.com/ojrosten/sequoia)  
+[stb](https://github.com/nothings/stb)  
+[tbb](https://github.com/uxlfoundation/oneTBB)  
+
+Heartfelt thanks to all the authors for making their work available.
