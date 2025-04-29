@@ -28,6 +28,10 @@ namespace avocet::testing
         image red{working_materials() / "red_3_channels.png", vertically_flipped::no},
               striped{working_materials() / "striped_3_channels.png", vertically_flipped::no};
 
-        check(equivalence, "", red,  make_red(2, 3, 3));
+        check_semantics("",
+                        image{working_materials() / "red_3_channels.png", vertically_flipped::no},
+                        image{working_materials() / "striped_3_channels.png", vertically_flipped::no},
+                        make_red(2, 3, 3),
+                        make_striped());
     }
 }

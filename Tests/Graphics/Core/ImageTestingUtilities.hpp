@@ -29,6 +29,20 @@ namespace avocet::testing {
 
         return image;
     }
+
+    [[nodiscard]]
+    inline image_data make_striped() {
+        return {
+            .width{2},
+            .height{3},
+            .num_channels{3},
+            .data{
+                255, 0,    0, 255, 0,    0,
+                0,   255,  0, 0,   255,  0,
+                0,   0,  255, 0,   0,  255
+            }
+        };
+    };
 }
 
 namespace sequoia::testing
