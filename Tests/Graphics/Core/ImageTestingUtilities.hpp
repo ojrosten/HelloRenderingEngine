@@ -31,16 +31,16 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    inline image_data make_striped(std::size_t width, std::size_t height, std::size_t channels) {
+    inline image_data make_striped(std::size_t w, std::size_t h, std::size_t channels) {
         return {
-            .width{width},
-            .height{height},
+            .width{w},
+            .height{h},
             .num_channels{channels},
             .data{
-                  std::views::iota(0u, width * height * channels)
+                  std::views::iota(0u, w * h * channels)
                 | std::views::transform(
                     [=](auto i) -> unsigned char {
-                        const auto row{i / (width * channels)};
+                        const auto row{i / (w * channels)};
                         const auto channel{i % channels};
                         return static_cast<unsigned char>((row == channel) ? 255 : 0);
                     }

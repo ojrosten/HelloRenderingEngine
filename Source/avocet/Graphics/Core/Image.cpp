@@ -16,6 +16,11 @@ namespace avocet {
 
     [[nodiscard]]
     image image::make(const fs::path& texture, vertically_flipped flip) {
+        if(!fs::exists(texture))
+            throw std::runtime_error{std::format("image {} not found", texture.generic_string())};
+
+        //std::lock_guard lock{st_Mutex};
+
         stbi_set_flip_vertically_on_load(static_cast<bool>(flip));
         int width{}, height{}, numChannels{};
 

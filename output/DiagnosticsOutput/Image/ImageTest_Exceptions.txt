@@ -1,0 +1,9 @@
+Tests/Graphics/Core/ImageTest.cpp, Line 25
+File missing
+
+Expected Exception Type:
+[std::runtime_error]
+image absent.png not found
+
+=======================================
+

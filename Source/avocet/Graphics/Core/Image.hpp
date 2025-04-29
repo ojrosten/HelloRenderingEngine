@@ -11,6 +11,7 @@
 #include <filesystem>
 #include <format>
 #include <memory>
+#include <mutex>
 #include <span>
 #include <source_location>
 
@@ -68,6 +69,7 @@ namespace avocet {
 
         std::size_t m_Width{}, m_Height{}, m_NumChannels;
         std::unique_ptr<data_type, file_deleter> m_Data;
+        inline static std::mutex st_Mutex{};
 
         [[nodiscard]]
         std::size_t size() const noexcept { return width() * height() * num_channels() * sizeof(data_type); }

@@ -22,6 +22,8 @@ namespace avocet::testing
 
     void image_test::run_tests()
     {
+        check_exception_thrown<std::runtime_error>("File missing", [](){ return image{"absent.png", vertically_flipped::no}; });
+
         image red{working_materials() / "red_3_channels.png", vertically_flipped::no},
               striped{working_materials() / "striped_3_channels.png", vertically_flipped::no};
 
