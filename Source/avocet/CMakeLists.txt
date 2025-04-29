@@ -24,6 +24,6 @@ target_include_directories(avocet PUBLIC ${Dependencies}/glad/OpenGL/include)
 add_subdirectory(${Dependencies}/sequoia/Source/sequoia sequoia)
 target_link_libraries(avocet PUBLIC sequoia)
 
-target_include_directories(avocet PUBLIC ${Dependencies}/stb)
+target_include_directories(avocet PRIVATE ${Dependencies}/stb)
 
 sequoia_finalize_library(avocet)

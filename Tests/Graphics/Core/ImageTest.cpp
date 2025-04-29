@@ -12,9 +12,6 @@
 #include <print>
 #include <ranges>
 
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
-
 namespace avocet::testing
 {
     [[nodiscard]]
