@@ -25,7 +25,7 @@ namespace avocet::testing
         auto almostRed{make_red(2, 3, 3)};
         almostRed.data.at(1) = 255;
         check(equivalence, "", red, almostRed);
-        check(equivalence, "", flippedStriped, make_striped());
+        check(equivalence, "", flippedStriped, make_striped(2, 3, 3));
         check(equality, "", red, flippedStriped);
     }
 }
