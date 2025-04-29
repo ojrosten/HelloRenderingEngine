@@ -9,6 +9,12 @@
 
 #include "ImageTest.hpp"
 
+#include <print>
+#include <ranges>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 namespace avocet::testing
 {
     [[nodiscard]]
@@ -19,14 +25,9 @@ namespace avocet::testing
 
     void image_test::run_tests()
     {
-        // For example:
+        image red{working_materials() / "red_3_channels.png", vertically_flipped::no},
+              striped{working_materials() / "striped_3_channels.png", vertically_flipped::no};
 
-        // avocet::image x{args}, y{different args};
-        // check(equivalence, "Useful Description", x, something equivalent);
-        // check(equivalence,"Useful Description", y, something equivalent);
-        // For orderable type, with x < y:
-        // check_semantics("Useful Description", x, y, std::weak_ordering::less);
-        // For equality comparable but not orderable:
-        // check_semantics("Useful Description", x, y);
+        check(equivalence, "", red,  make_red(2, 3, 3));
     }
 }

@@ -1,0 +1,77 @@
+Tests/Graphics/Core/ImageTestingDiagnostics.cpp, Line 27
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::image>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+
+    Element 1 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+
+Tests/Graphics/Core/ImageTestingDiagnostics.cpp, Line 28
+
+[avocet::image]
+operator== returned false
+
+  Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  operator== returned false
+
+    Element 6 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 7 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 9 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 10 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 12 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 14 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 15 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 17 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+

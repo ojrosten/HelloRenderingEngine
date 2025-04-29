@@ -19,10 +19,12 @@ namespace avocet::testing
 
     void image_false_negative_test::run_tests()
     {
-        // For example:
+        image red{working_materials() / "red_3_channels.png", vertically_flipped::no},
+              striped{working_materials() / "striped_3_channels.png", vertically_flipped::no};
 
-        // avocet::image x{args}, y{different args};
-        // check(equivalence, "Useful Description", x, something inequivalent - ordinarily this would fail);
-        // check(equality, "Useful Description", x, y);
+        auto almostRed{make_red(2, 3, 3)};
+        almostRed.data.at(1) = 255;
+        check(equivalence, "", red, almostRed);
+        check(equality, "", red, striped);
     }
 }
