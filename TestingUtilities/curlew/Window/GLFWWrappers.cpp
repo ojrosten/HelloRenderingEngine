@@ -7,9 +7,9 @@
 
 #include "curlew/Window/GLFWWrappers.hpp"
 
-#include "avocet/Debugging/OpenGL/DebugMode.hpp"
-#include "avocet/Graphics/OpenGL/GLFunction.hpp"
-#include "avocet/Utilities/OpenGL/Version.hpp"
+#include "avocet/OpenGL/Debugging/DebugMode.hpp"
+#include "avocet/OpenGL/Graphics/GLFunction.hpp"
+#include "avocet/OpenGL/Utilities/Version.hpp"
 
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"

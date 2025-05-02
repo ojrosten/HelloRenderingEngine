@@ -7,17 +7,17 @@
 
 /*! \file */
 
-#include "Debugging/OpenGL/IllegalGPUCallFreeTest.hpp"
-#include "Debugging/OpenGL/InfiniteLoopFreeTest.hpp"
-#include "Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.hpp"
-#include "Debugging/OpenGL/NullFunctionPointerFreeTest.hpp"
-#include "Graphics/OpenGL/BufferObjectTest.hpp"
-#include "Graphics/OpenGL/BufferObjectTestingDiagnostics.hpp"
-#include "Graphics/OpenGL/ResourceHandleTest.hpp"
-#include "Graphics/OpenGL/ResourceHandleTestingDiagnostics.hpp"
-#include "Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.hpp"
-#include "Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.hpp"
-#include "Graphics/OpenGL/ShaderProgramLabellingFreeTest.hpp"
+#include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
+#include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
+#include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
+#include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
+#include "OpenGL/Graphics/BufferObjectTest.hpp"
+#include "OpenGL/Graphics/BufferObjectTestingDiagnostics.hpp"
+#include "OpenGL/Graphics/ResourceHandleTest.hpp"
+#include "OpenGL/Graphics/ResourceHandleTestingDiagnostics.hpp"
+#include "OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.hpp"
+#include "OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.hpp"
+#include "OpenGL/Graphics/ShaderProgramLabellingFreeTest.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>

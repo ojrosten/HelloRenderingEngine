@@ -7,18 +7,18 @@
 
 /*! \file */
 
-#include "LabellingTestDiagnostics.hpp"
+#include "ShaderProgramLabellingFreeTest.hpp"
 #include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
 
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path labelling_false_negative_test::source_file() const
+    std::filesystem::path shader_program_labelling_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void labelling_false_negative_test::labelling_tests()
+    void shader_program_labelling_free_test::labelling_tests()
     {
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
@@ -28,8 +28,6 @@ namespace avocet::testing
             shaderDir / "Monochrome.fs"
         };
 
-        check(equivalence, "Label is too short", sp.extract_label(), "Identity.vs / Monochrome.fss");
-        check(equivalence, "Label is too long",  sp.extract_label(), "Identity.vs / Monochrome.f");
-        check(equivalence, "Label has a typo",   sp.extract_label(), "Identity.vs / Monocjrome.fs");
+        check(equivalence, "", sp.extract_label(), "Identity.vs / Monochrome.fs");
     }
 }

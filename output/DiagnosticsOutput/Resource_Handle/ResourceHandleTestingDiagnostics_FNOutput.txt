@@ -1,4 +1,4 @@
-Tests/Graphics/OpenGL/ResourceHandleTestingDiagnostics.cpp, Line 24
+Tests/OpenGL/Graphics/ResourceHandleTestingDiagnostics.cpp, Line 24
 Wrong wrapped value
 
 Comparison performed using:

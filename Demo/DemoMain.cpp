@@ -8,8 +8,8 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "curlew/Window/RenderingSetup.hpp"
 
-#include "avocet/Graphics/OpenGL/ShaderProgram.hpp"
-#include "avocet/Geometry/OpenGL/Polygon.hpp"
+#include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
+#include "avocet/OpenGL/Geometry/Polygon.hpp"
 
 #include "sequoia/FileSystem/FileSystem.hpp"
 

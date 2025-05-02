@@ -14,17 +14,17 @@ sequoia_init()
 add_executable(TestAll TestAllMain.cpp)
 
 target_sources(TestAll PRIVATE
-               ${TestDir}/Debugging/OpenGL/IllegalGPUCallFreeTest.cpp
-               ${TestDir}/Debugging/OpenGL/InfiniteLoopFreeTest.cpp
-               ${TestDir}/Debugging/OpenGL/MultipleIllegalGPUCallsFreeTest.cpp
-               ${TestDir}/Debugging/OpenGL/NullFunctionPointerFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/BufferObjectTest.cpp
-               ${TestDir}/Graphics/OpenGL/BufferObjectTestingDiagnostics.cpp
-               ${TestDir}/Graphics/OpenGL/ResourceHandleTest.cpp
-               ${TestDir}/Graphics/OpenGL/ResourceHandleTestingDiagnostics.cpp
-               ${TestDir}/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/ShaderProgramFileExistenceFreeTest.cpp
-               ${TestDir}/Graphics/OpenGL/ShaderProgramLabellingFreeTest.cpp
+               ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
+               ${TestDir}/OpenGL/Debugging/InfiniteLoopFreeTest.cpp
+               ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
+               ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
+               ${TestDir}/OpenGL/Graphics/BufferObjectTest.cpp
+               ${TestDir}/OpenGL/Graphics/BufferObjectTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/Graphics/ResourceHandleTest.cpp
+               ${TestDir}/OpenGL/Graphics/ResourceHandleTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp
+               ${TestDir}/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp
+               ${TestDir}/OpenGL/Graphics/ShaderProgramLabellingFreeTest.cpp
                ${TestDir}/TestFramework/OpenGL/LabellingTestDiagnostics.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})

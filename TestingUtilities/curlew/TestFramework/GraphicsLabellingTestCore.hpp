@@ -10,8 +10,8 @@
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
 
-#include "avocet/Debugging/OpenGL/Errors.hpp"
-#include "avocet/Graphics/OpenGL/ObjectIdentifiers.hpp"
+#include "avocet/OpenGL/Debugging/Errors.hpp"
+#include "avocet/OpenGL/Graphics/ObjectIdentifiers.hpp"
 
 namespace curlew {
     template<class T>
