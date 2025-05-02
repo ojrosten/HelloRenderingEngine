@@ -59,7 +59,7 @@ namespace sequoia::testing
         using image_data = avocet::testing::image_data;
 
         template<std::ranges::range R>
-        static auto as_unsigned(R&& r) {
+        static auto as_unsigned_int(R&& r) {
             return std::views::transform(r, [](auto c) -> unsigned int { return c; }) | std::ranges::to<std::vector>();
         }
 
@@ -69,7 +69,7 @@ namespace sequoia::testing
             check(equality, "Width",    logger, actual.width(),        prediction.width());
             check(equality, "Height",   logger, actual.height(),       prediction.height());
             check(equality, "Channels", logger, actual.num_channels(), prediction.num_channels());
-            check(equality, "Data",     logger, as_unsigned(actual.span()), as_unsigned(prediction.span()));
+            check(equality, "Data",     logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.span()));
         }
 
         template<test_mode Mode>
@@ -78,7 +78,7 @@ namespace sequoia::testing
             check(equality, "Width",    logger, actual.width(),             prediction.width);
             check(equality, "Height",   logger, actual.height(),            prediction.height);
             check(equality, "Channels", logger, actual.num_channels(),      prediction.num_channels);
-            check(equivalence, "Data",  logger, as_unsigned(actual.span()), as_unsigned(prediction.data));
+            check(equivalence, "Data",  logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.data));
         }
     };
 }
