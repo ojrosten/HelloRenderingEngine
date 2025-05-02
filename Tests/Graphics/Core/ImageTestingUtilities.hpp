@@ -58,6 +58,10 @@ namespace sequoia::testing
         using type = avocet::image;
         using image_data = avocet::testing::image_data;
 
+        // This is used to convert a vector of unsigned chars to a vector of unsigned ints.
+        // The transform is done to make the output of failed tests more comprehensible.
+        // A new vector is materialized to make the output for failed tests platform-independent.
+        // I will investigate making improvements to sequoia to obviate the need for the latter.
         template<std::ranges::range R>
         static auto as_unsigned_int(R&& r) {
             return std::views::transform(r, [](auto c) -> unsigned int { return c; }) | std::ranges::to<std::vector>();
