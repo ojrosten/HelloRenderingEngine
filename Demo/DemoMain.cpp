@@ -77,7 +77,7 @@ int main()
         constexpr std::array<GLfloat, 2> centre{-0.5, 0.5};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> disc{
-            [](std::ranges::random_access_range auto verts) {
+          [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     constexpr auto scale{2 * radius / 0.5};
                     (verts[i] *= scale) += centre[i % 2];
