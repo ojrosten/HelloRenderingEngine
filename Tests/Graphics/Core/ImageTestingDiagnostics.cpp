@@ -22,9 +22,7 @@ namespace avocet::testing
         image red{working_materials() / "red_3_channels.png", vertically_flipped::no},
               flippedStriped{working_materials() / "striped_3_channels.png", vertically_flipped::yes};
 
-        auto almostRed{make_red(2, 3, 3)};
-        almostRed.data.at(1) = 255;
-        check(equivalence, "", red, almostRed);
+        check(equivalence, "", red, make_striped(2, 3, 3));
         check(equivalence, "", flippedStriped, make_striped(2, 3, 3));
         check(equality, "", red, flippedStriped);
     }
