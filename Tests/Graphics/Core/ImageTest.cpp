@@ -32,6 +32,8 @@ namespace avocet::testing
                         image{working_materials() / "red_3_channels.png", vertically_flipped::no},
                         image{working_materials() / "striped_3_channels.png", vertically_flipped::no},
                         make_red(2, 3, 3),
-                        make_striped(2, 3, 3));
+                        make_striped(2, 3, 3),
+                        image_data{},
+                        image_data{});
     }
 }
