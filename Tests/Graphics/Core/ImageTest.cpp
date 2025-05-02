@@ -25,9 +25,6 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>("File missing", [](){ return image{"absent.png", vertically_flipped::no}; });
         check_exception_thrown<std::runtime_error>("File not an image", [this](){ return image{working_materials() / "not_an_image.txt", vertically_flipped::no}; });
 
-        image red{working_materials() / "red_3_channels.png", vertically_flipped::no},
-              striped{working_materials() / "striped_3_channels.png", vertically_flipped::no};
-
         check_semantics("",
                         image{working_materials() / "red_3_channels.png", vertically_flipped::no},
                         image{working_materials() / "striped_3_channels.png", vertically_flipped::no},
