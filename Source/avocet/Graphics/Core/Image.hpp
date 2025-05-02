@@ -57,27 +57,36 @@ namespace avocet {
             void operator()(data_type* ptr) const;
         };
 
-        [[nodiscard]]
-        static std::size_t to_unsigned(int val, std::string_view name) {
-            if(val < 0) throw std::runtime_error{std::format("image_view: {} = {}, but it should be positive", name, val)};
+        struct parameter {
+            std::size_t value{};
 
-            return static_cast<std::size_t>(val);
-        }
+            explicit parameter(std::size_t val) : value{val} {}
+
+            parameter(parameter&& other) : value{std::exchange(other.value, 0)} {}
+
+            parameter& operator=(parameter&& other) {
+                value = std::exchange(other.value, 0);
+                return *this;
+            }
+
+            [[nodiscard]]
+            friend auto operator<=>(const parameter&, const parameter&) noexcept = default;
+        };
 
         [[nodiscard]]
         static image make(const std::filesystem::path& texture, vertically_flipped flip);
 
-        std::size_t m_Width{}, m_Height{}, m_NumChannels;
+        parameter m_Width, m_Height, m_NumChannels;
         std::unique_ptr<data_type, file_deleter> m_Data;
         inline static std::mutex st_Mutex{};
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return width() * height() * num_channels() * sizeof(data_type); }
+        std::size_t size() const noexcept { return width() * height() * num_channels(); }
 
-        image(int width, int height, int numChannels, data_type* ptr)
-            : m_Width{to_unsigned(width, "width")}
-            , m_Height{to_unsigned(height, "height")}
-            , m_NumChannels{to_unsigned(numChannels, "channels")}
+        image(std::size_t width, std::size_t height, std::size_t numChannels, data_type* ptr)
+            : m_Width{width}
+            , m_Height{height}
+            , m_NumChannels{numChannels}
             , m_Data{ptr}
         {}
 
@@ -87,12 +96,12 @@ namespace avocet {
         {}
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Width; }
+        std::size_t width() const noexcept { return m_Width.value; }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Height; }
+        std::size_t height() const noexcept { return m_Height.value; }
 
-        std::size_t num_channels() const noexcept { return m_NumChannels; }
+        std::size_t num_channels() const noexcept { return m_NumChannels.value; }
 
         [[nodiscard]]
         std::span<const data_type> span() const noexcept { return {m_Data.get(), size()}; }
@@ -101,14 +110,6 @@ namespace avocet {
         std::span<data_type> span() noexcept { return {m_Data.get(), size()}; }
 
         [[nodiscard]]
-        friend bool operator==(const image& lhs, const image& rhs) noexcept {
-            return (lhs.width() == rhs.width())
-                && (lhs.height() == rhs.height())
-                && (lhs.num_channels() == rhs.num_channels())
-                && std::ranges::equal(lhs.span(), rhs.span());
-        }
+        friend bool operator==(const image&, const image&) noexcept = default;
     };
-
-    [[nodiscard]]
-    inline image load_texture(const std::filesystem::path& texture, vertically_flipped flip) { return {texture, flip}; }
 }

@@ -14,6 +14,15 @@
 namespace avocet {
     namespace fs = std::filesystem;
 
+    namespace {
+        [[nodiscard]]
+        std::size_t to_unsigned(int val, std::string_view name) {
+            if(val < 0) throw std::runtime_error{std::format("image_view: {} = {}, but it should be positive", name, val)};
+
+            return static_cast<std::size_t>(val);
+        }
+    }
+
     [[nodiscard]]
     image image::make(const fs::path& texture, vertically_flipped flip) {
         if(!fs::exists(texture))
@@ -25,7 +34,10 @@ namespace avocet {
         int width{}, height{}, numChannels{};
 
         if(auto pData{stbi_load(texture.generic_string().c_str(), &width, &height, &numChannels, 0)}; pData != nullptr)
-            return {width, height, numChannels, pData};
+            return {to_unsigned(width, "width"),
+                    to_unsigned(height, "height"),
+                    to_unsigned(numChannels, "channels"),
+                    pData};
 
         throw std::runtime_error{std::format("Failed to load image {}", texture.generic_string())};
     }
