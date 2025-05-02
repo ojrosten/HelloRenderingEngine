@@ -15,7 +15,7 @@ namespace avocet {
     namespace fs = std::filesystem;
 
     [[nodiscard]]
-    image image::make(const fs::path& texture, vertically_flipped flip) {
+    image image::make(const fs::path& texture, flip_vertically flip) {
         stbi_set_flip_vertically_on_load(static_cast<bool>(flip));
         int width{}, height{}, numChannels{};
 

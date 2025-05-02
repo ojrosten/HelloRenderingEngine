@@ -24,7 +24,7 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    image image::make(const fs::path& texture, vertically_flipped flip) {
+    image image::make(const fs::path& texture, flip_vertically flip) {
         if(!fs::exists(texture))
             throw std::runtime_error{std::format("image {} not found", texture.generic_string())};
 

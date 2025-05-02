@@ -17,17 +17,17 @@
 
 namespace avocet {
 
-    enum class vertically_flipped : bool { no, yes };
+    enum class flip_vertically : bool { no, yes };
 
     enum class colour_space_flavour : bool { linear, gamma };
 
     class image_configuration
     {
         std::filesystem::path m_File{};
-        vertically_flipped m_Flip{};
+        flip_vertically m_Flip{};
         colour_space_flavour m_ColourSpace{colour_space_flavour::gamma};
     public:
-        image_configuration(std::filesystem::path textureFile, vertically_flipped flip, colour_space_flavour colourSpace, std::source_location loc=std::source_location::current())
+        image_configuration(std::filesystem::path textureFile, flip_vertically flip, colour_space_flavour colourSpace, std::source_location loc=std::source_location::current())
             : m_File{std::move(textureFile)}
             , m_Flip{flip}
             , m_ColourSpace{colourSpace}
@@ -40,7 +40,7 @@ namespace avocet {
         const std::filesystem::path& file() const noexcept { return m_File; }
 
         [[nodiscard]]
-        vertically_flipped flipped() const noexcept { return  m_Flip; }
+        flip_vertically flipped() const noexcept { return  m_Flip; }
 
         [[nodiscard]]
         colour_space_flavour colour_space() const noexcept { return m_ColourSpace; }
@@ -74,7 +74,7 @@ namespace avocet {
         };
 
         [[nodiscard]]
-        static image make(const std::filesystem::path& texture, vertically_flipped flip);
+        static image make(const std::filesystem::path& texture, flip_vertically flip);
 
         parameter m_Width, m_Height, m_NumChannels;
         std::unique_ptr<data_type, file_deleter> m_Data;
@@ -91,7 +91,7 @@ namespace avocet {
         {}
 
     public:
-        image(const std::filesystem::path& texture, vertically_flipped flip)
+        image(const std::filesystem::path& texture, flip_vertically flip)
             : image{make(texture, flip)}
         {}
 

@@ -135,7 +135,7 @@ int main()
 
                 return verts;
             },
-            {{avocet::image_configuration{get_image_dir() / "PrincessTwilightSparkle.png", avocet::vertically_flipped::yes, avocet::colour_space_flavour::gamma}}},
+            {{avocet::image_configuration{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::colour_space_flavour::gamma}}},
             make_label("Hexagon")
         };
 

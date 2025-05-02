@@ -19,8 +19,8 @@ namespace avocet::testing
 
     void image_false_negative_test::run_tests()
     {
-        image red{working_materials() / "red_3_channels.png", vertically_flipped::no},
-              flippedStriped{working_materials() / "striped_3_channels.png", vertically_flipped::yes};
+        image red{working_materials() / "red_3_channels.png", flip_vertically::no},
+              flippedStriped{working_materials() / "striped_3_channels.png", flip_vertically::yes};
 
         check(equivalence, "", red, make_striped(2, 3, 3));
         check(equivalence, "", flippedStriped, make_striped(2, 3, 3));
