@@ -7,6 +7,7 @@ include(${BuildSystem}/Utilities.cmake)
 sequoia_init()
 
 set(SourceList
+    Core/AssetManagement/Image.cpp
     OpenGL/Debugging/Errors.cpp
     OpenGL/Graphics/ShaderProgram.cpp
     OpenGL/Utilities/Version.cpp)
@@ -21,5 +22,7 @@ target_include_directories(avocet PUBLIC ${Dependencies}/glad/OpenGL/include)
 
 add_subdirectory(${Dependencies}/sequoia/Source/sequoia sequoia)
 target_link_libraries(avocet PUBLIC sequoia)
+
+target_include_directories(avocet PRIVATE ${Dependencies}/stb)
 
 sequoia_finalize_library(avocet)

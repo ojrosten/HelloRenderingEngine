@@ -14,6 +14,9 @@ sequoia_init()
 add_executable(TestAll TestAllMain.cpp)
 
 target_sources(TestAll PRIVATE
+               ${TestDir}/Core/AssetManagement/ImageTest.cpp
+               ${TestDir}/Core/AssetManagement/ImageTestingDiagnostics.cpp
+               ${TestDir}/Core/AssetManagement/ImageTestingUtilities.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/InfiniteLoopFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp

@@ -7,6 +7,8 @@
 
 /*! \file */
 
+#include "Core/AssetManagement/ImageTest.hpp"
+#include "Core/AssetManagement/ImageTestingDiagnostics.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
@@ -65,6 +67,12 @@ int main(int argc, char** argv)
             buffer_object_false_negative_test{"False Negative Test"},
             buffer_object_test{"Semantics Test"},
             buffer_object_labelling_free_test{"Labelling Test"}
+        );
+
+        runner.add_test_suite(
+            "Image",
+            image_false_negative_test{"False Negative Test"},
+            image_test{"Unit Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
