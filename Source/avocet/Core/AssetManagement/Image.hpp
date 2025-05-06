@@ -8,10 +8,10 @@
 #pragma once
 
 #include <filesystem>
+#include <format>
 #include <memory>
 #include <mutex>
 #include <span>
-#include <source_location>
 
 namespace avocet {
     class image {
