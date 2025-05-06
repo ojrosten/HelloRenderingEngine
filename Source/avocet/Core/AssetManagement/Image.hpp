@@ -14,9 +14,6 @@
 #include <source_location>
 
 namespace avocet {
-
-    enum class flip_vertically : bool { no, yes };
-
     class image {
     public:
     };
