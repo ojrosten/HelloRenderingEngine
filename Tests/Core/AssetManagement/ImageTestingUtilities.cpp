@@ -20,7 +20,7 @@ namespace avocet::testing {
         image_data image{width, height, channels};
         image.data.resize(width * height * channels);
         for(auto i : std::views::iota(0u, image.data.size())) {
-            if((i % 3) == 0) image.data[i] = 255;
+            if((i % channels) == 0) image.data[i] = 255;
         }
 
         return image;
