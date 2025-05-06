@@ -27,7 +27,7 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    image_data make_striped(std::size_t w, std::size_t h, std::size_t channels) {
+    image_data make_rgb_striped(std::size_t w, std::size_t h, std::size_t channels) {
         return {
             .width{w},
             .height{h},
