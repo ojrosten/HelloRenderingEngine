@@ -19,15 +19,5 @@ namespace avocet::testing
 
     void image_test::run_tests()
     {
-        // For example:
-
-        // auto x = []() { return avocet::image{args}; };
-        // auto y = []() { return avocet::image{different args}; };
-        // check(equivalence, "Useful Description", x(), something equivalent);
-        // check(equivalence, "Useful Description", y(), something equivalent);
-        // For orderable type, with x < y:
-        // check_semantics("Useful Description", x, y, std::weak_ordering::less);
-        // For equality comparable but not orderable:
-        // check_semantics("Useful Description", x, y);
     }
 }

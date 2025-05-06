@@ -19,11 +19,5 @@ namespace avocet::testing
 
     void image_false_negative_test::run_tests()
     {
-        // For example:
-
-        // auto x = []() { return avocet::image{args}; };
-        // auto y = []() { return avocet::image{different args}; };
-        // check(equivalence, "Useful Description", x(), something inequivalent - ordinarily this would fail);
-        // check(equality, "Useful Description", x(), y());
     }
 }
