@@ -14,14 +14,22 @@
 namespace avocet::testing {
 
     [[nodiscard]]
-    image_data make_red(std::size_t width, std::size_t height, std::size_t channels) {
-        image_data image{width, height, channels};
-        image.data.resize(width * height * channels);
-        for(auto i : std::views::iota(0u, image.data.size())) {
-            if((i % channels) == 0) image.data[i] = 255;
-        }
-
-        return image;
+    image_data make_red(std::size_t w, std::size_t h, std::size_t channels) {
+        return {
+            .width{w},
+            .height{h},
+            .num_channels{channels},
+            .data{
+                  std::views::iota(0u, w * h * channels)
+                | std::views::transform(
+                    [=](auto i) -> unsigned char {
+                        const auto channel{i % channels};
+                        return static_cast<unsigned char>(channel ? 0 : 255);
+                    }
+                  )
+                | std::ranges::to<std::vector>()
+            }
+        };
     }
 
     [[nodiscard]]
