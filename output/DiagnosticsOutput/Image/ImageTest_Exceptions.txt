@@ -1,7 +1,5 @@
 Tests/Core/AssetManagement/ImageTest.cpp, Line 34
-Tests/Core/AssetManagement/ImageTest.cpp, Line 34
 Absent image
-
 
 Expected Exception Type:
 [std::runtime_error]
@@ -10,9 +8,7 @@ image: texture TestsTemporaryData/Core/AssetManagement/ImageTest/Absent.png not 
 =======================================
 
 Tests/Core/AssetManagement/ImageTest.cpp, Line 42
-Tests/Core/AssetManagement/ImageTest.cpp, Line 42
 Invalid image
-
 
 Expected Exception Type:
 [std::runtime_error]

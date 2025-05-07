@@ -12,6 +12,7 @@
 #include <memory>
 #include <mutex>
 #include <span>
+#include <utility>
 
 namespace avocet {
     enum class flip_vertically : bool { no, yes };

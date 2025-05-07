@@ -31,7 +31,7 @@ namespace avocet::testing
         );
 
         check_exception_thrown<std::runtime_error>(
-            report("Absent image"),
+            reporter{"Absent image"},
             [this](){
                 return image{working_materials() / "Absent.png", flip_vertically::no}; 
             },
@@ -39,7 +39,7 @@ namespace avocet::testing
         );
 
         check_exception_thrown<std::runtime_error>(
-            report("Invalid image"),
+            reporter{"Invalid image"},
             [this](){
                 return image{working_materials() / "not_an_image.txt", flip_vertically::no};
             },
