@@ -1,0 +1,18 @@
+Tests/Core/AssetManagement/ImageTest.cpp, Line 33
+Absent image
+
+Expected Exception Type:
+[std::runtime_error]
+image: texture C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Core/AssetManagement/ImageTest/Absent.png not found
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTest.cpp, Line 34
+Invalid image
+
+Expected Exception Type:
+[std::runtime_error]
+image: texture C:/UnitySrc/HelloRenderingEngine/output/TestsTemporaryData/Core/AssetManagement/ImageTest/not_an_image.txt did not load
+
+=======================================
+

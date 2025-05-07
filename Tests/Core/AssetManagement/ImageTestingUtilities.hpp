@@ -48,7 +48,7 @@ namespace sequoia::testing
             return std::views::transform(data, [](auto c) -> unsigned int { return c; }) | std::ranges::to<std::vector>();
         }
 
-        /*template<test_mode Mode>
+        template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const type& actual, const type& prediction)
         {
             check(equality, "Width",    logger, actual.width(),                 prediction.width());
@@ -64,6 +64,6 @@ namespace sequoia::testing
             check(equality,    "Height",   logger, actual.height(),                prediction.height);
             check(equality,    "Channels", logger, actual.num_channels(),          prediction.num_channels);
             check(equivalence, "Data",     logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.data));
-        }*/
+        }
     };
 }

@@ -12,4 +12,23 @@
 
 namespace avocet {
     namespace fs = std::filesystem;
+
+    void image::file_unloader::operator()(value_type* ptr) const {
+        stbi_image_free(ptr);
+    }
+
+    [[nodiscard]]
+    image image::make(const std::filesystem::path& texturePath, flip_vertically flip) {
+        if(!fs::exists(texturePath))
+            throw std::runtime_error{std::format("image: texture {} not found", texturePath.generic_string())};
+
+        stbi_set_flip_vertically_on_load_thread(static_cast<bool>(flip));
+
+        int width{}, height{}, channels{};
+        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, 0)};
+        if(!pData)
+            throw std::runtime_error{std::format("image: texture {} did not load", texturePath.generic_string())};
+
+        return {pData, width, height, channels};
+    }
 }

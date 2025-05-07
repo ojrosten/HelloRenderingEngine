@@ -1,0 +1,218 @@
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 24
+Wrong image
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::image>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Width
+  [unsigned long long]
+  operator== returned false
+  Obtained : 2
+  Predicted: 3
+
+  Height
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 2
+
+  Channels
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 4
+
+  Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 18
+    Predicted: 24
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 25
+Wrong colours
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::image>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+
+    Element 6 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 7 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 9 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 10 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 12 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 14 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 15 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 17 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 27
+Wrong image
+
+[avocet::image]
+operator== returned false
+
+  Width
+  [unsigned long long]
+  operator== returned false
+  Obtained : 2
+  Predicted: 3
+
+  Height
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 2
+
+  Channels
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 1
+
+  Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  operator== returned false
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 18
+    Predicted: 6
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 28
+Wrong colours
+
+[avocet::image]
+operator== returned false
+
+  Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  operator== returned false
+
+    Element 0 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 2 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 3 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 5 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 6 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 8 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 9 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 11 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 12 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 14 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 15 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 17 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+
