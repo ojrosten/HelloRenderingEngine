@@ -78,7 +78,7 @@ int main(int argc, char** argv)
         );
 
         runner.add_test_suite(
-            "Texture Object",
+            "Textures",
             texture_2d_object_false_negative_test{"False Negative Test"},
             texture_2d_object_test{"Semantics Test"},
             texture_2d_object_labelling_free_test{"Labelling Test"}

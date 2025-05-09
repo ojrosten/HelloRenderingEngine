@@ -17,21 +17,22 @@ namespace sequoia::testing
     namespace agl = avocet::opengl;
 
     template<>
-    struct value_tester<agl::texture_2d_object> {
-        using texture_value_type = agl::texture_2d_object::value_type;
+    struct value_tester<agl::texture_2d> {
+        using texture_value_type = agl::texture_2d::value_type;
 
         template<test_mode Mode>
         static void test(equivalence_check_t,
             test_logger<Mode>& logger,
-            const agl::texture_2d_object& texture,
-            const std::optional<std::span<const texture_value_type>>& prediction)
+            const agl::texture_2d& texture,
+            const std::optional<avocet::image_view>& prediction)
         {
             if(prediction) {
+                const auto imageData{extract_image(texture, agl::texture_format::rgba)};
                 check(equality,
                      "Texture Data",
                      logger,
-                     std::span<const texture_value_type>{extract_image(texture, agl::texture_format::rgba)},
-                     prediction.value());
+                     std::span<const texture_value_type>{imageData.data},
+                     prediction.value().span());
             }
             else {
                 check("Null Buffer", logger, texture.is_null());

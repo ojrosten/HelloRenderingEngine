@@ -1,0 +1,14 @@
+Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 33
+Texture which should be null
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<std::span<unsigned char const, -1> >]
+
+  Null Buffer
+  [bool]
+  check failed
+
+=======================================
+

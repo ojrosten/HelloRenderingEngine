@@ -75,23 +75,32 @@ namespace avocet::opengl {
         static void configure(const resource_handle& h, const configuration& config);
     };
 
-    class texture_2d_object : public generic_resource<num_resources{1}, texture_lifecycle_events> {
+    class texture_2d : public generic_resource<num_resources{1}, texture_lifecycle_events> {
     public:
         using base_type          = generic_resource<num_resources{1}, texture_lifecycle_events>;
         using configuration_type = base_type::configuration_type;
         using value_type         = texture_2d_configuration::value_type;
 
-        texture_2d_object(const configuration_type& textureConfig)
+        struct image_data {
+            std::vector<value_type> data;
+            std::size_t width{};
+            std::size_t height{};
+
+        };
+
+        texture_2d(const configuration_type& textureConfig)
             : base_type{{textureConfig}}
         {}
 
         [[nodiscard]]
-        friend std::vector<value_type> extract_image(const texture_2d_object& texObj, texture_format format) {
+        friend image_data extract_image(const texture_2d& texObj, texture_format format) {
             base_type::do_bind(texObj);
-            const auto size{extract_texture_2d_param(GL_TEXTURE_WIDTH) * extract_texture_2d_param(GL_TEXTURE_HEIGHT) * extract_bytes_per_texel()};
+            const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
+            const auto size{width * height * extract_num_channels()};
+            // TO DO: GL_PACK_ALIGNMENT
             std::vector<value_type> texture(size);
             gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
-            return texture;
+            return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height)};
         }
 
         /*friend void bind_for_rendering(const texture_object& texObj) {
@@ -115,7 +124,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        static GLint extract_bytes_per_texel() {
+        static GLint extract_num_channels() {
             const texture_internal_format internalFormat{extract_texture_2d_param(GL_TEXTURE_INTERNAL_FORMAT)};
             switch(internalFormat)
             {

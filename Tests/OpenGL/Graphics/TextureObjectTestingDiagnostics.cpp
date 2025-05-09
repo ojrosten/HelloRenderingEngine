@@ -26,6 +26,11 @@ namespace avocet::testing
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        using value_type = agl::texture_2d::value_type;
+        using opt_data   = std::optional<avocet::image_view>;
+        std::vector<value_type> texture{255, 255, 255, 1};
+        check(equivalence, "Texture which should be null", agl::texture_2d{agl::texture_2d_configuration{.data{texture, 1, 1}}}, opt_data{});
     }
 
     /*template<class Buffer>
