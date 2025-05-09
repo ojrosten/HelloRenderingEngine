@@ -98,13 +98,13 @@ namespace avocet {
     public:
         using value_type = unsigned char;
 
-        image_view(std::span<value_type> data, std::size_t width, std::size_t height)
+        image_view(std::span<value_type> data, std::size_t width, std::size_t height, std::size_t numChannels)
             : m_Data{data}
             , m_Width{width}
             , m_Height{height}
         {
-            if(m_Data.size() % (m_Width * m_Height))
-                throw std::runtime_error{std::format("image_view: image size {} not a multiple of the width and height, {} * {}", m_Data.size(), m_Width, m_Height)};
+            if(m_Width * m_Height * numChannels != m_Data.size())
+                throw std::runtime_error{std::format("image_view: image size {} not a multiple of the width, height and channels, {} * {} * {}", m_Data.size(), m_Width, m_Height, numChannels)};
         }
 
         [[nodiscard]]

@@ -30,7 +30,8 @@ namespace avocet::testing
         using value_type = agl::texture_2d::value_type;
         using opt_data   = std::optional<avocet::image_view>;
         std::vector<value_type> texture{255, 255, 255, 1};
-        check(equivalence, "Texture which should be null", agl::texture_2d{agl::texture_2d_configuration{.data{texture, 1, 1}}}, opt_data{});
+        check(equivalence, "Texture which should be null", agl::texture_2d{agl::texture_2d_configuration{.data{texture, 1, 1, 4}}}, opt_data{});
+        check(equivalence, "Too much data", agl::texture_2d{agl::texture_2d_configuration{.data{texture, 1, 1, 4}}}, opt_data{avocet::image_view{{}, 0, 0, 0}});
     }
 
     /*template<class Buffer>

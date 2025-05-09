@@ -12,3 +12,21 @@ Checking for equivalence with:
 
 =======================================
 
+Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 34
+Too much data
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::image_view>]
+
+  Texture Data
+  [std::span<unsigned char const, -1>]
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 0
+
+=======================================
+
