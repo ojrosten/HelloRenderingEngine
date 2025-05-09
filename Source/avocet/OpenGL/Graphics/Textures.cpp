@@ -37,23 +37,27 @@ namespace avocet::opengl {
 
             throw std::runtime_error{std::format("{} channels requested, but it must be in the range [1,4]", numChannels)};
         }
+
+        void load_to_gpu(const texture_2d_configuration& config) {
+            const auto format{to_format(config.colour_space, config.data.num_channels())};
+
+            gl_function{glTexImage2D}(
+                GL_TEXTURE_2D,
+                0,
+                static_cast<GLint>(format.internal_format),
+                static_cast<int>(config.data.width()),
+                static_cast<int>(config.data.height()),
+                0,
+                to_gl_enum(format.format),
+                to_gl_enum(to_gl_type_specifier_v<texture_2d_configuration::value_type>),
+                config.data.span().data()
+            );
+            if(config.parameter_setter) config.parameter_setter();
+        }
     }
 
-    void load_texture_2d_to_gpu(const texture_2d_configuration& config) {
-        image im{config.image_config.file(), config.image_config.flipped()};
-        const auto format{to_format(config.image_config.colour_space(), im.num_channels())};
-
-        gl_function{glTexImage2D}(
-            GL_TEXTURE_2D,
-            0,
-            static_cast<GLint>(format.internal_format),
-            static_cast<int>(im.width()),
-            static_cast<int>(im.height()),
-            0,
-            to_gl_enum(format.format),
-            to_gl_enum(to_gl_type_specifier_v<texture_2d_configuration::value_type>),
-            im.span().data()
-        );
-        if(config.parameter_setter) config.parameter_setter();
+    void texture_lifecycle_events::configure(const resource_handle& h, const configuration& config) {
+        add_label(identifier, h, config.label);
+        load_to_gpu(config);
     }
 }

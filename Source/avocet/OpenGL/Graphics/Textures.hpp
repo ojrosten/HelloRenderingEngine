@@ -13,8 +13,6 @@
 #include "avocet/OpenGL/Graphics/Resources.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
-#include "sequoia/FileSystem/FileSystem.hpp"
-
 #include <array>
 #include <filesystem>
 #include <functional>
@@ -41,32 +39,6 @@ namespace avocet::opengl {
         rgba = GL_RGBA
     };
 
-    class image_configuration
-    {
-        std::filesystem::path m_File{};
-        flip_vertically m_Flip{};
-        colour_space_flavour m_ColourSpace{colour_space_flavour::srgb};
-    public:
-        image_configuration(std::filesystem::path textureFile, flip_vertically flip, colour_space_flavour colourSpace)
-            : m_File{std::move(textureFile)}
-            , m_Flip{flip}
-            , m_ColourSpace{colourSpace}
-        {}
-
-        [[nodiscard]]
-        const std::filesystem::path& file() const noexcept { return m_File; }
-
-        [[nodiscard]]
-        flip_vertically flipped() const noexcept { return  m_Flip; }
-
-        [[nodiscard]]
-        colour_space_flavour colour_space() const noexcept { return m_ColourSpace; }
-
-
-        [[nodiscard]]
-        friend bool operator==(const image_configuration&, const image_configuration&) = default;
-    };
-
     struct default_texture_2d_parameter_setter {
         void operator()() {
             gl_function{glGenerateMipmap}(GL_TEXTURE_2D);
@@ -81,12 +53,11 @@ namespace avocet::opengl {
         constexpr static auto flavour{GL_TEXTURE_2D};
         using value_type = GLubyte;
 
-        image_configuration image_config;
-        std::function<void()> parameter_setter{default_texture_2d_parameter_setter{}};
-        optional_label label{sequoia::back(image_config.file()).generic_string()};
+        image_view data;
+        colour_space_flavour colour_space;
+        std::function<void()> parameter_setter{};
+        optional_label label{};
     };
-
-    void load_texture_2d_to_gpu(const texture_2d_configuration& config);
 
     struct texture_lifecycle_events {
         using configuration = texture_2d_configuration;
@@ -101,10 +72,7 @@ namespace avocet::opengl {
 
         static void bind(const resource_handle& h) { gl_function{glBindTexture}(GL_TEXTURE_2D, h.index()); }
 
-        static void configure(const resource_handle& h, const configuration& config) {
-            add_label(identifier, h, config.label);
-            load_texture_2d_to_gpu(config);
-        }
+        static void configure(const resource_handle& h, const configuration& config);
     };
 
     class texture_2d_object : public generic_resource<num_resources{1}, texture_lifecycle_events> {

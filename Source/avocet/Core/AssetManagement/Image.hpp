@@ -93,4 +93,39 @@ namespace avocet {
         [[nodiscard]]
         static image make(const std::filesystem::path& texturePath, flip_vertically flip);
     };
+
+    class image_view {
+    public:
+        using value_type = unsigned char;
+
+        image_view(std::span<value_type> data, std::size_t width, std::size_t height)
+            : m_Data{data}
+            , m_Width{width}
+            , m_Height{height}
+        {
+            if(m_Data.size() % (m_Width * m_Height))
+                throw std::runtime_error{std::format("image_view: image size {} not a multiple of the width and height, {} * {}", m_Data.size(), m_Width, m_Height)};
+        }
+
+        [[nodiscard]]
+        std::size_t width() const noexcept { return m_Width; }
+
+        [[nodiscard]]
+        std::size_t height() const noexcept { return m_Height; }
+
+        [[nodiscard]]
+        std::size_t num_channels() const noexcept { return m_Data.size() / (width() * height()); }
+
+        [[nodiscard]]
+        std::span<value_type> span() noexcept { return m_Data; }
+
+        [[nodiscard]]
+        std::span<const value_type> span() const noexcept { return m_Data; }
+
+        [[nodiscard]]
+        friend bool operator==(const image&, const image&) noexcept = default;
+    private:
+        std::span<value_type> m_Data;
+        std::size_t m_Width{}, m_Height{};
+    };
 }
