@@ -94,10 +94,10 @@ namespace avocet::opengl {
     class texture_object : public generic_resource<NumResources, texture_lifecycle_events> {
     public:
         using base_type         = generic_resource<NumResources, texture_lifecycle_events>;
-        using configurator_type = base_type::configurator_type;
+        using configuration_type = base_type::configuration_type;
         constexpr static auto N{base_type::N};
 
-        texture_object(const std::array<configurator_type, N>& textureConfig)
+        texture_object(const std::array<configuration_type, N>& textureConfig)
             : base_type{textureConfig}
         {}
 

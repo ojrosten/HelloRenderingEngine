@@ -65,7 +65,7 @@ namespace avocet::opengl {
     template<num_resources NumResources, class LifeEvents>
         requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
     struct resource_lifecycle {
-        using configurator_type = LifeEvents::configuration;
+        using configuration_type = LifeEvents::configuration;
 
         constexpr static std::size_t N{NumResources.value};
 
@@ -82,7 +82,7 @@ namespace avocet::opengl {
 
         static void bind(const resource_handle& h) { LifeEvents::bind(h); }
 
-        static void configure(const resource_handle& h, const configurator_type& config) {
+        static void configure(const resource_handle& h, const configuration_type& config) {
             LifeEvents::configure(h, config);
         }
     };
@@ -117,10 +117,10 @@ namespace avocet::opengl {
         using lifecycle_type = resource_type::lifecycle_type;
         resource_type m_Resource;
     public:
-        using configurator_type = lifecycle_type::configurator_type;
+        using configuration_type = lifecycle_type::configuration_type;
         constexpr static std::size_t N{NumResources.value};
 
-        explicit generic_resource(const std::array<configurator_type, N>& configs) {
+        explicit generic_resource(const std::array<configuration_type, N>& configs) {
             for(const auto& [handle, config] : std::views::zip(get_handles(), configs)) {
                 if(handle == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
