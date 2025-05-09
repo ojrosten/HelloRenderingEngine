@@ -20,6 +20,8 @@
 #include "OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.hpp"
 #include "OpenGL/Graphics/ShaderProgramLabellingFreeTest.hpp"
+#include "OpenGL/Graphics/TextureObjectTest.hpp"
+#include "OpenGL/Graphics/TextureObjectTestingDiagnostics.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -73,6 +75,13 @@ int main(int argc, char** argv)
             "Image",
             image_false_negative_test{"False Negative Test"},
             image_test{"Unit Test"}
+        );
+
+        runner.add_test_suite(
+            "Texture Object",
+            texture_2d_object_false_negative_test{"False Negative Test"},
+            texture_2d_object_test{"Semantics Test"},
+            texture_2d_object_labelling_free_test{"Labelling Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
