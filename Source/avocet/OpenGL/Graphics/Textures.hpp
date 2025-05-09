@@ -25,6 +25,22 @@
 namespace avocet::opengl {
     enum class colour_space_flavour : int { linear, srgb };
 
+    enum class texture_internal_format : GLint {
+        red   = GL_RED,
+        rg    = GL_RG,
+        rgb   = GL_RGB,
+        srgb  = GL_SRGB,
+        rgba  = GL_RGBA,
+        srgba = GL_SRGB_ALPHA
+    };
+
+    enum class texture_format : GLenum {
+        red  = GL_RED,
+        rg   = GL_RG,
+        rgb  = GL_RGB,
+        rgba = GL_RGBA
+    };
+
     class image_configuration
     {
         std::filesystem::path m_File{};
@@ -54,8 +70,8 @@ namespace avocet::opengl {
     struct default_texture_2d_parameter_setter {
         void operator()() {
             gl_function{glGenerateMipmap}(GL_TEXTURE_2D);
-            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_REPEAT);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_REPEAT);
             gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         };
@@ -63,6 +79,7 @@ namespace avocet::opengl {
 
     struct texture_2d_configuration {
         constexpr static auto flavour{GL_TEXTURE_2D};
+        using value_type = GLubyte;
 
         image_configuration image_config;
         std::function<void()> parameter_setter{default_texture_2d_parameter_setter{}};
@@ -90,28 +107,66 @@ namespace avocet::opengl {
         }
     };
 
-    template<num_resources NumResources>
-    class texture_object : public generic_resource<NumResources, texture_lifecycle_events> {
+    class texture_2d_object : public generic_resource<num_resources{1}, texture_lifecycle_events> {
     public:
-        using base_type         = generic_resource<NumResources, texture_lifecycle_events>;
+        using base_type          = generic_resource<num_resources{1}, texture_lifecycle_events>;
         using configuration_type = base_type::configuration_type;
-        constexpr static auto N{base_type::N};
+        using value_type         = texture_2d_configuration::value_type;
 
-        texture_object(const std::array<configuration_type, N>& textureConfig)
-            : base_type{textureConfig}
+        texture_2d_object(const configuration_type& textureConfig)
+            : base_type{{textureConfig}}
         {}
 
-        friend void bind_for_rendering(const texture_object& texObj) {
+        [[nodiscard]]
+        friend std::vector<value_type> extract_image(const texture_2d_object& texObj, texture_format format) {
+            base_type::do_bind(texObj);
+            const auto size{extract_texture_2d_param(GL_TEXTURE_WIDTH) * extract_texture_2d_param(GL_TEXTURE_HEIGHT) * extract_bytes_per_texel()};
+            std::vector<value_type> texture(size);
+            gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
+            return texture;
+        }
+
+        /*friend void bind_for_rendering(const texture_object& texObj) {
             [&] <std::size_t... Is>(std::index_sequence<Is...>){
                 (texture_object::activate_and_bind<Is>(texObj), ...);
             }(std::make_index_sequence<N>{});
-        }
+        }*/
 
     private:
-        template<std::size_t I>
+        /*template<std::size_t I>
         static void activate_and_bind(const texture_object& texObj) {
             gl_function{glActiveTexture}(GL_TEXTURE0 + I);
             base_type::do_bind(texObj, index<I>{});
+        }*/
+
+        [[nodiscard]]
+        static GLint extract_texture_2d_param(GLenum paramName) {
+            GLint param{};
+            gl_function{glGetTexLevelParameteriv}(GL_TEXTURE_2D, 0, paramName, &param);
+            return param;
+        }
+
+        [[nodiscard]]
+        static GLint extract_bytes_per_texel() {
+            const texture_internal_format internalFormat{extract_texture_2d_param(GL_TEXTURE_INTERNAL_FORMAT)};
+            switch(internalFormat)
+            {
+            using enum texture_internal_format;
+            case red:
+                return 1;
+            case rg:
+                return 2;
+            case rgb:
+                return 3;
+            case srgb:
+                return 3;
+            case rgba:
+                return 4;
+            case srgba:
+                return 4;
+            }
+
+            throw std::runtime_error{std::format("texture_2d: internal fomrat {} not currently supported when extracting textures", static_cast<GLint>(internalFormat))};
         }
     };
 }

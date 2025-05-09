@@ -11,8 +11,8 @@ namespace avocet::opengl {
     namespace {
         struct image_format
         {
-            GLint internal_format{};
-            GLenum format{};
+            texture_internal_format internal_format{};
+            texture_format format{};
         };
 
         [[nodiscard]]
@@ -22,17 +22,17 @@ namespace avocet::opengl {
             switch(numChannels)
             {
             case 1:
-                return {.internal_format{GL_RED},
-                        .format{GL_RED}};
+                return {.internal_format{texture_internal_format::red},
+                        .format{texture_format::red}};
             case 2:
-                return {.internal_format{GL_RG},
-                        .format{GL_RG}};
+                return {.internal_format{texture_internal_format::rg},
+                        .format{texture_format::rg}};
             case 3:
-                return {.internal_format{isLinear ? GL_RGB  : GL_SRGB},
-                        .format{GL_RGB}};
+                return {.internal_format{isLinear ? texture_internal_format::rgb : texture_internal_format::srgb},
+                        .format{texture_format::rgb}};
             case 4:
-                return {.internal_format{isLinear ? GL_RGBA : GL_SRGB_ALPHA},
-                        .format{GL_RGBA}};
+                return {.internal_format{isLinear ? texture_internal_format::rgba : texture_internal_format::srgba},
+                        .format{texture_format::rgba}};
             }
 
             throw std::runtime_error{std::format("{} channels requested, but it must be in the range [1,4]", numChannels)};
@@ -43,7 +43,17 @@ namespace avocet::opengl {
         image im{config.image_config.file(), config.image_config.flipped()};
         const auto format{to_format(config.image_config.colour_space(), im.num_channels())};
 
-        gl_function{glTexImage2D}(GL_TEXTURE_2D, 0, format.internal_format, static_cast<int>(im.width()), static_cast<int>(im.height()), 0, format.format, GL_UNSIGNED_BYTE, im.span().data());
+        gl_function{glTexImage2D}(
+            GL_TEXTURE_2D,
+            0,
+            static_cast<GLint>(format.internal_format),
+            static_cast<int>(im.width()),
+            static_cast<int>(im.height()),
+            0,
+            to_gl_enum(format.format),
+            to_gl_enum(to_gl_type_specifier_v<texture_2d_configuration::value_type>),
+            im.span().data()
+        );
         if(config.parameter_setter) config.parameter_setter();
     }
 }
