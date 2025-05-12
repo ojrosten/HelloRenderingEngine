@@ -42,6 +42,19 @@ namespace avocet::testing
             );
         }
 
+        //{
+        //    std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 0, 1, 255, 3, 0}, extractedTextureVals2{255, 7, 42, 1, 255, 3};
+        //    check_semantics(
+        //        reporter{"Aligned roundtrip rga and rgb"},
+        //        agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}},
+        //        agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 1, 2, 3, 4}}}, // alignment
+        //        opt_data{{{textureVals, 1, 1, 4}, agl::texture_format::rgba}},
+        //        opt_data{{{textureVals2, 1, 2, 3}, agl::texture_format::rgb}},
+        //        opt_data{},
+        //        opt_data{{{textureVals, 1, 1, 4}, agl::texture_format::rgba}}
+        //    );
+        //}
+
         {
             glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
             glPixelStorei(GL_PACK_ALIGNMENT, 2);
