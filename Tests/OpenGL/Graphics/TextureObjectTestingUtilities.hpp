@@ -20,6 +20,10 @@ namespace sequoia::testing
     struct value_tester<agl::texture_2d> {
         using texture_value_type = agl::texture_2d::value_type;
 
+        static auto as_unsigned_int(std::span<const texture_value_type> data) {
+            return std::views::transform(data, [](auto c) -> unsigned int { return c; }) | std::ranges::to<std::vector>();
+        }
+
         template<test_mode Mode>
         static void test(equivalence_check_t,
             test_logger<Mode>& logger,
@@ -31,8 +35,8 @@ namespace sequoia::testing
                 check(equality,
                      "Texture Data",
                      logger,
-                     std::span<const texture_value_type>{imageData.data},
-                     prediction.value().span());
+                     as_unsigned_int(std::span<const texture_value_type>{imageData.data}),
+                     as_unsigned_int(prediction.value().span()));
             }
             else {
                 check("Null Buffer", logger, texture.is_null());

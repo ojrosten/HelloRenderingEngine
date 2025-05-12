@@ -29,21 +29,12 @@ namespace avocet::testing
 
         using value_type = agl::texture_2d::value_type;
         using opt_data   = std::optional<avocet::image_view>;
-        std::vector<value_type> texture{255, 255, 255, 1};
-        check(equivalence, "Texture which should be null", agl::texture_2d{agl::texture_2d_configuration{.data{texture, 1, 1, 4}}}, opt_data{});
-        check(equivalence, "Too much data", agl::texture_2d{agl::texture_2d_configuration{.data{texture, 1, 1, 4}}}, opt_data{avocet::image_view{{}, 0, 0, 0}});
-    }
+        std::vector<value_type> textureVals{255, 255, 255, 1}, textureVals2{42, 7, 6, 10}, textureVals3{255, 0, 0, 0, 255, 0};
+        agl::texture_2d tex2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}};
 
-    /*template<class Buffer>
-        requires is_gl_buffer_v<Buffer>
-    void buffer_object_false_negative_test::execute()
-    {
-        using T = Buffer::value_type;
-        using opt_span = std::optional<std::span<const T>>;
-        std::vector<T> buffer{40, 41, 42, 43};
-        check(equivalence, "Buffer which should be null", Buffer{buffer, agl::null_label}, opt_span{});
-        check(equivalence, "Too much buffer data",        Buffer{buffer, agl::null_label}, opt_span{std::vector<T>{}});
-        check(equivalence, "Incorrect buffer data",       Buffer{buffer, agl::null_label}, opt_span{std::vector<T>{40, 42, 42, 43}});
-        check(equivalence, "Not enough buffer data",      Buffer{buffer, agl::null_label}, opt_span{std::vector<T>{40, 41, 42, 43, 44}});
-    }*/
+        check(equivalence, "Texture which should be null", tex2d, opt_data{});
+        check(equivalence, "Empty texture",                tex2d, opt_data{avocet::image_view{{},             0, 0, 0}});
+        check(equivalence, "Incorrect buffer data",        tex2d, opt_data{avocet::image_view{{textureVals2}, 1, 1, 4}});
+        check(equivalence, "Mismatched textures",          tex2d, opt_data{avocet::image_view{{textureVals3}, 2, 1, 3}});
+    }
 }

@@ -1,4 +1,4 @@
-Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 33
+Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 35
 Texture which should be null
 
 Comparison performed using:
@@ -12,8 +12,8 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 34
-Too much data
+Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 36
+Empty texture
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::texture_2d>]
@@ -21,12 +21,72 @@ Checking for equivalence with:
 [std::optional<avocet::image_view>]
 
   Texture Data
-  [std::span<unsigned char const, -1>]
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  operator== returned false
+
     Container size wrong
     [unsigned long long]
     operator== returned false
     Obtained : 4
     Predicted: 0
+
+=======================================
+
+Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 37
+Incorrect buffer data
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::image_view>]
+
+  Texture Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  operator== returned false
+
+    Element 0 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 42
+
+    Element 1 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 7
+
+    Element 2 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 255
+    Predicted: 6
+
+    Element 3 of range incorrect
+    [unsigned int]
+    operator== returned false
+    Obtained : 1
+    Predicted: 10
+
+=======================================
+
+Tests/OpenGL/Graphics/TextureObjectTestingDiagnostics.cpp, Line 38
+Mismatched textures
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::image_view>]
+
+  Texture Data
+  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  operator== returned false
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 6
 
 =======================================
 

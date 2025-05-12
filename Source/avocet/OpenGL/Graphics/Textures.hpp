@@ -143,7 +143,7 @@ namespace avocet::opengl {
                 return 4;
             }
 
-            throw std::runtime_error{std::format("texture_2d: internal fomrat {} not currently supported when extracting textures", static_cast<GLint>(internalFormat))};
+            throw std::runtime_error{std::format("texture_2d: internal format {} not currently supported when extracting textures", static_cast<GLint>(internalFormat))};
         }
     };
 }
