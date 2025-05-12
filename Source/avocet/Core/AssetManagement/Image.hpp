@@ -98,7 +98,7 @@ namespace avocet {
     public:
         using value_type = unsigned char;
 
-        image_view(std::span<value_type> data, std::size_t width, std::size_t height, std::size_t numChannels)
+        image_view(std::span<const value_type> data, std::size_t width, std::size_t height, std::size_t numChannels)
             : m_Data{data}
             , m_Width{width}
             , m_Height{height}
@@ -117,15 +117,12 @@ namespace avocet {
         std::size_t num_channels() const noexcept { return m_Data.size() / (width() * height()); }
 
         [[nodiscard]]
-        std::span<value_type> span() noexcept { return m_Data; }
-
-        [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Data; }
 
         [[nodiscard]]
         friend bool operator==(const image&, const image&) noexcept = default;
     private:
-        std::span<value_type> m_Data;
+        std::span<const value_type> m_Data;
         std::size_t m_Width{}, m_Height{};
     };
 }
