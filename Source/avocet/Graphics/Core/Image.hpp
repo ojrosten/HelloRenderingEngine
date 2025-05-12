@@ -107,9 +107,6 @@ namespace avocet {
         std::span<const data_type> span() const noexcept { return {m_Data.get(), size()}; }
 
         [[nodiscard]]
-        std::span<data_type> span() noexcept { return {m_Data.get(), size()}; }
-
-        [[nodiscard]]
         friend bool operator==(const image&, const image&) noexcept = default;
     };
 }
