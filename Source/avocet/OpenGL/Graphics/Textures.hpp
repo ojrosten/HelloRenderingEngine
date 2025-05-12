@@ -39,6 +39,19 @@ namespace avocet::opengl {
         rgba = GL_RGBA
     };
 
+    [[nodiscard]]
+    constexpr std::size_t to_num_channels(texture_format format) {
+        switch(format) {
+            using enum texture_format;
+        case red:  return 1;
+        case rg:   return 2;
+        case rgb:  return 3;
+        case rgba: return 4;
+        }
+
+        throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_enum(format))};
+    }
+
     struct default_texture_2d_parameter_setter {
         void operator()() {
             gl_function{glGenerateMipmap}(GL_TEXTURE_2D);
@@ -96,9 +109,9 @@ namespace avocet::opengl {
         friend image_data extract_image(const texture_2d& texObj, texture_format format) {
             base_type::do_bind(texObj);
             const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
-            const auto size{width * height * extract_num_channels()};
-            // TO DO: GL_PACK_ALIGNMENT
-            std::vector<value_type> texture(size);
+
+            const auto size{width * to_num_channels(format) * height};
+            std::vector<value_type> texture(size, 3);
             gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
             return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height)};
         }
@@ -123,7 +136,7 @@ namespace avocet::opengl {
             return param;
         }
 
-        [[nodiscard]]
+        /*[[nodiscard]]
         static GLint extract_num_channels() {
             const texture_internal_format internalFormat{extract_texture_2d_param(GL_TEXTURE_INTERNAL_FORMAT)};
             switch(internalFormat)
@@ -145,5 +158,38 @@ namespace avocet::opengl {
 
             throw std::runtime_error{std::format("texture_2d: internal format {} not currently supported when extracting textures", static_cast<GLint>(internalFormat))};
         }
+
+        [[nodiscard]]
+        static GLint get_integer(GLenum name) {
+            GLint param{};
+            gl_function{glGetIntegerv}(name, &param);
+            return param;
+        }
+
+        [[nodiscard]]
+        static GLint aligned_width(texture_format format) {
+            const auto requestedChannels{static_cast<GLint>(to_num_channels(format))};
+            const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH) * requestedChannels};
+ 
+            if(requestedChannels != extract_num_channels())
+                return width;
+
+            const auto alignment{get_integer(GL_PACK_ALIGNMENT)};
+            const auto excess{width % alignment};
+
+            switch(alignment) {
+            case 1:
+                return width;
+            case 2:
+            case 3:
+            case 4:
+            {
+                
+                return excess ? width - excess + alignment : width;
+            }
+            default:
+                throw std::logic_error{std::format("Unexpected value for GL_PACK_ALIGNMENT, {}", alignment)};
+            }
+        }*/
     };
 }

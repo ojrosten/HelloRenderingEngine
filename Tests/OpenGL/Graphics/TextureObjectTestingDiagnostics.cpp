@@ -28,13 +28,13 @@ namespace avocet::testing
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
         using value_type = agl::texture_2d::value_type;
-        using opt_data   = std::optional<avocet::image_view>;
+        using opt_data   = std::optional<avocet::testing::texture_data>;
         std::vector<value_type> textureVals{255, 255, 255, 1}, textureVals2{42, 7, 6, 10}, textureVals3{255, 0, 0, 0, 255, 0};
         agl::texture_2d tex2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}};
 
         check(equivalence, "Texture which should be null", tex2d, opt_data{});
-        check(equivalence, "Empty texture",                tex2d, opt_data{avocet::image_view{{},             0, 0, 0}});
-        check(equivalence, "Incorrect buffer data",        tex2d, opt_data{avocet::image_view{{textureVals2}, 1, 1, 4}});
-        check(equivalence, "Mismatched textures",          tex2d, opt_data{avocet::image_view{{textureVals3}, 2, 1, 3}});
+        check(equivalence, "Empty texture",                tex2d, opt_data{{{{},             0, 0, 0}}});
+        check(equivalence, "Incorrect buffer data",        tex2d, opt_data{{{{textureVals2}, 1, 1, 4}}});
+        check(equivalence, "Mismatched textures",          tex2d, opt_data{{{{textureVals3}, 2, 1, 3}}});
     }
 }

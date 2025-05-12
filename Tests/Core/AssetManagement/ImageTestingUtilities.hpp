@@ -18,8 +18,8 @@ namespace avocet::testing {
     struct image_data {
         using value_type = unsigned char;
 
-        std::size_t width{}, height{}, num_channels{};
         std::vector<value_type> data;
+        std::size_t width{}, height{}, num_channels{};
     };
 
     [[nodiscard]]

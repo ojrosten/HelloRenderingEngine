@@ -27,17 +27,17 @@ namespace avocet::testing
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
         using value_type = agl::texture_2d::value_type;
-        using opt_data = std::optional<avocet::image_view>;
+        using opt_data   = std::optional<avocet::testing::texture_data>;
 
-        std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 0, 0, 4, 0, 255, 0, 8};
+        std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 1, 255, 3};
         check_semantics(
             reporter{""},
             agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}},
-            agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, 4}}},
-            opt_data{avocet::image_view{textureVals, 1, 1, 4}},
-            opt_data{avocet::image_view{textureVals2, 2, 1, 4}},
+            agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, 3}}},
+            opt_data{{{textureVals, 1, 1, 4}}},
+            opt_data{{{textureVals2, 2, 1, 3}, agl::texture_format::rgb}},
             opt_data{},
-            opt_data{avocet::image_view{textureVals, 1, 1, 4}}
+            opt_data{{{textureVals, 1, 1, 4}}}
         );
     }
 

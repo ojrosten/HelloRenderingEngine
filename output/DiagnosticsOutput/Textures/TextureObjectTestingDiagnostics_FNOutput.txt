@@ -4,7 +4,7 @@ Texture which should be null
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::texture_2d>]
 Checking for equivalence with:
-[std::optional<avocet::image_view>]
+[std::optional<avocet::testing::texture_data>]
 
   Null Buffer
   [bool]
@@ -18,7 +18,7 @@ Empty texture
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::texture_2d>]
 Checking for equivalence with:
-[std::optional<avocet::image_view>]
+[std::optional<avocet::testing::texture_data>]
 
   Texture Data
   [std::vector<unsigned int, std::allocator<unsigned int> >]
@@ -38,7 +38,7 @@ Incorrect buffer data
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::texture_2d>]
 Checking for equivalence with:
-[std::optional<avocet::image_view>]
+[std::optional<avocet::testing::texture_data>]
 
   Texture Data
   [std::vector<unsigned int, std::allocator<unsigned int> >]
@@ -76,7 +76,7 @@ Mismatched textures
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::texture_2d>]
 Checking for equivalence with:
-[std::optional<avocet::image_view>]
+[std::optional<avocet::testing::texture_data>]
 
   Texture Data
   [std::vector<unsigned int, std::allocator<unsigned int> >]

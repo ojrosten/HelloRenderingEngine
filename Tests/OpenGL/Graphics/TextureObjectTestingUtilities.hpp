@@ -12,13 +12,23 @@
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
 #include "avocet/OpenGL/Graphics/Textures.hpp"
 
+#include "../../Core/AssetManagement/ImageTestingUtilities.hpp"
+
+namespace agl = avocet::opengl;
+
+namespace avocet::testing {
+    struct texture_data : image_data {
+        agl::texture_format desired_format{agl::texture_format::rgba};
+    };
+}
+
 namespace sequoia::testing
 {
-    namespace agl = avocet::opengl;
 
     template<>
     struct value_tester<agl::texture_2d> {
         using texture_value_type = agl::texture_2d::value_type;
+        using texture_data       = avocet::testing::texture_data;
 
         static auto as_unsigned_int(std::span<const texture_value_type> data) {
             return std::views::transform(data, [](auto c) -> unsigned int { return c; }) | std::ranges::to<std::vector>();
@@ -28,15 +38,15 @@ namespace sequoia::testing
         static void test(equivalence_check_t,
             test_logger<Mode>& logger,
             const agl::texture_2d& texture,
-            const std::optional<avocet::image_view>& prediction)
+            const std::optional<texture_data>& prediction)
         {
             if(prediction) {
-                const auto imageData{extract_image(texture, agl::texture_format::rgba)};
+                const auto imageData{extract_image(texture, prediction.value().desired_format)};
                 check(equality,
                      "Texture Data",
                      logger,
                      as_unsigned_int(std::span<const texture_value_type>{imageData.data}),
-                     as_unsigned_int(prediction.value().span()));
+                     as_unsigned_int(prediction.value().data));
             }
             else {
                 check("Null Buffer", logger, texture.is_null());
