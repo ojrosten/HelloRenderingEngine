@@ -85,7 +85,7 @@ Checking for equivalence with:
     Container size wrong
     [unsigned long long]
     operator== returned false
-    Obtained : 4
+    Obtained : 3
     Predicted: 6
 
 =======================================

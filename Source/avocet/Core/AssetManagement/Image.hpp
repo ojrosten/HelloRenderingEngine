@@ -38,9 +38,6 @@ namespace avocet {
         std::size_t size() const noexcept { return width() * height() * num_channels(); }
 
         [[nodiscard]]
-        std::span<value_type> span() noexcept { return {m_Data.get(), size()}; }
-
-        [[nodiscard]]
         std::span<const value_type> span() const noexcept { return {m_Data.get(), size()}; }
 
         [[nodiscard]]

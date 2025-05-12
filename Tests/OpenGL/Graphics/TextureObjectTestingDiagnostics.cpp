@@ -33,8 +33,8 @@ namespace avocet::testing
         agl::texture_2d tex2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}};
 
         check(equivalence, "Texture which should be null", tex2d, opt_data{});
-        check(equivalence, "Empty texture",                tex2d, opt_data{{{{},             0, 0, 0}}});
-        check(equivalence, "Incorrect buffer data",        tex2d, opt_data{{{{textureVals2}, 1, 1, 4}}});
-        check(equivalence, "Mismatched textures",          tex2d, opt_data{{{{textureVals3}, 2, 1, 3}}});
+        check(equivalence, "Empty texture",                tex2d, opt_data{{{},             0, 0, agl::texture_format::rgba}});
+        check(equivalence, "Incorrect buffer data",        tex2d, opt_data{{{textureVals2}, 1, 1, agl::texture_format::rgba}});
+        check(equivalence, "Mismatched textures",          tex2d, opt_data{{{textureVals3}, 2, 1, agl::texture_format::rgb}});
     }
 }

@@ -17,7 +17,11 @@
 namespace agl = avocet::opengl;
 
 namespace avocet::testing {
-    struct texture_data : image_data {
+    struct texture_data {
+        using value_type = unsigned char;
+
+        std::vector<value_type> data;
+        std::size_t width{}, height{};
         agl::texture_format desired_format{agl::texture_format::rgba};
     };
 }
@@ -43,10 +47,10 @@ namespace sequoia::testing
             if(prediction) {
                 const auto imageData{extract_image(texture, prediction.value().desired_format)};
                 check(equality,
-                     "Texture Data",
-                     logger,
-                     as_unsigned_int(std::span<const texture_value_type>{imageData.data}),
-                     as_unsigned_int(prediction.value().data));
+                      "Texture Data",
+                      logger,
+                      as_unsigned_int(std::span<const texture_value_type>{imageData.data}),
+                      as_unsigned_int(prediction.value().data));
             }
             else {
                 check("Null Buffer", logger, texture.is_null());
