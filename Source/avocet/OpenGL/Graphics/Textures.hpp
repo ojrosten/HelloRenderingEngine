@@ -111,7 +111,7 @@ namespace avocet::opengl {
             const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
 
             const auto size{width * to_num_channels(format) * height};
-            std::vector<value_type> texture(size, 3);
+            std::vector<value_type> texture(size);
             gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
             return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height)};
         }
