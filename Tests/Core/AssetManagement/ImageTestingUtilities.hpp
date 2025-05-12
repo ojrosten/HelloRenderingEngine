@@ -44,7 +44,7 @@ namespace sequoia::testing
         static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::image_channels& actual, const std::size_t prediction)
         {
             check(equality, "Wrapped value", logger, actual.raw_value(), prediction);
-            check(equality, "Wrapped value", logger, static_cast<std::size_t>(actual), prediction);
+            check(equality, "Wrapped value from cast", logger, static_cast<std::size_t>(actual), prediction);
         }
     };
 

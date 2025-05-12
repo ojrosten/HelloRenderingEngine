@@ -33,8 +33,8 @@ namespace avocet::testing
             std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 1, 255, 3};
             check_semantics(
                 reporter{"Faithful roundtrip rga and rgb"},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, 3}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, image_channels{4}}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, image_channels{3}}}},
                 opt_data{{textureVals, 1, 1, agl::texture_format::rgba}},
                 opt_data{{textureVals2, 2, 1, agl::texture_format::rgb}},
                 opt_data{},
@@ -61,8 +61,8 @@ namespace avocet::testing
             std::vector<value_type> textureVals{42, 7, 6}, textureVals2{255, 7, 42, 1, 255, 3};
             check_semantics(
                 reporter{"Faithful roundtrip red and rg"},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 3, 1, 1}}},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 1, 3, 2}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 3, 1, image_channels{1}}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 1, 3, image_channels{2}}}},
                 opt_data{{textureVals, 3, 1, agl::texture_format::red}},
                 opt_data{{textureVals2, 1, 3, agl::texture_format::rg}},
                 opt_data{},
@@ -76,8 +76,8 @@ namespace avocet::testing
             std::vector<value_type> textureVals{42}, extractedTextureVals{42, 0}, textureVals2{255, 7, 42, 1, 255, 3}, extractedTextureVals2{255, 7, 42, 255, 1, 255, 3, 255};
             check_semantics(
                 reporter{"Widening extractions"},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 1}}},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, 3}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, image_channels{1}}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, image_channels{3}}}},
                 opt_data{{extractedTextureVals, 1, 1,  agl::texture_format::rg}},
                 opt_data{{extractedTextureVals2, 2, 1, agl::texture_format::rgba}},
                 opt_data{},
@@ -89,8 +89,8 @@ namespace avocet::testing
             std::vector<value_type> textureVals{42, 6}, extractedTextureVals{42}, textureVals2{255, 7, 42, 9, 1, 255, 3, 10}, extractedTextureVals2{255, 7, 42, 1, 255, 3};
             check_semantics(
                 reporter{"Narrowing extractions"},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 2}}},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, 4}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, image_channels{2}}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, image_channels{4}}}},
                 opt_data{{extractedTextureVals, 1, 1, agl::texture_format::red}},
                 opt_data{{extractedTextureVals2, 2, 1, agl::texture_format::rgb}},
                 opt_data{},

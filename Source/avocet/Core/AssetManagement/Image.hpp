@@ -116,13 +116,13 @@ namespace avocet {
     public:
         using value_type = unsigned char;
 
-        image_view(std::span<const value_type> data, std::size_t width, std::size_t height, std::size_t numChannels)
+        image_view(std::span<const value_type> data, std::size_t width, std::size_t height, image_channels numChannels)
             : m_Data{data}
             , m_Width{width}
             , m_Height{height}
         {
-            if(m_Width * m_Height * numChannels != m_Data.size())
-                throw std::runtime_error{std::format("image_view: image size {} not a multiple of the width, height and channels, {} * {} * {}", m_Data.size(), m_Width, m_Height, numChannels)};
+            if(m_Width * m_Height * numChannels.raw_value() != m_Data.size())
+                throw std::runtime_error{std::format("image_view: image size {} not a multiple of the width, height and channels, {} * {} * {}", m_Data.size(), m_Width, m_Height, numChannels.raw_value())};
         }
 
         [[nodiscard]]
@@ -132,7 +132,7 @@ namespace avocet {
         std::size_t height() const noexcept { return m_Height; }
 
         [[nodiscard]]
-        std::size_t num_channels() const noexcept { return m_Data.size() / (width() * height()); }
+        image_channels num_channels() const noexcept { return image_channels{m_Data.size() / (width() * height())}; }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Data; }
@@ -142,5 +142,16 @@ namespace avocet {
     private:
         std::span<const value_type> m_Data;
         std::size_t m_Width{}, m_Height{};
+    };
+}
+
+namespace std {
+    template<>
+    struct formatter<avocet::image_channels> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(const avocet::image_channels& channels, auto& ctx) const {
+            return std::format_to(ctx.out(), "{}", channels.raw_value());
+        }
     };
 }

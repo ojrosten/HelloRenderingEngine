@@ -16,10 +16,10 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        image_format to_format(colour_space_flavour colourSpace, std::size_t numChannels)
+        image_format to_format(colour_space_flavour colourSpace, image_channels numChannels)
         {
             const bool isLinear{colourSpace == colour_space_flavour::linear};
-            switch(numChannels)
+            switch(numChannels.raw_value())
             {
             case 1:
                 return {.internal_format{texture_internal_format::red},
