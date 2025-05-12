@@ -57,6 +57,9 @@ namespace avocet {
         std::size_t size() const noexcept { return width() * height() * num_channels().raw_value(); }
 
         [[nodiscard]]
+        std::size_t alignment() const noexcept { return m_Alignment.value; }
+
+        [[nodiscard]]
         std::span<const value_type> span() const noexcept { return {m_Data.get(), size()}; }
 
         [[nodiscard]]
@@ -82,6 +85,10 @@ namespace avocet {
                 : value{to_unsigned(val)}
             { }
 
+            explicit parameter(std::size_t val) noexcept
+                : value{val}
+            { }
+
             parameter(parameter&& other) noexcept 
                 : value{std::exchange(other.value, T{})}
             {}
@@ -98,14 +105,15 @@ namespace avocet {
         };
 
         std::unique_ptr<value_type, file_unloader> m_Data;
-        parameter<std::size_t> m_Width, m_Height;
+        parameter<std::size_t> m_Width, m_Height, m_Alignment;
         parameter<image_channels> m_Channels;
 
-        image(value_type* ptr, int width, int height, int channels)
+        image(value_type* ptr, int width, int height, int channels, std::size_t alignment)
             : m_Data{ptr}
             , m_Width{width}
             , m_Height{height}
             , m_Channels{channels}
+            , m_Alignment{alignment}
         {}
 
         [[nodiscard]]
