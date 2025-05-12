@@ -19,7 +19,8 @@ namespace avocet::testing {
         using value_type = unsigned char;
 
         std::vector<value_type> data;
-        std::size_t width{}, height{}, num_channels{};
+        std::size_t width{}, height{};
+        image_channels num_channels{};
     };
 
     [[nodiscard]]
@@ -31,6 +32,22 @@ namespace avocet::testing {
 
 namespace sequoia::testing
 {
+    template<> struct value_tester<avocet::image_channels>
+    {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const avocet::image_channels& actual, const avocet::image_channels& prediction)
+        {
+            check(equality, "Wrapped value", logger, actual.raw_value(), prediction.raw_value());
+        }
+
+        template<test_mode Mode>
+        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::image_channels& actual, const std::size_t prediction)
+        {
+            check(equality, "Wrapped value", logger, actual.raw_value(), prediction);
+            check(equality, "Wrapped value", logger, static_cast<std::size_t>(actual), prediction);
+        }
+    };
+
     template<> struct value_tester<avocet::image>
     {
         using type       = avocet::image;

@@ -17,6 +17,25 @@
 namespace avocet {
     enum class flip_vertically : bool { no, yes };
 
+    class image_channels {
+        std::size_t m_Value{};
+    public:
+        constexpr image_channels() noexcept {};
+
+        constexpr explicit image_channels(std::size_t n)
+            : m_Value{n}
+        {}
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const image_channels&, const image_channels&) noexcept = default;
+
+        [[nodiscard]]
+        std::size_t raw_value() const noexcept { return m_Value; }
+
+        [[nodiscard]]
+        explicit operator std::size_t() const noexcept { return m_Value; }
+    };
+
     class image {
     public:
         using value_type = unsigned char;
@@ -32,10 +51,10 @@ namespace avocet {
         std::size_t height() const noexcept { return m_Height.value; }
 
         [[nodiscard]]
-        std::size_t num_channels() const noexcept { return m_Channels.value; }
+        image_channels num_channels() const noexcept { return m_Channels.value; }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return width() * height() * num_channels(); }
+        std::size_t size() const noexcept { return width() * height() * num_channels().raw_value(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return {m_Data.get(), size()}; }
@@ -47,6 +66,7 @@ namespace avocet {
             void operator()(value_type* ptr) const;
         };
 
+        template<class T>
         struct parameter {
             [[nodiscard]]
             std::size_t to_unsigned(int val) {
@@ -56,19 +76,19 @@ namespace avocet {
                 return static_cast<std::size_t>(val);
             }
 
-            std::size_t value{};
+            T value{};
 
             explicit parameter(int val)
                 : value{to_unsigned(val)}
             { }
 
             parameter(parameter&& other) noexcept 
-                : value{std::exchange(other.value, 0)}
+                : value{std::exchange(other.value, T{})}
             {}
 
             parameter& operator=(parameter&& other) noexcept {
                 if(this != &other)
-                    value = std::exchange(other.value, 0);
+                    value = std::exchange(other.value, T{});
 
                 return *this;
             }
@@ -78,7 +98,8 @@ namespace avocet {
         };
 
         std::unique_ptr<value_type, file_unloader> m_Data;
-        parameter m_Width, m_Height, m_Channels;
+        parameter<std::size_t> m_Width, m_Height;
+        parameter<image_channels> m_Channels;
 
         image(value_type* ptr, int width, int height, int channels)
             : m_Data{ptr}
