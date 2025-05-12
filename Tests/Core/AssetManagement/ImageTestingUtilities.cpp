@@ -28,6 +28,7 @@ namespace avocet::testing {
             },
             .width{w},
             .height{h},
+            .alignment{1},
             .num_channels{channels}
         };
     }
@@ -48,6 +49,7 @@ namespace avocet::testing {
             },
             .width{w},
             .height{h},
+            .alignment{1},
             .num_channels{channels}
         };
     };

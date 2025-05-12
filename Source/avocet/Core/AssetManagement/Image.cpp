@@ -18,14 +18,22 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    image image::make(const std::filesystem::path& texturePath, flip_vertically flip) {
+    image image::make(const std::filesystem::path& texturePath, flip_vertically flip, const std::optional<image_channels> requestedChannels) {
         if(!fs::exists(texturePath))
             throw std::runtime_error{std::format("image: texture {} not found", texturePath.generic_string())};
+
+        if(requestedChannels)
+        {
+            if((requestedChannels.value() < image_channels{1}) || (requestedChannels.value() > image_channels{4}))
+                throw std::runtime_error{std::format("image: invalid number of channels {} requested", requestedChannels.value())};
+        }
+
+        const auto outputChannels{requestedChannels.value_or(image_channels{})};
 
         stbi_set_flip_vertically_on_load_thread(static_cast<bool>(flip));
 
         int width{}, height{}, channels{};
-        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, 0)};
+        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, static_cast<int>(outputChannels.raw_value()))};
         if(!pData)
             throw std::runtime_error{std::format("image: texture {} did not load", texturePath.generic_string())};
 

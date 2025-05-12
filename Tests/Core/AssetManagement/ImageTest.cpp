@@ -22,8 +22,8 @@ namespace avocet::testing
     {
         check_semantics(
             "",
-            image{working_materials() / "red_2w_3h_3c.png", flip_vertically::no},
-            image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes},
+            image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  channels_in_image},
+            image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, channels_in_image},
             make_red(2, 3, 3),
             make_rgb_striped(2, 3, 3),
             image_data{},
@@ -33,7 +33,7 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             reporter{"Absent image"},
             [this](){
-                return image{working_materials() / "Absent.png", flip_vertically::no}; 
+                return image{working_materials() / "Absent.png", flip_vertically::no, channels_in_image};
             },
             curlew::exception_postprocessor{}
         );
@@ -41,7 +41,7 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             reporter{"Invalid image"},
             [this](){
-                return image{working_materials() / "not_an_image.txt", flip_vertically::no};
+                return image{working_materials() / "not_an_image.txt", flip_vertically::no, channels_in_image};
             },
             curlew::exception_postprocessor{}
         );

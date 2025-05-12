@@ -11,6 +11,7 @@
 #include <format>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <span>
 #include <utility>
 
@@ -36,12 +37,14 @@ namespace avocet {
         explicit operator std::size_t() const noexcept { return m_Value; }
     };
 
+    inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
+
     class image {
     public:
         using value_type = unsigned char;
 
-        image(const std::filesystem::path& texturePath, flip_vertically flip)
-            : image{make(texturePath, flip)}
+        image(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels)
+            : image{make(texturePath, flip, requestedChannels)}
         {}
 
         [[nodiscard]]
@@ -117,7 +120,7 @@ namespace avocet {
         {}
 
         [[nodiscard]]
-        static image make(const std::filesystem::path& texturePath, flip_vertically flip);
+        static image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels);
     };
 
     class image_view {

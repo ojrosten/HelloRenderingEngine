@@ -19,7 +19,7 @@ namespace avocet::testing {
         using value_type = unsigned char;
 
         std::vector<value_type> data;
-        std::size_t width{}, height{};
+        std::size_t width{}, height{}, alignment{};
         image_channels num_channels{};
     };
 
@@ -68,10 +68,11 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const type& actual, const type& prediction)
         {
-            check(equality, "Width",    logger, actual.width(),                 prediction.width());
-            check(equality, "Height",   logger, actual.height(),                prediction.height());
-            check(equality, "Channels", logger, actual.num_channels(),          prediction.num_channels());
-            check(equality, "Data",     logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.span()));
+            check(equality, "Width",     logger, actual.width(),                 prediction.width());
+            check(equality, "Height",    logger, actual.height(),                prediction.height());
+            check(equality, "Channels",  logger, actual.num_channels(),          prediction.num_channels());
+            check(equality, "Alignment", logger, actual.alignment(),             prediction.alignment());
+            check(equality, "Data",      logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.span()));
         }
 
         template<test_mode Mode>
@@ -80,6 +81,7 @@ namespace sequoia::testing
             check(equality,    "Width",    logger, actual.width(),                 prediction.width);
             check(equality,    "Height",   logger, actual.height(),                prediction.height);
             check(equality,    "Channels", logger, actual.num_channels(),          prediction.num_channels);
+            check(equality,    "Alignment", logger, actual.alignment(),            prediction.alignment);
             check(equivalence, "Data",     logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.data));
         }
     };
