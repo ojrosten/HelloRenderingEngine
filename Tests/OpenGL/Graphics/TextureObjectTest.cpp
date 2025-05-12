@@ -32,17 +32,34 @@ namespace avocet::testing
         {
             std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 1, 255, 3};
             check_semantics(
-                reporter{""},
+                reporter{"Faithful roundtrip rga and rgb"},
                 agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}},
                 agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, 3}}},
-                opt_data{{{textureVals, 1, 1, 4}}},
+                opt_data{{{textureVals, 1, 1, 4}, agl::texture_format::rgba}},
                 opt_data{{{textureVals2, 2, 1, 3}, agl::texture_format::rgb}},
                 opt_data{},
-                opt_data{{{textureVals, 1, 1, 4}}}
+                opt_data{{{textureVals, 1, 1, 4}, agl::texture_format::rgba}}
             );
         }
 
         {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+            glPixelStorei(GL_PACK_ALIGNMENT, 2);
+            std::vector<value_type> textureVals{42, 7, 6}, textureVals2{255, 7, 42, 1, 255, 3};
+            check_semantics(
+                reporter{"Faithful roundtrip red and rg"},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 3, 1, 1}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 1, 3, 2}}},
+                opt_data{{{textureVals, 3, 1, 1}, agl::texture_format::red}},
+                opt_data{{{textureVals2, 1, 3, 2}, agl::texture_format::rg}},
+                opt_data{},
+                opt_data{{{textureVals, 3, 1, 1}, agl::texture_format::red}}
+            );
+        }
+
+        {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+            glPixelStorei(GL_PACK_ALIGNMENT, 4);
             std::vector<value_type> textureVals{42}, textureVals2{255, 7, 42, 1, 255, 3}, extractedTextureVals2{255, 7, 42, 255, 1, 255, 3, 255};
             check_semantics(
                 reporter{""},
