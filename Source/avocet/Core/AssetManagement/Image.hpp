@@ -58,8 +58,8 @@ namespace avocet {
             , m_Channels{channels}
             , m_Alignment{alignment}
         {
-            if(const auto sz{std::get<vec_t>(m_Data).size()}; height() * row_size() != sz)
-                throw std::runtime_error{std::format("image: image size {} not a multiple of the height and padded row size, {}, {}", sz, height(), row_size())};
+            if(const auto sz{std::get<vec_t>(m_Data).size()}; height() * aligned_row_size() != sz)
+                throw std::runtime_error{std::format("image: image size {} not a multiple of the height and padded row size, {}, {}", sz, height(), aligned_row_size())};
         }
 
         [[nodiscard]]
@@ -78,7 +78,7 @@ namespace avocet {
         std::size_t alignment() const noexcept { return m_Alignment.value; }
 
         [[nodiscard]]
-        std::size_t row_size() const noexcept {
+        std::size_t aligned_row_size() const noexcept {
             const std::size_t excess{(width() * num_channels().raw_value()) % alignment()};
             const auto alignedWidth{excess ? width() - excess + alignment() : width()};
             return alignedWidth * num_channels().raw_value();
@@ -167,15 +167,15 @@ namespace avocet {
             , m_Channels{numChannels}
             , m_Alignment{alignment}
         {
-            if(height() * row_size() != m_Data.size())
-                throw std::runtime_error{std::format("image: image size {} not a multiple of the height and padded row size, {}, {}", m_Data.size(), height(), row_size())};
+            if(height() * aligned_row_size() != m_Data.size())
+                throw std::runtime_error{std::format("image: image size {} not a multiple of the height and padded row size, {}, {}", m_Data.size(), height(), aligned_row_size())};
         }
 
         [[nodiscard]]
         std::size_t width() const noexcept { return m_Width; }
 
         [[nodiscard]]
-        std::size_t row_size() const noexcept {
+        std::size_t aligned_row_size() const noexcept {
             const std::size_t excess{(width() * num_channels().raw_value()) % m_Alignment};
             const auto alignedWidth{excess ? width() - excess + m_Alignment : width()};
             return alignedWidth * num_channels().raw_value();
