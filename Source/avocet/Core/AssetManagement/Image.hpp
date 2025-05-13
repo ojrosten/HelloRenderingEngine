@@ -13,7 +13,10 @@
 #include <mutex>
 #include <optional>
 #include <span>
+#include <variant>
 #include <utility>
+
+#include "sequoia/Core/Meta/Utilities.hpp"
 
 namespace avocet {
     enum class flip_vertically : bool { no, yes };
@@ -39,12 +42,21 @@ namespace avocet {
 
     inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
 
+
     class image {
     public:
         using value_type = unsigned char;
 
         image(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels)
             : image{make(texturePath, flip, requestedChannels)}
+        {}
+
+        image(std::vector<value_type> data, std::size_t width, std::size_t height, image_channels channels, std::size_t alignment)
+            : m_Data{std::move(data)}
+            , m_Width{width}
+            , m_Height{height}
+            , m_Channels{channels}
+            , m_Alignment{alignment}
         {}
 
         [[nodiscard]]
@@ -63,7 +75,16 @@ namespace avocet {
         std::size_t alignment() const noexcept { return m_Alignment.value; }
 
         [[nodiscard]]
-        std::span<const value_type> span() const noexcept { return {m_Data.get(), size()}; }
+        std::span<const value_type> span() const noexcept {
+            using span_t = std::span<const value_type>;
+            return std::visit(
+                sequoia::overloaded{
+                    [this](const ptr_t& p) { return span_t{p.get(), size()}; },
+                    []    (const vec_t& v) { return span_t{v}; }
+                },
+                m_Data
+            );
+        }
 
         [[nodiscard]]
         friend bool operator==(const image&, const image&) noexcept = default;
@@ -88,7 +109,7 @@ namespace avocet {
                 : value{to_unsigned(val)}
             { }
 
-            explicit parameter(std::size_t val) noexcept
+            explicit parameter(T val) noexcept
                 : value{val}
             { }
 
@@ -107,12 +128,14 @@ namespace avocet {
             auto operator<=>(const parameter&) const noexcept = default;
         };
 
-        std::unique_ptr<value_type, file_unloader> m_Data;
+        using ptr_t = std::unique_ptr<value_type, file_unloader>;
+        using vec_t = std::vector<value_type>;
+        std::variant<ptr_t, vec_t> m_Data;
         parameter<std::size_t> m_Width, m_Height, m_Alignment;
         parameter<image_channels> m_Channels;
 
         image(value_type* ptr, int width, int height, int channels, std::size_t alignment)
-            : m_Data{ptr}
+            : m_Data{ptr_t{ptr}}
             , m_Width{width}
             , m_Height{height}
             , m_Channels{channels}
