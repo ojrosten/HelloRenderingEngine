@@ -72,13 +72,15 @@ namespace avocet {
         image_channels num_channels() const noexcept { return m_Channels.value; }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return width() * height() * num_channels().raw_value(); }
+        std::size_t size() const noexcept { return height() * aligned_row_size(); }
 
         [[nodiscard]]
         std::size_t alignment() const noexcept { return m_Alignment.value; }
 
         [[nodiscard]]
         std::size_t aligned_row_size() const noexcept {
+            if(!alignment()) return 0;
+
             const std::size_t excess{(width() * num_channels().raw_value()) % alignment()};
             const auto alignedWidth{excess ? width() - excess + alignment() : width()};
             return alignedWidth * num_channels().raw_value();
