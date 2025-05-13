@@ -25,10 +25,10 @@ namespace avocet::testing {
     };
 
     [[nodiscard]]
-    image_data make_red(std::size_t width, std::size_t height, std::size_t channels);
+    image_data make_red(std::size_t width, std::size_t height, image_channels channels);
 
     [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, std::size_t channels);
+    image_data make_rgb_striped(std::size_t w, std::size_t h, image_channels channels);
 }
 
 namespace sequoia::testing
