@@ -1,2 +1,2 @@
 Semantics Test
-Standard Top Level Checks:                 5;  Failures:  0  [Deep checks: 247]
+Standard Top Level Checks:                 6;  Failures:  0  [Deep checks: 294]
