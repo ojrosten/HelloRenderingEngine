@@ -33,7 +33,7 @@ namespace avocet::testing
             std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 1, 255, 3};
             check_semantics(
                 reporter{"Faithful roundtrip rga and rgb"},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, image_channels{4}, alignment{1}}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, image_channels{4}, alignment{4}}}},
                 agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, image_channels{3}, alignment{1}}}},
                 opt_data{{textureVals, 1, 1, agl::texture_format::rgba}},
                 opt_data{{textureVals2, 2, 1, agl::texture_format::rgb}},
