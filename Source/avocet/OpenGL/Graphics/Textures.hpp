@@ -103,13 +103,13 @@ namespace avocet::opengl {
         friend image extract_image(const texture_2d& tex2d, texture_format format) {
             base_type::do_bind(tex2d);
             const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
-            const auto numChannels{to_num_channels(format)};
+            const image_channels numChannels{to_num_channels(format)};
 
-            const auto size{width * numChannels * height};
+            const auto size{padded_row_size(width, numChannels, tex2d.m_RowAlignment) * height};
             std::vector<value_type> texture(size);
             glPixelStorei(GL_PACK_ALIGNMENT, static_cast<int>(tex2d.m_RowAlignment.raw_value()));
             gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
-            return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), image_channels{numChannels}, alignment{1}};
+            return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), numChannels, tex2d.m_RowAlignment};
         }
 
         [[nodiscard]]

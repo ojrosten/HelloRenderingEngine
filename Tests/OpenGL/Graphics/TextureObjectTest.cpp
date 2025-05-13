@@ -33,7 +33,7 @@ namespace avocet::testing
             std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 1, 255, 3};
             check_semantics(
                 reporter{"Faithful roundtrip rga and rgb"},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, image_channels{4}, alignment{4}}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals,  1, 1, image_channels{4}, alignment{4}}}},
                 agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 2, 1, image_channels{3}, alignment{1}}}},
                 opt_data{{textureVals, 1, 1, agl::texture_format::rgba}},
                 opt_data{{textureVals2, 2, 1, agl::texture_format::rgb}},
@@ -42,29 +42,29 @@ namespace avocet::testing
             );
         }
 
-        /*{
-            std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 0, 1, 255, 3, 0}, extractedTextureVals2{255, 7, 42, 1, 255, 3};
+        {
+            std::vector<value_type> textureVals{42, 7, 6, 10}, textureVals2{255, 7, 42, 0, 1, 255, 3, 0};
             check_semantics(
-                reporter{"Aligned roundtrip rga and rgb"},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 1, 1, 4}}},
-                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 1, 2, 3, 1}}}, // alignment
+                reporter{"Faithfully aligned roundtrip rga and rgb"},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals,  1, 1, image_channels{4}, alignment{4}}}},
+                agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 1, 2, image_channels{3}, alignment{4}}}},
                 opt_data{{textureVals, 1, 1, agl::texture_format::rgba}},
                 opt_data{{textureVals2, 1, 2, agl::texture_format::rgb}},
                 opt_data{},
                 opt_data{{textureVals, 1, 1, agl::texture_format::rgba}}
             );
-        }*/
+        }
 
         {
-            std::vector<value_type> textureVals{42, 7, 6, 0}, textureVals2{255, 7, 42, 1, 255, 3}, extractedTextureVals{42, 7, 6};
+            std::vector<value_type> textureVals{42, 7, 6, 0}, textureVals2{255, 7, 42, 1, 255, 3};
             check_semantics(
-                reporter{"Faithful roundtrip red and rg"},
+                reporter{"Faithfully aligned roundtrip red and rg"},
                 agl::texture_2d{agl::texture_2d_configuration{.data{textureVals, 3, 1, image_channels{1}, alignment{2}}}},
                 agl::texture_2d{agl::texture_2d_configuration{.data{textureVals2, 1, 3, image_channels{2}, alignment{2}}}},
-                opt_data{{extractedTextureVals, 3, 1, agl::texture_format::red}},
+                opt_data{{textureVals, 3, 1, agl::texture_format::red}},
                 opt_data{{textureVals2, 1, 3, agl::texture_format::rg}},
                 opt_data{},
-                opt_data{{extractedTextureVals, 3, 1, agl::texture_format::red}}
+                opt_data{{textureVals, 3, 1, agl::texture_format::red}}
             );
         }
 

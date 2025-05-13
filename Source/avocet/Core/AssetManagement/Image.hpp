@@ -62,10 +62,10 @@ namespace avocet {
     };
 
     [[nodiscard]]
-    constexpr std::size_t aligned_row_size(std::size_t width, image_channels channels, alignment rowAlignment) noexcept {
-        const std::size_t excess{(width * channels.raw_value()) % rowAlignment.raw_value()};
-        const auto alignedWidth{excess ? width - excess + rowAlignment.raw_value() : width};
-        return alignedWidth * channels.raw_value();
+    constexpr std::size_t padded_row_size(std::size_t width, image_channels channels, alignment rowAlignment) noexcept {
+        const std::size_t nominalRowSize{width * channels.raw_value()};
+        const std::size_t excess{nominalRowSize % rowAlignment.raw_value()};
+        return excess ? nominalRowSize - excess + rowAlignment.raw_value() : nominalRowSize;
     }
 
     inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
@@ -85,8 +85,8 @@ namespace avocet {
             , m_Channels{channels}
             , m_Alignment{rowAlignment}
         {
-            if(const auto sz{std::get<vec_t>(m_Data).size()}; height() * aligned_row_size() != sz)
-                throw std::runtime_error{std::format("image: image size {} not a multiple of the height and padded row size, {}, {}", sz, height(), aligned_row_size())};
+            if(const auto sz{std::get<vec_t>(m_Data).size()}; height() * padded_row_size() != sz)
+                throw std::runtime_error{std::format("image: image size {} not a multiple of the height {} and padded row size {}", sz, height(), padded_row_size())};
         }
 
         [[nodiscard]]
@@ -99,14 +99,14 @@ namespace avocet {
         image_channels num_channels() const noexcept { return m_Channels.value; }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return height() * aligned_row_size(); }
+        std::size_t size() const noexcept { return height() * padded_row_size(); }
 
         [[nodiscard]]
         alignment row_alignment() const noexcept { return m_Alignment.value; }
 
         [[nodiscard]]
-        std::size_t aligned_row_size() const noexcept {
-            return avocet::aligned_row_size(width(), num_channels(), row_alignment());
+        std::size_t padded_row_size() const noexcept {
+            return avocet::padded_row_size(width(), num_channels(), row_alignment());
         }
 
         [[nodiscard]]
@@ -193,16 +193,16 @@ namespace avocet {
             , m_Channels{numChannels}
             , m_Alignment{rowAlignment}
         {
-            if(height() * aligned_row_size() != m_Data.size())
-                throw std::runtime_error{std::format("image: image size {} not a multiple of the height and padded row size, {}, {}", m_Data.size(), height(), aligned_row_size())};
+            if(height() * padded_row_size() != m_Data.size())
+                throw std::runtime_error{std::format("image: image size {} not a multiple of the height {} and padded row size {}", m_Data.size(), height(), padded_row_size())};
         }
 
         [[nodiscard]]
         std::size_t width() const noexcept { return m_Width; }
 
         [[nodiscard]]
-        std::size_t aligned_row_size() const noexcept { 
-            return avocet::aligned_row_size(width(), num_channels(), row_alignment());
+        std::size_t padded_row_size() const noexcept { 
+            return avocet::padded_row_size(width(), num_channels(), row_alignment());
         }
 
         [[nodiscard]]
