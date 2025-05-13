@@ -29,7 +29,7 @@ Checking for equivalence with:
     Predicted: 4
 
   Data
-  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  [std::span<unsigned char const, -1>]
 
     Container size wrong
     [unsigned long long]
@@ -48,52 +48,52 @@ Checking for equivalence with:
 [avocet::testing::image_data]
 
   Data
-  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  [std::span<unsigned char const, -1>]
 
     Element 6 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 7 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 9 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 10 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 12 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 14 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 15 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 17 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
@@ -129,9 +129,7 @@ operator== returned false
     Predicted: 1
 
   Data
-  [std::vector<unsigned int, std::allocator<unsigned int> >]
-  operator== returned false
-
+  [std::span<unsigned char const, -1>]
     Container size wrong
     [unsigned long long]
     operator== returned false
@@ -147,77 +145,75 @@ Wrong colours
 operator== returned false
 
   Data
-  [std::vector<unsigned int, std::allocator<unsigned int> >]
-  operator== returned false
-
+  [std::span<unsigned char const, -1>]
     Element 0 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 2 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 3 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 5 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 6 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 8 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 9 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 11 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 12 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 14 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255
 
     Element 15 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 0
 
     Element 17 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 0
     Predicted: 255

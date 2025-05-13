@@ -34,10 +34,6 @@ namespace sequoia::testing
         using texture_value_type = agl::texture_2d::value_type;
         using texture_data       = avocet::testing::texture_data;
 
-        static auto as_unsigned_int(std::span<const texture_value_type> data) {
-            return std::views::transform(data, [](auto c) -> unsigned int { return c; }) | std::ranges::to<std::vector>();
-        }
-
         template<test_mode Mode>
         static void test(equivalence_check_t,
             test_logger<Mode>& logger,
@@ -49,8 +45,8 @@ namespace sequoia::testing
                 check(equality,
                       "Texture Data",
                       logger,
-                      as_unsigned_int(std::span<const texture_value_type>{imageData.data}),
-                      as_unsigned_int(prediction.value().data));
+                      imageData.data,
+                      prediction.value().data);
             }
             else {
                 check("Null Buffer", logger, texture.is_null());

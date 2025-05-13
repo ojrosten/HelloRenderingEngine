@@ -21,7 +21,7 @@ Checking for equivalence with:
 [std::optional<avocet::testing::texture_data>]
 
   Texture Data
-  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  [std::vector<unsigned char, std::allocator<unsigned char> >]
   operator== returned false
 
     Container size wrong
@@ -41,29 +41,29 @@ Checking for equivalence with:
 [std::optional<avocet::testing::texture_data>]
 
   Texture Data
-  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  [std::vector<unsigned char, std::allocator<unsigned char> >]
   operator== returned false
 
     Element 0 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 42
 
     Element 1 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 7
 
     Element 2 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 255
     Predicted: 6
 
     Element 3 of range incorrect
-    [unsigned int]
+    [unsigned char]
     operator== returned false
     Obtained : 1
     Predicted: 10
@@ -79,7 +79,7 @@ Checking for equivalence with:
 [std::optional<avocet::testing::texture_data>]
 
   Texture Data
-  [std::vector<unsigned int, std::allocator<unsigned int> >]
+  [std::vector<unsigned char, std::allocator<unsigned char> >]
   operator== returned false
 
     Container size wrong
