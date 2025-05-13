@@ -158,7 +158,7 @@ namespace avocet {
         std::span<const value_type> span() const noexcept { return m_Data; }
 
         [[nodiscard]]
-        friend bool operator==(const image&, const image&) noexcept = default;
+        friend bool operator==(const image_view&, const image_view&) noexcept = default;
     private:
         std::span<const value_type> m_Data;
         std::size_t m_Width{}, m_Height{};
