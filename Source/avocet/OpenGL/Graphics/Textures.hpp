@@ -96,14 +96,10 @@ namespace avocet::opengl {
 
         texture_2d(const configuration_type& textureConfig)
             : base_type{{textureConfig}}
-            , m_RowAlignment{textureConfig.data.row_alignment()}
         {}
 
         [[nodiscard]]
-        friend image extract_image(const texture_2d& tex2d, texture_format format);
-
-        [[nodiscard]]
-        friend bool operator==(const texture_2d&, const texture_2d&) noexcept = default;
+        friend image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
 
         /*friend void bind_for_rendering(const texture_object& texObj) {
             [&] <std::size_t... Is>(std::index_sequence<Is...>){
@@ -112,8 +108,6 @@ namespace avocet::opengl {
         }*/
 
     private:
-        alignment m_RowAlignment;
-
         /*template<std::size_t I>
         static void activate_and_bind(const texture_object& texObj) {
             gl_function{glActiveTexture}(GL_TEXTURE0 + I);

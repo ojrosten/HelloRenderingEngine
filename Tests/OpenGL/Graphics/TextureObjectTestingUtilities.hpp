@@ -23,6 +23,7 @@ namespace avocet::testing {
         std::vector<value_type> data;
         std::size_t width{}, height{};
         agl::texture_format desired_format{agl::texture_format::rgba};
+        alignment row_alignment{};
     };
 }
 
@@ -41,7 +42,7 @@ namespace sequoia::testing
             const std::optional<texture_data>& prediction)
         {
             if(prediction) {
-                const auto imageData{extract_image(texture, prediction.value().desired_format)};
+                const auto imageData{extract_image(texture, prediction->desired_format, prediction->row_alignment)};
                 check(equality,
                       "Texture Data",
                       logger,
