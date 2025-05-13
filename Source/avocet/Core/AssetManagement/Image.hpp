@@ -127,12 +127,14 @@ namespace avocet {
     public:
         using value_type = unsigned char;
 
-        image_view(std::span<const value_type> data, std::size_t width, std::size_t height, image_channels numChannels)
+        image_view(std::span<const value_type> data, std::size_t width, std::size_t height, image_channels numChannels, std::size_t alignment)
             : m_Data{data}
             , m_Width{width}
             , m_Height{height}
+            , m_Channels{numChannels}
+            , m_Alignment{alignment}
         {
-            if(m_Width * m_Height * numChannels.raw_value() != m_Data.size())
+            if(m_Height * row_size() != m_Data.size())
                 throw std::runtime_error{std::format("image_view: image size {} not a multiple of the width, height and channels, {} * {} * {}", m_Data.size(), m_Width, m_Height, numChannels.raw_value())};
         }
 
@@ -140,10 +142,17 @@ namespace avocet {
         std::size_t width() const noexcept { return m_Width; }
 
         [[nodiscard]]
+        std::size_t row_size() const noexcept {
+            const std::size_t excess{width() % m_Alignment};
+            const auto alignedWidth{excess ? width() - excess + m_Alignment : width()};
+            return alignedWidth * num_channels().raw_value();
+        }
+
+        [[nodiscard]]
         std::size_t height() const noexcept { return m_Height; }
 
         [[nodiscard]]
-        image_channels num_channels() const noexcept { return image_channels{m_Data.size() / (width() * height())}; }
+        image_channels num_channels() const noexcept { return m_Channels; }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Data; }
@@ -153,6 +162,8 @@ namespace avocet {
     private:
         std::span<const value_type> m_Data;
         std::size_t m_Width{}, m_Height{};
+        image_channels m_Channels;
+        std::size_t m_Alignment{};
     };
 }
 

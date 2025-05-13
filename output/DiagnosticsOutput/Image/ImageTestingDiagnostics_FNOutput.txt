@@ -19,10 +19,14 @@ Checking for equivalence with:
   Predicted: 2
 
   Channels
-  [unsigned long long]
+  [avocet::image_channels]
   operator== returned false
-  Obtained : 3
-  Predicted: 4
+
+    Wrapped value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 3
+    Predicted: 4
 
   Data
   [std::vector<unsigned int, std::allocator<unsigned int> >]
@@ -115,10 +119,14 @@ operator== returned false
   Predicted: 2
 
   Channels
-  [unsigned long long]
+  [avocet::image_channels]
   operator== returned false
-  Obtained : 3
-  Predicted: 1
+
+    Wrapped value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 3
+    Predicted: 1
 
   Data
   [std::vector<unsigned int, std::allocator<unsigned int> >]
