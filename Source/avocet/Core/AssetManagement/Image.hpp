@@ -34,7 +34,7 @@ namespace avocet {
         friend constexpr auto operator<=>(const image_channels&, const image_channels&) noexcept = default;
 
         [[nodiscard]]
-        std::size_t raw_value() const noexcept { return m_Value; }
+        constexpr std::size_t raw_value() const noexcept { return m_Value; }
     };
 
     class alignment {
@@ -58,11 +58,17 @@ namespace avocet {
         friend constexpr auto operator<=>(const alignment&, const alignment&) noexcept = default;
 
         [[nodiscard]]
-        std::size_t raw_value() const noexcept { return m_Value; }
+        constexpr std::size_t raw_value() const noexcept { return m_Value; }
     };
 
-    inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
+    [[nodiscard]]
+    constexpr std::size_t aligned_row_size(std::size_t width, image_channels channels, alignment rowAlignment) noexcept {
+        const std::size_t excess{(width * channels.raw_value()) % rowAlignment.raw_value()};
+        const auto alignedWidth{excess ? width - excess + rowAlignment.raw_value() : width};
+        return alignedWidth * channels.raw_value();
+    }
 
+    inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
 
     class image {
     public:
@@ -100,9 +106,7 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t aligned_row_size() const noexcept {
-            const std::size_t excess{(width() * num_channels().raw_value()) % row_alignment().raw_value()};
-            const auto alignedWidth{excess ? width() - excess + row_alignment().raw_value() : width()};
-            return alignedWidth * num_channels().raw_value();
+            return avocet::aligned_row_size(width(), num_channels(), row_alignment());
         }
 
         [[nodiscard]]
@@ -197,10 +201,8 @@ namespace avocet {
         std::size_t width() const noexcept { return m_Width; }
 
         [[nodiscard]]
-        std::size_t aligned_row_size() const noexcept {
-            const std::size_t excess{(width() * num_channels().raw_value()) % row_alignment().raw_value()};
-            const auto alignedWidth{excess ? width() - excess + row_alignment().raw_value() : width()};
-            return alignedWidth * num_channels().raw_value();
+        std::size_t aligned_row_size() const noexcept { 
+            return avocet::aligned_row_size(width(), num_channels(), row_alignment());
         }
 
         [[nodiscard]]
