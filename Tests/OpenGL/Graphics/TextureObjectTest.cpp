@@ -56,7 +56,6 @@ namespace avocet::testing
         }*/
 
         {
-            glPixelStorei(GL_PACK_ALIGNMENT, 2);
             std::vector<value_type> textureVals{42, 7, 6, 0}, textureVals2{255, 7, 42, 1, 255, 3}, extractedTextureVals{42, 7, 6};
             check_semantics(
                 reporter{"Faithful roundtrip red and rg"},
@@ -70,8 +69,6 @@ namespace avocet::testing
         }
 
         {
-            glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-            glPixelStorei(GL_PACK_ALIGNMENT, 4);
             std::vector<value_type> textureVals{42}, extractedTextureVals{42, 0}, textureVals2{255, 7, 42, 1, 255, 3}, extractedTextureVals2{255, 7, 42, 255, 1, 255, 3, 255};
             check_semantics(
                 reporter{"Widening extractions"},

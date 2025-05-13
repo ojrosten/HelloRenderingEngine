@@ -26,7 +26,7 @@ namespace avocet {
     public:
         constexpr image_channels() noexcept {};
 
-        constexpr explicit image_channels(std::size_t n)
+        constexpr explicit image_channels(std::size_t n) noexcept
             : m_Value{n}
         {}
 
