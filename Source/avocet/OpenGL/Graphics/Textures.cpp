@@ -41,7 +41,7 @@ namespace avocet::opengl {
         void load_to_gpu(const texture_2d_configuration& config) {
             const auto format{to_format(config.colour_space, config.data.num_channels())};
 
-            glPixelStorei(GL_UNPACK_ALIGNMENT, static_cast<int>(config.data.row_alignment().raw_value()));
+            gl_function{glPixelStorei}(GL_UNPACK_ALIGNMENT, static_cast<int>(config.data.row_alignment().raw_value()));
 
             gl_function{glTexImage2D}(
                 GL_TEXTURE_2D,
@@ -72,7 +72,7 @@ namespace avocet::opengl {
         using value_type = texture_2d::value_type;
         const auto size{padded_row_size(width, numChannels, rowAlignment) * height};
         std::vector<value_type> texture(size);
-        glPixelStorei(GL_PACK_ALIGNMENT, static_cast<int>(rowAlignment.raw_value()));
+        gl_function{glPixelStorei}(GL_PACK_ALIGNMENT, static_cast<int>(rowAlignment.raw_value()));
         gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
         return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), numChannels, rowAlignment};
     }
