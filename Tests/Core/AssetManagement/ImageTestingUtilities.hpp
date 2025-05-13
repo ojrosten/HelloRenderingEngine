@@ -33,38 +33,6 @@ namespace avocet::testing {
 
 namespace sequoia::testing
 {
-    template<> struct value_tester<avocet::image_channels>
-    {
-        template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>& logger, const avocet::image_channels& actual, const avocet::image_channels& prediction)
-        {
-            check(equality, "Wrapped value", logger, actual.raw_value(), prediction.raw_value());
-        }
-
-        template<test_mode Mode>
-        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::image_channels& actual, const std::size_t prediction)
-        {
-            check(equality, "Wrapped value", logger, actual.raw_value(), prediction);
-            check(equality, "Wrapped value from cast", logger, static_cast<std::size_t>(actual), prediction);
-        }
-    };
-
-    template<> struct value_tester<avocet::alignment>
-    {
-        template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>& logger, const avocet::alignment& actual, const avocet::alignment& prediction)
-        {
-            check(equality, "Wrapped value", logger, actual.raw_value(), prediction.raw_value());
-        }
-
-        template<test_mode Mode>
-        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::alignment& actual, const std::size_t prediction)
-        {
-            check(equality, "Wrapped value", logger, actual.raw_value(), prediction);
-            check(equality, "Wrapped value from cast", logger, static_cast<std::size_t>(actual), prediction);
-        }
-    };
-
     template<> struct value_tester<avocet::image>
     {
         using type       = avocet::image;

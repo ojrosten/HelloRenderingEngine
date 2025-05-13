@@ -21,12 +21,8 @@ Checking for equivalence with:
   Channels
   [avocet::image_channels]
   operator== returned false
-
-    Wrapped value
-    [unsigned long long]
-    operator== returned false
-    Obtained : 3
-    Predicted: 4
+  Obtained : 3
+  Predicted: 4
 
   Data
   [std::span<unsigned char const, -1>]
@@ -121,12 +117,8 @@ operator== returned false
   Channels
   [avocet::image_channels]
   operator== returned false
-
-    Wrapped value
-    [unsigned long long]
-    operator== returned false
-    Obtained : 3
-    Predicted: 1
+  Obtained : 3
+  Predicted: 1
 
   Data
   [std::span<unsigned char const, -1>]

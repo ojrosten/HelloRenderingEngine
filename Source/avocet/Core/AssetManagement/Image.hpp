@@ -35,9 +35,6 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t raw_value() const noexcept { return m_Value; }
-
-        [[nodiscard]]
-        explicit operator std::size_t() const noexcept { return m_Value; }
     };
 
     class alignment {
@@ -62,9 +59,6 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t raw_value() const noexcept { return m_Value; }
-
-        [[nodiscard]]
-        explicit operator std::size_t() const noexcept { return m_Value; }
     };
 
     inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
@@ -238,6 +232,15 @@ namespace std {
 
         auto format(const avocet::image_channels& channels, auto& ctx) const {
             return std::format_to(ctx.out(), "{}", channels.raw_value());
+        }
+    };
+
+    template<>
+    struct formatter<avocet::alignment> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::alignment a, auto& ctx) const {
+            return std::format_to(ctx.out(), "{}", a.raw_value());
         }
     };
 }
