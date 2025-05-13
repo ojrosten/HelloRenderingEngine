@@ -45,8 +45,8 @@ namespace sequoia::testing
                 check(equality,
                       "Texture Data",
                       logger,
-                      imageData.data,
-                      prediction.value().data);
+                      imageData.span(),
+                      std::span<const texture_value_type>(prediction.value().data));
             }
             else {
                 check("Null Buffer", logger, texture.is_null());

@@ -21,9 +21,7 @@ Checking for equivalence with:
 [std::optional<avocet::testing::texture_data>]
 
   Texture Data
-  [std::vector<unsigned char, std::allocator<unsigned char> >]
-  operator== returned false
-
+  [std::span<unsigned char const, -1>]
     Container size wrong
     [unsigned long long]
     operator== returned false
@@ -41,9 +39,7 @@ Checking for equivalence with:
 [std::optional<avocet::testing::texture_data>]
 
   Texture Data
-  [std::vector<unsigned char, std::allocator<unsigned char> >]
-  operator== returned false
-
+  [std::span<unsigned char const, -1>]
     Element 0 of range incorrect
     [unsigned char]
     operator== returned false
@@ -79,9 +75,7 @@ Checking for equivalence with:
 [std::optional<avocet::testing::texture_data>]
 
   Texture Data
-  [std::vector<unsigned char, std::allocator<unsigned char> >]
-  operator== returned false
-
+  [std::span<unsigned char const, -1>]
     Container size wrong
     [unsigned long long]
     operator== returned false

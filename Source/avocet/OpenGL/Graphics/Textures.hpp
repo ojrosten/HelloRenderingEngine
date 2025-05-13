@@ -94,26 +94,20 @@ namespace avocet::opengl {
         using configuration_type = base_type::configuration_type;
         using value_type         = texture_2d_configuration::value_type;
 
-        struct image_data {
-            std::vector<value_type> data;
-            std::size_t width{};
-            std::size_t height{};
-
-        };
-
         texture_2d(const configuration_type& textureConfig)
             : base_type{{textureConfig}}
         {}
 
         [[nodiscard]]
-        friend image_data extract_image(const texture_2d& texObj, texture_format format) {
+        friend image extract_image(const texture_2d& texObj, texture_format format) {
             base_type::do_bind(texObj);
             const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
+            const auto numChannels{to_num_channels(format)};
 
-            const auto size{width * to_num_channels(format) * height};
+            const auto size{width * numChannels * height};
             std::vector<value_type> texture(size);
             gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
-            return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height)};
+            return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), image_channels{numChannels}, 1};
         }
 
         /*friend void bind_for_rendering(const texture_object& texObj) {

@@ -51,13 +51,16 @@ namespace avocet {
             : image{make(texturePath, flip, requestedChannels)}
         {}
 
-        image(std::vector<value_type> data, std::size_t width, std::size_t height, image_channels channels, std::size_t alignment)
+        image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, image_channels channels, std::size_t alignment)
             : m_Data{std::move(data)}
-            , m_Width{width}
-            , m_Height{height}
+            , m_Width{imageWidth}
+            , m_Height{imageHeight}
             , m_Channels{channels}
             , m_Alignment{alignment}
-        {}
+        {
+            if(const auto sz{std::get<vec_t>(m_Data).size()}; height() * row_size() != sz)
+                throw std::runtime_error{std::format("image: image size {} not a multiple of the width, height and channels, {} * {} * {}", sz, width(), height(), num_channels().raw_value())};
+        }
 
         [[nodiscard]]
         std::size_t width() const noexcept { return m_Width.value; }
@@ -73,6 +76,13 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t alignment() const noexcept { return m_Alignment.value; }
+
+        [[nodiscard]]
+        std::size_t row_size() const noexcept {
+            const std::size_t excess{width() % alignment()};
+            const auto alignedWidth{excess ? width() - excess + alignment() : width()};
+            return alignedWidth * num_channels().raw_value();
+        }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept {
