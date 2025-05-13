@@ -70,7 +70,7 @@ namespace avocet {
 
     void validate(std::size_t paddedRowSize, std::size_t height, std::size_t size);
 
-    inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
+    inline constexpr std::optional<image_channels> all_channels_in_image{std::nullopt};
 
     class image {
     public:
