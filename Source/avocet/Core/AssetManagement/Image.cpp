@@ -17,6 +17,11 @@ namespace avocet {
         stbi_image_free(ptr);
     }
 
+    void validate(std::size_t paddedRowSize, std::size_t height, std::size_t size) {
+        if(paddedRowSize * height != size)
+            throw std::runtime_error{std::format("image size {} is not a multiple of the height {} and padded row size {}", size, paddedRowSize, height)};
+    }
+
     [[nodiscard]]
     image image::make(const std::filesystem::path& texturePath, flip_vertically flip, const std::optional<image_channels> requestedChannels) {
         if(!fs::exists(texturePath))

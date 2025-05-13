@@ -68,6 +68,8 @@ namespace avocet {
         return excess ? nominalRowSize - excess + rowAlignment.raw_value() : nominalRowSize;
     }
 
+    void validate(std::size_t paddedRowSize, std::size_t height, std::size_t size);
+
     inline constexpr std::optional<image_channels> channels_in_image{std::nullopt};
 
     class image {
@@ -85,8 +87,7 @@ namespace avocet {
             , m_Channels{channels}
             , m_Alignment{rowAlignment}
         {
-            if(const auto sz{std::get<vec_t>(m_Data).size()}; height() * padded_row_size() != sz)
-                throw std::runtime_error{std::format("image: image size {} not a multiple of the height {} and padded row size {}", sz, height(), padded_row_size())};
+            validate(height(), padded_row_size(), std::get<vec_t>(m_Data).size());
         }
 
         [[nodiscard]]
@@ -193,8 +194,7 @@ namespace avocet {
             , m_Channels{numChannels}
             , m_Alignment{rowAlignment}
         {
-            if(height() * padded_row_size() != m_Data.size())
-                throw std::runtime_error{std::format("image: image size {} not a multiple of the height {} and padded row size {}", m_Data.size(), height(), padded_row_size())};
+            validate(height(), padded_row_size(), m_Data.size());
         }
 
         [[nodiscard]]
