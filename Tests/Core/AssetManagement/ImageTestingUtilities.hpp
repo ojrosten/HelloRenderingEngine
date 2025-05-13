@@ -19,8 +19,9 @@ namespace avocet::testing {
         using value_type = unsigned char;
 
         std::vector<value_type> data;
-        std::size_t width{}, height{}, alignment{};
+        std::size_t width{}, height{};
         image_channels num_channels{};
+        alignment row_alignment{};
     };
 
     [[nodiscard]]
@@ -48,6 +49,22 @@ namespace sequoia::testing
         }
     };
 
+    template<> struct value_tester<avocet::alignment>
+    {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const avocet::alignment& actual, const avocet::alignment& prediction)
+        {
+            check(equality, "Wrapped value", logger, actual.raw_value(), prediction.raw_value());
+        }
+
+        template<test_mode Mode>
+        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::alignment& actual, const std::size_t prediction)
+        {
+            check(equality, "Wrapped value", logger, actual.raw_value(), prediction);
+            check(equality, "Wrapped value from cast", logger, static_cast<std::size_t>(actual), prediction);
+        }
+    };
+
     template<> struct value_tester<avocet::image>
     {
         using type       = avocet::image;
@@ -57,21 +74,21 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const type& actual, const type& prediction)
         {
-            check(equality, "Width",     logger, actual.width(),        prediction.width());
-            check(equality, "Height",    logger, actual.height(),       prediction.height());
-            check(equality, "Channels",  logger, actual.num_channels(), prediction.num_channels());
-            check(equality, "Alignment", logger, actual.alignment(),    prediction.alignment());
-            check(equality, "Data",      logger, actual.span(),         prediction.span());
+            check(equality, "Width",     logger, actual.width(),         prediction.width());
+            check(equality, "Height",    logger, actual.height(),        prediction.height());
+            check(equality, "Channels",  logger, actual.num_channels(),  prediction.num_channels());
+            check(equality, "Alignment", logger, actual.row_alignment(), prediction.row_alignment());
+            check(equality, "Data",      logger, actual.span(),          prediction.span());
         }
 
         template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const type& actual, const image_data& prediction)
         {
-            check(equality,    "Width",     logger, actual.width(),        prediction.width);
-            check(equality,    "Height",    logger, actual.height(),       prediction.height);
-            check(equality,    "Channels",  logger, actual.num_channels(), prediction.num_channels);
-            check(equality,    "Alignment", logger, actual.alignment(),    prediction.alignment);
-            check(equivalence, "Data",      logger, actual.span(),         prediction.data);
+            check(equality,    "Width",     logger, actual.width(),         prediction.width);
+            check(equality,    "Height",    logger, actual.height(),        prediction.height);
+            check(equality,    "Channels",  logger, actual.num_channels(),  prediction.num_channels);
+            check(equality,    "Alignment", logger, actual.row_alignment(), prediction.row_alignment);
+            check(equivalence, "Data",      logger, actual.span(),          prediction.data);
         }
     };
 }

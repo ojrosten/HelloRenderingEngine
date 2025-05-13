@@ -107,7 +107,7 @@ namespace avocet::opengl {
             const auto size{width * numChannels * height};
             std::vector<value_type> texture(size);
             gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
-            return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), image_channels{numChannels}, 1};
+            return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), image_channels{numChannels}, alignment{1}};
         }
 
         /*friend void bind_for_rendering(const texture_object& texObj) {

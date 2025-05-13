@@ -41,7 +41,7 @@ namespace avocet::opengl {
         void load_to_gpu(const texture_2d_configuration& config) {
             const auto format{to_format(config.colour_space, config.data.num_channels())};
 
-            glPixelStorei(GL_UNPACK_ALIGNMENT, static_cast<int>(config.data.alignment()));
+            glPixelStorei(GL_UNPACK_ALIGNMENT, static_cast<int>(config.data.row_alignment().raw_value()));
 
             gl_function{glTexImage2D}(
                 GL_TEXTURE_2D,
