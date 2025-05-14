@@ -41,11 +41,21 @@ namespace avocet::testing
         );
 
         check_semantics(
-            "From aligned vector",
+            "From vector with aligned rows",
             to_image(make_red(2, 3, image_channels{3}, 255, alignment{1})),
             to_image(make_rgb_striped(2, 3, image_channels{4}, 0, alignment{4})),
             make_red(2, 3, image_channels{3}, 255, alignment{1}),
             make_rgb_striped(2, 3, image_channels{4}, 0, alignment{4}),
+            image_data{},
+            image_data{}
+        );
+
+        check_semantics(
+            "From vector with padded rows",
+            to_image(make_red(2, 3, image_channels{3}, 255, alignment{4})),
+            to_image(make_red(2, 3, image_channels{1}, 0, alignment{2})),
+            make_red(2, 3, image_channels{3}, 255, alignment{4}),
+            make_red(2, 3, image_channels{1}, 0, alignment{2}),
             image_data{},
             image_data{}
         );
