@@ -33,16 +33,14 @@ namespace avocet {
                 throw std::runtime_error{std::format("image: invalid number of channels {} requested", requestedChannels.value())};
         }
 
-        const auto outputChannels{requestedChannels.value_or(image_channels{})};
-
         stbi_set_flip_vertically_on_load_thread(static_cast<bool>(flip));
 
-        int width{}, height{}, channels{};
-        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, static_cast<int>(outputChannels.raw_value()))};
+        int width{}, height{}, channels{}, outputChannels{requestedChannels ? static_cast<int>(requestedChannels->raw_value()) : 0};
+        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, outputChannels)};
         if(!pData)
             throw std::runtime_error{std::format("image: texture {} did not load", texturePath.generic_string())};
 
-        const auto actualChannels{static_cast<int>(requestedChannels ? requestedChannels->raw_value() : channels)};
+        const auto actualChannels{static_cast<int>(outputChannels ? outputChannels : channels)};
         return {pData, width, height, actualChannels, alignment{1}};
     }
 }
