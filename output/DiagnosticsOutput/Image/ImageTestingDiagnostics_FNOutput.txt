@@ -234,3 +234,31 @@ operator== returned false
 
 =======================================
 
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 31
+Not padded
+
+[avocet::image]
+operator== returned false
+
+  Channels
+  [avocet::image_channels]
+  operator== returned false
+  Obtained : 4
+  Predicted: 3
+
+  Alignment
+  [avocet::alignment]
+  operator== returned false
+  Obtained : 1
+  Predicted: 4
+
+  Data
+  [std::span<unsigned char const, -1>]
+    Element 3 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+=======================================
+

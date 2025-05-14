@@ -18,8 +18,9 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    image_data make_red(std::size_t w, std::size_t h, image_channels channels, std::size_t intensity, alignment rowAlignment) {
+    image_data make_red(std::size_t w, std::size_t h, image_channels channels, unsigned char intensity, alignment rowAlignment) {
         const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
+        const bool isPadded{paddedRowSize != w * channels.raw_value()};
         return {
             .data{
                   std::views::iota(0u, paddedRowSize * h)
@@ -27,7 +28,8 @@ namespace avocet::testing {
                     [=](auto i) -> unsigned char {
                         const auto row{i / (w * channels.raw_value())};
                         const auto decrementedChannel{(i - paddedRowSize * row) % channels.raw_value()};
-                        return static_cast<unsigned char>(decrementedChannel ? 0 : intensity);
+                        const auto paddingByte{isPadded && !((i + 1) % paddedRowSize)};
+                        return static_cast<unsigned char>((decrementedChannel || paddingByte) ? 0 : intensity);
                     }
                   )
                 | std::ranges::to<std::vector>()
