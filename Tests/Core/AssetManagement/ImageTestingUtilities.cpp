@@ -13,6 +13,11 @@
 
 namespace avocet::testing {
     [[nodiscard]]
+    image to_image(image_data imageData) {
+        return {imageData.data, imageData.width, imageData.height, imageData.num_channels, imageData.row_alignment};
+    }
+
+    [[nodiscard]]
     image_data make_red(std::size_t w, std::size_t h, image_channels channels, std::size_t intensity, alignment rowAlignment) {
         const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
         return {

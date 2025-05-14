@@ -25,6 +25,9 @@ namespace avocet::testing {
     };
 
     [[nodiscard]]
+    image to_image(image_data imageData);
+
+    [[nodiscard]]
     image_data make_red(std::size_t width, std::size_t height, image_channels channels, std::size_t intensity, alignment rowAlignment = {});
 
     [[nodiscard]]
