@@ -35,12 +35,12 @@ namespace avocet {
 
         stbi_set_flip_vertically_on_load_thread(static_cast<bool>(flip));
 
-        int width{}, height{}, channels{}, outputChannels{requestedChannels ? static_cast<int>(requestedChannels->raw_value()) : 0};
-        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, outputChannels)};
+        int width{}, height{}, channels{}, channelSelection{requestedChannels ? static_cast<int>(requestedChannels->raw_value()) : 0};
+        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, channelSelection)};
         if(!pData)
             throw std::runtime_error{std::format("image: texture {} did not load", texturePath.generic_string())};
 
-        const auto actualChannels{static_cast<int>(outputChannels ? outputChannels : channels)};
+        const auto actualChannels{static_cast<int>(channelSelection ? channelSelection : channels)};
         return {pData, width, height, actualChannels, alignment{1}};
     }
 }
