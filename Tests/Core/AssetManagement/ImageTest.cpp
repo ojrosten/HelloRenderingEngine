@@ -40,6 +40,16 @@ namespace avocet::testing
             image_data{}
         );
 
+        check_semantics(
+            "From aligned vector",
+            image{make_red(2, 3, image_channels{3}, 255).data, 2, 3, image_channels{3}, alignment{1}},
+            image{make_rgb_striped(2, 3, image_channels{4}, 0, alignment{4}).data, 2, 3, image_channels{4}, alignment{4}},
+            make_red(2, 3, image_channels{3}, 255),
+            make_rgb_striped(2, 3, image_channels{4}, 0, alignment{4}),
+            image_data{},
+            image_data{}
+        );
+
         check_exception_thrown<std::runtime_error>(
             reporter{"Absent image"},
             [this](){
