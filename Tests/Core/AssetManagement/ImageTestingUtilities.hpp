@@ -28,10 +28,10 @@ namespace avocet::testing {
     image to_image(image_data imageData);
 
     [[nodiscard]]
-    image_data make_red(std::size_t width, std::size_t height, image_channels channels, unsigned char intensity, alignment rowAlignment = {});
+    image_data make_red(std::size_t width, std::size_t height, image_channels channels, alignment rowAlignment, unsigned char intensity);
 
     [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, image_channels channels, unsigned char alpha=0, alignment rowAlignment = {});
+    image_data make_rgb_striped(std::size_t w, std::size_t h, image_channels channels, alignment rowAlignment, unsigned char alpha=0);
 }
 
 namespace sequoia::testing

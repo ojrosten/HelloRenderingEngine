@@ -18,7 +18,7 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    image_data make_red(std::size_t w, std::size_t h, image_channels channels, unsigned char intensity, alignment rowAlignment) {
+    image_data make_red(std::size_t w, std::size_t h, image_channels channels, alignment rowAlignment, unsigned char intensity) {
         const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
         const bool isPadded{paddedRowSize != w * channels.raw_value()};
         return {
@@ -42,7 +42,7 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, image_channels channels, unsigned char alpha, alignment rowAlignment) {
+    image_data make_rgb_striped(std::size_t w, std::size_t h, image_channels channels, alignment rowAlignment, unsigned char alpha) {
         const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
         return {
             .data{
