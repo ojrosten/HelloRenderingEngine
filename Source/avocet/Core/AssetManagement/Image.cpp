@@ -42,6 +42,7 @@ namespace avocet {
         if(!pData)
             throw std::runtime_error{std::format("image: texture {} did not load", texturePath.generic_string())};
 
-        return {pData, width, height, channels, alignment{1}};
+        const auto actualChannels{static_cast<int>(requestedChannels ? requestedChannels->raw_value() : channels)};
+        return {pData, width, height, actualChannels, alignment{1}};
     }
 }

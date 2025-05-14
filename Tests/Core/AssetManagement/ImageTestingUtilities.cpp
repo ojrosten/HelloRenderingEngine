@@ -14,14 +14,14 @@
 namespace avocet::testing {
 
     [[nodiscard]]
-    image_data make_red(std::size_t w, std::size_t h, image_channels channels) {
+    image_data make_red(std::size_t w, std::size_t h, image_channels channels, std::size_t intensity) {
         return {
             .data{
                   std::views::iota(0u, w * h * channels.raw_value())
                 | std::views::transform(
                     [=](auto i) -> unsigned char {
                         const auto channel{i % channels.raw_value()};
-                        return static_cast<unsigned char>(channel ? 0 : 255);
+                        return static_cast<unsigned char>(channel ? 0 : intensity);
                     }
                   )
                 | std::ranges::to<std::vector>()
