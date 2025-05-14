@@ -24,5 +24,8 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+    private:
+        void check_padded_row_size();
+        void check_image();
     };
 }

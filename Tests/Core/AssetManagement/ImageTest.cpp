@@ -20,6 +20,29 @@ namespace avocet::testing
 
     void image_test::run_tests()
     {
+        check_padded_row_size();
+        check_image();
+    }
+
+    void image_test::check_padded_row_size() {
+        check(equality, "", padded_row_size(0, image_channels{1}, alignment{1}), std::size_t{});
+        check(equality, "", padded_row_size(1, image_channels{1}, alignment{1}), std::size_t{1});
+        check(equality, "", padded_row_size(1, image_channels{1}, alignment{2}), std::size_t{2});
+        check(equality, "", padded_row_size(2, image_channels{1}, alignment{1}), std::size_t{2});
+        check(equality, "", padded_row_size(2, image_channels{1}, alignment{2}), std::size_t{2});
+        check(equality, "", padded_row_size(2, image_channels{1}, alignment{4}), std::size_t{4});
+
+        check(equality, "", padded_row_size(1, image_channels{2}, alignment{1}), std::size_t{2});
+        check(equality, "", padded_row_size(1, image_channels{2}, alignment{2}), std::size_t{2});
+        check(equality, "", padded_row_size(1, image_channels{2}, alignment{4}), std::size_t{4});
+        check(equality, "", padded_row_size(2, image_channels{2}, alignment{2}), std::size_t{4});
+        check(equality, "", padded_row_size(2, image_channels{2}, alignment{4}), std::size_t{4});
+
+        check(equality, "", padded_row_size(3, image_channels{2}, alignment{4}), std::size_t{8});
+    }
+
+    void image_test::check_image() {
+
         check_semantics(
             "",
             image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image},
