@@ -26,5 +26,7 @@ namespace avocet::testing
 
         check(equality, "Wrong image",   red, image{working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image});
         check(equality, "Wrong colours", red, image{working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image});
+
+        check(equality, "Not padded", to_image(make_red(2, 3, image_channels{3}, 255, alignment{1})), to_image(make_red(2, 3, image_channels{3}, 255, alignment{4})));
     }
 }
