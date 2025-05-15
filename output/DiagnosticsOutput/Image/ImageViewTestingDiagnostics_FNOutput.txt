@@ -100,6 +100,8 @@ Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 78
 Wrong image
 
 [avocet::image_view]
+operator== returned false
+
   Width
   [unsigned long long]
   operator== returned false
@@ -132,6 +134,8 @@ Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 79
 Wrong colours
 
 [avocet::image_view]
+operator== returned false
+
   Data
   [std::span<unsigned char const, -1>]
     Element 0 of range incorrect
@@ -212,6 +216,8 @@ Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 81
 Not padded
 
 [avocet::image_view]
+operator== returned false
+
   Alignment
   [avocet::alignment]
   operator== returned false
@@ -232,6 +238,8 @@ Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 82
 Not padded
 
 [avocet::image_view]
+operator== returned false
+
   Channels
   [avocet::image_channels]
   operator== returned false

@@ -75,8 +75,8 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Image",
-            image_view_test{"Unit Test"},
             image_view_false_negative_test{"False Negative Test"},
+            image_view_test{"Unit Test"},
             image_false_negative_test{"False Negative Test"},
             image_test{"Unit Test"}
         );

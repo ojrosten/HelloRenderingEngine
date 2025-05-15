@@ -226,7 +226,13 @@ namespace avocet {
         std::span<const value_type> span() const noexcept { return m_Data; }
 
         [[nodiscard]]
-        friend bool operator==(const image_view&, const image_view&) noexcept = default;
+        friend bool operator==(const image_view& lhs, const image_view& rhs) noexcept {
+            return std::ranges::equal(lhs.span(), rhs.span())
+                && lhs.width()         == rhs.width()
+                && lhs.height()        == rhs.height()
+                && lhs.num_channels()  == rhs.num_channels()
+                && lhs.row_alignment() == rhs.row_alignment();
+        }
     private:
         std::span<const value_type> m_Data;
         std::size_t m_Width{}, m_Height{};

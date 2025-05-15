@@ -27,7 +27,6 @@ namespace avocet::testing
     private:
         void test_padded_row_size();
 
-        template<class Transform>
-        void test_image(Transform transform);
+        void test_image();
     };
 }

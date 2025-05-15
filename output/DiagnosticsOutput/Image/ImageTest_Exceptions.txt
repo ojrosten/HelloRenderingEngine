@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/ImageTest.cpp, Line 89
+Tests/Core/AssetManagement/ImageTest.cpp, Line 86
 Absent image
 
 Expected Exception Type:
@@ -7,7 +7,7 @@ image: texture TestsTemporaryData/Core/AssetManagement/ImageTest/Absent.png not 
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTest.cpp, Line 97
+Tests/Core/AssetManagement/ImageTest.cpp, Line 94
 Invalid image
 
 Expected Exception Type:

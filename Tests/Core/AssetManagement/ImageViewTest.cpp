@@ -8,6 +8,7 @@
 /*! \file */
 
 #include "ImageViewTest.hpp"
+#include "curlew/TestFramework/GraphicsTestCore.hpp"
 
 namespace avocet::testing
 {
@@ -19,14 +20,44 @@ namespace avocet::testing
 
     void image_view_test::run_tests()
     {
-        // For example:
+        check_semantics(
+            "",
+            image_view{image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image}},
+            image_view{image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image}}
+        );
 
-        // avocet::image_view x{args}, y{different args};
-        // check(equivalence, "Useful Description", x, something equivalent);
-        // check(equivalence,"Useful Description", y, something equivalent);
-        // For orderable type, with x < y:
-        // check_semantics("Useful Description", x, y, std::weak_ordering::less);
-        // For equality comparable but not orderable:
-        // check_semantics("Useful Description", x, y);
+        check_semantics(
+            "Override number of channels",
+            image_view{image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  image_channels{1}}},
+            image_view{image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, image_channels{4}}}
+        );
+
+        check_semantics(
+            "From vector with aligned rows",
+            image_view{to_image(make_red(2, 3, image_channels{3}, alignment{1}, 255))},
+            image_view{to_image(make_rgb_striped(2, 3, image_channels{4}, alignment{4}))}
+        );
+
+        check_semantics(
+            "From vector with padded rows",
+            image_view{to_image(make_red(2, 3, image_channels{3}, alignment{4}, 255))},
+            image_view{to_image(make_red(2, 3, image_channels{1}, alignment{2}, 0))}
+        );
+
+        check_exception_thrown<std::runtime_error>(
+            reporter{"Absent image"},
+            [this](){
+                image_view{image{working_materials() / "Absent.png", flip_vertically::no, all_channels_in_image}};
+            },
+            curlew::exception_postprocessor{}
+        );
+
+        check_exception_thrown<std::runtime_error>(
+            reporter{"Invalid image"},
+            [this](){
+                image_view{image{working_materials() / "not_an_image.txt", flip_vertically::no, all_channels_in_image}};
+            },
+            curlew::exception_postprocessor{}
+        );
     }
 }
