@@ -197,6 +197,14 @@ namespace avocet {
             validate(height(), padded_row_size(), m_Data.size());
         }
 
+        image_view(const image& im)
+            : m_Data{im.span()}
+            , m_Width{im.width()}
+            , m_Height{im.height()}
+            , m_Channels{im.num_channels()}
+            , m_Alignment{im.row_alignment()}
+        {}
+
         [[nodiscard]]
         std::size_t width() const noexcept { return m_Width; }
 

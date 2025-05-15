@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 30
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 31
 Wrong image
 
 Comparison performed using:
@@ -35,7 +35,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 31
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 32
 Wrong colours
 
 Comparison performed using:
@@ -96,7 +96,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 33
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 34
 Wrong image
 
 [avocet::image]
@@ -130,7 +130,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 34
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 35
 Wrong colours
 
 [avocet::image]
@@ -212,7 +212,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 36
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 37
 Not padded
 
 [avocet::image]
@@ -234,12 +234,268 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 37
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 38
 Not padded
 
 [avocet::image]
 operator== returned false
 
+  Channels
+  [avocet::image_channels]
+  operator== returned false
+  Obtained : 4
+  Predicted: 3
+
+  Alignment
+  [avocet::alignment]
+  operator== returned false
+  Obtained : 1
+  Predicted: 4
+
+  Data
+  [std::span<unsigned char const, -1>]
+    Element 3 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 31
+Wrong image
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::image_view>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Width
+  [unsigned long long]
+  operator== returned false
+  Obtained : 2
+  Predicted: 3
+
+  Height
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 2
+
+  Channels
+  [avocet::image_channels]
+  operator== returned false
+  Obtained : 3
+  Predicted: 4
+
+  Data
+  [std::span<unsigned char const, -1>]
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 18
+    Predicted: 24
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 32
+Wrong colours
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::image_view>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Data
+  [std::span<unsigned char const, -1>]
+
+    Element 6 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 7 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 9 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 10 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 12 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 14 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 15 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 17 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 34
+Wrong image
+
+[avocet::image_view]
+  Width
+  [unsigned long long]
+  operator== returned false
+  Obtained : 2
+  Predicted: 3
+
+  Height
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 2
+
+  Channels
+  [avocet::image_channels]
+  operator== returned false
+  Obtained : 3
+  Predicted: 1
+
+  Data
+  [std::span<unsigned char const, -1>]
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 18
+    Predicted: 6
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 35
+Wrong colours
+
+[avocet::image_view]
+  Data
+  [std::span<unsigned char const, -1>]
+    Element 0 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 2 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 3 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 5 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 6 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 8 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 9 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 11 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 12 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 14 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 15 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 17 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 37
+Not padded
+
+[avocet::image_view]
+  Alignment
+  [avocet::alignment]
+  operator== returned false
+  Obtained : 1
+  Predicted: 4
+
+  Data
+  [std::span<unsigned char const, -1>]
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 18
+    Predicted: 24
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 38
+Not padded
+
+[avocet::image_view]
   Channels
   [avocet::image_channels]
   operator== returned false
