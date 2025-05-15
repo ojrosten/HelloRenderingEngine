@@ -87,7 +87,7 @@ namespace avocet::opengl {
 
         static void configure(const resource_handle& h, const configuration& config);
     };
-
+  
     class texture_2d : public generic_resource<num_resources{1}, texture_lifecycle_events> {
     public:
         using base_type          = generic_resource<num_resources{1}, texture_lifecycle_events>;
@@ -98,7 +98,6 @@ namespace avocet::opengl {
             : base_type{{textureConfig}}
         {}
 
-        [[nodiscard]]
         friend image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
 
         /*friend void bind_for_rendering(const texture_object& texObj) {
@@ -121,4 +120,7 @@ namespace avocet::opengl {
             return param;
         }
     };
+
+    [[nodiscard]]
+    image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
 }
