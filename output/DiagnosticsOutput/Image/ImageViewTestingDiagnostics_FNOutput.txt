@@ -2,7 +2,7 @@ Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 75
 Wrong image
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::image>]
+[sequoia::testing::value_tester<avocet::image_view>]
 Checking for equivalence with:
 [avocet::testing::image_data]
 
@@ -39,7 +39,7 @@ Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 76
 Wrong colours
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::image>]
+[sequoia::testing::value_tester<avocet::image_view>]
 Checking for equivalence with:
 [avocet::testing::image_data]
 
@@ -99,9 +99,7 @@ Checking for equivalence with:
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 78
 Wrong image
 
-[avocet::image]
-operator== returned false
-
+[avocet::image_view]
   Width
   [unsigned long long]
   operator== returned false
@@ -133,9 +131,7 @@ operator== returned false
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 79
 Wrong colours
 
-[avocet::image]
-operator== returned false
-
+[avocet::image_view]
   Data
   [std::span<unsigned char const, -1>]
     Element 0 of range incorrect
@@ -215,9 +211,7 @@ operator== returned false
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 81
 Not padded
 
-[avocet::image]
-operator== returned false
-
+[avocet::image_view]
   Alignment
   [avocet::alignment]
   operator== returned false
@@ -237,9 +231,7 @@ operator== returned false
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 82
 Not padded
 
-[avocet::image]
-operator== returned false
-
+[avocet::image_view]
   Channels
   [avocet::image_channels]
   operator== returned false

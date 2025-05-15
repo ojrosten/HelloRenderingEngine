@@ -5,29 +5,21 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#pragma once
-
 /*! \file */
 
-#include "ImageTestingUtilities.hpp"
+#include "ImageViewTestingDiagnostics.hpp"
 
 namespace avocet::testing
 {
-    using namespace sequoia::testing;
-
-    class image_test final : public move_only_test
+    [[nodiscard]]
+    std::filesystem::path image_view_false_negative_test::source_file() const
     {
-    public:
-        using move_only_test::move_only_test;
+        return std::source_location::current().file_name();
+    }
 
-        [[nodiscard]]
-        std::filesystem::path source_file() const;
-
-        void run_tests();
-    private:
-        void test_padded_row_size();
-
-        template<class Transform>
-        void test_image(Transform transform);
-    };
+    void image_view_false_negative_test::run_tests()
+    {
+        using namespace avocet;
+        execute_image_false_negative_tests(*this, [](const image& im) { return image_view{im}; });
+    }
 }

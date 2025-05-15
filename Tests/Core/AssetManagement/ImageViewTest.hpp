@@ -15,19 +15,14 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class image_test final : public move_only_test
+    class image_view_test final : public regular_test
     {
     public:
-        using move_only_test::move_only_test;
+        using regular_test::regular_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
         void run_tests();
-    private:
-        void test_padded_row_size();
-
-        template<class Transform>
-        void test_image(Transform transform);
     };
 }

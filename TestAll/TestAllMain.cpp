@@ -9,6 +9,8 @@
 
 #include "Core/AssetManagement/ImageTest.hpp"
 #include "Core/AssetManagement/ImageTestingDiagnostics.hpp"
+#include "Core/AssetManagement/ImageViewTest.hpp"
+#include "Core/AssetManagement/ImageViewTestingDiagnostics.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
@@ -73,6 +75,8 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Image",
+            image_view_test{"Unit Test"},
+            image_view_false_negative_test{"False Negative Test"},
             image_false_negative_test{"False Negative Test"},
             image_test{"Unit Test"}
         );

@@ -25,7 +25,5 @@ namespace avocet::testing
 
         void run_tests();
     private:
-        template<class Transform>
-        void test_image(Transform transform);
     };
 }

@@ -9,10 +9,10 @@
 
 /*! \file */
 
-#include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
 #include "avocet/Core/AssetManagement/Image.hpp"
 
-#include <ranges>
+#include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
+#include "sequoia/TestFramework/RegularTestCore.hpp"
 
 namespace avocet::testing {
     struct image_data {
@@ -65,4 +65,20 @@ namespace sequoia::testing
     template<> struct value_tester<avocet::image> : image_value_tester<avocet::image> {};
 
     template<> struct value_tester<avocet::image_view> : image_value_tester<avocet::image_view> {};
+
+    template<concrete_test Test, class Transform>
+    void execute_image_false_negative_tests(Test& test, Transform transform) {
+        using namespace avocet;
+        using namespace avocet::testing;
+        image red{test.working_materials() / "red_2w_3h_3c.png", flip_vertically::no, all_channels_in_image};
+
+        test.check(equivalence, "Wrong image",   transform(red), make_red(        3, 2, image_channels{4}, alignment{1}, 255));
+        test.check(equivalence, "Wrong colours", transform(red), make_rgb_striped(2, 3, image_channels{3}, alignment{1}));
+
+        test.check(equality, "Wrong image",   transform(red), transform(image{test.working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image}));
+        test.check(equality, "Wrong colours", transform(red), transform(image{test.working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image}));
+
+        test.check(equality, "Not padded", transform(to_image(make_red(        2, 3, image_channels{3}, alignment{1}, 255))), transform(to_image(make_red(        2, 3, image_channels{3}, alignment{4}, 255))));
+        test.check(equality, "Not padded", transform(to_image(make_rgb_striped(1, 1, image_channels{4}, alignment{1}, 255))), transform(to_image(make_rgb_striped(1, 1, image_channels{3}, alignment{4}, 255))));
+    }
 }

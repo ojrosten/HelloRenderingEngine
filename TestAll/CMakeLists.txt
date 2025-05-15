@@ -17,6 +17,8 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/ImageTest.cpp
                ${TestDir}/Core/AssetManagement/ImageTestingDiagnostics.cpp
                ${TestDir}/Core/AssetManagement/ImageTestingUtilities.cpp
+               ${TestDir}/Core/AssetManagement/ImageViewTest.cpp
+               ${TestDir}/Core/AssetManagement/ImageViewTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/InfiniteLoopFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp

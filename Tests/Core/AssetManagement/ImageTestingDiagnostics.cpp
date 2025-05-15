@@ -19,22 +19,6 @@ namespace avocet::testing
 
     void image_false_negative_test::run_tests()
     {
-        test_image(std::identity{});
-        test_image([](const image& im){ return image_view{im}; });
-    }
-
-    template<class Transform>
-    void image_false_negative_test::test_image(Transform transform)
-    {
-        image red{working_materials() / "red_2w_3h_3c.png", flip_vertically::no, all_channels_in_image};
-
-        check(equivalence, "Wrong image",   transform(red), make_red(        3, 2, image_channels{4}, alignment{1}, 255));
-        check(equivalence, "Wrong colours", transform(red), make_rgb_striped(2, 3, image_channels{3}, alignment{1}));
-
-        check(equality, "Wrong image",   transform(red), transform(image{working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image}));
-        check(equality, "Wrong colours", transform(red), transform(image{working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image}));
-
-        check(equality, "Not padded", transform(to_image(        make_red(2, 3, image_channels{3}, alignment{1}, 255))), transform(to_image(make_red(        2, 3, image_channels{3}, alignment{4}, 255))));
-        check(equality, "Not padded", transform(to_image(make_rgb_striped(1, 1, image_channels{4}, alignment{1}, 255))), transform(to_image(make_rgb_striped(1, 1, image_channels{3}, alignment{4}, 255))));
+        execute_image_false_negative_tests(*this, std::identity{});
     }
 }
