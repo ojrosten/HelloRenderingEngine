@@ -72,15 +72,15 @@ namespace avocet {
 
     inline constexpr std::optional<image_channels> all_channels_in_image{std::nullopt};
 
-    class image {
+    class unique_image {
     public:
         using value_type = unsigned char;
 
-        image(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels)
-            : image{make(texturePath, flip, requestedChannels)}
+        unique_image(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels)
+            : unique_image{make(texturePath, flip, requestedChannels)}
         {}
 
-        image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, image_channels channels, alignment rowAlignment)
+        unique_image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, image_channels channels, alignment rowAlignment)
             : m_Data{std::move(data)}
             , m_Width{imageWidth}
             , m_Height{imageHeight}
@@ -123,7 +123,7 @@ namespace avocet {
         }
 
         [[nodiscard]]
-        friend bool operator==(const image&, const image&) noexcept = default;
+        friend bool operator==(const unique_image&, const unique_image&) noexcept = default;
     private:
         struct file_unloader {
             void operator()(value_type* ptr) const;
@@ -134,7 +134,7 @@ namespace avocet {
             [[nodiscard]]
             std::size_t to_unsigned(int val) {
                 if(val < 0)
-                    throw std::logic_error{std::format("image::parameter - negative value {}", val)};
+                    throw std::logic_error{std::format("unique_image::parameter - negative value {}", val)};
 
                 return static_cast<std::size_t>(val);
             }
@@ -171,7 +171,7 @@ namespace avocet {
         parameter<image_channels> m_Channels;
         parameter<alignment> m_Alignment;
 
-        image(value_type* ptr, int width, int height, int channels, alignment rowAlignment)
+        unique_image(value_type* ptr, int width, int height, int channels, alignment rowAlignment)
             : m_Data{ptr_t{ptr}}
             , m_Width{width}
             , m_Height{height}
@@ -180,7 +180,7 @@ namespace avocet {
         {}
 
         [[nodiscard]]
-        static image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels);
+        static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels);
     };
 
     class image_view {
@@ -197,7 +197,7 @@ namespace avocet {
             validate(height(), padded_row_size(), m_Data.size());
         }
 
-        image_view(const image& im)
+        image_view(const unique_image& im)
             : m_Data{im.span()}
             , m_Width{im.width()}
             , m_Height{im.height()}

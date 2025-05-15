@@ -98,7 +98,7 @@ namespace avocet::opengl {
             : base_type{{textureConfig}}
         {}
 
-        friend image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
+        friend unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
 
         /*friend void bind_for_rendering(const texture_object& texObj) {
             [&] <std::size_t... Is>(std::index_sequence<Is...>){
@@ -122,5 +122,5 @@ namespace avocet::opengl {
     };
 
     [[nodiscard]]
-    image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
+    unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
 }

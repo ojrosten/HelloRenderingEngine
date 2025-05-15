@@ -22,14 +22,14 @@ namespace avocet::testing
     {
         check_semantics(
             "",
-            image_view{image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image}},
-            image_view{image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image}}
+            image_view{unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image}},
+            image_view{unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image}}
         );
 
         check_semantics(
             "Override number of channels",
-            image_view{image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  image_channels{1}}},
-            image_view{image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, image_channels{4}}}
+            image_view{unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  image_channels{1}}},
+            image_view{unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, image_channels{4}}}
         );
 
         check_semantics(
@@ -45,17 +45,17 @@ namespace avocet::testing
         );
 
         check_exception_thrown<std::runtime_error>(
-            reporter{"Absent image"},
+            reporter{"Absent unique_image"},
             [this](){
-                image_view{image{working_materials() / "Absent.png", flip_vertically::no, all_channels_in_image}};
+                image_view{unique_image{working_materials() / "Absent.png", flip_vertically::no, all_channels_in_image}};
             },
             curlew::exception_postprocessor{}
         );
 
         check_exception_thrown<std::runtime_error>(
-            reporter{"Invalid image"},
+            reporter{"Invalid unique_image"},
             [this](){
-                image_view{image{working_materials() / "not_an_image.txt", flip_vertically::no, all_channels_in_image}};
+                image_view{unique_image{working_materials() / "not_an_image.txt", flip_vertically::no, all_channels_in_image}};
             },
             curlew::exception_postprocessor{}
         );

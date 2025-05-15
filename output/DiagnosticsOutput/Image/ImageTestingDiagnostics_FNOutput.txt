@@ -1,8 +1,8 @@
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 75
-Wrong image
+Wrong unique_image
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::image>]
+[sequoia::testing::value_tester<avocet::unique_image>]
 Checking for equivalence with:
 [avocet::testing::image_data]
 
@@ -39,7 +39,7 @@ Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 76
 Wrong colours
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::image>]
+[sequoia::testing::value_tester<avocet::unique_image>]
 Checking for equivalence with:
 [avocet::testing::image_data]
 
@@ -97,9 +97,9 @@ Checking for equivalence with:
 =======================================
 
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 78
-Wrong image
+Wrong unique_image
 
-[avocet::image]
+[avocet::unique_image]
 operator== returned false
 
   Width
@@ -133,7 +133,7 @@ operator== returned false
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 79
 Wrong colours
 
-[avocet::image]
+[avocet::unique_image]
 operator== returned false
 
   Data
@@ -215,7 +215,7 @@ operator== returned false
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 81
 Not padded
 
-[avocet::image]
+[avocet::unique_image]
 operator== returned false
 
   Alignment
@@ -237,7 +237,7 @@ operator== returned false
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 82
 Not padded
 
-[avocet::image]
+[avocet::unique_image]
 operator== returned false
 
   Channels

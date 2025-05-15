@@ -13,7 +13,7 @@
 
 namespace avocet::testing {
     [[nodiscard]]
-    image to_image(image_data imageData) {
+    unique_image to_image(image_data imageData) {
         return {imageData.data, imageData.width, imageData.height, imageData.num_channels, imageData.row_alignment};
     }
 

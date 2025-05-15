@@ -25,7 +25,7 @@ namespace avocet::testing {
     };
 
     [[nodiscard]]
-    image to_image(image_data imageData);
+    unique_image to_image(image_data imageData);
 
     [[nodiscard]]
     image_data make_red(std::size_t width, std::size_t height, image_channels channels, alignment rowAlignment, unsigned char intensity);
@@ -62,7 +62,7 @@ namespace sequoia::testing
         }
     };
 
-    template<> struct value_tester<avocet::image> : image_value_tester<avocet::image> {};
+    template<> struct value_tester<avocet::unique_image> : image_value_tester<avocet::unique_image> {};
 
     template<> struct value_tester<avocet::image_view> : image_value_tester<avocet::image_view> {};
 
@@ -70,13 +70,13 @@ namespace sequoia::testing
     void execute_image_false_negative_tests(Test& test, Transform transform) {
         using namespace avocet;
         using namespace avocet::testing;
-        image red{test.working_materials() / "red_2w_3h_3c.png", flip_vertically::no, all_channels_in_image};
+        unique_image red{test.working_materials() / "red_2w_3h_3c.png", flip_vertically::no, all_channels_in_image};
 
-        test.check(equivalence, "Wrong image",   transform(red), make_red(        3, 2, image_channels{4}, alignment{1}, 255));
+        test.check(equivalence, "Wrong unique_image",   transform(red), make_red(        3, 2, image_channels{4}, alignment{1}, 255));
         test.check(equivalence, "Wrong colours", transform(red), make_rgb_striped(2, 3, image_channels{3}, alignment{1}));
 
-        test.check(equality, "Wrong image",   transform(red), transform(image{test.working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image}));
-        test.check(equality, "Wrong colours", transform(red), transform(image{test.working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image}));
+        test.check(equality, "Wrong unique_image",   transform(red), transform(unique_image{test.working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image}));
+        test.check(equality, "Wrong colours", transform(red), transform(unique_image{test.working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image}));
 
         test.check(equality, "Not padded", transform(to_image(make_red(        2, 3, image_channels{3}, alignment{1}, 255))), transform(to_image(make_red(        2, 3, image_channels{3}, alignment{4}, 255))));
         test.check(equality, "Not padded", transform(to_image(make_rgb_striped(1, 1, image_channels{4}, alignment{1}, 255))), transform(to_image(make_rgb_striped(1, 1, image_channels{3}, alignment{4}, 255))));

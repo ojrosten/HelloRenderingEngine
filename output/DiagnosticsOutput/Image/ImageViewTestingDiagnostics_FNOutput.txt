@@ -1,5 +1,5 @@
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 75
-Wrong image
+Wrong unique_image
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::image_view>]
@@ -97,7 +97,7 @@ Checking for equivalence with:
 =======================================
 
 Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 78
-Wrong image
+Wrong unique_image
 
 [avocet::image_view]
 operator== returned false
