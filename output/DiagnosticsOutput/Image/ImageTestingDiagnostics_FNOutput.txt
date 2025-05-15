@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 24
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 30
 Wrong image
 
 Comparison performed using:
@@ -35,7 +35,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 25
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 31
 Wrong colours
 
 Comparison performed using:
@@ -96,7 +96,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 27
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 33
 Wrong image
 
 [avocet::image]
@@ -130,7 +130,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 28
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 34
 Wrong colours
 
 [avocet::image]
@@ -212,7 +212,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 30
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 36
 Not padded
 
 [avocet::image]
@@ -234,7 +234,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 31
+Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 37
 Not padded
 
 [avocet::image]

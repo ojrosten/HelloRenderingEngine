@@ -19,6 +19,12 @@ namespace avocet::testing
 
     void image_false_negative_test::run_tests()
     {
+        test_image();
+        test_image_view();
+    }
+
+    void image_false_negative_test::test_image()
+    {
         image red{working_materials() / "red_2w_3h_3c.png", flip_vertically::no, all_channels_in_image};
 
         check(equivalence, "Wrong image",   red, make_red(        3, 2, image_channels{4}, alignment{1}, 255));
@@ -27,8 +33,11 @@ namespace avocet::testing
         check(equality, "Wrong image",   red, image{working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image});
         check(equality, "Wrong colours", red, image{working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image});
 
-        check(equality, "Not padded", to_image(make_red(2, 3, image_channels{3}, alignment{1}, 255)), to_image(make_red(2, 3, image_channels{3}, alignment{4}, 255)));
+        check(equality, "Not padded", to_image(        make_red(2, 3, image_channels{3}, alignment{1}, 255)), to_image(make_red(        2, 3, image_channels{3}, alignment{4}, 255)));
         check(equality, "Not padded", to_image(make_rgb_striped(1, 1, image_channels{4}, alignment{1}, 255)), to_image(make_rgb_striped(1, 1, image_channels{3}, alignment{4}, 255)));
+    }
 
+    void image_false_negative_test::test_image_view()
+    {
     }
 }
