@@ -24,7 +24,7 @@ namespace avocet {
     class image_channels {
         std::size_t m_Value{};
     public:
-        constexpr image_channels() noexcept {};
+        constexpr image_channels() noexcept = default;
 
         constexpr explicit image_channels(std::size_t n) noexcept
             : m_Value{n}
@@ -45,7 +45,7 @@ namespace avocet {
             return (val > 0) && ((val & (val - 1)) == 0);
         }
     public:
-        constexpr alignment() noexcept {};
+        constexpr alignment() noexcept = default;
 
         constexpr explicit alignment(std::size_t n)
             : m_Value{n}
