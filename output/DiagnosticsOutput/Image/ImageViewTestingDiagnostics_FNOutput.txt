@@ -19,7 +19,7 @@ Checking for equivalence with:
   Predicted: 2
 
   Channels
-  [avocet::image_channels]
+  [avocet::colour_channels]
   operator== returned false
   Obtained : 3
   Predicted: 4
@@ -115,7 +115,7 @@ operator== returned false
   Predicted: 2
 
   Channels
-  [avocet::image_channels]
+  [avocet::colour_channels]
   operator== returned false
   Obtained : 3
   Predicted: 1
@@ -241,7 +241,7 @@ Not padded
 operator== returned false
 
   Channels
-  [avocet::image_channels]
+  [avocet::colour_channels]
   operator== returned false
   Obtained : 4
   Predicted: 3

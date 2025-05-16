@@ -23,13 +23,13 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    unique_image unique_image::make(const std::filesystem::path& texturePath, flip_vertically flip, const std::optional<image_channels> requestedChannels) {
+    unique_image unique_image::make(const std::filesystem::path& texturePath, flip_vertically flip, const std::optional<colour_channels> requestedChannels) {
         if(!fs::exists(texturePath))
             throw std::runtime_error{std::format("unique_image: texture {} not found", texturePath.generic_string())};
 
         if(requestedChannels)
         {
-            if((requestedChannels.value() < image_channels{1}) || (requestedChannels.value() > image_channels{4}))
+            if((requestedChannels.value() < colour_channels{1}) || (requestedChannels.value() > colour_channels{4}))
                 throw std::runtime_error{std::format("unique_image: invalid number of channels {} requested", requestedChannels.value())};
         }
 

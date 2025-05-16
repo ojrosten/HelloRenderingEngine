@@ -28,20 +28,20 @@ namespace avocet::testing
 
         check_semantics(
             "Override number of channels",
-            image_view{unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  image_channels{1}}},
-            image_view{unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, image_channels{4}}}
+            image_view{unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  colour_channels{1}}},
+            image_view{unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, colour_channels{4}}}
         );
 
         check_semantics(
             "From vector with aligned rows",
-            image_view{to_image(make_red(2, 3, image_channels{3}, alignment{1}, 255))},
-            image_view{to_image(make_rgb_striped(2, 3, image_channels{4}, alignment{4}))}
+            image_view{to_image(make_red(2, 3, colour_channels{3}, alignment{1}, 255))},
+            image_view{to_image(make_rgb_striped(2, 3, colour_channels{4}, alignment{4}))}
         );
 
         check_semantics(
             "From vector with padded rows",
-            image_view{to_image(make_red(2, 3, image_channels{3}, alignment{4}, 255))},
-            image_view{to_image(make_red(2, 3, image_channels{1}, alignment{2}, 0))}
+            image_view{to_image(make_red(2, 3, colour_channels{3}, alignment{4}, 255))},
+            image_view{to_image(make_red(2, 3, colour_channels{1}, alignment{2}, 0))}
         );
 
         check_exception_thrown<std::runtime_error>(

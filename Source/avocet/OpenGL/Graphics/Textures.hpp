@@ -101,7 +101,7 @@ namespace avocet::opengl {
         friend unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
             texture_2d::base_type::do_bind(tex2d);
             const GLint width{texture_2d::extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{texture_2d::extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
-            const image_channels numChannels{to_num_channels(format)};
+            const colour_channels numChannels{to_num_channels(format)};
 
             using value_type = texture_2d::value_type;
             const auto size{padded_row_size(width, numChannels, rowAlignment) * height};

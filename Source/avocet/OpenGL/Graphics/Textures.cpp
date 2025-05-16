@@ -16,7 +16,7 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        image_format to_format(colour_space_flavour colourSpace, image_channels numChannels)
+        image_format to_format(colour_space_flavour colourSpace, colour_channels numChannels)
         {
             const bool isLinear{colourSpace == colour_space_flavour::linear};
             switch(numChannels.raw_value())

@@ -20,7 +20,7 @@ namespace avocet::testing {
 
         std::vector<value_type> data;
         std::size_t width{}, height{};
-        image_channels num_channels{};
+        colour_channels num_channels{};
         alignment row_alignment{};
     };
 
@@ -28,10 +28,10 @@ namespace avocet::testing {
     unique_image to_image(image_data imageData);
 
     [[nodiscard]]
-    image_data make_red(std::size_t width, std::size_t height, image_channels channels, alignment rowAlignment, unsigned char intensity);
+    image_data make_red(std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment, unsigned char intensity);
 
     [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, image_channels channels, alignment rowAlignment, unsigned char alpha=0);
+    image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char alpha=0);
 }
 
 namespace sequoia::testing
@@ -72,13 +72,13 @@ namespace sequoia::testing
         using namespace avocet::testing;
         unique_image red{test.working_materials() / "red_2w_3h_3c.png", flip_vertically::no, all_channels_in_image};
 
-        test.check(equivalence, "Wrong unique_image",   transform(red), make_red(        3, 2, image_channels{4}, alignment{1}, 255));
-        test.check(equivalence, "Wrong colours", transform(red), make_rgb_striped(2, 3, image_channels{3}, alignment{1}));
+        test.check(equivalence, "Wrong unique_image",   transform(red), make_red(        3, 2, colour_channels{4}, alignment{1}, 255));
+        test.check(equivalence, "Wrong colours", transform(red), make_rgb_striped(2, 3, colour_channels{3}, alignment{1}));
 
         test.check(equality, "Wrong unique_image",   transform(red), transform(unique_image{test.working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image}));
         test.check(equality, "Wrong colours", transform(red), transform(unique_image{test.working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image}));
 
-        test.check(equality, "Not padded", transform(to_image(make_red(        2, 3, image_channels{3}, alignment{1}, 255))), transform(to_image(make_red(        2, 3, image_channels{3}, alignment{4}, 255))));
-        test.check(equality, "Not padded", transform(to_image(make_rgb_striped(1, 1, image_channels{4}, alignment{1}, 255))), transform(to_image(make_rgb_striped(1, 1, image_channels{3}, alignment{4}, 255))));
+        test.check(equality, "Not padded", transform(to_image(make_red(        2, 3, colour_channels{3}, alignment{1}, 255))), transform(to_image(make_red(        2, 3, colour_channels{3}, alignment{4}, 255))));
+        test.check(equality, "Not padded", transform(to_image(make_rgb_striped(1, 1, colour_channels{4}, alignment{1}, 255))), transform(to_image(make_rgb_striped(1, 1, colour_channels{3}, alignment{4}, 255))));
     }
 }

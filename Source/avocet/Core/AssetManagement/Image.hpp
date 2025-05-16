@@ -22,17 +22,17 @@
 namespace avocet {
     enum class flip_vertically : bool { no, yes };
 
-    class image_channels {
+    class colour_channels {
         std::size_t m_Value{};
     public:
-        constexpr image_channels() noexcept = default;
+        constexpr colour_channels() noexcept = default;
 
-        constexpr explicit image_channels(std::size_t n) noexcept
+        constexpr explicit colour_channels(std::size_t n) noexcept
             : m_Value{n}
         {}
 
         [[nodiscard]]
-        friend constexpr auto operator<=>(const image_channels&, const image_channels&) noexcept = default;
+        friend constexpr auto operator<=>(const colour_channels&, const colour_channels&) noexcept = default;
 
         [[nodiscard]]
         constexpr std::size_t raw_value() const noexcept { return m_Value; }
@@ -63,7 +63,7 @@ namespace avocet {
     };
 
     [[nodiscard]]
-    constexpr std::size_t padded_row_size(std::size_t width, image_channels channels, alignment rowAlignment) noexcept {
+    constexpr std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment) noexcept {
         const std::size_t nominalRowSize{width * channels.raw_value()};
         const std::size_t excess{nominalRowSize % rowAlignment.raw_value()};
         return excess ? nominalRowSize - excess + rowAlignment.raw_value() : nominalRowSize;
@@ -71,17 +71,17 @@ namespace avocet {
 
     void validate(std::size_t paddedRowSize, std::size_t height, std::size_t size);
 
-    inline constexpr std::optional<image_channels> all_channels_in_image{std::nullopt};
+    inline constexpr std::optional<colour_channels> all_channels_in_image{std::nullopt};
 
     class unique_image {
     public:
         using value_type = unsigned char;
 
-        unique_image(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels)
+        unique_image(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels)
             : unique_image{make(texturePath, flip, requestedChannels)}
         {}
 
-        unique_image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, image_channels channels, alignment rowAlignment)
+        unique_image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, colour_channels channels, alignment rowAlignment)
             : m_Data{std::move(data)}
             , m_Width{imageWidth}
             , m_Height{imageHeight}
@@ -98,7 +98,7 @@ namespace avocet {
         std::size_t height() const noexcept { return m_Height.value; }
 
         [[nodiscard]]
-        image_channels num_channels() const noexcept { return m_Channels.value; }
+        colour_channels num_channels() const noexcept { return m_Channels.value; }
 
         [[nodiscard]]
         std::size_t size() const noexcept { return height() * padded_row_size(); }
@@ -169,7 +169,7 @@ namespace avocet {
         using vec_t = std::vector<value_type>;
         std::variant<ptr_t, vec_t> m_Data;
         parameter<std::size_t> m_Width, m_Height;
-        parameter<image_channels> m_Channels;
+        parameter<colour_channels> m_Channels;
         parameter<alignment> m_Alignment;
 
         unique_image(value_type* ptr, int width, int height, int channels, alignment rowAlignment)
@@ -181,14 +181,14 @@ namespace avocet {
         {}
 
         [[nodiscard]]
-        static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<image_channels> requestedChannels);
+        static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels);
     };
 
     class image_view {
     public:
         using value_type = unsigned char;
 
-        image_view(std::span<const value_type> data, std::size_t imageWidth, std::size_t imageHeight, image_channels numChannels, alignment rowAlignment)
+        image_view(std::span<const value_type> data, std::size_t imageWidth, std::size_t imageHeight, colour_channels numChannels, alignment rowAlignment)
             : m_Data{data}
             , m_Width{imageWidth}
             , m_Height{imageHeight}
@@ -218,7 +218,7 @@ namespace avocet {
         std::size_t height() const noexcept { return m_Height; }
 
         [[nodiscard]]
-        image_channels num_channels() const noexcept { return m_Channels; }
+        colour_channels num_channels() const noexcept { return m_Channels; }
 
         [[nodiscard]]
         alignment row_alignment() const noexcept { return m_Alignment; }
@@ -237,17 +237,17 @@ namespace avocet {
     private:
         std::span<const value_type> m_Data;
         std::size_t m_Width{}, m_Height{};
-        image_channels m_Channels;
+        colour_channels m_Channels;
         alignment m_Alignment{};
     };
 }
 
 namespace std {
     template<>
-    struct formatter<avocet::image_channels> {
+    struct formatter<avocet::colour_channels> {
         constexpr auto parse(auto& ctx) { return ctx.begin(); }
 
-        auto format(const avocet::image_channels& channels, auto& ctx) const {
+        auto format(const avocet::colour_channels& channels, auto& ctx) const {
             return std::format_to(ctx.out(), "{}", channels.raw_value());
         }
     };
