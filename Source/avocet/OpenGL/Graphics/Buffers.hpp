@@ -17,7 +17,7 @@ namespace avocet::opengl {
     struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
 
-        struct configuration {
+        struct configurator {
             optional_label label;
         };
 
@@ -29,7 +29,7 @@ namespace avocet::opengl {
 
         static void bind(const resource_handle& h) { gl_function{glBindVertexArray}(h.index()); }
 
-        static void configure(const resource_handle& h, const configuration& config) {
+        static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
         }
     };
@@ -51,14 +51,14 @@ namespace avocet::opengl {
 
     template<buffer_species Species, gl_arithmetic_type T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
-        struct configuration {
+        struct configurator {
             std::span<const T> buffer_data;
             optional_label label;
         };
 
         static void bind(const resource_handle& h) { gl_function{glBindBuffer}(to_gl_enum(Species), h.index()); }
 
-        static void configure(const resource_handle& h, const configuration& config) {
+        static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
             gl_function{glBufferData}(to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
         }

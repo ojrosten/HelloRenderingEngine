@@ -38,7 +38,7 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("{} channels requested, but it must be in the range [1,4]", numChannels)};
         }
 
-        void load_to_gpu(const texture_2d_configuration& config) {
+        void load_to_gpu(const texture_2d_configurator& config) {
             const auto format{to_format(config.colour_space, config.data.num_channels())};
 
             gl_function{glPixelStorei}(GL_UNPACK_ALIGNMENT, static_cast<int>(config.data.row_alignment().raw_value()));
@@ -51,14 +51,14 @@ namespace avocet::opengl {
                 static_cast<int>(config.data.height()),
                 0,
                 to_gl_enum(format.format),
-                to_gl_enum(to_gl_type_specifier_v<texture_2d_configuration::value_type>),
+                to_gl_enum(to_gl_type_specifier_v<texture_2d_configurator::value_type>),
                 config.data.span().data()
             );
             if(config.parameter_setter) config.parameter_setter();
         }
     }
 
-    void texture_lifecycle_events::configure(const resource_handle& h, const configuration& config) {
+    void texture_lifecycle_events::configure(const resource_handle& h, const configurator& config) {
         add_label(identifier, h, config.label);
         load_to_gpu(config);
     }

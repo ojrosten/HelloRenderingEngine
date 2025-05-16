@@ -62,7 +62,7 @@ namespace avocet::opengl {
         };
     };
 
-    struct texture_2d_configuration {
+    struct texture_2d_configurator {
         constexpr static auto flavour{GL_TEXTURE_2D};
         using value_type = GLubyte;
 
@@ -73,7 +73,7 @@ namespace avocet::opengl {
     };
 
     struct texture_lifecycle_events {
-        using configuration = texture_2d_configuration;
+        using configurator = texture_2d_configurator;
 
         constexpr static auto identifier{object_identifier::texture};
 
@@ -85,16 +85,16 @@ namespace avocet::opengl {
 
         static void bind(const resource_handle& h) { gl_function{glBindTexture}(GL_TEXTURE_2D, h.index()); }
 
-        static void configure(const resource_handle& h, const configuration& config);
+        static void configure(const resource_handle& h, const configurator& config);
     };
   
     class texture_2d : public generic_resource<num_resources{1}, texture_lifecycle_events> {
     public:
-        using base_type          = generic_resource<num_resources{1}, texture_lifecycle_events>;
-        using configuration_type = base_type::configuration_type;
-        using value_type         = texture_2d_configuration::value_type;
+        using base_type         = generic_resource<num_resources{1}, texture_lifecycle_events>;
+        using configurator_type = base_type::configurator_type;
+        using value_type        = texture_2d_configurator::value_type;
 
-        texture_2d(const configuration_type& textureConfig)
+        texture_2d(const configurator_type& textureConfig)
             : base_type{{textureConfig}}
         {}
 
