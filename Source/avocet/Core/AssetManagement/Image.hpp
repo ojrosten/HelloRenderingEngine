@@ -74,7 +74,7 @@ namespace avocet {
     inline constexpr std::optional<colour_channels> all_channels_in_image{std::nullopt};
 
     namespace impl {
-        template<std::movable Width, std::movable Height, std::movable NumChannels, std::movable Alignment>
+        template<sequoia::movable_comparable Width, sequoia::movable_comparable Height, sequoia::movable_comparable NumChannels, sequoia::movable_comparable Alignment>
         struct image_spec {
             Width width;
             Height height;
