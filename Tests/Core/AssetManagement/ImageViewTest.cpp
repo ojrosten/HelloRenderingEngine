@@ -19,42 +19,6 @@ namespace avocet::testing
 
     void image_view_test::run_tests()
     {
-        check_semantics(
-            "",
-            image_view{unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image}},
-            image_view{unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image}}
-        );
-
-        check_semantics(
-            "Override number of channels",
-            image_view{unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  colour_channels{1}}},
-            image_view{unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, colour_channels{4}}}
-        );
-
-        check_semantics(
-            "From vector with aligned rows",
-            image_view{to_image(make_red(2, 3, colour_channels{3}, alignment{1}, 255))},
-            image_view{to_image(make_rgb_striped(2, 3, colour_channels{4}, alignment{4}))}
-        );
-
-        check_semantics(
-            "From vector with padded rows",
-            image_view{to_image(make_red(2, 3, colour_channels{3}, alignment{4}, 255))},
-            image_view{to_image(make_red(2, 3, colour_channels{1}, alignment{2}, 0))}
-        );
-
-        check_exception_thrown<std::runtime_error>(
-            reporter{"Absent unique_image"},
-            [this](){
-                image_view{unique_image{working_materials() / "Absent.png", flip_vertically::no, all_channels_in_image}};
-            }
-        );
-
-        check_exception_thrown<std::runtime_error>(
-            reporter{"Invalid unique_image"},
-            [this](){
-                image_view{unique_image{working_materials() / "not_an_image.txt", flip_vertically::no, all_channels_in_image}};
-            }
-        );
+        execute_image_tests(*this, [](const unique_image& im) { return image_view{im}; });
     }
 }

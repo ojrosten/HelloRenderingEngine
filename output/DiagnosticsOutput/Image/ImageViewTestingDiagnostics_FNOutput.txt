@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 75
+Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 41
 Wrong unique_image
 
 Comparison performed using:
@@ -35,7 +35,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 76
+Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 42
 Wrong colours
 
 Comparison performed using:
@@ -96,7 +96,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 78
+Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 44
 Wrong unique_image
 
 [avocet::image_view]
@@ -130,7 +130,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 79
+Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 45
 Wrong colours
 
 [avocet::image_view]
@@ -212,7 +212,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 81
+Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 47
 Not padded
 
 [avocet::image_view]
@@ -234,7 +234,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 82
+Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 48
 Not padded
 
 [avocet::image_view]
