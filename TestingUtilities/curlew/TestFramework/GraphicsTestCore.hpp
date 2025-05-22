@@ -48,12 +48,6 @@ namespace curlew {
 
         using basic_test<Mode, trivial_extender>::basic_test;
 
-        template<class E, class Fn>
-        bool check_filtered_exception_thrown(const reporter& description, Fn&& function)
-        {
-            return base_test_type::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
-        }
-
         [[nodiscard]]
         std::string summary_discriminator() const
             requires (Selectivity != selectivity_flavour::none)

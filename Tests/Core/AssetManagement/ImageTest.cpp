@@ -8,8 +8,6 @@
 /*! \file */
 
 #include "ImageTest.hpp"
-#include "curlew/TestFramework/GraphicsTestCore.hpp"
-
 namespace avocet::testing
 {
     [[nodiscard]]
@@ -86,16 +84,14 @@ namespace avocet::testing
             reporter{"Absent unique_image"},
             [this](){
                 return unique_image{working_materials() / "Absent.png", flip_vertically::no, all_channels_in_image};
-            },
-            curlew::exception_postprocessor{}
+            }
         );
 
         check_exception_thrown<std::runtime_error>(
             reporter{"Invalid unique_image"},
             [this](){
                 return unique_image{working_materials() / "not_an_image.txt", flip_vertically::no, all_channels_in_image};
-            },
-            curlew::exception_postprocessor{}
+            }
         );
     }
 }

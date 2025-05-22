@@ -60,7 +60,11 @@ namespace avocet::opengl {
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
-            gl_function{glBufferData}(to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
+            gl_function{glBufferData}(
+                to_gl_enum(Species),
+                sizeof(T) * config.buffer_data.size(),
+                config.buffer_data.data(),
+                GL_STATIC_DRAW);
         }
     };
 

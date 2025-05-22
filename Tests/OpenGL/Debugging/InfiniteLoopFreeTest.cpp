@@ -28,7 +28,7 @@ namespace avocet::testing
             glfw_manager manager{};
             if(is_intel(manager.find_rendering_setup().renderer)) {
                 namespace agl = avocet::opengl;
-                check_filtered_exception_thrown<std::runtime_error>(
+                check_exception_thrown<std::runtime_error>(
                     "Repeatedly call glGetError",
                     [](){ agl::check_for_basic_errors(agl::num_messages{5}, std::source_location::current()); }
                 );

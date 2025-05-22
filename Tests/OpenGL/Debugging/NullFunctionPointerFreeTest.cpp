@@ -27,7 +27,7 @@ namespace avocet::testing
         namespace agl = avocet::opengl;
         using namespace curlew;
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             reporter{"Constructing gl_function with a null pointer"},
             [](){
                 gl_breaker breaker{glGetError};
@@ -35,7 +35,7 @@ namespace avocet::testing
             }
         );
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             reporter{"Null glGetError when checking for basic errors"},
             [](){
                 gl_breaker breaker{glGetError};
@@ -46,7 +46,7 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             reporter{"Null glBindBuffer"},
             [](){
                 gl_breaker breaker{glBindBuffer};
