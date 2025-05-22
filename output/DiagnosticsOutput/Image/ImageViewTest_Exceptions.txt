@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 55
+Tests/Core/AssetManagement/ImageTestingUtilities.cpp, Line 99
 Absent unique_image
 
 Expected Exception Type:
@@ -7,7 +7,7 @@ unique_image: texture output/TestsTemporaryData/Core/AssetManagement/ImageViewTe
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.hpp, Line 62
+Tests/Core/AssetManagement/ImageTestingUtilities.cpp, Line 106
 Invalid unique_image
 
 Expected Exception Type:

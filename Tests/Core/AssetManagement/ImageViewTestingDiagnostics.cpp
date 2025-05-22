@@ -20,6 +20,6 @@ namespace avocet::testing
     void image_view_false_negative_test::run_tests()
     {
         using namespace avocet;
-        execute_image_false_negative_tests(*this, [](const unique_image& im) { return image_view{im}; });
+        execute_image_false_negative_tests(*this, to_image_view{});
     }
 }

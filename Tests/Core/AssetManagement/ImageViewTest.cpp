@@ -19,6 +19,6 @@ namespace avocet::testing
 
     void image_view_test::run_tests()
     {
-        execute_image_tests(*this, [](const unique_image& im) { return image_view{im}; });
+        execute_image_tests(*this, to_image_view{});
     }
 }
