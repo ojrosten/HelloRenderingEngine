@@ -125,6 +125,12 @@ operator== returned false
   operator== returned false
   Pointers both non-null, but they point to different addresses
 
+  Data Size
+  [unsigned long long]
+  operator== returned false
+  Obtained : 18
+  Predicted: 6
+
 =======================================
 
 Tests/Core/AssetManagement/ImageTestingUtilities.cpp, Line 86
@@ -156,6 +162,12 @@ operator== returned false
   [unsigned char const*]
   operator== returned false
   Pointers both non-null, but they point to different addresses
+
+  Data Size
+  [unsigned long long]
+  operator== returned false
+  Obtained : 18
+  Predicted: 24
 
 =======================================
 

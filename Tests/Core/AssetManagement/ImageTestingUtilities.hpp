@@ -79,6 +79,7 @@ namespace sequoia::testing
         {
             image_value_tester<avocet::unique_image>::do_test(equality, logger, actual, prediction);
             check(equality, "Data Handle", logger, actual.span().data(), prediction.span().data());
+            check(equality, "Data Size", logger, actual.span().size(), prediction.span().size());
         }
 
         using image_value_tester<avocet::unique_image>::test;
