@@ -195,24 +195,18 @@ namespace avocet {
 
         image_view(std::span<const value_type> data, std::size_t imageWidth, std::size_t imageHeight, colour_channels numChannels, alignment rowAlignment)
             : m_Data{data}
-            , m_Width{imageWidth}
-            , m_Height{imageHeight}
-            , m_Channels{numChannels}
-            , m_Alignment{rowAlignment}
+            , m_Spec{.width{imageWidth}, .height{imageHeight}, .channels{numChannels}, .row_alignment{rowAlignment}}
         {
             validate(height(), padded_row_size(), m_Data.size());
         }
 
         image_view(const unique_image& im)
             : m_Data{im.span()}
-            , m_Width{im.width()}
-            , m_Height{im.height()}
-            , m_Channels{im.num_channels()}
-            , m_Alignment{im.row_alignment()}
+            , m_Spec{.width{im.width()}, .height{im.height()}, .channels{im.num_channels()}, .row_alignment{im.row_alignment()}}
         {}
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Width; }
+        std::size_t width() const noexcept { return m_Spec.width; }
 
         [[nodiscard]]
         std::size_t padded_row_size() const noexcept { 
@@ -220,30 +214,24 @@ namespace avocet {
         }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Height; }
+        std::size_t height() const noexcept { return m_Spec.height; }
 
         [[nodiscard]]
-        colour_channels num_channels() const noexcept { return m_Channels; }
+        colour_channels num_channels() const noexcept { return m_Spec.channels; }
 
         [[nodiscard]]
-        alignment row_alignment() const noexcept { return m_Alignment; }
+        alignment row_alignment() const noexcept { return m_Spec.row_alignment; }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Data; }
 
         [[nodiscard]]
         friend bool operator==(const image_view& lhs, const image_view& rhs) noexcept {
-            return std::ranges::equal(lhs.span(), rhs.span())
-                && lhs.width()         == rhs.width()
-                && lhs.height()        == rhs.height()
-                && lhs.num_channels()  == rhs.num_channels()
-                && lhs.row_alignment() == rhs.row_alignment();
+            return std::ranges::equal(lhs.span(), rhs.span()) && lhs.m_Spec == rhs.m_Spec;
         }
     private:
         std::span<const value_type> m_Data;
-        std::size_t m_Width{}, m_Height{};
-        colour_channels m_Channels;
-        alignment m_Alignment{};
+        impl::image_spec<std::size_t, std::size_t, colour_channels, alignment> m_Spec;
     };
 }
 
