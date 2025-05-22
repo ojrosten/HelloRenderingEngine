@@ -73,6 +73,19 @@ namespace avocet {
 
     inline constexpr std::optional<colour_channels> all_channels_in_image{std::nullopt};
 
+    namespace impl {
+        template<std::movable Width, std::movable Height, std::movable NumChannels, std::movable Alignment>
+        struct image_spec {
+            Width width;
+            Height height;
+            NumChannels channels;
+            Alignment row_alignment;
+
+            [[nodiscard]]
+            friend bool operator==(const image_spec&, const image_spec&) noexcept = default;
+        };
+    }
+
     class unique_image {
     public:
         using value_type = unsigned char;
@@ -83,28 +96,25 @@ namespace avocet {
 
         unique_image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, colour_channels channels, alignment rowAlignment)
             : m_Data{std::move(data)}
-            , m_Width{imageWidth}
-            , m_Height{imageHeight}
-            , m_Channels{channels}
-            , m_Alignment{rowAlignment}
+            , m_Spec{.width{imageWidth}, .height{imageHeight}, .channels{channels}, .row_alignment{rowAlignment}}
         {
             validate(height(), padded_row_size(), std::get<vec_t>(m_Data).size());
         }
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Width.value; }
+        std::size_t width() const noexcept { return m_Spec.width.value; }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Height.value; }
+        std::size_t height() const noexcept { return m_Spec.height.value; }
 
         [[nodiscard]]
-        colour_channels num_channels() const noexcept { return m_Channels.value; }
+        colour_channels num_channels() const noexcept { return m_Spec.channels.value; }
 
         [[nodiscard]]
         std::size_t size() const noexcept { return height() * padded_row_size(); }
 
         [[nodiscard]]
-        alignment row_alignment() const noexcept { return m_Alignment.value; }
+        alignment row_alignment() const noexcept { return m_Spec.row_alignment.value; }
 
         [[nodiscard]]
         std::size_t padded_row_size() const noexcept {
@@ -168,16 +178,11 @@ namespace avocet {
         using ptr_t = std::unique_ptr<value_type, file_unloader>;
         using vec_t = std::vector<value_type>;
         std::variant<ptr_t, vec_t> m_Data;
-        parameter<std::size_t> m_Width, m_Height;
-        parameter<colour_channels> m_Channels;
-        parameter<alignment> m_Alignment;
+        impl::image_spec<parameter<std::size_t>, parameter<std::size_t>, parameter<colour_channels>, parameter<alignment>> m_Spec;
 
         unique_image(value_type* ptr, int width, int height, int channels, alignment rowAlignment)
             : m_Data{ptr_t{ptr}}
-            , m_Width{width}
-            , m_Height{height}
-            , m_Channels{channels}
-            , m_Alignment{rowAlignment}
+            , m_Spec{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}
         {}
 
         [[nodiscard]]
