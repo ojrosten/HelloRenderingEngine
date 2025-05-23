@@ -65,9 +65,9 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void do_test(equality_check_t, test_logger<Mode>& logger, const T& actual, const T& prediction)
         {
-            check(equality, "Width", logger, actual.width(), prediction.width());
-            check(equality, "Height", logger, actual.height(), prediction.height());
-            check(equality, "Channels", logger, actual.num_channels(), prediction.num_channels());
+            check(equality, "Width",     logger, actual.width(),         prediction.width());
+            check(equality, "Height",    logger, actual.height(),        prediction.height());
+            check(equality, "Channels",  logger, actual.num_channels(),  prediction.num_channels());
             check(equality, "Alignment", logger, actual.row_alignment(), prediction.row_alignment());
         }
     };
