@@ -98,7 +98,7 @@ namespace avocet {
             : m_Data{std::move(data)}
             , m_Spec{.width{imageWidth}, .height{imageHeight}, .channels{channels}, .row_alignment{rowAlignment}}
         {
-            validate(height(), padded_row_size(), std::get<vec_t>(m_Data).size());
+            validate(padded_row_size(), height(), std::get<vec_t>(m_Data).size());
         }
 
         [[nodiscard]]
