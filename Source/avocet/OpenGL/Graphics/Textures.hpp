@@ -94,7 +94,7 @@ namespace avocet::opengl {
         using configurator_type = base_type::configurator_type;
         using value_type        = texture_2d_configurator::value_type;
 
-        texture_2d(const configurator_type& textureConfig)
+        explicit texture_2d(const configurator_type& textureConfig)
             : base_type{{textureConfig}}
         {}
 
