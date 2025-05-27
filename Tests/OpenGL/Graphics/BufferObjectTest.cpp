@@ -35,11 +35,17 @@ namespace avocet::testing
     void buffer_object_test::execute()
     {
         using T = Buffer::value_type;
-
-        const std::vector<T> xBuffer{0, 1, 2, 4}, yBuffer{5, 6, 7};
         using opt_span = std::optional<std::span<const T>>;
 
-        check_semantics("", Buffer{xBuffer, agl::null_label}, Buffer{yBuffer, agl::null_label}, opt_span{xBuffer}, opt_span{yBuffer}, opt_span{}, opt_span{xBuffer});
+        const std::vector<T> xBuffer{0, 1, 2, 4};
+        std::array<T, 3> yBuffer{5, 6, 7};
+        check_semantics("",
+                        Buffer{xBuffer, agl::null_label},
+                        Buffer{yBuffer, agl::null_label},
+                        opt_span{xBuffer},
+                        opt_span{yBuffer},
+                        opt_span{},
+                        opt_span{xBuffer});
     }
 
     [[nodiscard]]
