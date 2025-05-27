@@ -24,19 +24,10 @@ namespace avocet::testing {
         alignment row_alignment{};
     };
 
-    [[nodiscard]]
-    unique_image to_image(image_data imageData);
-
     struct to_image_view {
         [[nodiscard]]
         image_view operator()(const unique_image& im) const { return {im}; }
     };
-
-    [[nodiscard]]
-    image_data make_red(std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment, unsigned char intensity);
-
-    [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char alpha=0);
  
     template<sequoia::testing::concrete_test Test, class Transform>
     void execute_image_false_negative_tests(Test& test, Transform transform);

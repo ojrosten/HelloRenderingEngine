@@ -16,60 +16,61 @@
 #include <ranges>
 
 namespace avocet::testing {
+    namespace {
+        [[nodiscard]]
+        unique_image to_image(image_data imageData) {
+            return {imageData.data, imageData.width, imageData.height, imageData.num_channels, imageData.row_alignment};
+        }
 
-    [[nodiscard]]
-    unique_image to_image(image_data imageData) {
-        return {imageData.data, imageData.width, imageData.height, imageData.num_channels, imageData.row_alignment};
-    }
+        [[nodiscard]]
+        image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char intensity) {
+            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
+            const bool isPadded{paddedRowSize != w * channels.raw_value()};
+            return {
+                .data{
+                      std::views::iota(0u, paddedRowSize * h)
+                    | std::views::transform(
+                        [=](auto i) -> unsigned char {
+                            const auto row{i / (w * channels.raw_value())};
+                            const auto decrementedChannel{(i - paddedRowSize * row) % channels.raw_value()};
+                            const auto paddingByte{isPadded && !((i + 1) % paddedRowSize)};
+                            return static_cast<unsigned char>((decrementedChannel || paddingByte) ? 0 : intensity);
+                        }
+                      )
+                    | std::ranges::to<std::vector>()
+                },
+                .width{w},
+                .height{h},
+                .num_channels{channels},
+                .row_alignment{rowAlignment}
+            };
+        }
 
-    [[nodiscard]]
-    image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char intensity) {
-        const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
-        const bool isPadded{paddedRowSize != w * channels.raw_value()};
-        return {
-            .data{
-                  std::views::iota(0u, paddedRowSize * h)
-                | std::views::transform(
-                    [=](auto i) -> unsigned char {
-                        const auto row{i / (w * channels.raw_value())};
-                        const auto decrementedChannel{(i - paddedRowSize * row) % channels.raw_value()};
-                        const auto paddingByte{isPadded && !((i + 1) % paddedRowSize)};
-                        return static_cast<unsigned char>((decrementedChannel || paddingByte) ? 0 : intensity);
-                    }
-                  )
-                | std::ranges::to<std::vector>()
-            },
-            .width{w},
-            .height{h},
-            .num_channels{channels},
-            .row_alignment{rowAlignment}
+        [[nodiscard]]
+        image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char alpha = 0) {
+            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
+            return {
+                .data{
+                      std::views::iota(0u, paddedRowSize * h)
+                    | std::views::transform(
+                        [=](auto i) -> unsigned char {
+                            const auto row{i / (w * channels.raw_value())};
+                            const auto decrementedChannel{(i - paddedRowSize * row) % channels.raw_value()};
+                            if(decrementedChannel == 3)
+                                return alpha;
+
+                            return static_cast<unsigned char>((row == decrementedChannel) ? 255 : 0);
+                        }
+                      )
+                    | std::ranges::to<std::vector>()
+                },
+                .width{w},
+                .height{h},
+                .num_channels{channels},
+                .row_alignment{rowAlignment}
+            };
         };
     }
-
-    [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char alpha) {
-        const auto paddedRowSize{padded_row_size(w, channels, rowAlignment)};
-        return {
-            .data{
-                  std::views::iota(0u, paddedRowSize * h)
-                | std::views::transform(
-                    [=](auto i) -> unsigned char {
-                        const auto row{i / (w * channels.raw_value())};
-                        const auto decrementedChannel{(i - paddedRowSize * row) % channels.raw_value()};
-                        if(decrementedChannel == 3)
-                            return alpha;
-
-                        return static_cast<unsigned char>((row == decrementedChannel) ? 255 : 0);
-                    }
-                  )
-                | std::ranges::to<std::vector>()
-            },
-            .width{w},
-            .height{h},
-            .num_channels{channels},
-            .row_alignment{rowAlignment}
-        };
-    };
 
     template void execute_image_false_negative_tests(image_false_negative_test&, std::identity);
     template void execute_image_false_negative_tests(image_view_false_negative_test&, to_image_view);

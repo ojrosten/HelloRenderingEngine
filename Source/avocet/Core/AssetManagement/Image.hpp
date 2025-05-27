@@ -124,10 +124,11 @@ namespace avocet {
         [[nodiscard]]
         std::span<const value_type> span() const noexcept {
             using span_t = std::span<const value_type>;
+
             return std::visit(
                 sequoia::overloaded{
-                    [this](const ptr_t& p) { return span_t{p.get(), size()}; },
-                    []    (const vec_t& v) { return span_t{v}; }
+                    [sz{size()}] (const ptr_t& p) { return span_t{p.get(), sz}; },
+                              [] (const vec_t& v) { return span_t{v}; }
                 },
                 m_Data
             );
