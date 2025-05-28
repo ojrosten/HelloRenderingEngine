@@ -9,6 +9,8 @@
 
 /*! \file */
 
+#include "ColourChannelsTestingUtilities.hpp"
+
 #include "sequoia/TestFramework/FreeCheckers.hpp"
 #include "avocet/Core/AssetManagement/Image.hpp"
 
