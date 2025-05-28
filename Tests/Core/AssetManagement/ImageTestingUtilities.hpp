@@ -36,33 +36,22 @@ namespace sequoia::testing
         using image_data = avocet::testing::image_data;
         using value_type = image_data::value_type;
 
-        // This is used to convert a vector of unsigned chars to a vector of unsigned ints.
-        // The transform is done to make the output of failed tests more comprehensible.
-        // Fpor example a colour of 0 or 255 is much more comprehensible as an int that an
-        // ASCII character.
-        // A new vector is materialized to make the output for failed tests platform-independent.
-        // (Otherwise the output depends on details of transform_view.)
-        // I will investigate making improvements to sequoia to obviate the need for the this.
-        static auto as_unsigned_int(std::span<const value_type> data) {
-            return std::views::transform(data, [](auto c) -> unsigned int { return c; }) | std::ranges::to<std::vector>();
-        }
-
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const avocet::unique_image& actual, const avocet::unique_image& prediction)
         {
-            check(equality, "Width",    logger, actual.width(),                 prediction.width());
-            check(equality, "Height",   logger, actual.height(),                prediction.height());
-            check(equality, "Channels", logger, actual.num_channels(),          prediction.num_channels());
-            check(equality, "Data",     logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.span()));
+            check(equality, "Width",    logger, actual.width(),        prediction.width());
+            check(equality, "Height",   logger, actual.height(),       prediction.height());
+            check(equality, "Channels", logger, actual.num_channels(), prediction.num_channels());
+            check(equality, "Data",     logger, actual.span(),         prediction.span());
         }
 
         template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::unique_image& actual, const image_data& prediction)
         {
-            check(equality,    "Width",    logger, actual.width(),                 prediction.width);
-            check(equality,    "Height",   logger, actual.height(),                prediction.height);
-            check(equality,    "Channels", logger, actual.num_channels(),          prediction.num_channels);
-            check(equivalence, "Data",     logger, as_unsigned_int(actual.span()), as_unsigned_int(prediction.data));
+            check(equality,    "Width",    logger, actual.width(),        prediction.width);
+            check(equality,    "Height",   logger, actual.height(),       prediction.height);
+            check(equality,    "Channels", logger, actual.num_channels(), prediction.num_channels);
+            check(equivalence, "Data",     logger, actual.span(),         prediction.data);
         }
     };
 }
