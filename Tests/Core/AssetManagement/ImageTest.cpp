@@ -31,14 +31,14 @@ namespace avocet::testing
         );
 
         check_exception_thrown<std::runtime_error>(
-            reporter{"Absent image"},
+            "Absent image",
             [this](){
                 return image{working_materials() / "Absent.png", flip_vertically::no}; 
             }
         );
 
         check_exception_thrown<std::runtime_error>(
-            reporter{"Invalid image"},
+            "Invalid image",
             [this](){
                 return image{working_materials() / "not_an_image.txt", flip_vertically::no};
             }

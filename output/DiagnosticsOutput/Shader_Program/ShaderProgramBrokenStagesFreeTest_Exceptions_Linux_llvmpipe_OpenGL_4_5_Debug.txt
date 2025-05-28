@@ -1,4 +1,4 @@
-Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 31
+Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 32
 Broken Vertex Shader
 
 Expected Exception Type:
@@ -9,7 +9,7 @@ Source: Shader Compiler; Type: Error; Severity: High
 
 =======================================
 
-Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 41
+Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -20,7 +20,7 @@ Source: Shader Compiler; Type: Error; Severity: High
 
 =======================================
 
-Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 51
+Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 52
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:

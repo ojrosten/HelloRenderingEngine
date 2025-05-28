@@ -1,4 +1,4 @@
-Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, Line 39
+Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, Line 40
 At least two errors
 
 Expected Exception Type:
