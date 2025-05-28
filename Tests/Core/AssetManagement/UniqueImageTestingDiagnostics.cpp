@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "ImageTestingDiagnostics.hpp"
+#include "UniqueImageTestingDiagnostics.hpp"
 
 namespace avocet::testing
 {

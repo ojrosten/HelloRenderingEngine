@@ -7,8 +7,12 @@
 
 /*! \file */
 
-#include "Core/AssetManagement/ImageTest.hpp"
-#include "Core/AssetManagement/ImageTestingDiagnostics.hpp"
+#include "Core/AssetManagement/ColourChannelsTest.hpp"
+#include "Core/AssetManagement/ColourChannelsTestingDiagnostics.hpp"
+#include "Core/AssetManagement/ImageViewTest.hpp"
+#include "Core/AssetManagement/ImageViewTestingDiagnostics.hpp"
+#include "Core/AssetManagement/UniqueImageTest.hpp"
+#include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
@@ -71,6 +75,10 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Image",
+            image_view_test{"Unit Test"},
+            image_view_false_negative_test{"False Negative Test"},
+            colour_channels_test{"Unit Test"},
+            colour_channels_false_negative_test{"False Negative Test"},
             image_false_negative_test{"False Negative Test"},
             image_test{"Unit Test"}
         );

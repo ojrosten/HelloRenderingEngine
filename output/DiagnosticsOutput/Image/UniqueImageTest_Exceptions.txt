@@ -1,0 +1,18 @@
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 34
+Absent image
+
+Expected Exception Type:
+[std::runtime_error]
+unique_image: texture output/TestsTemporaryData/Core/AssetManagement/UniqueImageTest/Absent.png not found
+
+=======================================
+
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 41
+Invalid image
+
+Expected Exception Type:
+[std::runtime_error]
+unique_image: texture output/TestsTemporaryData/Core/AssetManagement/UniqueImageTest/not_an_image.txt did not load
+
+=======================================
+

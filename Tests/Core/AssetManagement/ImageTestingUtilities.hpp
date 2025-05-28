@@ -9,7 +9,7 @@
 
 /*! \file */
 
-#include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
+#include "sequoia/TestFramework/FreeCheckers.hpp"
 #include "avocet/Core/AssetManagement/Image.hpp"
 
 #include <ranges>

@@ -9,16 +9,16 @@
 
 /*! \file */
 
-#include "ImageTestingUtilities.hpp"
+#include "ColourChannelsTestingUtilities.hpp"
 
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class image_test final : public move_only_test
+    class colour_channels_test final : public regular_test
     {
     public:
-        using move_only_test::move_only_test;
+        using regular_test::regular_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

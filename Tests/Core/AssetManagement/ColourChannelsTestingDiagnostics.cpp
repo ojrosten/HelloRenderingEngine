@@ -5,24 +5,19 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#pragma once
-
 /*! \file */
 
-#include "ImageTestingUtilities.hpp"
+#include "ColourChannelsTestingDiagnostics.hpp"
 
 namespace avocet::testing
 {
-    using namespace sequoia::testing;
-
-    class image_false_negative_test final : public move_only_false_negative_test
+    [[nodiscard]]
+    std::filesystem::path colour_channels_false_negative_test::source_file() const
     {
-    public:
-        using move_only_false_negative_test::move_only_false_negative_test;
+        return std::source_location::current().file_name();
+    }
 
-        [[nodiscard]]
-        std::filesystem::path source_file() const;
-
-        void run_tests();
-    };
+    void colour_channels_false_negative_test::run_tests()
+    {
+    }
 }

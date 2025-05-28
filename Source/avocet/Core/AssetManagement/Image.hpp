@@ -17,6 +17,10 @@
 namespace avocet {
     enum class flip_vertically : bool { no, yes };
 
+    class colour_channels {
+
+    };
+
     class unique_image {
     public:
         using value_type = unsigned char;
@@ -89,5 +93,9 @@ namespace avocet {
 
         [[nodiscard]]
         static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip);
+    };
+
+    class image_view {
+
     };
 }

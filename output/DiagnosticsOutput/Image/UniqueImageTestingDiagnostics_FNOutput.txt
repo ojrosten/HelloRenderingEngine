@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 24
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 24
 Wrong image
 
 Comparison performed using:
@@ -35,7 +35,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 25
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 25
 Wrong colours
 
 Comparison performed using:
@@ -96,7 +96,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 27
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 27
 Wrong image
 
 [avocet::unique_image]
@@ -132,7 +132,7 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingDiagnostics.cpp, Line 28
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 28
 Wrong colours
 
 [avocet::unique_image]

@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "ImageTest.hpp"
+#include "UniqueImageTest.hpp"
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 
 namespace avocet::testing
