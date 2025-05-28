@@ -111,8 +111,8 @@ Checking for equivalence with:
     Element 1 of range incorrect
     [unsigned char]
     operator== returned false
-    Obtained : )
-    Predicted: *
+    Obtained : 41
+    Predicted: 42
 
 =======================================
 

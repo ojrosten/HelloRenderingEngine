@@ -24,11 +24,6 @@ namespace curlew {
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
-    struct exception_postprocessor {
-        [[nodiscard]]
-        std::string operator()(std::string message) const;
-    };
-
     template<class Fn>
     class [[nodiscard]] gl_breaker{
         Fn* m_pFn{};
@@ -47,12 +42,6 @@ namespace curlew {
         using base_test_type = basic_test<Mode, trivial_extender>;
 
         using basic_test<Mode, trivial_extender>::basic_test;
-
-        template<class E, class Fn>
-        bool check_filtered_exception_thrown(const reporter& description, Fn&& function)
-        {
-            return base_test_type::template check_exception_thrown<E>(description, std::forward<Fn>(function), exception_postprocessor{});
-        }
 
         [[nodiscard]]
         std::string summary_discriminator() const

@@ -28,7 +28,7 @@ namespace avocet::testing
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             "Broken Vertex Shader",
             [&shaderDir](){
                 agl::shader_program sp{
@@ -38,7 +38,7 @@ namespace avocet::testing
             }
         );
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             "Broken Fragment Shader",
             [&shaderDir](){
                 agl::shader_program sp{
@@ -48,7 +48,7 @@ namespace avocet::testing
             }
         );
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             "Unlinkable Vertex Shader / Fragment Shader Combo",
             [&shaderDir](){
                 agl::shader_program sp{

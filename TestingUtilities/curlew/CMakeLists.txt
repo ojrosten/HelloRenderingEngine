@@ -20,7 +20,6 @@ ENDFUNCTION()
 sequoia_init()
 
 set(SourceList
-    TestFramework/GraphicsTestCore.cpp
     Window/GLFWWrappers.cpp
     Window/RenderingSetup.cpp)
 

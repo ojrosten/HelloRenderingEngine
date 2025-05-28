@@ -34,16 +34,14 @@ namespace avocet::testing
             reporter{"Absent image"},
             [this](){
                 return image{working_materials() / "Absent.png", flip_vertically::no}; 
-            },
-            curlew::exception_postprocessor{}
+            }
         );
 
         check_exception_thrown<std::runtime_error>(
             reporter{"Invalid image"},
             [this](){
                 return image{working_materials() / "not_an_image.txt", flip_vertically::no};
-            },
-            curlew::exception_postprocessor{}
+            }
         );
     }
 }

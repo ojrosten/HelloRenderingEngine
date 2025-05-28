@@ -36,7 +36,7 @@ namespace avocet::testing
 
         namespace agl = avocet::opengl;
         if(agl::debug_output_supported()) {
-            check_filtered_exception_thrown<std::runtime_error>(
+            check_exception_thrown<std::runtime_error>(
                 "At least two errors",
                 [](){
                     glBindBuffer(GL_ARRAY_BUFFER, 42);

@@ -28,7 +28,7 @@ namespace avocet::testing
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             reporter{"Missing Vertex Shader"},
             [&shaderDir](){
                 agl::shader_program sp{
@@ -38,7 +38,7 @@ namespace avocet::testing
             }
         );
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             reporter{"Misnamed Vertex Shader"},
             [&shaderDir](){
                 agl::shader_program sp{
@@ -48,7 +48,7 @@ namespace avocet::testing
             }
         );
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             reporter{"Missing Fragment Shader"},
             [&shaderDir](){
                 agl::shader_program sp{
@@ -58,7 +58,7 @@ namespace avocet::testing
             }
         );
 
-        check_filtered_exception_thrown<std::runtime_error>(
+        check_exception_thrown<std::runtime_error>(
             reporter{"Misnamed Fragment Shader"},
             [&shaderDir](){
                 agl::shader_program sp{
