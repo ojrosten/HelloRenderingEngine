@@ -21,8 +21,12 @@ Checking for equivalence with:
   Channels
   [avocet::colour_channels]
   operator== returned false
-  Obtained : 3
-  Predicted: 4
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 3
+    Predicted: 4
 
   Data
   [std::span<unsigned char const, -1>]
@@ -117,8 +121,12 @@ operator== returned false
   Channels
   [avocet::colour_channels]
   operator== returned false
-  Obtained : 3
-  Predicted: 1
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 3
+    Predicted: 1
 
   Data
   [std::span<unsigned char const, -1>]
@@ -243,8 +251,12 @@ operator== returned false
   Channels
   [avocet::colour_channels]
   operator== returned false
-  Obtained : 4
-  Predicted: 3
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 3
 
   Alignment
   [avocet::alignment]

@@ -9,6 +9,8 @@
 
 /*! \file */
 
+#include "ColourChannelsTestingUtilities.hpp"
+
 #include "avocet/Core/AssetManagement/Image.hpp"
 
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"

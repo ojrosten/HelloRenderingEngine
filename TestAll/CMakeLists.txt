@@ -14,6 +14,8 @@ sequoia_init()
 add_executable(TestAll TestAllMain.cpp)
 
 target_sources(TestAll PRIVATE
+               ${TestDir}/Core/AssetManagement/ColourChannelsTest.cpp
+               ${TestDir}/Core/AssetManagement/ColourChannelsTestingDiagnostics.cpp
                ${TestDir}/Core/AssetManagement/ImageTest.cpp
                ${TestDir}/Core/AssetManagement/ImageTestingDiagnostics.cpp
                ${TestDir}/Core/AssetManagement/ImageTestingUtilities.cpp
