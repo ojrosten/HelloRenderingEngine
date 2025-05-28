@@ -17,12 +17,12 @@
 namespace avocet {
     enum class flip_vertically : bool { no, yes };
 
-    class image {
+    class unique_image {
     public:
         using value_type = unsigned char;
 
-        image(const std::filesystem::path& texturePath, flip_vertically flip)
-            : image{make(texturePath, flip)}
+        unique_image(const std::filesystem::path& texturePath, flip_vertically flip)
+            : unique_image{make(texturePath, flip)}
         {}
 
         [[nodiscard]]
@@ -44,7 +44,7 @@ namespace avocet {
         std::span<const value_type> span() const noexcept { return {m_Data.get(), size()}; }
 
         [[nodiscard]]
-        friend bool operator==(const image&, const image&) noexcept = default;
+        friend bool operator==(const unique_image&, const unique_image&) noexcept = default;
     private:
         struct file_unloader {
             void operator()(value_type* ptr) const;
@@ -54,7 +54,7 @@ namespace avocet {
             [[nodiscard]]
             std::size_t to_unsigned(int val) {
                 if(val < 0)
-                    throw std::logic_error{std::format("image::parameter - negative value {}", val)};
+                    throw std::logic_error{std::format("unique_image::parameter - negative value {}", val)};
 
                 return static_cast<std::size_t>(val);
             }
@@ -83,7 +83,7 @@ namespace avocet {
         std::unique_ptr<value_type, file_unloader> m_Data;
         parameter m_Width, m_Height, m_Channels;
 
-        image(value_type* ptr, int width, int height, int channels)
+        unique_image(value_type* ptr, int width, int height, int channels)
             : m_Data{ptr}
             , m_Width{width}
             , m_Height{height}
@@ -91,6 +91,6 @@ namespace avocet {
         {}
 
         [[nodiscard]]
-        static image make(const std::filesystem::path& texturePath, flip_vertically flip);
+        static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip);
     };
 }

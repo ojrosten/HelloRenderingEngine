@@ -31,9 +31,8 @@ namespace avocet::testing {
 
 namespace sequoia::testing
 {
-    template<> struct value_tester<avocet::image>
+    template<> struct value_tester<avocet::unique_image>
     {
-        using type       = avocet::image;
         using image_data = avocet::testing::image_data;
         using value_type = image_data::value_type;
 
@@ -49,7 +48,7 @@ namespace sequoia::testing
         }
 
         template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>& logger, const type& actual, const type& prediction)
+        static void test(equality_check_t, test_logger<Mode>& logger, const avocet::unique_image& actual, const avocet::unique_image& prediction)
         {
             check(equality, "Width",    logger, actual.width(),                 prediction.width());
             check(equality, "Height",   logger, actual.height(),                prediction.height());
@@ -58,7 +57,7 @@ namespace sequoia::testing
         }
 
         template<test_mode Mode>
-        static void test(equivalence_check_t, test_logger<Mode>& logger, const type& actual, const image_data& prediction)
+        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::unique_image& actual, const image_data& prediction)
         {
             check(equality,    "Width",    logger, actual.width(),                 prediction.width);
             check(equality,    "Height",   logger, actual.height(),                prediction.height);

@@ -3,7 +3,7 @@ Absent image
 
 Expected Exception Type:
 [std::runtime_error]
-image: texture output/TestsTemporaryData/Core/AssetManagement/ImageTest/Absent.png not found
+unique_image: texture output/TestsTemporaryData/Core/AssetManagement/ImageTest/Absent.png not found
 
 =======================================
 
@@ -12,7 +12,7 @@ Invalid image
 
 Expected Exception Type:
 [std::runtime_error]
-image: texture output/TestsTemporaryData/Core/AssetManagement/ImageTest/not_an_image.txt did not load
+unique_image: texture output/TestsTemporaryData/Core/AssetManagement/ImageTest/not_an_image.txt did not load
 
 =======================================
 

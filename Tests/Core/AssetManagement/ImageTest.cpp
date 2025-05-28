@@ -22,8 +22,8 @@ namespace avocet::testing
     {
         check_semantics(
             "",
-            image{working_materials() / "red_2w_3h_3c.png", flip_vertically::no},
-            image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes},
+            unique_image{working_materials() / "red_2w_3h_3c.png", flip_vertically::no},
+            unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes},
             make_red(2, 3, 3),
             make_rgb_striped(2, 3, 3),
             image_data{},
@@ -33,14 +33,14 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Absent image",
             [this](){
-                return image{working_materials() / "Absent.png", flip_vertically::no}; 
+                return unique_image{working_materials() / "Absent.png", flip_vertically::no}; 
             }
         );
 
         check_exception_thrown<std::runtime_error>(
             "Invalid image",
             [this](){
-                return image{working_materials() / "not_an_image.txt", flip_vertically::no};
+                return unique_image{working_materials() / "not_an_image.txt", flip_vertically::no};
             }
         );
     }
