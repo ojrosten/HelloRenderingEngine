@@ -34,18 +34,6 @@ namespace avocet {
         friend auto operator<=>(const colour_channels&, const colour_channels&) noexcept = default;
     };
 
-    namespace impl {
-        template<sequoia::movable_comparable Width, sequoia::movable_comparable Height, sequoia::movable_comparable Channels>
-        struct image_spec {
-            Width width;
-            Height height;
-            Channels channels;
-
-            [[nodiscard]]
-            friend bool operator==(const image_spec&, const image_spec&) noexcept = default;
-        };
-    }
-
     class unique_image {
     public:
         using value_type = unsigned char;
@@ -54,22 +42,24 @@ namespace avocet {
             : unique_image{make(texturePath, flip)}
         {}
 
-        unique_image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, colour_channels numChannels)
+        unique_image(std::vector<value_type> data, std::size_t width, std::size_t height, colour_channels numChannels)
             : m_Data{std::move(data)}
-            , m_Spec{.width{imageWidth}, .height{imageHeight}, .channels{numChannels}}
+            , m_Width{width}
+            , m_Height{height}
+            , m_Channels{numChannels}
         {
             if(const auto sz{std::get<vec_t>(m_Data).size()}; size() != sz)
-                throw std::runtime_error{std::format("unique_image size {} != width {} * height {} * channels {}", sz, width(), height(), num_channels().raw_value())};
+                throw std::runtime_error{std::format("unique_image size {} != width {} * height {} * channels {}", sz, this->width(), this->height(), num_channels().raw_value())};
         }
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Spec.width.value; }
+        std::size_t width() const noexcept { return m_Width.value; }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Spec.height.value; }
+        std::size_t height() const noexcept { return m_Height.value; }
 
         [[nodiscard]]
-        colour_channels num_channels() const noexcept { return m_Spec.channels.value; }
+        colour_channels num_channels() const noexcept { return m_Channels.value; }
 
         [[nodiscard]]
         std::size_t size() const noexcept { return width() * height() * num_channels().raw_value(); }
@@ -131,11 +121,14 @@ namespace avocet {
         using ptr_t = std::unique_ptr<value_type, file_unloader>;
         using vec_t = std::vector<value_type>;
         std::variant<ptr_t, vec_t> m_Data;
-        impl::image_spec<parameter<std::size_t>, parameter<std::size_t>, parameter<colour_channels>> m_Spec;
+        parameter<std::size_t> m_Width, m_Height;
+        parameter<colour_channels> m_Channels;
 
         unique_image(value_type* ptr, int width, int height, int channels)
             : m_Data{ptr_t{ptr}}
-            , m_Spec{.width{width}, .height{height}, .channels{channels}}
+            , m_Width{width}
+            , m_Height{height}
+            , m_Channels{channels}
         {}
 
         [[nodiscard]]
