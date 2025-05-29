@@ -120,13 +120,16 @@ operator== returned false
   Obtained : 3
   Predicted: 1
 
-  Data
-  [std::span<unsigned char const, -1>]
-    Container size wrong
-    [unsigned long long]
-    operator== returned false
-    Obtained : 18
-    Predicted: 6
+  Data Handle
+  [unsigned char const*]
+  operator== returned false
+  Pointers both non-null, but they point to different addresses
+
+  Data Size
+  [unsigned long long]
+  operator== returned false
+  Obtained : 18
+  Predicted: 6
 
 =======================================
 
@@ -136,79 +139,10 @@ Wrong colours
 [avocet::unique_image]
 operator== returned false
 
-  Data
-  [std::span<unsigned char const, -1>]
-    Element 0 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 255
-    Predicted: 0
-
-    Element 2 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 0
-    Predicted: 255
-
-    Element 3 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 255
-    Predicted: 0
-
-    Element 5 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 0
-    Predicted: 255
-
-    Element 6 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 255
-    Predicted: 0
-
-    Element 8 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 0
-    Predicted: 255
-
-    Element 9 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 255
-    Predicted: 0
-
-    Element 11 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 0
-    Predicted: 255
-
-    Element 12 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 255
-    Predicted: 0
-
-    Element 14 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 0
-    Predicted: 255
-
-    Element 15 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 255
-    Predicted: 0
-
-    Element 17 of range incorrect
-    [unsigned char]
-    operator== returned false
-    Obtained : 0
-    Predicted: 255
+  Data Handle
+  [unsigned char const*]
+  operator== returned false
+  Pointers both non-null, but they point to different addresses
 
 =======================================
 
