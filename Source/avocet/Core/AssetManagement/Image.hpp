@@ -167,8 +167,8 @@ namespace avocet {
 
         [[nodiscard]]
         friend bool operator==(const image_view& lhs, const image_view& rhs) noexcept {
-            return std::ranges::equal(lhs.span(), rhs.span())
-                && (lhs.m_Spec == rhs.m_Spec);
+            return (lhs.m_Spec == rhs.m_Spec)
+                && std::ranges::equal(lhs.span(), rhs.span());
         }
     private:
         std::span<const value_type> m_Span;
