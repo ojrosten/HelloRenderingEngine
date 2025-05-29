@@ -102,32 +102,28 @@ namespace avocet {
     /*public:
         using value_type = unique_image::value_type;
 
-        image_view(const unique_image& im)
-            : m_Span{im.span()}
-            , m_Spec{.width{im.width()},
-                     .height{im.height()},
-                     .channels{im.num_channels()}}
+        image_view(const unique_image& image)
+            : m_Image{&image}
         {
         }
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Spec.width; }
+        std::size_t width() const noexcept { return m_Image->width(); }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Spec.height; }
+        std::size_t height() const noexcept { return m_Image->height(); }
 
         [[nodiscard]]
-        colour_channels num_channels() const noexcept { return m_Spec.channels; }
+        colour_channels num_channels() const noexcept { return m_Image->num_channels(); }
 
         [[nodiscard]]
-        std::span<const value_type> span() const noexcept { return m_Span; }
+        std::span<const value_type> span() const noexcept { return m_Image->span(); }
 
         [[nodiscard]]
         friend bool operator==(const image_view& lhs, const image_view& rhs) noexcept {
-            return (lhs.m_Spec == rhs.m_Spec) && std::ranges::equal(lhs.span(), rhs.span());
+            return std::ranges::equal(lhs.span(), rhs.span());
         }
     private:
-        std::span<const value_type> m_Span;
-        impl::image_spec<std::size_t, std::size_t, colour_channels> m_Spec;*/
+        const unique_image* m_Image;*/
     };
 }
