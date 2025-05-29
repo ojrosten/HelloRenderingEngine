@@ -16,9 +16,6 @@ namespace avocet::testing {
     [[nodiscard]]
     image_data make_red(std::size_t w, std::size_t h, std::size_t channels) {
         return {
-            .width{w},
-            .height{h},
-            .num_channels{channels},
             .data{
                   std::views::iota(0u, w * h * channels)
                 | std::views::transform(
@@ -28,16 +25,16 @@ namespace avocet::testing {
                     }
                   )
                 | std::ranges::to<std::vector>()
-            }
+            },
+            .width{w},
+            .height{h},
+            .num_channels{channels}
         };
     }
 
     [[nodiscard]]
     image_data make_rgb_striped(std::size_t w, std::size_t h, std::size_t channels) {
         return {
-            .width{w},
-            .height{h},
-            .num_channels{channels},
             .data{
                   std::views::iota(0u, w * h * channels)
                 | std::views::transform(
@@ -48,7 +45,10 @@ namespace avocet::testing {
                     }
                   )
                 | std::ranges::to<std::vector>()
-            }
+            },
+            .width{w},
+            .height{h},
+            .num_channels{channels}
         };
     };
 }

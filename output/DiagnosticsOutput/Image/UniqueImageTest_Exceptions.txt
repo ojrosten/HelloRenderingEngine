@@ -16,3 +16,12 @@ unique_image: texture output/TestsTemporaryData/Core/AssetManagement/UniqueImage
 
 =======================================
 
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 48
+Inconsistent image data
+
+Expected Exception Type:
+[std::runtime_error]
+unique_image size 18 != width 3 * height 3 * channels 3
+
+=======================================
+

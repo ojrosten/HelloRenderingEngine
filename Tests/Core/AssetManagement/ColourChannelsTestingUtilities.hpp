@@ -16,16 +16,16 @@ namespace sequoia::testing
 {
     template<> struct value_tester<avocet::colour_channels>
     {
-        using type = avocet::colour_channels;
-
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const avocet::colour_channels& actual, const avocet::colour_channels& prediction)
         {
+            check(equality, "Raw value", logger, actual.raw_value(), prediction.raw_value());
         }
         
         template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::colour_channels& actual, const std::size_t prediction)
         {
+            check(equality, "Raw value", logger, actual.raw_value(), prediction);
         }
     };
 }

@@ -19,5 +19,12 @@ namespace avocet::testing
 
     void image_view_test::run_tests()
     {
+        check_semantics(
+            "",
+            image_view{to_unique_image(make_red(2, 3, 4))},
+            image_view{to_unique_image(make_red(2, 3, 3))},
+            make_red(2, 3, 4),
+            make_red(2, 3, 3)
+        );
     }
 }

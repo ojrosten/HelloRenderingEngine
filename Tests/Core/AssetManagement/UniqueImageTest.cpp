@@ -43,5 +43,13 @@ namespace avocet::testing
                 return unique_image{working_materials() / "not_an_image.txt", flip_vertically::no};
             }
         );
+
+        check_exception_thrown<std::runtime_error>(
+            "Inconsistent image data",
+            [this]() {
+                const image_data red{make_red(2, 3, 3)};
+                unique_image im{red.data, 3, 3, red.num_channels};
+            }
+        );
     }
 }

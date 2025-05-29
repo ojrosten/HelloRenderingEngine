@@ -1,0 +1,49 @@
+Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 23
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::image_view>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Channels
+  [avocet::colour_channels]
+  operator== returned false
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 3
+
+  Data
+  [std::span<unsigned char const, -1>]
+
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 24
+    Predicted: 18
+
+=======================================
+
+Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 24
+
+[avocet::image_view]
+operator== returned false
+
+  Width
+  [unsigned long long]
+  operator== returned false
+  Obtained : 2
+  Predicted: 1
+
+  Data
+  [std::span<unsigned char const, -1>]
+    Container size wrong
+    [unsigned long long]
+    operator== returned false
+    Obtained : 24
+    Predicted: 12
+
+=======================================
+
