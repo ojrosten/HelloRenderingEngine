@@ -13,6 +13,9 @@
 #include <mutex>
 #include <span>
 #include <utility>
+#include <variant>
+
+#include "sequoia/Core/Meta/Utilities.hpp"
 
 namespace avocet {
     enum class flip_vertically : bool { no, yes };
