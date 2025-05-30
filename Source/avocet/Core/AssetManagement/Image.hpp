@@ -54,12 +54,12 @@ namespace avocet {
             : unique_image{make(texturePath, flip)}
         {}
 
-        unique_image(std::vector<value_type> data, std::size_t imageWidth, std::size_t imageHeight, colour_channels numChannels)
+        unique_image(std::vector<value_type> data, std::size_t width, std::size_t height, colour_channels numChannels)
             : m_Data{std::move(data)}
-            , m_Spec{.width{imageWidth}, .height{imageHeight}, .channels{numChannels}}
+            , m_Spec{.width{width}, .height{height}, .channels{numChannels}}
         {
             if(const auto sz{std::get<vec_t>(m_Data).size()}; size() != sz)
-                throw std::runtime_error{std::format("unique_image size {} != width {} * height {} * channels {}", sz, width(), height(), num_channels().raw_value())};
+                throw std::runtime_error{std::format("unique_image size {} != width {} * height {} * channels {}", sz, this->width(), this->height(), num_channels().raw_value())};
         }
 
         [[nodiscard]]
