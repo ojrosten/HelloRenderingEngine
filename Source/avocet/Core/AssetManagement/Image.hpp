@@ -42,31 +42,34 @@ namespace avocet {
         std::size_t m_Value{1};
 
         [[nodiscard]]
-        constexpr static bool is_power_of_2(std::size_t val) {
-            return (val > 0) && ((val & (val - 1)) == 0);
+        static std::size_t validate(std::size_t val) {
+            const bool powOfTwo{(val > 0) && ((val & (val - 1)) == 0)};
+            if(!powOfTwo)
+                throw std::runtime_error{std::format("alignment: value {} is not a power of 2", val)};
+
+            return val;
         }
     public:
-        constexpr alignment() noexcept = default;
+        alignment() noexcept = default;
 
-        constexpr explicit alignment(std::size_t n)
-            : m_Value{n}
-        {
-            if(!is_power_of_2(m_Value))
-                throw std::runtime_error{std::format("alignment: value {} is not a power of 2", m_Value)};
-        }
+        explicit alignment(std::size_t n)
+            : m_Value{validate(n)}
+        {}
 
         [[nodiscard]]
-        friend constexpr auto operator<=>(const alignment&, const alignment&) noexcept = default;
+        friend auto operator<=>(const alignment&, const alignment&) noexcept = default;
 
         [[nodiscard]]
-        constexpr std::size_t raw_value() const noexcept { return m_Value; }
+        std::size_t raw_value() const noexcept { return m_Value; }
     };
 
     [[nodiscard]]
-    constexpr std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment) noexcept {
+    inline std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment) noexcept {
         const std::size_t nominalRowSize{width * channels.raw_value()};
-        const std::size_t excess{nominalRowSize % rowAlignment.raw_value()};
-        return excess ? nominalRowSize - excess + rowAlignment.raw_value() : nominalRowSize;
+        const std::size_t unpadded{nominalRowSize % rowAlignment.raw_value()};
+
+        return unpadded ? nominalRowSize - unpadded + rowAlignment.raw_value()
+                        : nominalRowSize;
     }
 
     void validate(std::size_t paddedRowSize, std::size_t height, std::size_t size);
