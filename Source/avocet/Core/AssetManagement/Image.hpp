@@ -42,7 +42,7 @@ namespace avocet {
         std::size_t m_Value{1};
 
         [[nodiscard]]
-        static std::size_t validate(std::size_t val) {
+        constexpr static std::size_t validate(std::size_t val) {
             const bool powOfTwo{(val > 0) && ((val & (val - 1)) == 0)};
             if(!powOfTwo)
                 throw std::runtime_error{std::format("alignment: value {} is not a power of 2", val)};
@@ -50,21 +50,21 @@ namespace avocet {
             return val;
         }
     public:
-        alignment() noexcept = default;
+        constexpr alignment() noexcept = default;
 
-        explicit alignment(std::size_t n)
+        constexpr explicit alignment(std::size_t n)
             : m_Value{validate(n)}
         {}
 
         [[nodiscard]]
-        friend auto operator<=>(const alignment&, const alignment&) noexcept = default;
+        friend constexpr auto operator<=>(const alignment&, const alignment&) noexcept = default;
 
         [[nodiscard]]
-        std::size_t raw_value() const noexcept { return m_Value; }
+        constexpr std::size_t raw_value() const noexcept { return m_Value; }
     };
 
     [[nodiscard]]
-    inline std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) noexcept {
+    constexpr std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) noexcept {
         const std::size_t nominalRowSize{width * channels.raw_value() * bytesPerChannel};
         const std::size_t unpadded{nominalRowSize % rowAlignment.raw_value()};
 
