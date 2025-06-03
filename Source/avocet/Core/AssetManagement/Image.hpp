@@ -64,8 +64,8 @@ namespace avocet {
     };
 
     [[nodiscard]]
-    inline std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment) noexcept {
-        const std::size_t nominalRowSize{width * channels.raw_value()};
+    inline std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) noexcept {
+        const std::size_t nominalRowSize{width * channels.raw_value() * bytesPerChannel};
         const std::size_t unpadded{nominalRowSize % rowAlignment.raw_value()};
 
         return unpadded ? nominalRowSize - unpadded + rowAlignment.raw_value()
@@ -121,7 +121,7 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t padded_row_size() const noexcept {
-            return avocet::padded_row_size(width(), num_channels(), row_alignment());
+            return avocet::padded_row_size(width(), num_channels(), row_alignment(), sizeof(value_type));
         }
 
         [[nodiscard]]
@@ -214,7 +214,7 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t padded_row_size() const noexcept { 
-            return avocet::padded_row_size(width(), num_channels(), row_alignment());
+            return avocet::padded_row_size(width(), num_channels(), row_alignment(), sizeof(value_type));
         }
 
         [[nodiscard]]

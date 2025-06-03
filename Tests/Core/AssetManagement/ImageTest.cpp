@@ -23,20 +23,20 @@ namespace avocet::testing
     }
 
     void image_test::test_padded_row_size() {
-        check(equality, "", padded_row_size(0, colour_channels{1}, alignment{1}), 0uz);
-        check(equality, "", padded_row_size(1, colour_channels{1}, alignment{1}), 1uz);
-        check(equality, "", padded_row_size(1, colour_channels{1}, alignment{2}), 2uz);
-        check(equality, "", padded_row_size(2, colour_channels{1}, alignment{1}), 2uz);
-        check(equality, "", padded_row_size(2, colour_channels{1}, alignment{2}), 2uz);
-        check(equality, "", padded_row_size(2, colour_channels{1}, alignment{4}), 4uz);
+        check(equality, "", padded_row_size(0, colour_channels{1}, alignment{1}, 1uz), 0uz);
+        check(equality, "", padded_row_size(1, colour_channels{1}, alignment{1}, 1uz), 1uz);
+        check(equality, "", padded_row_size(1, colour_channels{1}, alignment{2}, 1uz), 2uz);
+        check(equality, "", padded_row_size(2, colour_channels{1}, alignment{1}, 1uz), 2uz);
+        check(equality, "", padded_row_size(2, colour_channels{1}, alignment{2}, 1uz), 2uz);
+        check(equality, "", padded_row_size(2, colour_channels{1}, alignment{4}, 1uz), 4uz);
 
-        check(equality, "", padded_row_size(1, colour_channels{2}, alignment{1}), 2uz);
-        check(equality, "", padded_row_size(1, colour_channels{2}, alignment{2}), 2uz);
-        check(equality, "", padded_row_size(1, colour_channels{2}, alignment{4}), 4uz);
-        check(equality, "", padded_row_size(2, colour_channels{2}, alignment{2}), 4uz);
-        check(equality, "", padded_row_size(2, colour_channels{2}, alignment{4}), 4uz);
+        check(equality, "", padded_row_size(1, colour_channels{2}, alignment{1}, 1uz), 2uz);
+        check(equality, "", padded_row_size(1, colour_channels{2}, alignment{2}, 1uz), 2uz);
+        check(equality, "", padded_row_size(1, colour_channels{2}, alignment{4}, 1uz), 4uz);
+        check(equality, "", padded_row_size(2, colour_channels{2}, alignment{2}, 1uz), 4uz);
+        check(equality, "", padded_row_size(2, colour_channels{2}, alignment{4}, 1uz), 4uz);
 
-        check(equality, "", padded_row_size(3, colour_channels{2}, alignment{4}), 8uz);
+        check(equality, "", padded_row_size(3, colour_channels{2}, alignment{4}, 1uz), 8uz);
     }
 
     void image_test::test_image() {
