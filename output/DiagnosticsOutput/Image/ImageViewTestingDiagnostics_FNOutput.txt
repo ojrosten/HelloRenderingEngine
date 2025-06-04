@@ -1,0 +1,115 @@
+Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 23
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::image_view>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Width
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 4
+
+  Height
+  [unsigned long long]
+  operator== returned false
+  Obtained : 2
+  Predicted: 3
+
+  Channels
+  [avocet::colour_channels]
+  operator== returned false
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 4
+    Predicted: 2
+
+  Data
+  [std::span<unsigned char const, -1>]
+
+    Element 2 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 6 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 10 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 14 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 18 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 22 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+
+Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 24
+
+[avocet::image_view]
+operator== returned false
+
+  Data
+  [std::span<unsigned char const, -1>]
+    Element 12 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 13 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 16 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 17 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+    Element 20 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 255
+    Predicted: 0
+
+    Element 21 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 255
+
+=======================================
+

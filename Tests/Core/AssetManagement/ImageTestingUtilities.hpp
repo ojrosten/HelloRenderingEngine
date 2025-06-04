@@ -25,10 +25,10 @@ namespace avocet::testing {
         colour_channels num_channels{};
     };
 
-    /*[[nodiscard]]
+    [[nodiscard]]
     inline unique_image to_unique_image(const image_data& im) {
         return {im.data, im.width, im.height, im.num_channels};
-    }*/
+    }
 
     [[nodiscard]]
     image_data make_red(std::size_t width, std::size_t height, std::size_t channels);
@@ -75,7 +75,7 @@ namespace sequoia::testing
         using image_value_tester<avocet::unique_image>::test;
     };
 
-    /*template<> struct value_tester<avocet::image_view> : image_value_tester<avocet::image_view> {
+    template<> struct value_tester<avocet::image_view> : image_value_tester<avocet::image_view> {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const avocet::image_view& actual, const avocet::image_view& prediction)
         {
@@ -84,5 +84,5 @@ namespace sequoia::testing
         }
 
         using image_value_tester<avocet::image_view>::test;
-    };*/
+    };
 }

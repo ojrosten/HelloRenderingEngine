@@ -142,14 +142,14 @@ namespace avocet {
     };
 
     class image_view {
-    /*public:
+    public:
         using value_type = unique_image::value_type;
 
-        image_view(const unique_image& im)
-            : m_Span{im.span()}
-            , m_Spec{.width{im.width()},
-                     .height{im.height()},
-                     .channels{im.num_channels()}}
+        image_view(const unique_image& image)
+            : m_Span{image.span()}
+            , m_Spec{.width{image.width()},
+                     .height{image.height()},
+                     .channels{image.num_channels()}}
         {
         }
 
@@ -171,6 +171,6 @@ namespace avocet {
         }
     private:
         std::span<const value_type> m_Span;
-        impl::image_spec<std::size_t, std::size_t, colour_channels> m_Spec;*/
+        impl::image_spec<std::size_t, std::size_t, colour_channels> m_Spec;
     };
 }
