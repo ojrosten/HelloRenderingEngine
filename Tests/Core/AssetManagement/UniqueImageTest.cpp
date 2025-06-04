@@ -30,6 +30,16 @@ namespace avocet::testing
             image_data{}
         );
 
+        check_semantics(
+            "",
+            unique_image{make_red(2, 3, 3).data, 2, 3, colour_channels{3}},
+            unique_image{make_red(1, 4, 2).data, 1, 4, colour_channels{2}},
+            make_red(2, 3, 3),
+            make_red(1, 4, 2),
+            image_data{},
+            image_data{}
+        );
+
         check_exception_thrown<std::runtime_error>(
             "Absent image",
             [this](){
