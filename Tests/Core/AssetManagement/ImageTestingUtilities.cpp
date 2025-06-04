@@ -32,9 +32,9 @@ namespace avocet::testing {
                     | std::views::transform(
                         [=](auto i) -> unsigned char {
                             const auto row{i / (w * channels.raw_value())};
-                            const auto decrementedChannel{(i - paddedRowSize * row) % channels.raw_value()};
+                            const auto channelIndex{(i - paddedRowSize * row) % channels.raw_value()};
                             const auto paddingByte{isPadded && !((i + 1) % paddedRowSize)};
-                            return static_cast<unsigned char>((decrementedChannel || paddingByte) ? 0 : intensity);
+                            return static_cast<unsigned char>((channelIndex || paddingByte) ? 0 : intensity);
                         }
                       )
                     | std::ranges::to<std::vector>()
