@@ -22,8 +22,10 @@ namespace avocet::testing {
             return {imageData.data, imageData.width, imageData.height, imageData.num_channels, imageData.row_alignment};
         }
 
+        template<class Fn>
+          requires std::is_invocable_r_v<typename image_data::value_type, Fn, std::size_t, std::size_t>
         [[nodiscard]]
-        image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char intensity) {
+        image_data make_image(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, Fn fn) {
             const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, sizeof(image_data::value_type))};
             const bool isPadded{paddedRowSize != w * channels.raw_value()};
             return {
@@ -36,7 +38,7 @@ namespace avocet::testing {
 
                             const auto row{i / paddedRowSize};
                             const auto channelIndex{(i - paddedRowSize * row) % channels.raw_value()};
-                            return static_cast<unsigned char>(channelIndex ? 0 : intensity);
+                            return fn(row, channelIndex);
                         }
                       )
                     | std::ranges::to<std::vector>()
@@ -49,32 +51,21 @@ namespace avocet::testing {
         }
 
         [[nodiscard]]
+        image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char intensity) {
+            return make_image(w, h, channels, rowAlignment, [intensity](std::size_t, std::size_t channelIndex){ return static_cast<unsigned char>(channelIndex ? 0 : intensity); });
+        }
+
+        [[nodiscard]]
         image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char alpha = 0) {
-            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, sizeof(image_data::value_type))};
-            const bool isPadded{paddedRowSize != w * channels.raw_value()};
-            return {
-                .data{
-                      std::views::iota(0u, paddedRowSize * h)
-                    | std::views::transform(
-                        [=](auto i) -> unsigned char {
-                            if(const bool paddingByte{isPadded && !((i + 1) % paddedRowSize)}; paddingByte)
-                                return 0;
+            const auto fn{
+                [channels, alpha](std::size_t row, std::size_t channelIndex){
+                    if(channelIndex == 3)
+                         return alpha;
 
-                            const auto row{i / paddedRowSize};
-                            const auto channelIndex{(i - paddedRowSize * row) % channels.raw_value()};
-                            if(channelIndex == 3)
-                                return alpha;
-
-                            return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
-                        }
-                      )
-                    | std::ranges::to<std::vector>()
-                },
-                .width{w},
-                .height{h},
-                .num_channels{channels},
-                .row_alignment{rowAlignment}
+                    return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
+                }
             };
+            return make_image(w, h, channels, rowAlignment, fn);
         };
     }
 
