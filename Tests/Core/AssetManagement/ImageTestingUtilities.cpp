@@ -24,7 +24,7 @@ namespace avocet::testing {
 
         [[nodiscard]]
         image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char intensity) {
-            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, 1uz)};
+            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, sizeof(image_data::value_type))};
             const bool isPadded{paddedRowSize != w * channels.raw_value()};
             return {
                 .data{
