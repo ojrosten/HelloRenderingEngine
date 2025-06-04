@@ -19,10 +19,14 @@ Checking for equivalence with:
   Predicted: 2
 
   Channels
-  [unsigned long long]
+  [avocet::colour_channels]
   operator== returned false
-  Obtained : 3
-  Predicted: 4
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 3
+    Predicted: 4
 
   Data
   [std::span<unsigned char const, -1>]
@@ -115,10 +119,14 @@ operator== returned false
   Predicted: 2
 
   Channels
-  [unsigned long long]
+  [avocet::colour_channels]
   operator== returned false
-  Obtained : 3
-  Predicted: 1
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 3
+    Predicted: 1
 
   Data Handle
   [unsigned char const*]
