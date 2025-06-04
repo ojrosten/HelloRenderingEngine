@@ -31,10 +31,12 @@ namespace avocet::testing {
                       std::views::iota(0u, paddedRowSize * h)
                     | std::views::transform(
                         [=](auto i) -> unsigned char {
-                            const auto row{i / (w * channels.raw_value())};
+                            if(const bool paddingByte{isPadded && !((i + 1) % paddedRowSize)}; paddingByte)
+                                return 0;
+
+                            const auto row{i / paddedRowSize};
                             const auto channelIndex{(i - paddedRowSize * row) % channels.raw_value()};
-                            const auto paddingByte{isPadded && !((i + 1) % paddedRowSize)};
-                            return static_cast<unsigned char>((channelIndex || paddingByte) ? 0 : intensity);
+                            return static_cast<unsigned char>(channelIndex ? 0 : intensity);
                         }
                       )
                     | std::ranges::to<std::vector>()
@@ -48,18 +50,22 @@ namespace avocet::testing {
 
         [[nodiscard]]
         image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, unsigned char alpha = 0) {
-            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, 1uz)};
+            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, sizeof(image_data::value_type))};
+            const bool isPadded{paddedRowSize != w * channels.raw_value()};
             return {
                 .data{
                       std::views::iota(0u, paddedRowSize * h)
                     | std::views::transform(
                         [=](auto i) -> unsigned char {
-                            const auto row{i / (w * channels.raw_value())};
-                            const auto decrementedChannel{(i - paddedRowSize * row) % channels.raw_value()};
-                            if(decrementedChannel == 3)
+                            if(const bool paddingByte{isPadded && !((i + 1) % paddedRowSize)}; paddingByte)
+                                return 0;
+
+                            const auto row{i / paddedRowSize};
+                            const auto channelIndex{(i - paddedRowSize * row) % channels.raw_value()};
+                            if(channelIndex == 3)
                                 return alpha;
 
-                            return static_cast<unsigned char>((row == decrementedChannel) ? 255 : 0);
+                            return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
                         }
                       )
                     | std::ranges::to<std::vector>()
