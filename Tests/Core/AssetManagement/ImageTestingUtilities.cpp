@@ -29,7 +29,7 @@ namespace avocet::testing {
             constexpr auto bytesPerChannel{sizeof(image_data::value_type)};
 
             const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, bytesPerChannel)};
-            const bool isPadded{paddedRowSize != padded_row_size(w, channels, alignment{1}, bytesPerChannel)};
+            const bool isPadded{paddedRowSize > padded_row_size(w, channels, alignment{1}, bytesPerChannel)};
             return {
                 .data{
                       std::views::iota(0u, paddedRowSize * h)
