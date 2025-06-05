@@ -1,18 +1,27 @@
 Tests/Core/AssetManagement/ImageTest.cpp, Line 31
-Image size exceeds maximum allowed
+Too much image channel data 
 
 Expected Exception Type:
 [std::runtime_error]
-padded_row_size: width (9223372036854775808) * channels (2) * bytes per channel (1) exceed the maximum allowed value 18446744073709551615
+padded_row_size: bytes per channel (18446744073709551615) * channels (2) exceeds the maximum allowed value 18446744073709551615
 
 =======================================
 
 Tests/Core/AssetManagement/ImageTest.cpp, Line 38
+Image size exceeds maximum allowed
+
+Expected Exception Type:
+[std::runtime_error]
+padded_row_size: width (9223372036854775808) * channels (2) * bytes per channel (1) exceeds the maximum allowed value 18446744073709551615
+
+=======================================
+
+Tests/Core/AssetManagement/ImageTest.cpp, Line 45
 Image size padded beyond maximum allowed
 
 Expected Exception Type:
 [std::runtime_error]
-padded_row_size: nominal row size (18446744073709551615) aligned to a (2) byte boundary will exceed the maxmimu allowed value 18446744073709551615
+padded_row_size: nominal row size (18446744073709551615) aligned to a (2) byte boundary exceeds the maxmimu allowed value 18446744073709551615
 
 =======================================
 

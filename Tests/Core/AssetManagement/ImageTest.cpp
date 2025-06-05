@@ -28,6 +28,13 @@ namespace avocet::testing
     void image_test::test_padded_row_size() {
         constexpr auto maxVal{std::numeric_limits<std::size_t>::max()};
         check_exception_thrown<std::runtime_error>(
+            "Too much image channel data ",
+            [](){
+                return padded_row_size(1, colour_channels{2}, alignment{1}, maxVal);
+            }
+        );
+
+        check_exception_thrown<std::runtime_error>(
             "Image size exceeds maximum allowed",
             [](){
                 return padded_row_size(1 + maxVal / 2, colour_channels{2}, alignment{1}, 1uz);

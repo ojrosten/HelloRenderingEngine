@@ -17,15 +17,18 @@ namespace avocet {
     std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) {
         constexpr auto maxVal{std::numeric_limits<std::size_t>::max()};
 
+        if(bytesPerChannel && (maxVal / bytesPerChannel < channels.raw_value()))
+            throw std::runtime_error{std::format("padded_row_size: bytes per channel ({}) * channels ({}) exceeds the maximum allowed value {}", bytesPerChannel, channels, maxVal)};
+
         const auto bytesPerTexel{channels.raw_value() * bytesPerChannel};
         if(bytesPerTexel && (maxVal / bytesPerTexel < width))
-            throw std::runtime_error{std::format("padded_row_size: width ({}) * channels ({}) * bytes per channel ({}) exceed the maximum allowed value {}", width, channels.raw_value(), bytesPerChannel, maxVal)};
+            throw std::runtime_error{std::format("padded_row_size: width ({}) * channels ({}) * bytes per channel ({}) exceeds the maximum allowed value {}", width, channels, bytesPerChannel, maxVal)};
 
         const std::size_t nominalRowSize{width * bytesPerTexel};
 
         if(const std::size_t overhangingBytes{nominalRowSize % rowAlignment.raw_value()}; overhangingBytes) {
             if(nominalRowSize - overhangingBytes > maxVal - rowAlignment.raw_value())
-                throw std::runtime_error{std::format("padded_row_size: nominal row size ({}) aligned to a ({}) byte boundary will exceed the maxmimu allowed value {}", nominalRowSize, rowAlignment.raw_value(), maxVal)};
+                throw std::runtime_error{std::format("padded_row_size: nominal row size ({}) aligned to a ({}) byte boundary exceeds the maxmimu allowed value {}", nominalRowSize, rowAlignment, maxVal)};
 
             return nominalRowSize - overhangingBytes + rowAlignment.raw_value();
         }
