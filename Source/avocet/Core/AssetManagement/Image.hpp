@@ -25,7 +25,7 @@ namespace avocet {
     public:
         colour_channels() noexcept = default;
 
-        explicit colour_channels(std::size_t val) : m_Value{val} {}
+        explicit colour_channels(std::size_t val) noexcept : m_Value{val} {}
 
         [[nodiscard]]
         friend auto operator<=>(const colour_channels&, const colour_channels&) noexcept = default;
