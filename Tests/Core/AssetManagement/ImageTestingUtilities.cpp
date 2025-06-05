@@ -26,8 +26,9 @@ namespace avocet::testing {
           requires std::is_invocable_r_v<typename image_data::value_type, Fn, std::size_t, std::size_t>
         [[nodiscard]]
         image_data make_image(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, Fn fn) {
-            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, sizeof(image_data::value_type))};
-            const bool isPadded{paddedRowSize != w * channels.raw_value()};
+            constexpr auto bytesPerChannel{sizeof(image_data::value_type)};
+            const auto paddedRowSize{padded_row_size(w, channels, rowAlignment, bytesPerChannel)};
+            const bool isPadded{paddedRowSize != w * channels.raw_value() * bytesPerChannel};
             return {
                 .data{
                       std::views::iota(0u, paddedRowSize * h)
