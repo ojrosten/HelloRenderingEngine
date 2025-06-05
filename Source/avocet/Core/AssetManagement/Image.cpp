@@ -13,6 +13,27 @@
 namespace avocet {
     namespace fs = std::filesystem;
 
+    [[nodiscard]]
+    std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) {
+        constexpr auto maxVal{std::numeric_limits<std::size_t>::max()};
+
+        const auto bytesPerTexel{channels.raw_value() * bytesPerChannel};
+        if(bytesPerTexel && (maxVal / bytesPerTexel < width))
+            throw std::runtime_error{std::format("padded_row_size: width ({}) * channels ({}) * bytes per channel ({}) exceed the maximum allowed value {}", width, channels.raw_value(), bytesPerChannel, maxVal)};
+
+        const std::size_t nominalRowSize{width * bytesPerTexel};
+
+        if(const std::size_t overhangingBytes{nominalRowSize % rowAlignment.raw_value()}; overhangingBytes) {
+            if(nominalRowSize - overhangingBytes > maxVal - rowAlignment.raw_value())
+                throw std::runtime_error{std::format("padded_row_size: nominal row size ({}) aligned to a ({}) byte boundary will exceed the maxmimu allowed value {}", nominalRowSize, rowAlignment.raw_value(), maxVal)};
+
+            return nominalRowSize - overhangingBytes + rowAlignment.raw_value();
+        }
+
+        return nominalRowSize;
+    }
+
+
     void unique_image::file_unloader::operator()(value_type* ptr) const {
         stbi_image_free(ptr);
     }
