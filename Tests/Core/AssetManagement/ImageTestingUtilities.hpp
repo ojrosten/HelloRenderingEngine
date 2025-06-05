@@ -21,7 +21,8 @@ namespace avocet::testing {
         using value_type = unsigned char;
 
         std::vector<value_type> data;
-        std::size_t width{}, height{}, num_channels{};
+        std::size_t width{}, height{};
+        colour_channels num_channels{};
     };
 
     /*[[nodiscard]]

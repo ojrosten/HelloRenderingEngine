@@ -21,8 +21,30 @@ namespace avocet {
     enum class flip_vertically : bool { no, yes };
 
     class colour_channels {
+        std::size_t m_Value{};
+    public:
+        colour_channels() noexcept = default;
 
+        explicit colour_channels(std::size_t val) noexcept : m_Value{val} {}
+
+        [[nodiscard]]
+        friend auto operator<=>(const colour_channels&, const colour_channels&) noexcept = default;
+
+        [[nodiscard]]
+        std::size_t raw_value() const noexcept { return m_Value; }
     };
+
+    namespace impl {
+        template<sequoia::movable_comparable Width, sequoia::movable_comparable Height, sequoia::movable_comparable Channels>
+        struct image_spec {
+            Width width;
+            Height height;
+            Channels channels;
+
+            [[nodiscard]]
+            friend bool operator==(const image_spec&, const image_spec&) noexcept = default;
+        };
+    }
 
     class unique_image {
     public:
@@ -32,20 +54,37 @@ namespace avocet {
             : unique_image{make(texturePath, flip)}
         {}
 
-        [[nodiscard]]
-        std::size_t width() const noexcept { return m_Width.value; }
+        unique_image(std::vector<value_type> data, std::size_t width, std::size_t height, colour_channels channels)
+            : m_Data{std::move(data)}
+            , m_Spec{.width{width}, .height{height}, .channels{channels}}
+        {
+            if(const auto sz{std::get<vec_t>(m_Data).size()}; sz != size())
+                throw std::runtime_error{std::format("unique_image size {} is not width ({}) * height ({}) * channels ({})", sz, this->width(), this->height(), num_channels().raw_value())};
+        }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Height.value; }
+        std::size_t width() const noexcept { return m_Spec.width.value; }
 
         [[nodiscard]]
-        std::size_t num_channels() const noexcept { return m_Channels.value; }
+        std::size_t height() const noexcept { return m_Spec.height.value; }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return width() * height() * num_channels(); }
+        colour_channels num_channels() const noexcept { return m_Spec.channels.value; }
 
         [[nodiscard]]
-        std::span<const value_type> span() const noexcept { return {m_Data.get(), size()}; }
+        std::size_t size() const noexcept { return width() * height() * num_channels().raw_value(); }
+
+        [[nodiscard]]
+        std::span<const value_type> span() const noexcept {
+            using span_t = std::span<const value_type>;
+            return std::visit(
+                sequoia::overloaded{
+                    [sz{size()}](const ptr_t& ptr) { return span_t{ptr.get(), sz}; },
+                              [](const vec_t& vec) { return span_t{vec}; }
+                },
+                m_Data
+            );
+        }
 
         [[nodiscard]]
         friend bool operator==(const unique_image&, const unique_image&) noexcept = default;
@@ -54,6 +93,7 @@ namespace avocet {
             void operator()(value_type* ptr) const;
         };
 
+        template<sequoia::movable_comparable T>
         struct parameter {
             [[nodiscard]]
             std::size_t to_unsigned(int val) {
@@ -63,19 +103,21 @@ namespace avocet {
                 return static_cast<std::size_t>(val);
             }
 
-            std::size_t value{};
+            T value{};
 
             explicit parameter(int val)
                 : value{to_unsigned(val)}
             { }
 
+            explicit parameter(T val) : value{val} {}
+
             parameter(parameter&& other) noexcept 
-                : value{std::exchange(other.value, 0)}
+                : value{std::exchange(other.value, T{})}
             {}
 
             parameter& operator=(parameter&& other) noexcept {
                 if(this != &other)
-                    value = std::exchange(other.value, 0);
+                    value = std::exchange(other.value, T{});
 
                 return *this;
             }
@@ -84,14 +126,15 @@ namespace avocet {
             auto operator<=>(const parameter&) const noexcept = default;
         };
 
-        std::unique_ptr<value_type, file_unloader> m_Data;
-        parameter m_Width, m_Height, m_Channels;
+        using ptr_t = std::unique_ptr<value_type, file_unloader>;
+        using vec_t = std::vector<value_type>;
+
+        std::variant<ptr_t, vec_t> m_Data;
+        impl::image_spec<parameter<std::size_t>, parameter<std::size_t>, parameter<colour_channels>> m_Spec;
 
         unique_image(value_type* ptr, int width, int height, int channels)
-            : m_Data{ptr}
-            , m_Width{width}
-            , m_Height{height}
-            , m_Channels{channels}
+            : m_Data{ptr_t{ptr}}
+            , m_Spec{.width{width}, .height{height}, .channels{channels}}
         {}
 
         [[nodiscard]]

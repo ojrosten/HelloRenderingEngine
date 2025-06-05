@@ -19,5 +19,7 @@ namespace avocet::testing
 
     void colour_channels_false_negative_test::run_tests()
     {
+        check(equivalence, "", colour_channels{}, 4uz);
+        check(equality,    "", colour_channels{3}, colour_channels{2});
     }
 }

@@ -1,0 +1,28 @@
+Tests/Core/AssetManagement/ColourChannelsTestingDiagnostics.cpp, Line 22
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::colour_channels>]
+Checking for equivalence with:
+[unsigned long long]
+
+  Raw value
+  [unsigned long long]
+  operator== returned false
+  Obtained : 0
+  Predicted: 4
+
+=======================================
+
+Tests/Core/AssetManagement/ColourChannelsTestingDiagnostics.cpp, Line 23
+
+[avocet::colour_channels]
+operator== returned false
+
+  Raw value
+  [unsigned long long]
+  operator== returned false
+  Obtained : 3
+  Predicted: 2
+
+=======================================
+

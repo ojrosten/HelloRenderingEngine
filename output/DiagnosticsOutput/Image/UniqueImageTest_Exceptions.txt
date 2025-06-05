@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 34
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 44
 Absent image
 
 Expected Exception Type:
@@ -7,12 +7,21 @@ unique_image: texture output/TestsTemporaryData/Core/AssetManagement/UniqueImage
 
 =======================================
 
-Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 41
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 51
 Invalid image
 
 Expected Exception Type:
 [std::runtime_error]
 unique_image: texture output/TestsTemporaryData/Core/AssetManagement/UniqueImageTest/not_an_image.txt did not load
+
+=======================================
+
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 58
+Inconsistent image data
+
+Expected Exception Type:
+[std::runtime_error]
+unique_image size 0 is not width (2) * height (3) * channels (4)
 
 =======================================
 
