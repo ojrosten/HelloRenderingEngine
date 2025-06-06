@@ -21,6 +21,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/ImageTestingUtilities.cpp
                ${TestDir}/Core/AssetManagement/ImageViewTest.cpp
                ${TestDir}/Core/AssetManagement/ImageViewTestingDiagnostics.cpp
+               ${TestDir}/Core/AssetManagement/PaddedRowSizeFreeTest.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageTest.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp

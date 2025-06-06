@@ -13,6 +13,7 @@
 #include "Core/AssetManagement/ColourChannelsTestingDiagnostics.hpp"
 #include "Core/AssetManagement/ImageViewTest.hpp"
 #include "Core/AssetManagement/ImageViewTestingDiagnostics.hpp"
+#include "Core/AssetManagement/PaddedRowSizeFreeTest.hpp"
 #include "Core/AssetManagement/UniqueImageTest.hpp"
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
@@ -81,6 +82,7 @@ int main(int argc, char** argv)
             colour_channels_test{"Unit Test"},
             alignment_false_negative_test{"False Negative Test"},
             alignment_test{"Unit Test"},
+            padded_row_size_free_test{"Padded Row Size Free Test"},
             image_false_negative_test{"False Negative Test"},
             unique_image_test{"Unit Test"},
             image_view_false_negative_test{"False Negative Test"},
