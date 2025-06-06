@@ -35,6 +35,8 @@ namespace avocet {
         std::size_t raw_value() const noexcept { return m_Value; }
     };
 
+    inline constexpr std::optional<colour_channels> all_channels_in_image{std::nullopt};
+
     class alignment {
         std::size_t m_Value{1};
 
@@ -79,8 +81,8 @@ namespace avocet {
     public:
         using value_type = unsigned char;
 
-        unique_image(const std::filesystem::path& texturePath, flip_vertically flip)
-            : unique_image{make(texturePath, flip)}
+        unique_image(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels)
+            : unique_image{make(texturePath, flip, requestedChannels)}
         {}
 
         unique_image(std::vector<value_type> data, std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment)
@@ -175,7 +177,7 @@ namespace avocet {
         {}
 
         [[nodiscard]]
-        static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip);
+        static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels);
     };
 
     class image_view {

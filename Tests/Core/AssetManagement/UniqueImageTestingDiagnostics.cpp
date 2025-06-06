@@ -19,12 +19,12 @@ namespace avocet::testing
 
     void image_false_negative_test::run_tests()
     {
-        unique_image red{working_materials() / "red_2w_3h_3c.png", flip_vertically::no};
+        unique_image red{working_materials() / "red_2w_3h_3c.png", flip_vertically::no, all_channels_in_image};
 
         check(equivalence, "Wrong image",   red, make_red(        3, 2, colour_channels{4}, alignment{1}));
         check(equivalence, "Wrong colours", red, make_rgb_striped(2, 3, colour_channels{3}, alignment{1}));
 
-        check(equality, "Wrong image",   red, unique_image{working_materials() / "grey_3w_2h_1c.png", flip_vertically::no});
-        check(equality, "Wrong colours", red, unique_image{working_materials() / "blue_2w_3h_3c.png", flip_vertically::no});
+        check(equality, "Wrong image",   red, unique_image{working_materials() / "grey_3w_2h_1c.png", flip_vertically::no, all_channels_in_image});
+        check(equality, "Wrong colours", red, unique_image{working_materials() / "blue_2w_3h_3c.png", flip_vertically::no, all_channels_in_image});
     }
 }

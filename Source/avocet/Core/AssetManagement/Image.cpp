@@ -18,18 +18,25 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    unique_image unique_image::make(const std::filesystem::path& texturePath, flip_vertically flip) {
+    unique_image unique_image::make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels) {
         if(!fs::exists(texturePath))
             throw std::runtime_error{std::format("unique_image: texture {} not found", texturePath.generic_string())};
 
+        if(requestedChannels)
+        {
+            if((requestedChannels.value() < colour_channels{1}) || (requestedChannels.value() > colour_channels{4}))
+                throw std::runtime_error{std::format("unique_image: {} channels requested, but only 1--4 supported by stbi_load", requestedChannels.value().raw_value())};
+        }
+
         stbi_set_flip_vertically_on_load_thread(static_cast<bool>(flip));
 
-        int width{}, height{}, channels{};
-        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, 0)};
+        int width{}, height{}, channels{}, channelsSelection{requestedChannels ? static_cast<int>(requestedChannels.value().raw_value()) : 0};
+        auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, channelsSelection)};
         if(!pData)
             throw std::runtime_error{std::format("unique_image: texture {} did not load", texturePath.generic_string())};
 
-        return {pData, width, height, channels, alignment{1}};
+        const auto actualChannels{static_cast<int>(channelsSelection ? channelsSelection : channels)};
+        return {pData, width, height, actualChannels, alignment{1}};
     }
 
     [[nodiscard]]
