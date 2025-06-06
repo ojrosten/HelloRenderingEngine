@@ -13,12 +13,12 @@
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path image_test::source_file() const
+    std::filesystem::path unique_image_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void image_test::run_tests()
+    void unique_image_test::run_tests()
     {
         check_semantics(
             "",

@@ -77,18 +77,14 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Image",
-            image_view_test{"Unit Test"},
-            image_view_false_negative_test{"False Negative Test"},
-            colour_channels_test{"Unit Test"},
             colour_channels_false_negative_test{"False Negative Test"},
-            image_false_negative_test{"False Negative Test"},
-            image_test{"Unit Test"}
-        );
-
-        runner.add_test_suite(
-            "Alignment",
+            colour_channels_test{"Unit Test"},
             alignment_false_negative_test{"False Negative Test"},
-            alignment_test{"Unit Test"}
+            alignment_test{"Unit Test"},
+            image_false_negative_test{"False Negative Test"},
+            unique_image_test{"Unit Test"},
+            image_view_false_negative_test{"False Negative Test"},
+            image_view_test{"Unit Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

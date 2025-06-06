@@ -17,7 +17,7 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class image_test final : public move_only_test
+    class unique_image_test final : public move_only_test
     {
     public:
         using move_only_test::move_only_test;
