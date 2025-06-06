@@ -26,5 +26,17 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+
+        void check_semantics_via_image_data(const reporter& description, const image_data& first, const image_data& second) {
+            move_only_test::check_semantics(
+                description,
+                to_unique_image(first),
+                to_unique_image(second),
+                first,
+                second,
+                image_data{},
+                image_data{}
+            );
+        }
     };
 }
