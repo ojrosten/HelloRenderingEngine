@@ -72,6 +72,9 @@ namespace avocet {
         };
     }
 
+    [[nodiscard]]
+    std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel);
+
     class unique_image {
     public:
         using value_type = unsigned char;
@@ -85,7 +88,7 @@ namespace avocet {
             , m_Spec{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}
         {
             if(const auto sz{std::get<vec_t>(m_Data).size()}; sz != size())
-                throw std::runtime_error{std::format("unique_image size {} is not width ({}) * height ({}) * channels ({})", sz, this->width(), this->height(), num_channels().raw_value())};
+                throw std::runtime_error{std::format("unique_image size {} is not height ({}) * padded_row_size ({})\n[width = {}; channels = {}; alignment = {}]", sz, this->height(), padded_row_size(), this->width(), num_channels().raw_value(), row_alignment().raw_value())};
         }
 
         [[nodiscard]]
@@ -101,7 +104,12 @@ namespace avocet {
         alignment row_alignment() const noexcept { return m_Spec.row_alignment.value; }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return width() * height() * num_channels().raw_value(); }
+        std::size_t padded_row_size() const {
+            return avocet::padded_row_size(width(), num_channels(), row_alignment(), sizeof(value_type));
+        }
+
+        [[nodiscard]]
+        std::size_t size() const noexcept { return height() * padded_row_size(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept {
@@ -190,6 +198,14 @@ namespace avocet {
 
         [[nodiscard]]
         alignment row_alignment() const noexcept { return m_Spec.row_alignment; }
+
+        [[nodiscard]]
+        std::size_t padded_row_size() const {
+            return avocet::padded_row_size(width(), num_channels(), row_alignment(), sizeof(value_type));
+        }
+
+        [[nodiscard]]
+        std::size_t size() const noexcept { return height() * padded_row_size(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Span; }

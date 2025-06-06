@@ -31,4 +31,9 @@ namespace avocet {
 
         return {pData, width, height, channels, alignment{1}};
     }
+
+    [[nodiscard]]
+    std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) {
+        return width * channels.raw_value() * bytesPerChannel;
+    }
 }

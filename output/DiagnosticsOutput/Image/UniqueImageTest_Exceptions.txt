@@ -21,7 +21,8 @@ Inconsistent image data
 
 Expected Exception Type:
 [std::runtime_error]
-unique_image size 0 is not width (2) * height (3) * channels (4)
+unique_image size 0 is not height (3) * padded_row_size (8)
+[width = 2; channels = 4; alignment = 1]
 
 =======================================
 
