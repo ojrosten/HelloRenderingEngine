@@ -32,8 +32,12 @@ namespace avocet::testing {
         return {im.data, im.width, im.height, im.num_channels, im.row_alignment};
     }
 
+    struct monochrome_intensity {
+        unsigned char red{255}, alpha{0};
+    };
+
     [[nodiscard]]
-    image_data make_red(std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment, unsigned char intensity=255);
+    image_data make_red(std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment, monochrome_intensity intensity = {});
 
     [[nodiscard]]
     image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment);
