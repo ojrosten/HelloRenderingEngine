@@ -7,6 +7,8 @@
 
 /*! \file */
 
+#include "Core/AssetManagement/AlignmentTest.hpp"
+#include "Core/AssetManagement/AlignmentTestingDiagnostics.hpp"
 #include "Core/AssetManagement/ColourChannelsTest.hpp"
 #include "Core/AssetManagement/ColourChannelsTestingDiagnostics.hpp"
 #include "Core/AssetManagement/ImageViewTest.hpp"
@@ -81,6 +83,12 @@ int main(int argc, char** argv)
             colour_channels_false_negative_test{"False Negative Test"},
             image_false_negative_test{"False Negative Test"},
             image_test{"Unit Test"}
+        );
+
+        runner.add_test_suite(
+            "Alignment",
+            alignment_false_negative_test{"False Negative Test"},
+            alignment_test{"Unit Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

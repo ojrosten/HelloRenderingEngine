@@ -1,0 +1,27 @@
+Tests/Core/AssetManagement/AlignmentTest.cpp, Line 23
+Alignment of zero
+
+Expected Exception Type:
+[std::runtime_error]
+alignment: value 0 is not a power of 2
+
+=======================================
+
+Tests/Core/AssetManagement/AlignmentTest.cpp, Line 28
+Alignment that is an odd number, not equal to 1
+
+Expected Exception Type:
+[std::runtime_error]
+alignment: value 3 is not a power of 2
+
+=======================================
+
+Tests/Core/AssetManagement/AlignmentTest.cpp, Line 33
+Alignment that is an even number which is not a non-negative power of 2
+
+Expected Exception Type:
+[std::runtime_error]
+alignment: value 14 is not a power of 2
+
+=======================================
+

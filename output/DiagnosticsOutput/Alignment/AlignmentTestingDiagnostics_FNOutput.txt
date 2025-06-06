@@ -1,0 +1,28 @@
+Tests/Core/AssetManagement/AlignmentTestingDiagnostics.cpp, Line 22
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::alignment>]
+Checking for equivalence with:
+[unsigned long long]
+
+  Raw value
+  [unsigned long long]
+  operator== returned false
+  Obtained : 1
+  Predicted: 4
+
+=======================================
+
+Tests/Core/AssetManagement/AlignmentTestingDiagnostics.cpp, Line 23
+
+[avocet::alignment]
+operator== returned false
+
+  Raw value
+  [unsigned long long]
+  operator== returned false
+  Obtained : 4
+  Predicted: 2
+
+=======================================
+

@@ -35,6 +35,30 @@ namespace avocet {
         std::size_t raw_value() const noexcept { return m_Value; }
     };
 
+    class alignment {
+        std::size_t m_Value{1};
+
+        [[nodiscard]]
+        static std::size_t validate(std::size_t val) {
+            const bool powOfTwo{(val > 0) && ((val & (val - 1)) == 0)};
+            if(!powOfTwo)
+                throw std::runtime_error{std::format("alignment: value {} is not a power of 2", val)};
+
+            return val;
+        }
+    public:
+        alignment() noexcept = default;
+
+        explicit alignment(std::size_t val) : m_Value{validate(val)}
+        {}
+
+        [[nodiscard]]
+        friend auto operator<=>(const alignment&, const alignment&) noexcept = default;
+
+        [[nodiscard]]
+        std::size_t raw_value() const noexcept { return m_Value; }
+    };
+
     namespace impl {
         template<sequoia::movable_comparable Width, sequoia::movable_comparable Height, sequoia::movable_comparable Channels>
         struct image_spec {
