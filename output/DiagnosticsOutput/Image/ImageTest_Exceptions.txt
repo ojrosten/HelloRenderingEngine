@@ -25,7 +25,7 @@ padded_row_size: nominal row size (18446744073709551615) aligned to a (2) byte b
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.cpp, Line 100
+Tests/Core/AssetManagement/ImageTestingUtilities.cpp, Line 99
 Absent unique_image
 
 Expected Exception Type:
@@ -34,7 +34,7 @@ unique_image: texture output/TestsTemporaryData/Core/AssetManagement/ImageTest/A
 
 =======================================
 
-Tests/Core/AssetManagement/ImageTestingUtilities.cpp, Line 107
+Tests/Core/AssetManagement/ImageTestingUtilities.cpp, Line 106
 Invalid unique_image
 
 Expected Exception Type:
