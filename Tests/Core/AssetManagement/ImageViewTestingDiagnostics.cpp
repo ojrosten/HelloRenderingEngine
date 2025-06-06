@@ -19,8 +19,9 @@ namespace avocet::testing
 
     void image_view_false_negative_test::run_tests()
     {
-        unique_image red{make_red(3, 2, colour_channels{4}).data, 3, 2, colour_channels{4}, alignment{1}};
-        check(equivalence, "", image_view{red}, make_red(4, 3, colour_channels{2}));
-        check(equality,    "", image_view{red}, image_view{to_unique_image(make_rgb_striped(3, 2, colour_channels{4}))});
+        unique_image red{make_red(3, 2, colour_channels{4}, alignment{1}).data, 3, 2, colour_channels{4}, alignment{1}};
+
+        check(equivalence, "", image_view{red}, make_red(4, 3, colour_channels{2}, alignment{1}));
+        check(equality,    "", image_view{red}, image_view{to_unique_image(make_rgb_striped(3, 2, colour_channels{4}, alignment{1}))});
     }
 }

@@ -21,10 +21,10 @@ namespace avocet::testing
     {
         check_semantics(
             "",
-            image_view{to_unique_image(make_red(        1, 3, colour_channels{2}))},
-            image_view{to_unique_image(make_rgb_striped(3, 2, colour_channels{4}))},
-            make_red(        1, 3, colour_channels{2}),
-            make_rgb_striped(3, 2, colour_channels{4})
+            image_view{to_unique_image(make_red(        1, 3, colour_channels{2}, alignment{1}))},
+            image_view{to_unique_image(make_rgb_striped(3, 2, colour_channels{4}, alignment{1}))},
+            make_red(        1, 3, colour_channels{2}, alignment{1}),
+            make_rgb_striped(3, 2, colour_channels{4}, alignment{1})
         );
     }
 }

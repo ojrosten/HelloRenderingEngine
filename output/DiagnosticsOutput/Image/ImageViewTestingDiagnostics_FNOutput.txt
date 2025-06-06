@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 23
+Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 24
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::image_view>]
@@ -68,7 +68,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 24
+Tests/Core/AssetManagement/ImageViewTestingDiagnostics.cpp, Line 25
 
 [avocet::image_view]
 operator== returned false

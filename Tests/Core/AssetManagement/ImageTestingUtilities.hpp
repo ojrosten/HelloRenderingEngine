@@ -33,10 +33,10 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    image_data make_red(std::size_t width, std::size_t height, colour_channels channels);
+    image_data make_red(std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment);
 
     [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels);
+    image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment);
 }
 
 namespace sequoia::testing
