@@ -29,6 +29,6 @@ namespace avocet {
         if(!pData)
             throw std::runtime_error{std::format("unique_image: texture {} did not load", texturePath.generic_string())};
 
-        return {pData, width, height, channels};
+        return {pData, width, height, channels, alignment{1}};
     }
 }

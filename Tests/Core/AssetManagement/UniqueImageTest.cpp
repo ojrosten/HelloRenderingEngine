@@ -32,8 +32,8 @@ namespace avocet::testing
 
         check_semantics(
             "",
-            unique_image{make_red(        2, 3, colour_channels{3}).data, 2uz, 3uz, colour_channels{3}},
-            unique_image{make_rgb_striped(2, 3, colour_channels{3}).data, 2uz, 3uz, colour_channels{3}},
+            unique_image{make_red(        2, 3, colour_channels{3}).data, 2uz, 3uz, colour_channels{3}, alignment{1}},
+            unique_image{make_rgb_striped(2, 3, colour_channels{3}).data, 2uz, 3uz, colour_channels{3}, alignment{1}},
             make_red(        2, 3, colour_channels{3}),
             make_rgb_striped(2, 3, colour_channels{3}),
             image_data{},
@@ -58,7 +58,7 @@ namespace avocet::testing
             "Inconsistent image data",
             []() {
                 using value_t = unique_image::value_type;
-                return unique_image{std::vector<value_t>{}, 2uz, 3uz, colour_channels{4}};
+                return unique_image{std::vector<value_t>{}, 2uz, 3uz, colour_channels{4}, alignment{1}};
             }
         );
     }

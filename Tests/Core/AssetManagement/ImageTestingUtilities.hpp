@@ -10,6 +10,7 @@
 /*! \file */
 
 #include "ColourChannelsTestingUtilities.hpp"
+#include "AlignmentTestingUtilities.hpp"
 
 #include "sequoia/TestFramework/FreeCheckers.hpp"
 #include "avocet/Core/AssetManagement/Image.hpp"
@@ -23,11 +24,12 @@ namespace avocet::testing {
         std::vector<value_type> data;
         std::size_t width{}, height{};
         colour_channels num_channels{};
+        alignment row_alignment{};
     };
 
     [[nodiscard]]
     inline unique_image to_unique_image(const image_data& im) {
-        return {im.data, im.width, im.height, im.num_channels};
+        return {im.data, im.width, im.height, im.num_channels, im.row_alignment};
     }
 
     [[nodiscard]]
@@ -50,6 +52,7 @@ namespace sequoia::testing
             check(equality,    "Width",     logger, actual.width(),         prediction.width);
             check(equality,    "Height",    logger, actual.height(),        prediction.height);
             check(equality,    "Channels",  logger, actual.num_channels(),  prediction.num_channels);
+            check(equality,    "Alignment", logger, actual.row_alignment(), prediction.row_alignment);
             check(equivalence, "Data",      logger, actual.span(),          prediction.data);
         }
     protected:
@@ -59,6 +62,7 @@ namespace sequoia::testing
             check(equality, "Width",     logger, actual.width(),         prediction.width());
             check(equality, "Height",    logger, actual.height(),        prediction.height());
             check(equality, "Channels",  logger, actual.num_channels(),  prediction.num_channels());
+            check(equality, "Alignment", logger, actual.row_alignment(), prediction.row_alignment());
         }
     };
 
