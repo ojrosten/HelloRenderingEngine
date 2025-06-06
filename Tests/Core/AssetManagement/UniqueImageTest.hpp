@@ -28,7 +28,7 @@ namespace avocet::testing
         void run_tests();
 
         void check_semantics_via_image_data(const reporter& description, const image_data& first, const image_data& second) {
-            move_only_test::check_semantics(
+            check_semantics(
                 description,
                 to_unique_image(first),
                 to_unique_image(second),
