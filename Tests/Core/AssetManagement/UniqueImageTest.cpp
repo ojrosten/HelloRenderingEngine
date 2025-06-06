@@ -30,14 +30,10 @@ namespace avocet::testing
             image_data{}
         );
 
-        check_semantics(
+        check_semantics_via_image_data(
             "",
-            unique_image{make_red(        2, 3, colour_channels{3}, alignment{1}).data, 2uz, 3uz, colour_channels{3}, alignment{1}},
-            unique_image{make_rgb_striped(2, 3, colour_channels{3}, alignment{1}).data, 2uz, 3uz, colour_channels{3}, alignment{1}},
             make_red(        2, 3, colour_channels{3}, alignment{1}),
-            make_rgb_striped(2, 3, colour_channels{3}, alignment{1}),
-            image_data{},
-            image_data{}
+            make_rgb_striped(2, 3, colour_channels{3}, alignment{1})
         );
 
         check_exception_thrown<std::runtime_error>(
