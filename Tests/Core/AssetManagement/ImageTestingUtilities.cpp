@@ -20,8 +20,8 @@ namespace avocet::testing {
                   std::views::iota(0u, w * h * channels.raw_value())
                 | std::views::transform(
                     [=](auto i) -> unsigned char {
-                        const auto channel{i % channels.raw_value()};
-                        return static_cast<unsigned char>(channel ? 0 : 255);
+                        const auto channelIndex{i % channels.raw_value()};
+                        return static_cast<unsigned char>(channelIndex ? 0 : 255);
                     }
                   )
                 | std::ranges::to<std::vector>()
@@ -40,8 +40,8 @@ namespace avocet::testing {
                 | std::views::transform(
                     [=](auto i) -> unsigned char {
                         const auto row{i / (w * channels.raw_value())};
-                        const auto channel{i % channels.raw_value()};
-                        return static_cast<unsigned char>((row == channel) ? 255 : 0);
+                        const auto channelIndex{i % channels.raw_value()};
+                        return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
                     }
                   )
                 | std::ranges::to<std::vector>()
