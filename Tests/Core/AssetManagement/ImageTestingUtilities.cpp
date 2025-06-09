@@ -13,18 +13,26 @@
 
 namespace avocet::testing {
 
+    template<class Fn>
+        requires std::is_invocable_r_v<typename image_data::value_type, Fn , std::size_t, std::size_t>
     [[nodiscard]]
-    image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, monochrome_intensity intensity) {
+    image_data make_image(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, Fn fn) {
+        const auto bytesPerChannel{sizeof(image_data::value_type)};
+
+        const auto paddedRowSize{padded_row_size(w, channels, bytesPerChannel, rowAlignment)};
+        const auto nominalRowSize{padded_row_size(w, channels, bytesPerChannel, alignment{1})};
+
         return {
             .data{
-                  std::views::iota(0u, w * h * channels.raw_value())
+                  std::views::iota(0u, paddedRowSize * h)
                 | std::views::transform(
                     [=](auto i) -> unsigned char {
-                        const auto channelIndex{i % channels.raw_value()};
-                        if(channelIndex == 3)
-                            return intensity.alpha;
+                        if(const bool paddingBtye{i % paddedRowSize >= nominalRowSize}; paddingBtye)
+                            return 0;
 
-                        return static_cast<unsigned char>(channelIndex ? 0 : intensity.red);
+                        const auto row{i / paddedRowSize};
+                        const auto channelIndex{(i - row * paddedRowSize) % channels.raw_value()};
+                        return fn(row, channelIndex);
                     }
                   )
                 | std::ranges::to<std::vector>()
@@ -33,25 +41,25 @@ namespace avocet::testing {
             .height{h},
             .num_channels{channels}
         };
+
+    }
+
+    [[nodiscard]]
+    image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, monochrome_intensity intensity) {
+        auto fn{
+            [intensity](std::size_t, std::size_t channelIndex){
+                if(channelIndex == 3)
+                     return intensity.alpha;
+
+                return static_cast<unsigned char>(channelIndex ? 0 : intensity.red);
+            }
+        };
+
+        return make_image(w, h, channels, rowAlignment, fn);
     }
 
     [[nodiscard]]
     image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment) {
-        return {
-            .data{
-                  std::views::iota(0u, w * h * channels.raw_value())
-                | std::views::transform(
-                    [=](auto i) -> unsigned char {
-                        const auto row{i / (w * channels.raw_value())};
-                        const auto channelIndex{i % channels.raw_value()};
-                        return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
-                    }
-                  )
-                | std::ranges::to<std::vector>()
-            },
-            .width{w},
-            .height{h},
-            .num_channels{channels}
-        };
-    };
+        return make_image(w, h, channels, rowAlignment, [channels](std::size_t row, std::size_t channelIndex) { return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0); });
+    }
 }

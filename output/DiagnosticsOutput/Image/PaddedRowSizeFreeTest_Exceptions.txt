@@ -1,0 +1,33 @@
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 28
+Zero bytes per channel
+
+Expected Exception Type:
+[std::out_of_range]
+padded_row_size requires a non-zero number of bytes per channel
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 33
+
+Expected Exception Type:
+[std::out_of_range]
+padded_row_size: bytesPerChannel (9223372036854775808) * channels (2) exceeed maximum allowed value 18446744073709551615
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 38
+
+Expected Exception Type:
+[std::out_of_range]
+padded_row_size: bytesPerTexel (2) * width (9223372036854775808) exceeed maximum allowed value 18446744073709551615
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 43
+
+Expected Exception Type:
+[std::out_of_range]
+padded_row_size: nominal width (18446744073709551615) aligned to a (2) byte boundary will be padded to exceeed the maximum allowed value 18446744073709551615
+
+=======================================
+

@@ -40,7 +40,26 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) {
-        return width * channels.raw_value() * bytesPerChannel;
+    std::size_t padded_row_size(std::size_t width, colour_channels channels, std::size_t bytesPerChannel, alignment rowAlignment) {
+        constexpr auto maxVal{std::numeric_limits<std::size_t>::max()};
+        if(!bytesPerChannel)
+            throw std::out_of_range{"padded_row_size requires a non-zero number of bytes per channel"};
+
+        if(maxVal / bytesPerChannel < channels.raw_value())
+            throw std::out_of_range{std::format("padded_row_size: bytesPerChannel ({}) * channels ({}) exceeed maximum allowed value {}", bytesPerChannel, channels.raw_value(), maxVal)};
+
+        const auto bytesPerTexel{channels.raw_value() * bytesPerChannel};
+        if(bytesPerTexel && (maxVal / bytesPerTexel < width))
+            throw std::out_of_range{std::format("padded_row_size: bytesPerTexel ({}) * width ({}) exceeed maximum allowed value {}", bytesPerTexel, width, maxVal)};
+
+        const auto nominalWidth{width * channels.raw_value() * bytesPerChannel};
+        const auto unpaddedBytes{nominalWidth % rowAlignment.raw_value()};
+
+        if(!unpaddedBytes) return nominalWidth;
+
+        if(nominalWidth - unpaddedBytes > maxVal - rowAlignment.raw_value())
+            throw std::out_of_range{std::format("padded_row_size: nominal width ({}) aligned to a ({}) byte boundary will be padded to exceeed the maximum allowed value {}", nominalWidth, rowAlignment.raw_value(), maxVal)};
+
+        return nominalWidth - unpaddedBytes + rowAlignment.raw_value();
     }
 }

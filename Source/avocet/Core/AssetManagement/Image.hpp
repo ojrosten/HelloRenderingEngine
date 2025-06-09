@@ -75,7 +75,7 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel);
+    std::size_t padded_row_size(std::size_t width, colour_channels channels, std::size_t bytesPerChannel, alignment rowAlignment);
 
     class unique_image {
     public:
@@ -107,7 +107,7 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t padded_row_size() const {
-            return avocet::padded_row_size(width(), num_channels(), row_alignment(), sizeof(value_type));
+            return avocet::padded_row_size(width(), num_channels(), sizeof(value_type), row_alignment());
         }
 
         [[nodiscard]]
@@ -203,7 +203,7 @@ namespace avocet {
 
         [[nodiscard]]
         std::size_t padded_row_size() const {
-            return avocet::padded_row_size(width(), num_channels(), row_alignment(), sizeof(value_type));
+            return avocet::padded_row_size(width(), num_channels(), sizeof(value_type), row_alignment());
         }
 
         [[nodiscard]]
