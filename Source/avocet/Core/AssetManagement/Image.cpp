@@ -55,11 +55,9 @@ namespace avocet {
         const auto nominalWidth{width * channels.raw_value() * bytesPerChannel};
         const auto unpaddedBytes{nominalWidth % rowAlignment.raw_value()};
 
-        if(!unpaddedBytes) return nominalWidth;
-
         if(nominalWidth - unpaddedBytes > maxVal - rowAlignment.raw_value())
             throw std::out_of_range{std::format("padded_row_size: nominal width ({}) aligned to a ({}) byte boundary will be padded to exceeed the maximum allowed value {}", nominalWidth, rowAlignment.raw_value(), maxVal)};
 
-        return nominalWidth - unpaddedBytes + rowAlignment.raw_value();
+        return unpaddedBytes ? nominalWidth - unpaddedBytes + rowAlignment.raw_value() : nominalWidth;
     }
 }
