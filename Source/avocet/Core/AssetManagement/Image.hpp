@@ -221,3 +221,23 @@ namespace avocet {
         impl::image_spec<std::size_t, std::size_t, colour_channels, alignment> m_Spec;
     };
 }
+
+namespace std {
+    template<>
+    struct formatter<avocet::colour_channels> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::colour_channels channels, auto& ctx) const {
+            return std::format_to(ctx.out(), "{}", channels.raw_value());
+        }
+    };
+
+    template<>
+    struct formatter<avocet::alignment> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::alignment a, auto& ctx) const {
+            return std::format_to(ctx.out(), "{}", a.raw_value());
+        }
+    };
+}
