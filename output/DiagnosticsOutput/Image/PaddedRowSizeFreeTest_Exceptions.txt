@@ -1,0 +1,40 @@
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 52
+
+Expected Exception Type:
+[std::runtime_error]
+padded_row_size: bytes per channel must be > 0
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 57
+
+Expected Exception Type:
+[std::runtime_error]
+padded_row_size: width (9223372036854775808) * bytes per texel (2) exceeds max allowed value, 18446744073709551615
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 62
+
+Expected Exception Type:
+[std::runtime_error]
+padded_row_size: channels (2) * bytes per channel (9223372036854775808) exceeds max allowed value, 18446744073709551615
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 67
+
+Expected Exception Type:
+[std::runtime_error]
+padded_row_size: width (2) * bytes per texel (9223372036854775808) exceeds max allowed value, 18446744073709551615
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 72
+
+Expected Exception Type:
+[std::runtime_error]
+padded_row_size: nominal row size (18446744073709551615) aligned to (2) bytes will be padded to exceed max allowed value, 18446744073709551615
+
+=======================================
+
