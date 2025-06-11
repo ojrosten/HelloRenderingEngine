@@ -13,6 +13,14 @@
 namespace avocet {
     namespace fs = std::filesystem;
 
+    namespace {
+        constexpr auto maxVal{std::numeric_limits<std::size_t>::max()};
+
+        constexpr bool multiplication_overflows(std::size_t x, std::size_t y) noexcept {
+            return y ? maxVal / y < x : false;
+        }
+    }
+
     void unique_image::file_unloader::operator()(value_type* ptr) const {
         stbi_image_free(ptr);
     }
@@ -40,7 +48,33 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    std::size_t padded_row_size(std::size_t width, colour_channels channels, alignment rowAlignment, std::size_t bytesPerChannel) {
-        return width * channels.raw_value() * bytesPerChannel;
+    std::size_t padded_row_size(std::size_t width, colour_channels channels, std::size_t bytesPerChannel, alignment rowAlignment) {
+        if(!bytesPerChannel)
+            throw std::runtime_error{"padded_row_size: bytes per channel must be > 0"};
+
+        if(multiplication_overflows(bytesPerChannel, channels.raw_value()))
+            throw std::runtime_error{std::format("padded_row_size: channels ({}) * bytes per channel ({}) exceeds max allowed value, {}", channels, bytesPerChannel, maxVal)};
+
+        const auto bytesPerTexel{channels.raw_value() * bytesPerChannel};
+        if(multiplication_overflows(bytesPerTexel, width))
+            throw std::runtime_error{std::format("padded_row_size: width ({}) * bytes per texel ({}) exceeds max allowed value, {}", width, bytesPerTexel, maxVal)};
+
+        const auto nominalWidth{width * bytesPerTexel};
+        const auto unpaddedBytes{nominalWidth % rowAlignment.raw_value()};
+        if(!unpaddedBytes)
+            return nominalWidth;
+
+        if(maxVal - rowAlignment.raw_value() < nominalWidth - unpaddedBytes)
+            throw std::runtime_error{std::format("padded_row_size: nominal row size ({}) aligned to ({}) bytes will be padded to exceed max allowed value, {}", nominalWidth, rowAlignment, maxVal)};
+
+        return nominalWidth - unpaddedBytes + rowAlignment.raw_value();
+    }
+
+    [[nodiscard]]
+    std::size_t safe_image_size(std::size_t width, std::size_t height) {
+        if(multiplication_overflows(width, height))
+            throw std::runtime_error{std::format("safe_image_size: width ({}) * height ({}) exceeds max allowed value, {}", width, height, maxVal)};
+
+        return width * height;
     }
 }

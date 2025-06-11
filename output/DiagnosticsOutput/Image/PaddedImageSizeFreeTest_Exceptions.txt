@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 52
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 34
 
 Expected Exception Type:
 [std::runtime_error]
@@ -6,7 +6,7 @@ padded_row_size: bytes per channel must be > 0
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 57
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 39
 Zero bytes per channel considered a bug, even if the image holds no data
 
 Expected Exception Type:
@@ -15,7 +15,7 @@ padded_row_size: bytes per channel must be > 0
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 62
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 44
 
 Expected Exception Type:
 [std::runtime_error]
@@ -23,7 +23,7 @@ padded_row_size: width (9223372036854775808) * bytes per texel (2) exceeds max a
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 67
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 49
 
 Expected Exception Type:
 [std::runtime_error]
@@ -31,7 +31,7 @@ padded_row_size: channels (2) * bytes per channel (9223372036854775808) exceeds 
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 72
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 54
 
 Expected Exception Type:
 [std::runtime_error]
@@ -39,11 +39,19 @@ padded_row_size: width (2) * bytes per texel (9223372036854775808) exceeds max a
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 77
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 59
 
 Expected Exception Type:
 [std::runtime_error]
 padded_row_size: nominal row size (18446744073709551615) aligned to (2) bytes will be padded to exceed max allowed value, 18446744073709551615
+
+=======================================
+
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 83
+
+Expected Exception Type:
+[std::runtime_error]
+safe_image_size: width (9223372036854775808) * height (2) exceeds max allowed value, 18446744073709551615
 
 =======================================
 

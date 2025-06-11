@@ -15,7 +15,7 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class padded_row_size_free_test final : public free_test
+    class padded_image_size_free_test final : public free_test
     {
     public:
         using free_test::free_test;
@@ -24,5 +24,8 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+    private:
+        void test_padded_row_size();
+        void test_safe_image_size();
     };
 }
