@@ -54,6 +54,11 @@ namespace avocet::testing
         );
 
         check_exception_thrown<std::runtime_error>(
+            "Zero bytes per channel considered a bug, even if the image holds no data",
+            []() { return testing::padded_row_size(0, colour_channels{1}, 0, alignment{1}); }
+        );
+
+        check_exception_thrown<std::runtime_error>(
             "",
             []() { return testing::padded_row_size(1 + maxVal / 2, colour_channels{2}, 1, alignment{1}); }
         );

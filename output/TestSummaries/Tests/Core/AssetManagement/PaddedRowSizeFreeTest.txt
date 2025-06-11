@@ -1,2 +1,2 @@
 Padded Row Size Free Test
-Standard Top Level Checks:                18;  Failures:  0  [Deep checks: 18]
+Standard Top Level Checks:                19;  Failures:  0  [Deep checks: 19]
