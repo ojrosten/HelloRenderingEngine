@@ -74,7 +74,7 @@ namespace avocet::testing
 
         check(
             equivalence,
-            "Override number of channels: the three RGB channels are reduced two channels - to grey scale and alpha set to 255",
+            "Override number of channels: the three RGB channels are reduced two channels - grey scale computed as above plus alpha set to 255",
             unique_image{working_materials() / "red_2w_3h_3c.png", flip_vertically::no, colour_channels{2}},
             make_red(2, 3, colour_channels{2}, alignment{1}, monochrome_intensity{.red{76}, .alpha{255}})
         );
