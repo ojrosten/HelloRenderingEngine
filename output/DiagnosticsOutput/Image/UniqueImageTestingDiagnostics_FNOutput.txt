@@ -100,7 +100,66 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 27
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 26
+Wrong alignment
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::unique_image>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Alignment
+  [avocet::alignment]
+  operator== returned false
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 1
+    Predicted: 2
+
+=======================================
+
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 29
+Padding where there should be an alpha channel
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::unique_image>]
+Checking for equivalence with:
+[avocet::testing::image_data]
+
+  Channels
+  [avocet::colour_channels]
+  operator== returned false
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 1
+    Predicted: 2
+
+  Alignment
+  [avocet::alignment]
+  operator== returned false
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 2
+    Predicted: 1
+
+  Data
+  [std::span<unsigned char const, -1>]
+
+    Element 1 of range incorrect
+    [unsigned char]
+    operator== returned false
+    Obtained : 0
+    Predicted: 42
+
+=======================================
+
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 33
 Wrong image
 
 [avocet::unique_image]
@@ -141,11 +200,34 @@ operator== returned false
 
 =======================================
 
-Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 28
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 34
 Wrong colours
 
 [avocet::unique_image]
 operator== returned false
+
+  Data Handle
+  [unsigned char const*]
+  operator== returned false
+  Pointers both non-null, but they point to different addresses
+
+=======================================
+
+Tests/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp, Line 35
+Wrong alignment
+
+[avocet::unique_image]
+operator== returned false
+
+  Alignment
+  [avocet::alignment]
+  operator== returned false
+
+    Raw value
+    [unsigned long long]
+    operator== returned false
+    Obtained : 1
+    Predicted: 2
 
   Data Handle
   [unsigned char const*]

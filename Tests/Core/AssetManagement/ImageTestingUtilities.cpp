@@ -47,8 +47,8 @@ namespace avocet::testing {
     [[nodiscard]]
     image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, monochrome_intensity intensity) {
         auto fn{
-            [intensity](std::size_t, std::size_t channelIndex){
-                if(channelIndex == 3)
+            [channels, intensity](std::size_t, std::size_t channelIndex){
+                if((channelIndex == 3) || ((channels == colour_channels{2}) && (channelIndex == 1)))
                      return intensity.alpha;
 
                 return static_cast<unsigned char>(channelIndex ? 0 : intensity.red);
