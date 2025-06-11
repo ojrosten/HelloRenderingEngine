@@ -28,10 +28,13 @@ namespace avocet::testing
 
             const auto nominalRowWidth{width * bytesPerTexel};
             const auto unpaddedBytes{nominalRowWidth % rowAlignment.raw_value()};
+            if(!unpaddedBytes)
+                return nominalRowWidth;
+
             if(nominalRowWidth - unpaddedBytes > maxVal - rowAlignment.raw_value())
                 throw std::runtime_error{std::format("padded_row_size: nominal width ({}) aligned to a ({}) byte boundary will to be padded to exceed maximum allowed value {}", nominalRowWidth, rowAlignment, maxVal)};
 
-            return unpaddedBytes ? nominalRowWidth - unpaddedBytes + rowAlignment.raw_value() : nominalRowWidth;
+            return nominalRowWidth - unpaddedBytes + rowAlignment.raw_value();
         }
     }
 
@@ -83,6 +86,8 @@ namespace avocet::testing
         check(equality, "", testing::padded_row_size(1, colour_channels{2}, 1, alignment{1}), 2uz);
         check(equality, "", testing::padded_row_size(1, colour_channels{1}, 2, alignment{1}), 2uz);
         check(equality, "", testing::padded_row_size(2, colour_channels{3}, 4, alignment{1}), 24uz);
+        check(equality, "", testing::padded_row_size(maxVal, colour_channels{1}, 1, alignment{1}), maxVal);
+        check(equality, "", testing::padded_row_size(maxVal / 2, colour_channels{1}, 2, alignment{1}), maxVal - 1);
 
         check(equality, "", testing::padded_row_size(1, colour_channels{1}, 1, alignment{2}), 2uz);
         check(equality, "", testing::padded_row_size(1, colour_channels{1}, 1, alignment{4}), 4uz);
@@ -91,5 +96,7 @@ namespace avocet::testing
 
         check(equality, "", testing::padded_row_size(2, colour_channels{1}, 1, alignment{2}), 2uz);
         check(equality, "", testing::padded_row_size(2, colour_channels{3}, 4, alignment{8}), 24uz);
+
+        check(equality, "", testing::padded_row_size(maxVal / 2, colour_channels{1}, 2, alignment{2}), maxVal - 1);
     }
 }

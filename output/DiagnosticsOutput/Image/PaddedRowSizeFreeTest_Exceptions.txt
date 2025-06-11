@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 49
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 52
 
 Expected Exception Type:
 [std::runtime_error]
@@ -6,7 +6,7 @@ padded_row_size: bytes per channel must be > 0
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 54
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 57
 Zero bytes per channel considered a bug, even if the image holds no data
 
 Expected Exception Type:
@@ -15,7 +15,7 @@ padded_row_size: bytes per channel must be > 0
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 59
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 62
 
 Expected Exception Type:
 [std::runtime_error]
@@ -23,7 +23,7 @@ padded_row_size: width (2) * bytesPerTexek (2) exceeds maximum allowed value 184
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 64
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 67
 
 Expected Exception Type:
 [std::runtime_error]
@@ -31,7 +31,7 @@ padded_row_size: width (9223372036854775808) * bytesPerTexek (922337203685477580
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 69
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 72
 
 Expected Exception Type:
 [std::runtime_error]
@@ -39,7 +39,7 @@ padded_row_size: channels (2) * bytesPerChannel (9223372036854775808) exceeds ma
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 74
+Tests/Core/AssetManagement/PaddedRowSizeFreeTest.cpp, Line 77
 
 Expected Exception Type:
 [std::runtime_error]
