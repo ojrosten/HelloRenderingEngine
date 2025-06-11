@@ -86,8 +86,6 @@ namespace avocet::testing
         check(equality, "", testing::padded_row_size(1, colour_channels{2}, 1, alignment{1}), 2uz);
         check(equality, "", testing::padded_row_size(1, colour_channels{1}, 2, alignment{1}), 2uz);
         check(equality, "", testing::padded_row_size(2, colour_channels{3}, 4, alignment{1}), 24uz);
-        check(equality, "", testing::padded_row_size(maxVal, colour_channels{1}, 1, alignment{1}), maxVal);
-        check(equality, "", testing::padded_row_size(maxVal / 2, colour_channels{1}, 2, alignment{1}), maxVal - 1);
 
         check(equality, "", testing::padded_row_size(1, colour_channels{1}, 1, alignment{2}), 2uz);
         check(equality, "", testing::padded_row_size(1, colour_channels{1}, 1, alignment{4}), 4uz);
@@ -97,6 +95,8 @@ namespace avocet::testing
         check(equality, "", testing::padded_row_size(2, colour_channels{1}, 1, alignment{2}), 2uz);
         check(equality, "", testing::padded_row_size(2, colour_channels{3}, 4, alignment{8}), 24uz);
 
+        check(equality, "", testing::padded_row_size(maxVal, colour_channels{1}, 1, alignment{1}), maxVal);
+        check(equality, "", testing::padded_row_size(maxVal / 2, colour_channels{1}, 2, alignment{1}), maxVal - 1);
         check(equality, "", testing::padded_row_size(maxVal / 2, colour_channels{1}, 2, alignment{2}), maxVal - 1);
     }
 }
