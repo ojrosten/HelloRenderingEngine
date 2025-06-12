@@ -59,7 +59,7 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Resource Handle",
             resource_handle_false_negative_test{"False Negative Test"},
-            resource_handle_test{"Unit Test"}
+            resource_handle_test{"Semantics Test"}
         );
 
         runner.add_test_suite(
@@ -79,12 +79,12 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Image",
             colour_channels_false_negative_test{"False Negative Test"},
-            colour_channels_test{"Unit Test"},
+            colour_channels_test{"Semantics Test"},
             alignment_false_negative_test{"False Negative Test"},
-            alignment_test{"Unit Test"},
+            alignment_test{"Semantics Test"},
             padded_image_size_free_test{"Padded Image Size Free Test"},
             image_false_negative_test{"False Negative Test"},
-            unique_image_test{"Unit Test"},
+            unique_image_test{"Semantics Test"},
             image_view_false_negative_test{"False Negative Test"},
             image_view_test{"Unit Test"}
         );
