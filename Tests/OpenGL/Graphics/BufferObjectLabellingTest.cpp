@@ -7,7 +7,7 @@
 
 /*! \file */
 
-#include "BufferObjectTest.hpp"
+#include "BufferObjectLabellingTest.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
 
 namespace avocet::testing
@@ -15,30 +15,23 @@ namespace avocet::testing
     namespace agl = avocet::opengl;
 
     [[nodiscard]]
-    std::filesystem::path buffer_object_test::source_file() const
+    std::filesystem::path buffer_object_labelling_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void buffer_object_test::run_tests()
+    void buffer_object_labelling_free_test::labelling_tests()
     {
-        using namespace curlew;
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-
         execute<agl::vertex_buffer_object<GLfloat>>();
         execute<agl::element_buffer_object<GLubyte>>();
     }
 
     template<class Buffer>
         requires is_gl_buffer_v<Buffer>
-    void buffer_object_test::execute()
+    void buffer_object_labelling_free_test::execute()
     {
-        using T = Buffer::value_type;
-
-        const std::vector<T> xBuffer{0, 1, 2, 4}, yBuffer{5, 6, 7};
-        using opt_span = std::optional<std::span<const T>>;
-
-        check_semantics("", Buffer{xBuffer, agl::null_label}, Buffer{yBuffer, agl::null_label}, opt_span{xBuffer}, opt_span{yBuffer}, opt_span{}, opt_span{xBuffer});
+        std::string label{"This is a nice label!"};
+        Buffer buffer{{}, label};
+        check(equality, "", buffer.extract_label(), label);
     }
 }

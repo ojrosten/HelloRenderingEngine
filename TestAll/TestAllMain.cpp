@@ -20,6 +20,7 @@
 #include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
+#include "OpenGL/Graphics/BufferObjectLabellingTest.hpp"
 #include "OpenGL/Graphics/BufferObjectTest.hpp"
 #include "OpenGL/Graphics/BufferObjectTestingDiagnostics.hpp"
 #include "OpenGL/Graphics/ResourceHandleTest.hpp"

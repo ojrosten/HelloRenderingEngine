@@ -16,17 +16,15 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class buffer_object_test final : public move_only_test
+    class buffer_object_labelling_free_test final : public curlew::graphics_labelling_test
     {
     public:
-        using parallelizable_type = std::false_type;
-
-        using move_only_test::move_only_test;
+        using curlew::graphics_labelling_test::graphics_labelling_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
-        void run_tests();
+        void labelling_tests();
     private:
         template<class Buffer>
             requires is_gl_buffer_v<Buffer>

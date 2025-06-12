@@ -28,6 +28,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Debugging/InfiniteLoopFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
+               ${TestDir}/OpenGL/Graphics/BufferObjectLabellingTest.cpp
                ${TestDir}/OpenGL/Graphics/BufferObjectTest.cpp
                ${TestDir}/OpenGL/Graphics/BufferObjectTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Graphics/ResourceHandleTest.cpp
