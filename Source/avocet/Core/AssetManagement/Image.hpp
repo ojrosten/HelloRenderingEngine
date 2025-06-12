@@ -166,7 +166,7 @@ namespace avocet {
             }
 
             [[nodiscard]]
-            auto operator<=>(const specification&) const noexcept = default;
+            bool operator==(const specification&) const noexcept = default;
         };
 
         using ptr_t = std::unique_ptr<value_type, file_unloader>;

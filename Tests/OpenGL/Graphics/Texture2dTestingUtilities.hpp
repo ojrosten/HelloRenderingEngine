@@ -21,8 +21,6 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::opengl::texture_2d& texture, const std::optional<avocet::testing::image_data>& prediction)
         {
-            using value_type = avocet::testing::image_data::value_type;
-
             if(prediction) {
                 const auto imageData{extract_image(texture, avocet::opengl::to_texture_format(prediction->num_channels), prediction->row_alignment)};
                 check(equivalence,
