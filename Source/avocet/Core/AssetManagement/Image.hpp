@@ -86,7 +86,7 @@ namespace avocet {
             }
 
             [[nodiscard]]
-            std::size_t size() const noexcept { return safe_image_size(height, padded_row_size()); }
+            std::size_t size() const { return safe_image_size(height, padded_row_size()); }
 
             void validate(std::size_t imageSize) const {
                 if(imageSize != size())
@@ -126,7 +126,7 @@ namespace avocet {
         std::size_t padded_row_size() const { return m_Spec.value.padded_row_size(); }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return m_Spec.value.size(); }
+        std::size_t size() const { return m_Spec.value.size(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept {
@@ -224,7 +224,7 @@ namespace avocet {
         std::size_t padded_row_size() const { return m_Spec.padded_row_size(); }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return m_Spec.size(); }
+        std::size_t size() const { return m_Spec.size(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Span; }
