@@ -61,24 +61,39 @@ namespace avocet {
         constexpr std::size_t raw_value() const noexcept { return m_Value; }
     };
 
-    namespace impl {
-        template<sequoia::movable_comparable Width, sequoia::movable_comparable Height, sequoia::movable_comparable Channels, sequoia::movable_comparable Alignment>
-        struct image_spec {
-            Width width;
-            Height height;
-            Channels channels;
-            Alignment row_alignment;
-
-            [[nodiscard]]
-            friend bool operator==(const image_spec&, const image_spec&) noexcept = default;
-        };
-    }
-
     [[nodiscard]]
     std::size_t padded_row_size(std::size_t width, colour_channels channels, std::size_t bytesPerChannel, alignment rowAlignment);
 
     [[nodiscard]]
     std::size_t safe_image_size(std::size_t width, std::size_t height);
+
+    namespace impl {
+        template<class ImageValueType>
+        struct image_spec {
+            using value_type = ImageValueType;
+
+            std::size_t     width;
+            std::size_t     height;
+            colour_channels channels;
+            alignment       row_alignment;
+
+            [[nodiscard]]
+            friend bool operator==(const image_spec&, const image_spec&) noexcept = default;
+
+            [[nodiscard]]
+            std::size_t padded_row_size() const {
+                return avocet::padded_row_size(width, channels, sizeof(value_type), row_alignment);
+            }
+
+            [[nodiscard]]
+            std::size_t size() const noexcept { return safe_image_size(height, padded_row_size()); }
+
+            void validate(std::size_t imageSize) const {
+                if(imageSize != size())
+                    throw std::runtime_error{std::format("unique_image size {} is not height ({}) * padded_row_size ({})\n[width = {}; channels = {}; alignment = {}]", imageSize, height, padded_row_size(), width, channels, row_alignment)};
+            }
+        };
+    }
 
     class unique_image {
     public:
@@ -90,31 +105,28 @@ namespace avocet {
 
         unique_image(std::vector<value_type> data, std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment)
             : m_Data{std::move(data)}
-            , m_Spec{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}
+            , m_Spec{{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}}
         {
-            if(const auto sz{std::get<vec_t>(m_Data).size()}; sz != size())
-                throw std::runtime_error{std::format("unique_image size {} is not height ({}) * padded_row_size ({})\n[width = {}; channels = {}; alignment = {}]", sz, this->height(), padded_row_size(), this->width(), num_channels().raw_value(), row_alignment().raw_value())};
+            m_Spec.value.validate(std::get<vec_t>(m_Data).size());
         }
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Spec.width.value; }
+        std::size_t width() const noexcept { return m_Spec.value.width; }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Spec.height.value; }
+        std::size_t height() const noexcept { return m_Spec.value.height; }
 
         [[nodiscard]]
-        colour_channels num_channels() const noexcept { return m_Spec.channels.value; }
+        colour_channels num_channels() const noexcept { return m_Spec.value.channels; }
 
         [[nodiscard]]
-        alignment row_alignment() const noexcept { return m_Spec.row_alignment.value; }
+        alignment row_alignment() const noexcept { return m_Spec.value.row_alignment; }
 
         [[nodiscard]]
-        std::size_t padded_row_size() const {
-            return avocet::padded_row_size(width(), num_channels(), sizeof(value_type), row_alignment());
-        }
+        std::size_t padded_row_size() const { return m_Spec.value.padded_row_size(); }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return safe_image_size(height(), padded_row_size()); }
+        std::size_t size() const noexcept { return m_Spec.value.size(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept {
@@ -135,52 +147,49 @@ namespace avocet {
             void operator()(value_type* ptr) const;
         };
 
-        template<sequoia::movable_comparable T>
-        struct parameter {
-            [[nodiscard]]
-            std::size_t to_unsigned(int val) {
-                if(val < 0)
-                    throw std::logic_error{std::format("unique_image::parameter - negative value {}", val)};
+        using spec_t = impl::image_spec<value_type>;
 
-                return static_cast<std::size_t>(val);
-            }
+        struct specification {
+            spec_t value{};
 
-            T value{};
+            explicit specification(const spec_t& val) : value{val} {}
 
-            explicit parameter(int val)
-                : value{to_unsigned(val)}
-            { }
-
-            explicit parameter(T val) : value{val} {}
-
-            parameter(parameter&& other) noexcept 
-                : value{std::exchange(other.value, T{})}
+            specification(specification&& other) noexcept 
+                : value{std::exchange(other.value, spec_t{})}
             {}
 
-            parameter& operator=(parameter&& other) noexcept {
+            specification& operator=(specification&& other) noexcept {
                 if(this != &other)
-                    value = std::exchange(other.value, T{});
+                    value = std::exchange(other.value, spec_t{});
 
                 return *this;
             }
 
             [[nodiscard]]
-            auto operator<=>(const parameter&) const noexcept = default;
+            auto operator<=>(const specification&) const noexcept = default;
         };
 
         using ptr_t = std::unique_ptr<value_type, file_unloader>;
         using vec_t = std::vector<value_type>;
 
         std::variant<ptr_t, vec_t> m_Data;
-        impl::image_spec<parameter<std::size_t>, parameter<std::size_t>, parameter<colour_channels>, parameter<alignment>> m_Spec;
+        specification m_Spec;
 
         unique_image(value_type* ptr, int width, int height, int channels, alignment rowAlignment)
             : m_Data{ptr_t{ptr}}
-            , m_Spec{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}
+            , m_Spec{spec_t{.width{to_unsigned(width)}, .height{to_unsigned(height)}, .channels{to_unsigned(channels)}, .row_alignment{rowAlignment}}}
         {}
 
         [[nodiscard]]
         static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels);
+
+        [[nodiscard]]
+        static std::size_t to_unsigned(int val) {
+            if(val < 0)
+                throw std::logic_error{std::format("unique_image::specification - negative value {}", val)};
+
+            return static_cast<std::size_t>(val);
+        }
     };
 
     class image_view {
@@ -191,6 +200,13 @@ namespace avocet {
             : m_Span{image.span()}
             , m_Spec{.width{image.width()}, .height{image.height()}, .channels{image.num_channels()}, .row_alignment{image.row_alignment()}}
         {}
+
+        image_view(std::span<const value_type> data, std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment)
+            : m_Span{data}
+            , m_Spec{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}
+        {
+            m_Spec.validate(m_Span.size());
+        }
 
         [[nodiscard]]
         std::size_t width() const noexcept { return m_Spec.width; }
@@ -205,12 +221,10 @@ namespace avocet {
         alignment row_alignment() const noexcept { return m_Spec.row_alignment; }
 
         [[nodiscard]]
-        std::size_t padded_row_size() const {
-            return avocet::padded_row_size(width(), num_channels(), sizeof(value_type), row_alignment());
-        }
+        std::size_t padded_row_size() const { return m_Spec.padded_row_size(); }
 
         [[nodiscard]]
-        std::size_t size() const noexcept { return safe_image_size(height(), padded_row_size()); }
+        std::size_t size() const noexcept { return m_Spec.size(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Span; }
@@ -221,7 +235,7 @@ namespace avocet {
         }
     private:
         std::span<const value_type> m_Span;
-        impl::image_spec<std::size_t, std::size_t, colour_channels, alignment> m_Spec;
+        impl::image_spec<value_type> m_Spec;
     };
 }
 

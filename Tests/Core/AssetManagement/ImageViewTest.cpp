@@ -19,6 +19,15 @@ namespace avocet::testing
 
     void image_view_test::run_tests()
     {
+        check_exception_thrown<std::runtime_error>(
+            "Inconsistent image data",
+            []() {
+                using value_t = unique_image::value_type;
+                std::vector<value_t> data{};
+                return unique_image{data, 2uz, 3uz, colour_channels{4}, alignment{1}};
+            }
+        );
+
         check_semantics_via_image_data(
             "",
             make_red(        1, 3, colour_channels{2}, alignment{1}),
