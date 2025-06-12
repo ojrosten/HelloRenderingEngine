@@ -68,11 +68,19 @@ namespace avocet::testing
         );
 
         check_semantics_via_texture_data(
-            "Channel Widening extractions:",
+            "Channel Widening extractions: rg -> red; rgba -> rgb",
             {.image{.data{42, 6},                        .width{1}, .height{1}, .num_channels{2}, .row_alignment{1}}, .colour_space{}, .label{}},
                    {.data{42},                           .width{1}, .height{1}, .num_channels{1}, .row_alignment{1}},
             {.image{.data{255, 7, 42, 9, 1, 255, 3, 10}, .width{2}, .height{1}, .num_channels{4}, .row_alignment{1}}, .colour_space{}, .label{}},
                    {.data{255, 7, 42,    1, 255, 3    }, .width{2}, .height{1}, .num_channels{3}, .row_alignment{1}}
+        );
+
+        check_semantics_via_texture_data(
+            "Mixed extractions: red -> rg but with alignment going from 4 -> 2; rgba -> rg with alignment going from 2 -> 8",
+            {.image{.data{42, 0, 0, 0},                        .width{1}, .height{1}, .num_channels{1}, .row_alignment{4}}, .colour_space{}, .label{}},
+                   {.data{42, 0},                              .width{1}, .height{1}, .num_channels{2}, .row_alignment{2}},
+            {.image{.data{255, 7, 42, 9, 1, 255, 3, 10},       .width{2}, .height{1}, .num_channels{4}, .row_alignment{2}}, .colour_space{}, .label{}},
+                   {.data{255, 7, 42,    1, 255, 3,    0, 0},  .width{2}, .height{1}, .num_channels{3}, .row_alignment{8}}
         );
     }
 }
