@@ -39,8 +39,8 @@ namespace avocet::testing
 
             check_semantics(
                 description,
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{to_unique_image( first.image)},  .colour_space{first.colour_space},  .label{ first.label}}},
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{to_unique_image(second.image)},  .colour_space{second.colour_space}, .label{second.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data( first.image)},  .colour_space{first.colour_space},  .label{ first.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(second.image)},  .colour_space{second.colour_space}, .label{second.label}}},
                 opt_data{ first.image},
                 opt_data{second.image},
                 opt_data{},
@@ -51,13 +51,18 @@ namespace avocet::testing
         void check_semantics_via_texture_data(const reporter& description, const texture_data& sent1, const image_data& extracted1, const texture_data& sent2, const image_data& extracted2) {
             check_semantics(
                 description,
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{to_unique_image(sent1.image)}, .colour_space{sent1.colour_space}, .label{sent1.label}}},
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{to_unique_image(sent2.image)}, .colour_space{sent2.colour_space}, .label{sent2.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent1.image)}, .colour_space{sent1.colour_space}, .label{sent1.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent2.image)}, .colour_space{sent2.colour_space}, .label{sent2.label}}},
                 opt_data{extracted1},
                 opt_data{extracted2},
                 opt_data{},
                 opt_data{extracted1}
             );
+        }
+
+        [[nodiscard]]
+        static image_view image_view_over_data(const image_data& im) {
+            return {im.data, im.width, im.height, im.num_channels, im.row_alignment};
         }
     };
 }
