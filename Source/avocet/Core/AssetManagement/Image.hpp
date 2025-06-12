@@ -24,15 +24,15 @@ namespace avocet {
     class colour_channels {
         std::size_t m_Value{};
     public:
-        colour_channels() noexcept = default;
+        constexpr colour_channels() noexcept = default;
 
-        explicit colour_channels(std::size_t val) noexcept : m_Value{val} {}
-
-        [[nodiscard]]
-        friend auto operator<=>(const colour_channels&, const colour_channels&) noexcept = default;
+        constexpr explicit colour_channels(std::size_t val) noexcept : m_Value{val} {}
 
         [[nodiscard]]
-        std::size_t raw_value() const noexcept { return m_Value; }
+        friend constexpr auto operator<=>(const colour_channels&, const colour_channels&) noexcept = default;
+
+        [[nodiscard]]
+        constexpr std::size_t raw_value() const noexcept { return m_Value; }
     };
 
     inline constexpr std::optional<colour_channels> all_channels_in_image{std::nullopt};
@@ -41,7 +41,7 @@ namespace avocet {
         std::size_t m_Value{1};
 
         [[nodiscard]]
-        static std::size_t validate(std::size_t val) {
+        constexpr static std::size_t validate(std::size_t val) {
             const bool powOfTwo{(val > 0) && ((val & (val - 1)) == 0)};
             if(!powOfTwo)
                 throw std::runtime_error{std::format("alignment: value {} is not a power of 2", val)};
@@ -49,16 +49,16 @@ namespace avocet {
             return val;
         }
     public:
-        alignment() noexcept = default;
+        constexpr alignment() noexcept = default;
 
-        explicit alignment(std::size_t val) : m_Value{validate(val)}
+        constexpr explicit alignment(std::size_t val) : m_Value{validate(val)}
         {}
 
         [[nodiscard]]
-        friend auto operator<=>(const alignment&, const alignment&) noexcept = default;
+        friend constexpr auto operator<=>(const alignment&, const alignment&) noexcept = default;
 
         [[nodiscard]]
-        std::size_t raw_value() const noexcept { return m_Value; }
+        constexpr std::size_t raw_value() const noexcept { return m_Value; }
     };
 
     namespace impl {
