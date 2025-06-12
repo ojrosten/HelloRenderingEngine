@@ -28,6 +28,7 @@
 #include "OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.hpp"
 #include "OpenGL/Graphics/ShaderProgramLabellingFreeTest.hpp"
+#include "OpenGL/Graphics/Texture2dLabellingTest.hpp"
 #include "OpenGL/Graphics/Texture2dTest.hpp"
 #include "OpenGL/Graphics/Texture2dTestingDiagnostics.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
@@ -95,7 +96,8 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Texture2d",
             texture_2d_false_negative_test{"False Negative Test"},
-            texture_2d_test{"Semantics Test"}
+            texture_2d_test{"Semantics Test"},
+            texture_2d_labelling_free_test{"Labelling Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
