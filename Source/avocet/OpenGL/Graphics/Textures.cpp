@@ -24,17 +24,55 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        constexpr texture_format to_format(colour_channels numChannels)
-        {
-            switch(numChannels.raw_value())
-            {
-            case 1: return texture_format::red;
-            case 2: return texture_format::rg;
-            case 3: return texture_format::rgb;
-            case 4: return texture_format::rgba;
-            }
+        constexpr int to_ogl_alignment(alignment rowAlignment) {
+            if(rowAlignment.raw_value() > 8)
+                throw std::runtime_error{std::format("Row alignment of {} bytes requested, but OpenGL only supports 1, 2, 4 and 8 bytes", rowAlignment)};
 
-            throw std::runtime_error{std::format("{} channels requested, but it must be in the range [1,4]", numChannels)};
+            return static_cast<int>(rowAlignment.raw_value());
         }
+
+        void load_to_gpu(const texture_2d_configurator& config) {
+            const auto format{to_texture_format(config.data_view.num_channels())};
+
+            gl_function{glPixelStorei}(GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
+
+            gl_function{glTexImage2D}(
+                GL_TEXTURE_2D,
+                0,
+                static_cast<GLint>(to_internal_format(format, config.colour_space)),
+                static_cast<int>(config.data_view.width()),
+                static_cast<int>(config.data_view.height()),
+                0,
+                to_gl_enum(format),
+                to_gl_enum(to_gl_type_specifier_v<texture_2d_configurator::value_type>),
+                config.data_view.span().data()
+            );
+        }
+
+        [[nodiscard]]
+        GLint extract_texture_2d_param(GLenum paramName) {
+            GLint param{};
+            gl_function{glGetTexLevelParameteriv}(GL_TEXTURE_2D, 0, paramName, &param);
+            return param;
+        }
+    }
+
+    void texture_2d_lifecycle_events::configure(const resource_handle& h, const configurator& config) {
+        add_label(identifier, h, config.label);
+        load_to_gpu(config);
+    }
+
+    [[nodiscard]]
+    unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
+        texture_2d::do_bind(tex2d);
+        const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
+        const colour_channels numChannels{to_num_channels(format)};
+
+        using value_type = texture_2d::value_type;
+        const auto size{safe_image_size(padded_row_size(width, numChannels, sizeof(value_type), rowAlignment), height)};
+        std::vector<value_type> texture(size);
+        gl_function{glPixelStorei}(GL_PACK_ALIGNMENT, to_ogl_alignment(rowAlignment));
+        gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
+        return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), numChannels, rowAlignment};
     }
 }
