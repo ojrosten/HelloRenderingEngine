@@ -51,4 +51,54 @@ namespace avocet::opengl {
 
         throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_enum(format))};
     }
+
+    [[nodiscard]]
+    constexpr texture_format to_texture_format(colour_channels numChannels) {
+        switch(numChannels.raw_value()) {
+            using enum texture_format;
+        case 1: return red;
+        case 2: return rg;
+        case 3: return rgb;
+        case 4: return rgba;
+        }
+
+        throw std::runtime_error{std::format("to_texture_format: {} colour channels requested but it must be in the range [1,4]", numChannels)};
+    }
+
+    struct texture_2d_configurator {
+        using value_type = GLubyte;
+
+        image_view data_view;
+        colour_space_flavour colour_space;
+        optional_label label{};
+    };
+
+    struct texture_2d_lifecycle_events {
+        using configurator = texture_2d_configurator;
+
+        constexpr static auto identifier{object_identifier::texture};
+
+        template<std::size_t N>
+        static void generate(raw_indices<N>& indices) { }
+
+        template<std::size_t N>
+        static void destroy(const raw_indices<N>& indices) { }
+
+        static void bind(const resource_handle& h) { }
+
+        static void configure(const resource_handle& h, const configurator& config);
+    };
+
+    class texture_2d : public generic_resource<num_resources{1}, texture_2d_lifecycle_events> {
+    public:
+        using base_type         = generic_resource<num_resources{1}, texture_2d_lifecycle_events> ;
+        using configurator_type = base_type::configurator_type;
+        using value_type        = configurator_type::value_type;
+
+        explicit texture_2d(const configurator_type& textureConfig)
+            : base_type{{textureConfig}}
+        {}
+
+        friend unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
+    };
 }

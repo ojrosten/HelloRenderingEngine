@@ -1,0 +1,68 @@
+////////////////////////////////////////////////////////////////////
+//                Copyright Oliver J. Rosten 2025.                //
+// Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //
+//    (See accompanying file LICENSE.md or copy at                //
+//          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
+////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+/*! \file */
+
+#include "Texture2dTestingUtilities.hpp"
+
+namespace avocet::testing
+{
+    using namespace sequoia::testing;
+
+    struct texture_data {
+        image_data image;
+        opengl::colour_space_flavour colour_space;
+        opengl::optional_label label{};
+    };
+
+    class texture_2d_test final : public move_only_test
+    {
+    public:
+        using parallelizable_type = std::false_type;
+
+        using move_only_test::move_only_test;
+
+        [[nodiscard]]
+        std::filesystem::path source_file() const;
+
+        void run_tests();
+    private:
+        using opt_data = std::optional<avocet::testing::image_data>;
+
+        void check_semantics_via_texture_data(const reporter& description, const texture_data& first, const texture_data& second) {
+
+            check_semantics(
+                description,
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data( first.image)},  .colour_space{first.colour_space},  .label{ first.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(second.image)},  .colour_space{second.colour_space}, .label{second.label}}},
+                opt_data{ first.image},
+                opt_data{second.image},
+                opt_data{},
+                opt_data{ first.image}
+            );
+        }
+
+        void check_semantics_via_texture_data(const reporter& description, const texture_data& sent1, const image_data& extracted1, const texture_data& sent2, const image_data& extracted2) {
+            check_semantics(
+                description,
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent1.image)}, .colour_space{sent1.colour_space}, .label{sent1.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent2.image)}, .colour_space{sent2.colour_space}, .label{sent2.label}}},
+                opt_data{extracted1},
+                opt_data{extracted2},
+                opt_data{},
+                opt_data{extracted1}
+            );
+        }
+
+        [[nodiscard]]
+        static image_view image_view_over_data(const image_data& im) {
+            return {im.data, im.width, im.height, im.num_channels, im.row_alignment};
+        }
+    };
+}

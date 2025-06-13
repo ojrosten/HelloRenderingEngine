@@ -36,6 +36,9 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp
                ${TestDir}/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp
                ${TestDir}/OpenGL/Graphics/ShaderProgramLabellingFreeTest.cpp
+               ${TestDir}/OpenGL/Graphics/Texture2dLabellingTest.cpp
+               ${TestDir}/OpenGL/Graphics/Texture2dTest.cpp
+               ${TestDir}/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp
                ${TestDir}/TestFramework/OpenGL/LabellingTestDiagnostics.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})

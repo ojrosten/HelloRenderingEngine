@@ -24,17 +24,21 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        constexpr texture_format to_format(colour_channels numChannels)
-        {
-            switch(numChannels.raw_value())
-            {
-            case 1: return texture_format::red;
-            case 2: return texture_format::rg;
-            case 3: return texture_format::rgb;
-            case 4: return texture_format::rgba;
-            }
+        constexpr int to_ogl_alignment(alignment rowAlignment) {
+            if(rowAlignment.raw_value() > 8)
+                throw std::runtime_error{std::format("Row alignment of {} bytes requested, but OpenGL only supports 1, 2, 4 and 8 bytes", rowAlignment)};
 
-            throw std::runtime_error{std::format("{} channels requested, but it must be in the range [1,4]", numChannels)};
+            return static_cast<int>(rowAlignment.raw_value());
         }
+    }
+
+    void texture_2d_lifecycle_events::configure(const resource_handle& h, const configurator& config) {
+    }
+
+    [[nodiscard]]
+    unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
+        using value_type = texture_2d::value_type;
+        std::vector<value_type> texture(0);
+        return {texture, 0, 0, colour_channels{0}, rowAlignment};
     }
 }
