@@ -22,7 +22,7 @@ namespace sequoia::testing
         static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::opengl::texture_2d& texture, const std::optional<avocet::testing::image_data>& prediction)
         {
             if(prediction) {
-                const auto imageData{extract_image(texture, avocet::opengl::to_texture_format(prediction->num_channels), prediction->row_alignment)};
+                const auto imageData{extract_data(texture, avocet::opengl::to_texture_format(prediction->num_channels), prediction->row_alignment)};
                 check(equivalence,
                       "Texture Data",
                       logger,

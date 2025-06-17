@@ -36,7 +36,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
+    unique_image extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
         using value_type = texture_2d::value_type;
         std::vector<value_type> texture(0);
         return {texture, 0, 0, colour_channels{0}, rowAlignment};
