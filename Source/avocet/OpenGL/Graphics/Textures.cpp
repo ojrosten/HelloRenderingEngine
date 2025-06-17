@@ -63,7 +63,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    unique_image extract_image(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
+    unique_image extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
         texture_2d::do_bind(tex2d);
         const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
         const colour_channels numChannels{to_num_channels(format)};
