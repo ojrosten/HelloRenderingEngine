@@ -39,9 +39,9 @@ namespace avocet::opengl {
             gl_function{glTexImage2D}(
                 GL_TEXTURE_2D,
                 0,
-                static_cast<GLint>(to_internal_format(format, config.decoding)),
-                static_cast<int>(config.data_view.width()),
-                static_cast<int>(config.data_view.height()),
+                to_gl_int(to_internal_format(format, config.decoding)),
+                to_gl_sizei(config.data_view.width()),
+                to_gl_sizei(config.data_view.height()),
                 0,
                 to_gl_enum(format),
                 to_gl_enum(to_gl_type_specifier_v<texture_2d_configurator::value_type>),
