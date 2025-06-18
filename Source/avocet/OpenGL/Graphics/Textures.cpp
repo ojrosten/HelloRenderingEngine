@@ -11,13 +11,13 @@ namespace avocet::opengl {
     namespace {
         [[nodiscard]]
         constexpr texture_internal_format to_internal_format(texture_format format, sampling_decoding colourSpace) {
-            const bool decodeOnSampling{colourSpace == sampling_decoding::none};
+            const bool noDecoding{colourSpace == sampling_decoding::none};
 
             switch(format) {
-            case texture_format::red  : return                    texture_internal_format::red;
-            case texture_format::rg   : return                    texture_internal_format::rg;
-            case texture_format::rgb  : return decodeOnSampling ? texture_internal_format::rgb  : texture_internal_format::srgb;
-            case texture_format::rgba : return decodeOnSampling ? texture_internal_format::rgba : texture_internal_format::srgba;
+            case texture_format::red  : return              texture_internal_format::red;
+            case texture_format::rg   : return              texture_internal_format::rg;
+            case texture_format::rgb  : return noDecoding ? texture_internal_format::rgb  : texture_internal_format::srgb;
+            case texture_format::rgba : return noDecoding ? texture_internal_format::rgba : texture_internal_format::srgba;
             }
 
             throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_enum(format))};
