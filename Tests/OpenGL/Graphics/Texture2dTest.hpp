@@ -17,7 +17,7 @@ namespace avocet::testing
 
     struct texture_data {
         image_data image;
-        opengl::colour_space_flavour colour_space;
+        opengl::sampling_decoding decoding;
         opengl::optional_label label{};
     };
 
@@ -39,8 +39,8 @@ namespace avocet::testing
 
             check_semantics(
                 description,
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data( first.image)},  .colour_space{first.colour_space},  .label{ first.label}}},
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(second.image)},  .colour_space{second.colour_space}, .label{second.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data( first.image)},  .decoding{first.decoding},  .label{ first.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(second.image)},  .decoding{second.decoding}, .label{second.label}}},
                 opt_data{ first.image},
                 opt_data{second.image},
                 opt_data{},
@@ -51,8 +51,8 @@ namespace avocet::testing
         void check_semantics_via_texture_data(const reporter& description, const texture_data& sent1, const image_data& extracted1, const texture_data& sent2, const image_data& extracted2) {
             check_semantics(
                 description,
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent1.image)}, .colour_space{sent1.colour_space}, .label{sent1.label}}},
-                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent2.image)}, .colour_space{sent2.colour_space}, .label{sent2.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent1.image)}, .decoding{sent1.decoding}, .label{sent1.label}}},
+                opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent2.image)}, .decoding{sent2.decoding}, .label{sent2.label}}},
                 opt_data{extracted1},
                 opt_data{extracted2},
                 opt_data{},

@@ -10,14 +10,14 @@
 namespace avocet::opengl {
     namespace {
         [[nodiscard]]
-        constexpr texture_internal_format to_internal_format(texture_format format, colour_space_flavour colourSpace) {
-            const bool isLinear{colourSpace == colour_space_flavour::linear};
+        constexpr texture_internal_format to_internal_format(texture_format format, sampling_decoding colourSpace) {
+            const bool noDecoding{colourSpace == sampling_decoding::none};
 
             switch(format) {
-            case texture_format::red  : return            texture_internal_format::red;
-            case texture_format::rg   : return            texture_internal_format::rg;
-            case texture_format::rgb  : return isLinear ? texture_internal_format::rgb  : texture_internal_format::srgb;
-            case texture_format::rgba : return isLinear ? texture_internal_format::rgba : texture_internal_format::srgba;
+            case texture_format::red  : return              texture_internal_format::red;
+            case texture_format::rg   : return              texture_internal_format::rg;
+            case texture_format::rgb  : return noDecoding ? texture_internal_format::rgb  : texture_internal_format::srgb;
+            case texture_format::rgba : return noDecoding ? texture_internal_format::rgba : texture_internal_format::srgba;
             }
 
             throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_enum(format))};
@@ -39,7 +39,7 @@ namespace avocet::opengl {
             gl_function{glTexImage2D}(
                 GL_TEXTURE_2D,
                 0,
-                static_cast<GLint>(to_internal_format(format, config.colour_space)),
+                static_cast<GLint>(to_internal_format(format, config.decoding)),
                 static_cast<int>(config.data_view.width()),
                 static_cast<int>(config.data_view.height()),
                 0,

@@ -21,7 +21,7 @@
 #include <vector>
 
 namespace avocet::opengl {
-    enum class colour_space_flavour : bool { linear, srgb };
+    enum class sampling_decoding : bool { none, srgb };
 
     enum class texture_internal_format : GLint {
         red   = GL_RED,
@@ -68,9 +68,9 @@ namespace avocet::opengl {
     struct texture_2d_configurator {
         using value_type = GLubyte;
 
-        image_view data_view;
-        colour_space_flavour colour_space;
-        optional_label label{};
+        image_view        data_view;
+        sampling_decoding decoding;
+        optional_label    label{};
     };
 
     struct texture_2d_lifecycle_events {
