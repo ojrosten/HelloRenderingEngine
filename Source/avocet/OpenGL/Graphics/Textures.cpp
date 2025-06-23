@@ -32,9 +32,10 @@ namespace avocet::opengl {
         }
 
         void load_to_gpu(const texture_2d_configurator& config) {
-            const auto format{to_texture_format(config.data_view.num_channels())};
-
             gl_function{glPixelStorei}(GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
+
+            const auto format{to_texture_format(config.data_view.num_channels())};
+            using value_type = texture_2d_configurator::value_type;
 
             gl_function{glTexImage2D}(
                 GL_TEXTURE_2D,
@@ -44,7 +45,7 @@ namespace avocet::opengl {
                 to_gl_sizei(config.data_view.height()),
                 0,
                 to_gl_enum(format),
-                to_gl_enum(to_gl_type_specifier_v<texture_2d_configurator::value_type>),
+                to_gl_enum(to_gl_type_specifier_v<value_type>),
                 config.data_view.span().data()
             );
         }
