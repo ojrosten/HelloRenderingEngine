@@ -40,19 +40,6 @@ namespace avocet::opengl {
     };
 
     [[nodiscard]]
-    constexpr colour_channels to_num_channels(texture_format format) {
-        switch(format) {
-            using enum texture_format;
-        case red:  return colour_channels{1};
-        case rg:   return colour_channels{2};
-        case rgb:  return colour_channels{3};
-        case rgba: return colour_channels{4};
-        }
-
-        throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_enum(format))};
-    }
-
-    [[nodiscard]]
     constexpr texture_format to_texture_format(colour_channels numChannels) {
         switch(numChannels.raw_value()) {
             using enum texture_format;
