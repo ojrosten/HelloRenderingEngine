@@ -65,14 +65,23 @@ namespace avocet::opengl {
     [[nodiscard]]
     unique_image extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
         texture_2d::do_bind(tex2d);
+
         const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
         const colour_channels numChannels{to_num_channels(format)};
 
         using value_type = texture_2d::value_type;
         const auto size{safe_image_size(padded_row_size(width, numChannels, sizeof(value_type), rowAlignment), height)};
         std::vector<value_type> texture(size);
+
         gl_function{glPixelStorei}(GL_PACK_ALIGNMENT, to_ogl_alignment(rowAlignment));
-        gl_function{glGetTexImage}(GL_TEXTURE_2D, 0, to_gl_enum(format), to_gl_enum(to_gl_type_specifier_v<value_type>), texture.data());
+
+        gl_function{glGetTexImage}(
+            GL_TEXTURE_2D,
+            0,
+            to_gl_enum(format),
+            to_gl_enum(to_gl_type_specifier_v<value_type>),
+            texture.data());
+
         return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), numChannels, rowAlignment};
     }
 }
