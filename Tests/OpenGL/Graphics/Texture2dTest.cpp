@@ -34,9 +34,9 @@ namespace avocet::testing
         );
 
         check_semantics_via_texture_data(
-            "Faithfully aligned roundtrip rgba and rgb: rgb data is sent and received padded",
-            {.image{.data{42,  7,  6, 0},               .width{1}, .height{1}, .num_channels{4}, .row_alignment{4}}, .decoding{}, .label{}},
-            {.image{.data{255, 7, 42, 0, 1, 255, 3, 0}, .width{1}, .height{2}, .num_channels{3}, .row_alignment{4}}, .decoding{}, .label{}}
+            "Faithfully aligned roundtrip rgba and rgb: data is sent and received padded",
+            {.image{.data{42,  7,  6, 255, 0,   0, 0, 0}, .width{1}, .height{1}, .num_channels{4}, .row_alignment{8}}, .decoding{}, .label{}},
+            {.image{.data{255, 7, 42,   0, 1, 255, 3, 0}, .width{1}, .height{2}, .num_channels{3}, .row_alignment{4}}, .decoding{}, .label{}}
         );
 
         check_semantics_via_texture_data(
@@ -46,9 +46,9 @@ namespace avocet::testing
         );
 
         check_semantics_via_texture_data(
-            "Faithfully aligned roundtrip red and rg: red data is sent and received padded",
-            {.image{.data{42,  7,  6, 0},         .width{3}, .height{1}, .num_channels{1}, .row_alignment{2}}, .decoding{}, .label{}},
-            {.image{.data{255, 7, 42, 1, 255, 3}, .width{1}, .height{3}, .num_channels{2}, .row_alignment{2}}, .decoding{}, .label{}}
+            "Faithfully aligned roundtrip red and rg: data is sent and received padded",
+            {.image{.data{42,  7,  6, 0},              .width{3}, .height{1}, .num_channels{1}, .row_alignment{2}}, .decoding{}, .label{}},
+            {.image{.data{255, 7,  0, 0, 42, 1, 0, 0}, .width{1}, .height{2}, .num_channels{2}, .row_alignment{4}}, .decoding{}, .label{}}
         );
 
         check_semantics_via_texture_data(
