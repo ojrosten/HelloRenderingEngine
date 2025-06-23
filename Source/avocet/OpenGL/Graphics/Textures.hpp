@@ -99,6 +99,12 @@ namespace avocet::opengl {
             : base_type{{textureConfig}}
         {}
 
-        friend unique_image extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
+        [[nodiscard]]
+        friend unique_image extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
+            return do_extract_data(tex2d, format, rowAlignment);
+        }
+
+    private:
+        static unique_image do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
     };
 }
