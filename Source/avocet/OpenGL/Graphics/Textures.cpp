@@ -24,11 +24,24 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        constexpr int to_ogl_alignment(alignment rowAlignment) {
+        constexpr colour_channels to_num_channels(texture_format format) {
+            switch(format) {
+                using enum texture_format;
+            case red:  return colour_channels{1};
+            case rg:   return colour_channels{2};
+            case rgb:  return colour_channels{3};
+            case rgba: return colour_channels{4};
+            }
+
+            throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_enum(format))};
+        }
+
+        [[nodiscard]]
+        constexpr GLint to_ogl_alignment(alignment rowAlignment) {
             if(rowAlignment.raw_value() > 8)
                 throw std::runtime_error{std::format("Row alignment of {} bytes requested, but OpenGL only supports 1, 2, 4 and 8 bytes", rowAlignment)};
 
-            return static_cast<int>(rowAlignment.raw_value());
+            return to_gl_int(rowAlignment.raw_value());
         }
     }
 
