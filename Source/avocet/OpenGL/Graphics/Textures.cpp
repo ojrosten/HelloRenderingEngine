@@ -37,11 +37,11 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        constexpr int to_ogl_alignment(alignment rowAlignment) {
+        constexpr GLint to_ogl_alignment(alignment rowAlignment) {
             if(rowAlignment.raw_value() > 8)
                 throw std::runtime_error{std::format("Row alignment of {} bytes requested, but OpenGL only supports 1, 2, 4 and 8 bytes", rowAlignment)};
 
-            return static_cast<int>(rowAlignment.raw_value());
+            return to_gl_int(rowAlignment.raw_value());
         }
 
         void load_to_gpu(const texture_2d_configurator& config) {
