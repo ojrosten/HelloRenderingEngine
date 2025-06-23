@@ -26,5 +26,28 @@ namespace avocet::testing
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        // "Faithful roundtrip rgba and rgb: data sent and received naturally aligned"
+
+
+        // "Faithfully aligned roundtrip rgba and rgb: data is sent and received padded"
+
+
+        // "Faithful roundtrip red and rg: data sent and received naturally aligned"
+
+
+        // "Faithfully aligned roundtrip red and rg: data is sent and received padded"
+
+
+        // "Faithul colours but different paddings: red data is sent with padding and extracted without; rg vice-versa"
+
+
+        // "Channel Widening extractions: red -> rg with green=0; rgb -> rgba with alpha=255"
+
+
+        // "Channel Narrowing extractions: rg -> red; rgba -> rgb"
+
+
+        // "Mixed extractions: red -> rg but with alignment going from 4 -> 2; rgba -> rg with alignment going from 2 -> 8"
     }
 }

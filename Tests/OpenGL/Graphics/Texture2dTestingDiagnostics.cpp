@@ -26,5 +26,20 @@ namespace avocet::testing
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        /*using value_type = agl::texture_2d::value_type;
+        using opt_data   = std::optional<image_data>;
+        std::vector<value_type> textureVals{ 255, 255, 255,  1},
+                                textureVals2{42,    7,   6, 10},
+                                textureVals3{255,   0,   0,  0, 255, 0};
+        unique_image image{textureVals, 1, 1, colour_channels{4}, alignment{1}};
+
+        agl::texture_2d tex2d{agl::texture_2d_configurator{.data_view{image}, .decoding{}, .label{}}};
+
+        check(equivalence, "Texture which should be null", tex2d, opt_data{});
+        check(equivalence, "Empty texture",                tex2d, opt_data{{.data{},             .width{},  .height{},  .num_channels{1}, .row_alignment{1}}});
+        check(equivalence, "Incorrect texture data",       tex2d, opt_data{{.data{textureVals2}, .width{1}, .height{1}, .num_channels{4}, .row_alignment{1}}});
+        check(equivalence, "Mismatched textures",          tex2d, opt_data{{.data{textureVals3}, .width{2}, .height{1}, .num_channels{3}, .row_alignment{1}}});
+        check(equivalence, "Mismatched padding",           tex2d, opt_data{{.data{textureVals},  .width{1}, .height{1}, .num_channels{4}, .row_alignment{8}}});*/
     }
 }
