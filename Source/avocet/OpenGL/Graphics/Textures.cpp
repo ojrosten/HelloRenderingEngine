@@ -47,8 +47,8 @@ namespace avocet::opengl {
         void load_to_gpu(const texture_2d_configurator& config) {
             gl_function{glPixelStorei}(GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
 
-            using value_type = texture_2d_configurator::value_type;
             const auto format{to_texture_format(config.data_view.num_channels())};
+            using value_type = texture_2d_configurator::value_type;
 
             gl_function{glTexImage2D}(
                 GL_TEXTURE_2D,
@@ -63,6 +63,7 @@ namespace avocet::opengl {
             );
         }
 
+        [[nodiscard]]
         GLint extract_texture_2d_param(GLenum paramName) {
             GLint param{};
             gl_function{glGetTexLevelParameteriv}(GL_TEXTURE_2D, 0, paramName, &param);
@@ -79,10 +80,11 @@ namespace avocet::opengl {
     unique_image texture_2d::do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
         texture_2d::do_bind(tex2d);
 
-        const GLint width{extract_texture_2d_param(GL_TEXTURE_WIDTH)}, height{extract_texture_2d_param(GL_TEXTURE_HEIGHT)};
-        const colour_channels numChannels{to_num_channels(format)};
-
         using value_type = texture_2d::value_type;
+
+        const auto  width{static_cast<std::size_t>(extract_texture_2d_param(GL_TEXTURE_WIDTH))},
+                   height{static_cast<std::size_t>(extract_texture_2d_param(GL_TEXTURE_HEIGHT))};
+        const auto numChannels{to_num_channels(format)};
         const auto size{safe_image_size(padded_row_size(width, numChannels, sizeof(value_type), rowAlignment), height)};
 
         std::vector<value_type> texture(size);
@@ -97,6 +99,6 @@ namespace avocet::opengl {
             texture.data()
         );
 
-        return {texture, static_cast<std::size_t>(width), static_cast<std::size_t>(height), numChannels, rowAlignment};
+        return {texture, width, height, numChannels, rowAlignment};
     }
 }
