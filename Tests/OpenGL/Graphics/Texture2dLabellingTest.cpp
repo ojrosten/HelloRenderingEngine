@@ -22,9 +22,9 @@ namespace avocet::testing
 
     void texture_2d_labelling_free_test::labelling_tests()
     {
-        /*std::string label{"This is a nice label!"};
+        std::string label{"This is a nice label!"};
         unique_image image{{1}, 1, 1, colour_channels{1}, alignment{1}};
         agl::texture_2d tex2d{agl::texture_2d_configurator{.data_view{image}, .decoding{}, .label{label}}};
-        check(equality, "", tex2d.extract_label(), label);*/
+        check(equality, "", tex2d.extract_label(), label);
     }
 }

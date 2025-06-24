@@ -1,0 +1,150 @@
+Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 39
+Texture which should be null
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::testing::image_data>]
+
+  Null Texture
+  [bool]
+  check failed
+
+=======================================
+
+Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 40
+Empty texture
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::testing::image_data>]
+
+  Texture Data
+  Comparison performed using:
+  [sequoia::testing::value_tester<avocet::unique_image>]
+  Checking for equivalence with:
+  [avocet::testing::image_data]
+
+    Width
+    [unsigned long long]
+    operator== returned false
+    Obtained : 1
+    Predicted: 0
+
+    Height
+    [unsigned long long]
+    operator== returned false
+    Obtained : 1
+    Predicted: 0
+
+    Data
+    [std::span<unsigned char const, -1>]
+
+      Container size wrong
+      [unsigned long long]
+      operator== returned false
+      Obtained : 1
+      Predicted: 0
+
+=======================================
+
+Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 41
+Incorrect texture data
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::testing::image_data>]
+
+  Texture Data
+  Comparison performed using:
+  [sequoia::testing::value_tester<avocet::unique_image>]
+  Checking for equivalence with:
+  [avocet::testing::image_data]
+
+    Data
+    [std::span<unsigned char const, -1>]
+
+      Element 0 of range incorrect
+      [unsigned char]
+      operator== returned false
+      Obtained : 255
+      Predicted: 42
+
+      Element 1 of range incorrect
+      [unsigned char]
+      operator== returned false
+      Obtained : 255
+      Predicted: 7
+
+      Element 2 of range incorrect
+      [unsigned char]
+      operator== returned false
+      Obtained : 255
+      Predicted: 6
+
+      Element 3 of range incorrect
+      [unsigned char]
+      operator== returned false
+      Obtained : 1
+      Predicted: 10
+
+=======================================
+
+Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 42
+Mismatched textures
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::testing::image_data>]
+
+  Texture Data
+  Comparison performed using:
+  [sequoia::testing::value_tester<avocet::unique_image>]
+  Checking for equivalence with:
+  [avocet::testing::image_data]
+
+    Width
+    [unsigned long long]
+    operator== returned false
+    Obtained : 1
+    Predicted: 2
+
+    Data
+    [std::span<unsigned char const, -1>]
+
+      Container size wrong
+      [unsigned long long]
+      operator== returned false
+      Obtained : 3
+      Predicted: 6
+
+=======================================
+
+Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 43
+Mismatched padding
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::texture_2d>]
+Checking for equivalence with:
+[std::optional<avocet::testing::image_data>]
+
+  Texture Data
+  Comparison performed using:
+  [sequoia::testing::value_tester<avocet::unique_image>]
+  Checking for equivalence with:
+  [avocet::testing::image_data]
+
+    Data
+    [std::span<unsigned char const, -1>]
+
+      Container size wrong
+      [unsigned long long]
+      operator== returned false
+      Obtained : 8
+      Predicted: 4
+
+=======================================
+
