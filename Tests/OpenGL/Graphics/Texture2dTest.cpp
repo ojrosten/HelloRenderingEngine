@@ -27,7 +27,11 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        // "Faithful roundtrip rgba and rgb: data sent and received naturally aligned"
+        /*check_semantics_via_texture_data(
+            "Faithful roundtrip rgba and rgb: data sent and received naturally aligned",
+            {.image{.data{}, .width{}, .height{}, .num_channels{}, .row_alignment{}}, .decoding{}, .label{}},
+            {.image{.data{}, .width{}, .height{}, .num_channels{}, .row_alignment{}}, .decoding{}, .label{}}
+        );*/
 
 
         // "Faithfully aligned roundtrip rgba and rgb: data is sent and received padded"
@@ -48,6 +52,6 @@ namespace avocet::testing
         // "Channel Narrowing extractions: rg -> red; rgba -> rgb"
 
 
-        // "Mixed extractions: red -> rg but with alignment going from 4 -> 2; rgba -> rg with alignment going from 2 -> 8"
+        // "Mixed extractions: red -> rg but with alignment going from 4 -> 2; rgba -> rgb with alignment going from 2 -> 8"
     }
 }
