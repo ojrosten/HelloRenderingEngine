@@ -66,12 +66,12 @@ namespace avocet::opengl {
         constexpr static auto identifier{object_identifier::texture};
 
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { }
+        static void generate(raw_indices<N>& indices) { gl_function{glGenTextures}(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { }
+        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteTextures}(N, indices.data()); }
 
-        static void bind(const resource_handle& h) { }
+        static void bind(const resource_handle& h) { gl_function{glBindTexture}(GL_TEXTURE_2D, h.index()); }
 
         static void configure(const resource_handle& h, const configurator& config);
     };

@@ -43,15 +43,62 @@ namespace avocet::opengl {
 
             return to_gl_int(rowAlignment.raw_value());
         }
+
+        void load_to_gpu(const texture_2d_configurator& config) {
+            gl_function{glPixelStorei}(GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
+
+            using value_type = texture_2d_configurator::value_type;
+            const auto format{to_texture_format(config.data_view.num_channels())};
+
+            gl_function{glTexImage2D}(
+                GL_TEXTURE_2D,
+                0,
+                to_gl_int(to_internal_format(format, config.decoding)),
+                to_gl_sizei(config.data_view.width()),
+                to_gl_sizei(config.data_view.height()),
+                0,
+                to_gl_enum(format),
+                to_gl_enum(to_gl_type_specifier_v<value_type>),
+                config.data_view.span().data()
+            );
+        }
+
+        [[nodiscard]]
+        GLint extract_texture_2d_param(GLenum paramName) {
+            GLint param{};
+            gl_function{glGetTexLevelParameteriv}(GL_TEXTURE_2D, 0, paramName, &param);
+            return param;
+        }
     }
 
     void texture_2d_lifecycle_events::configure(const resource_handle& h, const configurator& config) {
+        add_label(identifier, h, config.label);
+        load_to_gpu(config);
     }
 
     [[nodiscard]]
     unique_image texture_2d::do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
+        texture_2d::do_bind(tex2d);
+
         using value_type = texture_2d::value_type;
-        std::vector<value_type> texture(0);
-        return {texture, 0, 0, colour_channels{0}, rowAlignment};
+        const auto width{static_cast<std::size_t>(extract_texture_2d_param(GL_TEXTURE_WIDTH))},
+                  height{static_cast<std::size_t>(extract_texture_2d_param(GL_TEXTURE_HEIGHT))};
+
+        const auto numChannels{to_num_channels(format)};
+        const auto size{safe_image_size(padded_row_size(width, numChannels, sizeof(value_type), rowAlignment), height)};
+
+        std::vector<value_type> texture(size);
+
+        gl_function{glPixelStorei}(GL_PACK_ALIGNMENT, to_ogl_alignment(rowAlignment));
+
+        gl_function{glGetTexImage}(
+            GL_TEXTURE_2D,
+            0,
+            to_gl_enum(format),
+            to_gl_enum(to_gl_type_specifier_v<value_type>),
+            texture.data()
+        );
+
+        return {texture, width, height, numChannels, rowAlignment};
     }
 }
