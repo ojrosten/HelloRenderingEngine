@@ -24,22 +24,33 @@ namespace avocet::opengl {
         constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
-    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
-        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
+    template<dimensionality ArenaDimension>
+    inline constexpr bool is_legal_dimension_v{(dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})};
+
+    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
+    struct vertex_attributes {
+        using value_type = T;
+
+        std::array<T, ArenaDimension.value> local_coordinates;
+        std::tuple<Attributes...>           additional_attributes;
+    };
+
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
+        requires (3 <= N) && is_legal_dimension_v<ArenaDimension>
     class polygon_base{
     public:
         using value_type = T;
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
-        constexpr static auto num_coordinates{N * arena_dimension.value};
 
-        using vertices_type = std::array<T, num_coordinates>;
+        using vertex_attribute_type = vertex_attributes<T, ArenaDimension, Attributes...>;
+        using vertices_type         = std::array<vertex_attribute_type, N>;
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         polygon_base(Fn transformer, const std::optional<std::string>& label)
             : m_VAO{label}
-            , m_VBO{transformer(st_Vertices), label}
+            , m_VBO{flatten(transformer(st_Vertices)), label}
         {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
             constexpr auto dimension{arena_dimension.value};
@@ -64,24 +75,30 @@ namespace avocet::opengl {
         static void do_bind(const polygon_base& pg) { bind(pg.m_VAO); }
     private:
         [[nodiscard]]
-        constexpr static T to_coordinate(std::size_t i) {
+        constexpr static vertex_attribute_type to_vertex_attributes(std::size_t i) {
             constexpr T
                 pi{std::numbers::pi_v<T>},
                 offset{N % 2 ? 0 : pi / N};
 
-            constexpr auto dim{arena_dimension.value};
-            const auto n{i / dim};
-            const auto theta_n{offset + 2 * pi * n / N};
+            const auto theta_n{offset + 2 * pi * i / N};
 
-            if(const auto remainder{i % dim}; remainder == 0)
-                return -T{0.5}*std::sin(theta_n);
-            else if(remainder == 1)
-                return T{0.5}*std::cos(theta_n);
-
-            return T{};
+            return {.local_coordinates{-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)}, .additional_attributes{}};
         }
 
-        const inline static vertices_type st_Vertices{sequoia::utilities::make_array<T, num_coordinates>(to_coordinate)};
+        constexpr static auto coordsPerVert{arena_dimension.value + (0 + ... + (sizeof(Attributes) / sizeof(value_type)))};
+        constexpr static auto num_coordinates{N * coordsPerVert};
+
+        [[nodiscard]]
+        constexpr std::array<T, num_coordinates> flatten(const vertices_type& verts) {
+            std::array<T, num_coordinates> flattened{};
+            for(auto i : std::views::iota(0uz, verts.size())) {
+                std::ranges::copy(verts[i].local_coordinates, flattened.begin() + i * coordsPerVert);
+            }
+
+            return flattened;
+        }
+
+        const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(to_vertex_attributes)};
 
         vertex_attribute_object m_VAO;
         vertex_buffer_object<value_type> m_VBO;

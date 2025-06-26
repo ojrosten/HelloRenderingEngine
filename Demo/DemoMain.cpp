@@ -59,13 +59,9 @@ int main()
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.5; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v -= 0.5; });
-
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))       verts[i] += 0.5;
-                    if(!((i - 1) % 3)) verts[i] -= 0.5;
+                    verts[i].local_coordinates[0] += 0.5;
+                    verts[i].local_coordinates[1] -= 0.5;
                 }
 
                 return verts;
@@ -80,7 +76,8 @@ int main()
           [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     constexpr auto scale{2 * radius / 0.5};
-                    (verts[i] *= scale) += centre[i % 2];
+                    for(auto&& [coord, middle] : std::views::zip(verts[i].local_coordinates, centre))
+                        (coord *= scale) += middle;
                 }
 
                 return verts;
@@ -94,13 +91,10 @@ int main()
 
         agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
             [](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 3), [](auto& v){ v += 0.5; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(3), [](auto& v){ v += 0.5; });
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))     verts[i] += 0.5;
-                    if(!((i-1) % 3)) verts[i] += 0.5;
+                    verts[i].local_coordinates[0] += 0.5;
+                    verts[i].local_coordinates[1] += 0.5;
                 }
 
                 return verts;
@@ -110,13 +104,9 @@ int main()
 
         agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
             [](std::ranges::random_access_range auto verts) {
-                // Won't work with libc++ (clang) until views::stride is available; fine on MSVC and gcc
-                //std::ranges::for_each(std::views::stride(verts, 2), [](auto& v){ v -= 0.5; });
-                //std::ranges::for_each(std::views::drop(verts, 1) | std::views::stride(2), [](auto& v){ v -= 0.5; });
-
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 2))     verts[i] -= 0.5;
-                    if(!((i-1) % 2)) verts[i] -= 0.5;
+                    verts[i].local_coordinates[0] -= 0.5;
+                    verts[i].local_coordinates[1] -= 0.5;
                 }
 
                 return verts;
