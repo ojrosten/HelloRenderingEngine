@@ -10,6 +10,8 @@
 #include "avocet/OpenGL/Graphics/Buffers.hpp"
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
 
+#include "sequoia/PlatformSpecific/Preprocessor.hpp"
+
 #include <cmath>
 #include <limits>
 #include <numbers>
@@ -31,9 +33,26 @@ namespace avocet::opengl {
     struct vertex_attributes {
         using value_type = T;
 
-        std::array<T, ArenaDimension.value> local_coordinates;
-        std::tuple<Attributes...>           additional_attributes;
+        std::array<T, ArenaDimension.value>                 local_coordinates;
+        SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
+
+    template<class>
+    struct build_vertex_attribute;
+
+
+    template<gl_floating_point T, std::size_t D>
+    struct build_vertex_attribute<std::array<T, D>> {
+        [[nodiscard]]
+        constexpr std::array<T, D> operator() (std::size_t i, std::size_t N) const {
+            constexpr T pi{std::numbers::pi_v<T>};
+            const auto offset{N % 2 ? 0 : pi / N};
+            const auto theta_n{offset + 2 * pi * i / N};
+
+            return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
+        }
+    };
+
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
         requires (3 <= N) && is_legal_dimension_v<ArenaDimension>
@@ -50,18 +69,9 @@ namespace avocet::opengl {
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         polygon_base(Fn transformer, const std::optional<std::string>& label)
             : m_VAO{label}
-            , m_VBO{flatten(transformer(st_Vertices)), label}
+            , m_VBO{transformer(st_Vertices), label}
         {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto dimension{arena_dimension.value};
-            constexpr auto stride{dimension * sizeof(value_type)};
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(0, dimension, typeSpecifier, stride, (GLvoid*)0);
-            }
-            else {
-                gl_function{glVertexAttribPointer}(0, dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
-            }
-            gl_function{glEnableVertexAttribArray}(0);
+            set_attribute_ptr(0, to_gl_int(arena_dimension.value), 0);
         }
 
         [[nodiscard]]
@@ -76,40 +86,25 @@ namespace avocet::opengl {
     private:
         [[nodiscard]]
         constexpr static vertex_attribute_type to_vertex_attributes(std::size_t i) {
-            constexpr T
-                pi{std::numbers::pi_v<T>},
-                offset{N % 2 ? 0 : pi / N};
-
-            const auto theta_n{offset + 2 * pi * i / N};
-
-            return {.local_coordinates{-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)}, .additional_attributes{}};
-        }
-
-        constexpr static auto coordsPerVert{arena_dimension.value + (0 + ... + (sizeof(Attributes) / sizeof(value_type)))};
-        constexpr static auto num_coordinates{N * coordsPerVert};
-        constexpr static auto numAdditionalAtts{sizeof...(Attributes)};
-
-        [[nodiscard]]
-        constexpr std::array<T, num_coordinates> flatten(const vertices_type& verts) {
-            std::array<T, num_coordinates> flattened{};
-
-            for(auto i : std::views::iota(0uz, verts.size())) {
-                auto start{flattened.begin() + i * coordsPerVert};
-                auto& vert{verts[i]};
-                std::ranges::copy(verts[i].local_coordinates, start);
-                [&] <std::size_t... Is>(std::index_sequence<Is...>) {
-                    std::ranges::advance(start, coordsPerVert);
-                    ((start = std::ranges::copy(std::get<Is>(vert.additional_attributes), start)), ...);
-                }(std::make_index_sequence<numAdditionalAtts>{});
-            }
-
-            return flattened;
+            return {.local_coordinates{build_vertex_attribute<std::array<T, ArenaDimension.value>>{}(i, N)}, .additional_attributes{build_vertex_attribute<Attributes>{}(i, N)...}};
         }
 
         const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(to_vertex_attributes)};
 
         vertex_attribute_object m_VAO;
-        vertex_buffer_object<value_type> m_VBO;
+        vertex_buffer_object<vertex_attribute_type> m_VBO;
+
+        static void set_attribute_ptr(GLuint index, GLint components, std::ptrdiff_t offset) {
+            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
+            constexpr auto stride{arena_dimension.value * sizeof(value_type) + (0 + ... + sizeof(Attributes))};
+            if constexpr(std::is_same_v<value_type, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(index, components, typeSpecifier, stride, (GLvoid*)offset);
+            }
+            else {
+                gl_function{glVertexAttribPointer}(index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)offset);
+            }
+            gl_function{glEnableVertexAttribArray}(index);
+        }
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>

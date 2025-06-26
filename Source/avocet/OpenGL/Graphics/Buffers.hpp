@@ -49,7 +49,17 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
-    template<buffer_species Species, gl_arithmetic_type T>
+    template<class T>
+    inline constexpr bool legal_buffer_type_v{
+           gl_arithmetic_type<T> 
+        || requires {
+            typename T::value_type;
+            requires gl_arithmetic_type<typename T::value_type>;
+        }
+    };
+
+    template<buffer_species Species, class T>
+        requires legal_buffer_type_v<T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         struct configurator {
             std::span<const T> buffer_data;
@@ -75,7 +85,8 @@ namespace avocet::opengl {
         friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
     };
 
-    template<buffer_species Species, gl_arithmetic_type T>
+    template<buffer_species Species, class T>
+        requires legal_buffer_type_v<T>
     class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
     {
     public:
@@ -104,7 +115,7 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_arithmetic_type T>
+    template<class T>
     class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
     public:
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
