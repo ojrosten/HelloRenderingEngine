@@ -71,7 +71,8 @@ namespace avocet::opengl {
             : m_VAO{label}
             , m_VBO{transformer(st_Vertices), label}
         {
-            set_attribute_ptr(0, to_gl_int(arena_dimension.value), 0);
+            auto nextParams{set_attribute_ptr({.index{0}, .offset{0}}, to_gl_int(arena_dimension.value))};
+            ((nextParams = set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...);
         }
 
         [[nodiscard]]
@@ -94,16 +95,24 @@ namespace avocet::opengl {
         vertex_attribute_object m_VAO;
         vertex_buffer_object<vertex_attribute_type> m_VBO;
 
-        static void set_attribute_ptr(GLuint index, GLint components, std::ptrdiff_t offset) {
+        struct next_attribute_indices {
+            GLuint index{};
+            std::size_t offset{};
+        };
+
+        [[nodiscard]]
+        static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components) {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
             constexpr auto stride{arena_dimension.value * sizeof(value_type) + (0 + ... + sizeof(Attributes))};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(index, components, typeSpecifier, stride, (GLvoid*)offset);
+                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
             }
             else {
-                gl_function{glVertexAttribPointer}(index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)offset);
+                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
             }
-            gl_function{glEnableVertexAttribArray}(index);
+            gl_function{glEnableVertexAttribArray}(indices.index);
+
+            return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(value_type)}};
         }
     };
 
