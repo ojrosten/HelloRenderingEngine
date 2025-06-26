@@ -87,12 +87,20 @@ namespace avocet::opengl {
 
         constexpr static auto coordsPerVert{arena_dimension.value + (0 + ... + (sizeof(Attributes) / sizeof(value_type)))};
         constexpr static auto num_coordinates{N * coordsPerVert};
+        constexpr static auto numAdditionalAtts{sizeof...(Attributes)};
 
         [[nodiscard]]
         constexpr std::array<T, num_coordinates> flatten(const vertices_type& verts) {
             std::array<T, num_coordinates> flattened{};
+
             for(auto i : std::views::iota(0uz, verts.size())) {
-                std::ranges::copy(verts[i].local_coordinates, flattened.begin() + i * coordsPerVert);
+                auto start{flattened.begin() + i * coordsPerVert};
+                auto& vert{verts[i]};
+                std::ranges::copy(verts[i].local_coordinates, start);
+                [&] <std::size_t... Is>(std::index_sequence<Is...>) {
+                    std::ranges::advance(start, coordsPerVert);
+                    ((start = std::ranges::copy(std::get<Is>(vert.additional_attributes), start)), ...);
+                }(std::make_index_sequence<numAdditionalAtts>{});
             }
 
             return flattened;
