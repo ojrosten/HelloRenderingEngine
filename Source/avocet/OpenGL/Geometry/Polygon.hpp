@@ -127,8 +127,7 @@ namespace avocet::opengl {
             : m_VAO{label}
             , m_VBO{transformer(st_Vertices), label}
         {
-            auto nextParams{set_attribute_ptr({.index{0}, .offset{0}}, to_gl_int(arena_dimension.value))};
-            ((nextParams = set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...);
+            set_attribute_ptrs();
         }
 
         template<class Fn>
@@ -138,8 +137,7 @@ namespace avocet::opengl {
             , m_VBO{transformer(st_Vertices), label}
             , m_Texture{texConfig}
         {
-            auto nextParams{set_attribute_ptr({.index{0}, .offset{0}}, to_gl_int(arena_dimension.value))};
-            ((nextParams = set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...);
+            set_attribute_ptrs();
         }
 
         [[nodiscard]]
@@ -176,7 +174,7 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components) {
+        static next_attribute_indices do_set_attribute_ptr(next_attribute_indices indices, GLint components) {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
             constexpr auto stride{arena_dimension.value * sizeof(value_type) + (0 + ... + sizeof(Attributes))};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
@@ -188,6 +186,11 @@ namespace avocet::opengl {
             gl_function{glEnableVertexAttribArray}(indices.index);
 
             return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(value_type)}};
+        }
+
+        static void set_attribute_ptrs() {
+            [[maybe_unused]] auto nextParams{do_set_attribute_ptr({.index{0}, .offset{0}}, to_gl_int(arena_dimension.value))};
+            ((nextParams = do_set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...);
         }
     };
 
