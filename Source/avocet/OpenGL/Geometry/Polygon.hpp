@@ -11,6 +11,7 @@
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
 
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"
+#include "sequoia/Maths/Geometry/Spaces.hpp"
 
 #include <cmath>
 #include <limits>
@@ -19,6 +20,42 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    template<std::size_t D, std::floating_point T, class Arena>
+    struct euclidean_vector_space
+    {
+        using set_type        = sequoia::maths::sets::R<D>;
+        using field_type      = T;
+        using is_vector_space = std::true_type;
+        constexpr static std::size_t dimension{D};
+    };
+
+    template<std::size_t D, std::floating_point T, class Arena>
+    struct euclidean_affine_space
+    {
+        using set_type          = sequoia::maths::sets::R<D>;
+        using vector_space_type = euclidean_vector_space<D, T, Arena>;
+        using is_affine_space   = std::true_type;
+    };
+
+    struct texture_arena {};
+    struct geometry_arena{};
+    struct local_origin{};
+
+    template<std::size_t D, std::floating_point T, class Arena>
+    struct standard_basis
+    {
+        using vector_space_type = euclidean_vector_space<D, T, Arena>;
+        using orthonormal       = std::true_type;
+    };
+
+    template<std::size_t D, std::floating_point T, sequoia::maths::basis Basis, class Arena, class Origin>
+    using euclidean_affine_coordinates = sequoia::maths::affine_coordinates<euclidean_affine_space<D, T, Arena>, Basis, Origin>;
+
+    template<std::size_t D, std::floating_point T>
+    using local_position = euclidean_affine_coordinates<D, T, standard_basis<D, T, geometry_arena>, geometry_arena, local_origin>;
+
+
+
     struct dimensionality{
         std::size_t value{};
 
@@ -33,7 +70,7 @@ namespace avocet::opengl {
     struct vertex_attributes {
         using value_type = T;
 
-        std::array<T, ArenaDimension.value>                 local_coordinates;
+        local_position<ArenaDimension.value, T>             local_coordinates;
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 

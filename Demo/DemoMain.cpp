@@ -76,7 +76,7 @@ int main()
           [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     constexpr auto scale{2 * radius / 0.5};
-                    for(auto&& [coord, middle] : std::views::zip(verts[i].local_coordinates, centre))
+                    for(auto&& [coord, middle] : std::views::zip(verts[i].local_coordinates.values(), centre))
                         (coord *= scale) += middle;
                 }
 
