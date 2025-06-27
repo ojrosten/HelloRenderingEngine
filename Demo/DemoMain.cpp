@@ -58,10 +58,12 @@ namespace {
     struct texture_2d_parameter_setter {
         void operator()() {
             agl::gl_function{glGenerateMipmap}(GL_TEXTURE_2D);
-            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
             agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            float borderColor[] = {1.0f, 0.5f, 0.0f, 1.0f};
+            agl::gl_function{glTexParameterfv}(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
         };
     };
 }
