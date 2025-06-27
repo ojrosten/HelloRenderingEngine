@@ -65,68 +65,22 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program
-            shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
-            discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
-            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
-            shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
-
-        agl::quad<GLdouble, agl::dimensionality{3}> q{
-            [](std::ranges::random_access_range auto verts) {
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    verts[i].local_coordinates[0] += 0.5;
-                    verts[i].local_coordinates[1] -= 0.5;
-                }
-
-                return verts;
-            },
-            make_label("Quad")
-        };
-
-        constexpr GLfloat radius{0.4f};
-        constexpr std::array<GLfloat, 2> centre{-0.5, 0.5};
-
-        agl::triangle<GLfloat, agl::dimensionality{2}> disc{
-          [radius, centre](std::ranges::random_access_range auto verts) {
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    constexpr auto scale{2 * radius / 0.5};
-                    for(auto&& [coord, middle] : std::views::zip(verts[i].local_coordinates.values(), centre))
-                        (coord *= scale) += middle;
-                }
-
-                return verts;
-            },
-            make_label("Disc")
-        };
-
-        discShaderProgram.set_uniform("radius", radius);
-        discShaderProgram.set_uniform("centre", centre);
-
-
-        agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
-            [](std::ranges::random_access_range auto verts) {
-
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    verts[i].local_coordinates[0] += 0.5;
-                    verts[i].local_coordinates[1] += 0.5;
-                }
-
-                return verts;
-            },
-            make_label("Septagon")
-        };
+            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"};
 
         const avocet::unique_image princess{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
-        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
+        agl::polygon<GLfloat, 4, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> q{
             [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    verts[i].local_coordinates[0] -= 0.5;
-                    verts[i].local_coordinates[1] -= 0.5;
+                    verts[i].local_coordinates[0] *= 2.0;
+                    verts[i].local_coordinates[1] *= 2.0;
+                    (std::get<0>(verts[i].additional_attributes)[0] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f;
+                    (std::get<0>(verts[i].additional_attributes)[1] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f;
                 }
 
                 return verts;
             },
             agl::texture_2d_configurator{.data_view{princess}, .decoding{agl::sampling_decoding::srgb}, .parameter_setter{agl::default_texture_2d_parameter_setter{}}, .label{make_label("Pony")}},
-            make_label("Hexagon")
+            make_label("Quad")
         };
 
         shaderProgram2D.set_uniform("image", 0);
@@ -135,14 +89,8 @@ int main()
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            shaderProgramDouble.use();
-            q.draw();
-            discShaderProgram.use();
-            disc.draw();
-            shaderProgram.use();
-            sept.draw();
             shaderProgram2D.use();
-            hex.draw();
+            q.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
