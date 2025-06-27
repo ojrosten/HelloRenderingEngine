@@ -20,7 +20,7 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-    template<std::size_t D, std::floating_point T, class Arena>
+    template<std::floating_point T, std::size_t D, class Arena>
     struct euclidean_vector_space
     {
         using set_type        = sequoia::maths::sets::R<D>;
@@ -29,11 +29,11 @@ namespace avocet::opengl {
         constexpr static std::size_t dimension{D};
     };
 
-    template<std::size_t D, std::floating_point T, class Arena>
+    template<std::floating_point T, std::size_t D, class Arena>
     struct euclidean_affine_space
     {
         using set_type          = sequoia::maths::sets::R<D>;
-        using vector_space_type = euclidean_vector_space<D, T, Arena>;
+        using vector_space_type = euclidean_vector_space<T, D, Arena>;
         using is_affine_space   = std::true_type;
     };
 
@@ -41,18 +41,18 @@ namespace avocet::opengl {
     struct geometry_arena{};
     struct local_origin{};
 
-    template<std::size_t D, std::floating_point T, class Arena>
+    template<std::floating_point T, std::size_t D, class Arena>
     struct standard_basis
     {
-        using vector_space_type = euclidean_vector_space<D, T, Arena>;
+        using vector_space_type = euclidean_vector_space<T, D, Arena>;
         using orthonormal       = std::true_type;
     };
 
-    template<std::size_t D, std::floating_point T, sequoia::maths::basis Basis, class Arena, class Origin>
-    using euclidean_affine_coordinates = sequoia::maths::affine_coordinates<euclidean_affine_space<D, T, Arena>, Basis, Origin>;
+    template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena, class Origin>
+    using euclidean_affine_coordinates = sequoia::maths::affine_coordinates<euclidean_affine_space<T, D, Arena>, Basis, Origin>;
 
-    template<std::size_t D, std::floating_point T>
-    using local_position = euclidean_affine_coordinates<D, T, standard_basis<D, T, geometry_arena>, geometry_arena, local_origin>;
+    template<std::floating_point T, std::size_t D>
+    using local_position = euclidean_affine_coordinates<T, D, standard_basis<T, D, geometry_arena>, geometry_arena, local_origin>;
 
 
 
@@ -70,7 +70,7 @@ namespace avocet::opengl {
     struct vertex_attributes {
         using value_type = T;
 
-        local_position<ArenaDimension.value, T>             local_coordinates;
+        local_position<T, ArenaDimension.value>             local_coordinates;
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
@@ -79,7 +79,7 @@ namespace avocet::opengl {
 
 
     template<gl_floating_point T, std::size_t D>
-    struct build_vertex_attribute<std::array<T, D>> {
+    struct build_vertex_attribute<local_position<T, D>> {
         [[nodiscard]]
         constexpr std::array<T, D> operator() (std::size_t i, std::size_t N) const {
             constexpr T pi{std::numbers::pi_v<T>};
@@ -124,7 +124,7 @@ namespace avocet::opengl {
     private:
         [[nodiscard]]
         constexpr static vertex_attribute_type to_vertex_attributes(std::size_t i) {
-            return {.local_coordinates{build_vertex_attribute<std::array<T, ArenaDimension.value>>{}(i, N)}, .additional_attributes{build_vertex_attribute<Attributes>{}(i, N)...}};
+            return {.local_coordinates{build_vertex_attribute<local_position<T, ArenaDimension.value>>{}(i, N)}, .additional_attributes{build_vertex_attribute<Attributes>{}(i, N)...}};
         }
 
         const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(to_vertex_attributes)};
