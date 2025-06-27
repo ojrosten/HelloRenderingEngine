@@ -135,12 +135,12 @@ int main()
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            /*shaderProgramDouble.use();
+            shaderProgramDouble.use();
             q.draw();
             discShaderProgram.use();
             disc.draw();
             shaderProgram.use();
-            sept.draw();*/
+            sept.draw();
             shaderProgram2D.use();
             hex.draw();
 
