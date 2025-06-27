@@ -19,6 +19,8 @@
 #include <iostream>
 #include <source_location>
 
+namespace agl = avocet::opengl;
+
 namespace {
     namespace fs = std::filesystem;
 
@@ -52,6 +54,16 @@ namespace {
     std::string make_label(std::string_view name, std::source_location loc = std::source_location::current()) {
         return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
+
+    struct texture_2d_parameter_setter {
+        void operator()() {
+            agl::gl_function{glGenerateMipmap}(GL_TEXTURE_2D);
+            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        };
+    };
 }
 
 int main()
@@ -63,7 +75,6 @@ int main()
         curlew::glfw_manager manager{};
         auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
 
-        namespace agl = avocet::opengl;
         agl::shader_program
             shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"};
 
@@ -73,13 +84,13 @@ int main()
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     verts[i].local_coordinates[0] *= 2.0;
                     verts[i].local_coordinates[1] *= 2.0;
-                    (std::get<0>(verts[i].additional_attributes)[0] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f;
-                    (std::get<0>(verts[i].additional_attributes)[1] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f;
+                    (((std::get<0>(verts[i].additional_attributes)[0] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f)*=3.0)-=1.0;
+                    (((std::get<0>(verts[i].additional_attributes)[1] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f)*=3.0)-=1.0;
                 }
 
                 return verts;
             },
-            agl::texture_2d_configurator{.data_view{princess}, .decoding{agl::sampling_decoding::srgb}, .parameter_setter{agl::default_texture_2d_parameter_setter{}}, .label{make_label("Pony")}},
+            agl::texture_2d_configurator{.data_view{princess}, .decoding{agl::sampling_decoding::srgb}, .parameter_setter{texture_2d_parameter_setter{}}, .label{make_label("Pony")}},
             make_label("Quad")
         };
 
