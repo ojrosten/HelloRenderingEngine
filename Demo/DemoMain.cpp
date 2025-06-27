@@ -84,8 +84,8 @@ int main()
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     verts[i].local_coordinates[0] *= 2.0;
                     verts[i].local_coordinates[1] *= 2.0;
-                    (((std::get<0>(verts[i].additional_attributes)[0] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f)*=3.0)-=1.0;
-                    (((std::get<0>(verts[i].additional_attributes)[1] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f)*=3.0)-=1.0;
+                    (((std::get<0>(verts[i].additional_attributes)[0] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f)*=4.0)-=2.0;
+                    (((std::get<0>(verts[i].additional_attributes)[1] *= std::sqrt(2.0f)) += (1.0f - std::sqrt(2.0f))/2.0f)*=4.0)-=2.0;
                 }
 
                 return verts;
