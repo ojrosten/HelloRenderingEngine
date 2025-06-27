@@ -53,11 +53,14 @@ namespace avocet::opengl {
     template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena, class Origin>
     using euclidean_affine_coordinates = sequoia::maths::affine_coordinates<euclidean_affine_space<T, D, Arena>, Basis, Origin>;
 
+    template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena>
+    using euclidean_vector_coordinates = sequoia::maths::vector_coordinates<euclidean_vector_space<T, D, Arena>, Basis>;
+
     template<std::floating_point T, std::size_t D>
-    using local_position = euclidean_affine_coordinates<T, D, canonical_right_handed_basis<T, D, geometry_arena>, geometry_arena, local_origin>;
+    using local_coordinates = euclidean_vector_coordinates<T, D, canonical_right_handed_basis<T, D, geometry_arena>, geometry_arena>;
 
     template<std::floating_point T>
-    using texture_coordinates = euclidean_affine_coordinates<T, 2, canonical_right_handed_basis<T, 2, texture_arena>, texture_arena, texture_bottom_left_origin>;
+    using texture_coordinates = euclidean_vector_coordinates<T, 2, canonical_right_handed_basis<T, 2, texture_arena>, texture_arena>;
 
 
 
@@ -75,7 +78,7 @@ namespace avocet::opengl {
     struct vertex_attributes {
         using value_type = T;
 
-        local_position<T, ArenaDimension.value>             local_coordinates;
+        local_coordinates<T, ArenaDimension.value>             local_coordinates;
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
@@ -84,15 +87,15 @@ namespace avocet::opengl {
 
 
     template<gl_floating_point T, std::size_t D>
-    struct build_vertex_attribute<local_position<T, D>> {
+    struct build_vertex_attribute<local_coordinates<T, D>> {
         [[nodiscard]]
-        constexpr local_position<T, D> operator() (std::size_t i, std::size_t N) const {
+        constexpr local_coordinates<T, D> operator() (std::size_t i, std::size_t N) const {
             constexpr T pi{std::numbers::pi_v<T>};
             const auto offset{N % 2 ? 0 : pi / N};
             const auto theta_n{offset + 2 * pi * i / N};
 
             // Shouldn't be necessary to go via array; shouldn't be necessary to use explict constructor
-            return local_position<T, D>{std::array<T, D>{-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)}};
+            return local_coordinates<T, D>{std::array<T, D>{-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)}};
         }
     };
 
@@ -157,7 +160,7 @@ namespace avocet::opengl {
     private:
         [[nodiscard]]
         constexpr static vertex_attribute_type to_vertex_attributes(std::size_t i) {
-            return {.local_coordinates{build_vertex_attribute<local_position<T, ArenaDimension.value>>{}(i, N)}, .additional_attributes{build_vertex_attribute<Attributes>{}(i, N)...}};
+            return {.local_coordinates{build_vertex_attribute<local_coordinates<T, ArenaDimension.value>>{}(i, N)}, .additional_attributes{build_vertex_attribute<Attributes>{}(i, N)...}};
         }
 
         const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(to_vertex_attributes)};

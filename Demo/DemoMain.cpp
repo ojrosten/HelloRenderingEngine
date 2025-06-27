@@ -73,8 +73,7 @@ int main()
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    verts[i].local_coordinates[0] += 0.5;
-                    verts[i].local_coordinates[1] -= 0.5;
+                    verts[i].local_coordinates += agl::local_coordinates<GLdouble, 3>{0.5, -0.5, 0.0};
                 }
 
                 return verts;
