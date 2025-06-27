@@ -52,11 +52,22 @@ namespace avocet::opengl {
         throw std::runtime_error{std::format("to_texture_format: {} colour channels requested but it must be in the range [1,4]", numChannels)};
     }
 
+    struct default_texture_2d_parameter_setter {
+        void operator()() {
+            gl_function{glGenerateMipmap}(GL_TEXTURE_2D);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        };
+    };
+
     struct texture_2d_configurator {
         using value_type = GLubyte;
 
         image_view        data_view;
         sampling_decoding decoding;
+        std::function<void()> parameter_setter{default_texture_2d_parameter_setter{}};
         optional_label    label{};
     };
 
@@ -91,6 +102,10 @@ namespace avocet::opengl {
             return do_extract_data(tex2d, format, rowAlignment);
         }
 
+        friend void bind_for_rendering(const texture_2d& tex) {
+            gl_function{glActiveTexture}(GL_TEXTURE0);
+            base_type::do_bind(tex, index<0>{});
+        }
     private:
         static unique_image do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
     };
