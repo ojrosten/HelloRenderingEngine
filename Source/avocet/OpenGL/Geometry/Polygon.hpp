@@ -94,8 +94,7 @@ namespace avocet::opengl {
             const auto offset{N % 2 ? 0 : pi / N};
             const auto theta_n{offset + 2 * pi * i / N};
 
-            // Shouldn't be necessary to go via array; shouldn't be necessary to use explict constructor
-            return local_coordinates<T, D>{std::array<T, D>{-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)}};
+            return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
         }
     };
 
@@ -107,7 +106,7 @@ namespace avocet::opengl {
             const auto offset{N % 2 ? 0 : pi / N};
             const auto theta_n{offset + 2 * pi * i / N};
 
-            return texture_coordinates<T>{std::array<T, 2>{T{0.5}*(T{1.0} - std::sin(theta_n)), T{0.5}*(T{1.0} + std::cos(theta_n))}};
+            return {T{0.5}*(T{1.0} - std::sin(theta_n)), T{0.5}*(T{1.0} + std::cos(theta_n))};
         }
     };
 
