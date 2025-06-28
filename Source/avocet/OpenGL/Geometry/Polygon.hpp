@@ -22,26 +22,12 @@
 
 namespace avocet::opengl {
     template<std::floating_point T, std::size_t D, class Arena>
-    struct euclidean_vector_space
+    struct euclidean_vector_space : sequoia::maths::euclidean_vector_space<T, D>
     {
-        using set_type        = sequoia::maths::sets::R<D>;
-        using field_type      = T;
-        using is_vector_space = std::true_type;
-        constexpr static std::size_t dimension{D};
-    };
-
-    template<std::floating_point T, std::size_t D, class Arena>
-    struct euclidean_affine_space
-    {
-        using set_type          = sequoia::maths::sets::R<D>;
-        using vector_space_type = euclidean_vector_space<T, D, Arena>;
-        using is_affine_space   = std::true_type;
     };
 
     struct texture_arena {};
     struct geometry_arena {};
-    struct local_origin {};
-    struct texture_bottom_left_origin {};
 
     template<std::floating_point T, std::size_t D, class Arena>
     struct canonical_right_handed_basis
@@ -49,9 +35,6 @@ namespace avocet::opengl {
         using vector_space_type = euclidean_vector_space<T, D, Arena>;
         using orthonormal       = std::true_type;
     };
-
-    template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena, class Origin>
-    using euclidean_affine_coordinates = sequoia::maths::affine_coordinates<euclidean_affine_space<T, D, Arena>, Basis, Origin>;
 
     template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena>
     using euclidean_vector_coordinates = sequoia::maths::vector_coordinates<euclidean_vector_space<T, D, Arena>, Basis>;
