@@ -29,7 +29,7 @@ namespace avocet::opengl {
     struct texture_arena {};
     struct geometry_arena {};
 
-  template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena>
+    template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena>
     using euclidean_vector_coordinates = sequoia::maths::vector_coordinates<euclidean_vector_space<T, D, Arena>, Basis>;
 
     template<std::floating_point T, std::size_t D>
@@ -54,7 +54,7 @@ namespace avocet::opengl {
     struct vertex_attributes {
         using value_type = T;
 
-        local_coordinates<T, ArenaDimension.value>             local_coordinates;
+        local_coordinates<T, ArenaDimension.value>          local_coordinates;
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
