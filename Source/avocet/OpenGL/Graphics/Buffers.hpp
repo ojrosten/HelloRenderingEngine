@@ -14,7 +14,10 @@
 #include <vector>
 
 namespace avocet::opengl {
+    template<class... Attributes>
     struct vao_lifecycle_events {
+        using value_type = std::common_type_t<typename Attributes::value_type...>;
+
         constexpr static auto identifier{object_identifier::vertex_array};
 
         struct configurator {
@@ -31,6 +34,29 @@ namespace avocet::opengl {
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
+
+            next_attribute_indices nextParams{};
+            ((nextParams = set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...); 
+        }
+    private:
+        struct next_attribute_indices {
+            GLuint index{};
+            std::size_t offset{};
+        };
+
+        [[nodiscard]]
+        static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components) {
+            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
+            constexpr auto stride{(0 + ... + sizeof(Attributes))};
+            if constexpr(std::is_same_v<value_type, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
+            }
+            else {
+                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
+            }
+            gl_function{glEnableVertexAttribArray}(indices.index);
+
+            return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(value_type)}};
         }
     };
 
@@ -74,15 +100,17 @@ namespace avocet::opengl {
         }
     };
 
-    class vertex_attribute_object : public generic_resource<num_resources{1}, vao_lifecycle_events> {
+    template<class... Attributes>
+    class vertex_attribute_object : public generic_resource<num_resources{1}, vao_lifecycle_events<Attributes...>> {
     public:
-        using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
+        using lifecycle_events_type = vao_lifecycle_events<Attributes...>;
+        using base_type = generic_resource<num_resources{1}, vao_lifecycle_events<Attributes...>>;
 
         explicit vertex_attribute_object(const optional_label& label)
             : base_type{{{label}}}
         {}
 
-        friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
+        friend void bind(const vertex_attribute_object& vao) { base_type::do_bind(vao); }
     };
 
     template<buffer_species Species, class T>

@@ -102,20 +102,18 @@ namespace avocet::opengl {
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
         polygon_base(Fn transformer, const std::optional<std::string>& label)
-            : m_VAO{label}
-            , m_VBO{transformer(st_Vertices), label}
+            : m_VBO{transformer(st_Vertices), label}
+            , m_VAO{label}
         {
-            set_attribute_ptrs();
         }
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
         polygon_base(Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
-            : m_VAO{label}
-            , m_VBO{transformer(st_Vertices), label}
+            : m_VBO{transformer(st_Vertices), label}
+            , m_VAO{label}
             , m_Texture{texConfig}
         {
-            set_attribute_ptrs();
         }
 
         [[nodiscard]]
@@ -142,34 +140,10 @@ namespace avocet::opengl {
         struct null_texture {};
         using texture_t = std::conditional_t<is_textured_v, texture_2d, null_texture>;
 
-        vertex_attribute_object m_VAO;
+        using vao_t = vertex_attribute_object<local_coordinates<T, ArenaDimension.value>, Attributes...>;
         vertex_buffer_object<vertex_attribute_type> m_VBO;
+        vao_t m_VAO;
         SEQUOIA_NO_UNIQUE_ADDRESS texture_t m_Texture;
-
-        struct next_attribute_indices {
-            GLuint index{};
-            std::size_t offset{};
-        };
-
-        [[nodiscard]]
-        static next_attribute_indices do_set_attribute_ptr(next_attribute_indices indices, GLint components) {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto stride{arena_dimension.value * sizeof(value_type) + (0 + ... + sizeof(Attributes))};
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
-            }
-            else {
-                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
-            }
-            gl_function{glEnableVertexAttribArray}(indices.index);
-
-            return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(value_type)}};
-        }
-
-        static void set_attribute_ptrs() {
-            [[maybe_unused]] auto nextParams{do_set_attribute_ptr({.index{0}, .offset{0}}, to_gl_int(arena_dimension.value))};
-            ((nextParams = do_set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...);
-        }
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
