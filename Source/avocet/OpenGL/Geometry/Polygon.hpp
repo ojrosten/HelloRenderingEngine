@@ -27,13 +27,13 @@ namespace avocet::opengl {
     };
 
     struct texture_arena {};
-    struct geometry_arena {};
+    struct local_geometry_arena {};
 
     template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena>
     using euclidean_vector_coordinates = sequoia::maths::vector_coordinates<euclidean_vector_space<T, D, Arena>, Basis>;
 
     template<std::floating_point T, std::size_t D>
-    using local_coordinates = euclidean_vector_coordinates<T, D, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, D, geometry_arena>>, geometry_arena>;
+    using local_coordinates = euclidean_vector_coordinates<T, D, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, D, local_geometry_arena>>, local_geometry_arena>;
 
     template<std::floating_point T>
     using texture_coordinates = euclidean_vector_coordinates<T, 2, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, 2, texture_arena>>, texture_arena>;
@@ -47,9 +47,6 @@ namespace avocet::opengl {
         constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
-    template<dimensionality ArenaDimension>
-    inline constexpr bool is_legal_dimension_v{(dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})};
-
     template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
     struct vertex_attributes {
         using value_type = T;
@@ -58,7 +55,9 @@ namespace avocet::opengl {
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
+    // Changing to dimensionality seems to crash MSVC!
     template<gl_floating_point T, std::size_t D>
+        requires (2 <= D)
     [[nodiscard]]
     constexpr local_coordinates<T, D> make_polygon_vertex(std::size_t i, std::size_t N) {
         constexpr T pi{std::numbers::pi_v<T>};
@@ -91,9 +90,8 @@ namespace avocet::opengl {
         return {.local_coordinates{make_polygon_vertex<T, ArenaDimension.value>(i, N)}, .additional_attributes{build_polygon_vertex_attribute<Attributes>{}(i, N)...}};
     }
 
-
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (3 <= N) && is_legal_dimension_v<ArenaDimension>
+        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
     class polygon_base{
     public:
         using value_type = T;
