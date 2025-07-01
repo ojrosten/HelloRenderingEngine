@@ -54,7 +54,7 @@ namespace avocet::opengl {
     struct vertex_attributes {
         using value_type = T;
 
-        local_coordinates<T, ArenaDimension.value>          local_coordinates;
+        local_coordinates<T, ArenaDimension.value>          local_coords;
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
@@ -93,7 +93,7 @@ namespace avocet::opengl {
     [[nodiscard]]
     constexpr vertex_attributes<T, ArenaDimension, Attributes...> make_polygon_vertex_attributes(std::size_t i) {
         return {
-            .local_coordinates{make_polygon_vertex<T, ArenaDimension>(i, N)},
+            .local_coords{make_polygon_vertex<T, ArenaDimension>(i, N)},
             .additional_attributes{make_polygon_vertex_attribute<Attributes>{}(i, N)...}
         };
     }
