@@ -67,12 +67,6 @@ namespace avocet::opengl {
         return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
     }
 
-    template<gl_floating_point T>
-    [[nodiscard]]
-    constexpr texture_coordinates<T> make_polygon_texture_coordinate(std::size_t i, std::size_t N) {
-        texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, 2>(i, N).raw_values()};
-    }
-
     template<class>
     struct build_polygon_vertex_attribute;
 
