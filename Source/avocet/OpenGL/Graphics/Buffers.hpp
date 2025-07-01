@@ -76,13 +76,16 @@ namespace avocet::opengl {
     };
 
     template<class T>
-    inline constexpr bool legal_buffer_type_v{
-           gl_arithmetic_type<T> 
-        || requires {
-            typename T::value_type;
-            requires gl_arithmetic_type<typename T::value_type>;
-        }
-    };
+    struct legal_buffer_type : std::false_type {};
+
+    template<class T>
+    using legal_buffer_type_t = legal_buffer_type<T>::type;
+
+    template<class T>
+    inline constexpr bool legal_buffer_type_v{legal_buffer_type<T>::value};
+
+    template<gl_arithmetic_type T>
+    struct legal_buffer_type<T> : std::true_type {};
 
     template<buffer_species Species, class T>
         requires legal_buffer_type_v<T>
@@ -144,6 +147,7 @@ namespace avocet::opengl {
     };
 
     template<class T>
+        requires legal_buffer_type_v<T>
     class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
     public:
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
