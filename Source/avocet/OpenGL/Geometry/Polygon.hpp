@@ -58,38 +58,37 @@ namespace avocet::opengl {
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
-    template<class>
-    struct build_vertex_attribute;
-
-
     template<gl_floating_point T, std::size_t D>
-    struct build_vertex_attribute<local_coordinates<T, D>> {
-        [[nodiscard]]
-        constexpr local_coordinates<T, D> operator() (std::size_t i, std::size_t N) const {
-            constexpr T pi{std::numbers::pi_v<T>};
-            const auto offset{N % 2 ? 0 : pi / N};
-            const auto theta_n{offset + 2 * pi * i / N};
+    [[nodiscard]]
+    constexpr local_coordinates<T, D> make_polygon_vertex(std::size_t i, std::size_t N) {
+        constexpr T pi{std::numbers::pi_v<T>};
+        const auto offset{N % 2 ? 0 : pi / N};
+        const auto theta_n{offset + 2 * pi * i / N};
 
-            return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
-        }
-    };
+        return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
+    }
 
     template<gl_floating_point T>
-    struct build_vertex_attribute<texture_coordinates<T>> {
+    [[nodiscard]]
+    constexpr texture_coordinates<T> make_polygon_texture_coordinate(std::size_t i, std::size_t N) {
+        texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, 2>(i, N).raw_values()};
+    }
+
+    template<class>
+    struct build_polygon_vertex_attribute;
+
+    template<gl_floating_point T>
+    struct build_polygon_vertex_attribute<texture_coordinates<T>> {
         [[nodiscard]]
         constexpr texture_coordinates<T> operator() (std::size_t i, std::size_t N) const {
-            constexpr T pi{std::numbers::pi_v<T>};
-            const auto offset{N % 2 ? 0 : pi / N};
-            const auto theta_n{offset + 2 * pi * i / N};
-
-            return {T{0.5}*(T{1.0} - std::sin(theta_n)), T{0.5}*(T{1.0} + std::cos(theta_n))};
+            return texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, 2>(i, N).values()};
         }
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
     [[nodiscard]]
     constexpr vertex_attributes<T, ArenaDimension, Attributes...> build_polygon_vertex_attributes(std::size_t i) {
-        return {.local_coordinates{build_vertex_attribute<local_coordinates<T, ArenaDimension.value>>{}(i, N)}, .additional_attributes{build_vertex_attribute<Attributes>{}(i, N)...}};
+        return {.local_coordinates{make_polygon_vertex<T, ArenaDimension.value>(i, N)}, .additional_attributes{build_polygon_vertex_attribute<Attributes>{}(i, N)...}};
     }
 
 
