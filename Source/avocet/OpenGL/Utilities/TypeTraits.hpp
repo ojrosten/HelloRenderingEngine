@@ -13,13 +13,15 @@
 
 namespace avocet::opengl {
     template<class T>
-    concept gl_arithmetic_type = 
-           std::is_same_v<T, GLhalf> || std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble> || std::is_same_v<T, GLfixed>
-        || std::is_same_v<T, GLbyte> || std::is_same_v<T, GLubyte> || std::is_same_v<T, GLshort>  || std::is_same_v<T, GLint>
-        || std::is_same_v<T, GLuint>;
+    concept gl_integral_type =
+           std::is_same_v<T, GLbyte>   || std::is_same_v<T, GLubyte> || std::is_same_v<T, GLshort>
+        || std::is_same_v<T, GLushort> || std::is_same_v<T, GLint>   || std::is_same_v<T, GLuint>;
 
     template<class T>
     concept gl_floating_point = std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble>;
+
+    template<class T>
+    concept gl_arithmetic_type = gl_integral_type<T> || gl_floating_point<T> || std::is_same_v<T, GLfixed>;
 
     enum class gl_type_specifier : GLenum {
         gl_half   = GL_HALF_FLOAT,

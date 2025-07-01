@@ -149,7 +149,7 @@ namespace avocet::opengl {
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
     };
 
-    template<gl_arithmetic_type T>
+    template<gl_integral_type T>
     class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
     public:
         using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;

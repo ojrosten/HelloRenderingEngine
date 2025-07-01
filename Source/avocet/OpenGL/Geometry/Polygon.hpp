@@ -80,7 +80,10 @@ namespace avocet::opengl {
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
     [[nodiscard]]
     constexpr vertex_attributes<T, ArenaDimension, Attributes...> build_polygon_vertex_attributes(std::size_t i) {
-        return {.local_coordinates{make_polygon_vertex<T, ArenaDimension>(i, N)}, .additional_attributes{build_polygon_vertex_attribute<Attributes>{}(i, N)...}};
+        return {
+            .local_coordinates{make_polygon_vertex<T, ArenaDimension>(i, N)},
+            .additional_attributes{build_polygon_vertex_attribute<Attributes>{}(i, N)...}
+        };
     }
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
@@ -138,8 +141,13 @@ namespace avocet::opengl {
         SEQUOIA_NO_UNIQUE_ADDRESS texture_t m_Texture;
     };
 
+    template<std::integral EBOValueType>
+    constexpr std::size_t max_num_supported_vertices() {
+        return 2 + (std::numeric_limits<EBOValueType>::max() / 3);
+    }
+
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (N <= 87)
+        requires (N <= max_num_supported_vertices<GLubyte>())
     class polygon : public polygon_base<T, N, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, N, ArenaDimension, Attributes...>;
