@@ -55,11 +55,10 @@ namespace avocet::opengl {
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
-    // Changing to dimensionality seems to crash MSVC!
-    template<gl_floating_point T, std::size_t D>
-        requires (2 <= D)
+    template<gl_floating_point T, dimensionality D>
+        requires (dimensionality{2} <= D)
     [[nodiscard]]
-    constexpr local_coordinates<T, D> make_polygon_vertex(std::size_t i, std::size_t N) {
+    constexpr local_coordinates<T, D.value> make_polygon_vertex(std::size_t i, std::size_t N) {
         constexpr T pi{std::numbers::pi_v<T>};
         const auto offset{N % 2 ? 0 : pi / N};
         const auto theta_n{offset + 2 * pi * i / N};
@@ -74,14 +73,14 @@ namespace avocet::opengl {
     struct build_polygon_vertex_attribute<texture_coordinates<T>> {
         [[nodiscard]]
         constexpr texture_coordinates<T> operator() (std::size_t i, std::size_t N) const {
-            return texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, 2>(i, N).values()};
+            return texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, dimensionality{2}> (i, N).values()};
         }
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
     [[nodiscard]]
     constexpr vertex_attributes<T, ArenaDimension, Attributes...> build_polygon_vertex_attributes(std::size_t i) {
-        return {.local_coordinates{make_polygon_vertex<T, ArenaDimension.value>(i, N)}, .additional_attributes{build_polygon_vertex_attribute<Attributes>{}(i, N)...}};
+        return {.local_coordinates{make_polygon_vertex<T, ArenaDimension>(i, N)}, .additional_attributes{build_polygon_vertex_attribute<Attributes>{}(i, N)...}};
     }
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
