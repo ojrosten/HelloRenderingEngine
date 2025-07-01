@@ -79,10 +79,10 @@ namespace avocet::opengl {
     }
 
     template<class>
-    struct build_polygon_vertex_attribute;
+    struct make_polygon_vertex_attribute;
 
     template<gl_floating_point T>
-    struct build_polygon_vertex_attribute<texture_coordinates<T>> {
+    struct make_polygon_vertex_attribute<texture_coordinates<T>> {
         [[nodiscard]]
         constexpr texture_coordinates<T> operator() (std::size_t i, std::size_t N) const {
             return texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, dimensionality{2}> (i, N).values()};
@@ -91,10 +91,10 @@ namespace avocet::opengl {
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
     [[nodiscard]]
-    constexpr vertex_attributes<T, ArenaDimension, Attributes...> build_polygon_vertex_attributes(std::size_t i) {
+    constexpr vertex_attributes<T, ArenaDimension, Attributes...> make_polygon_vertex_attributes(std::size_t i) {
         return {
             .local_coordinates{make_polygon_vertex<T, ArenaDimension>(i, N)},
-            .additional_attributes{build_polygon_vertex_attribute<Attributes>{}(i, N)...}
+            .additional_attributes{make_polygon_vertex_attribute<Attributes>{}(i, N)...}
         };
     }
 
@@ -143,7 +143,7 @@ namespace avocet::opengl {
         }
     private:
         const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(
-            [](std::size_t i){ return build_polygon_vertex_attributes<T, N, ArenaDimension, Attributes...>(i); })};
+            [](std::size_t i){ return make_polygon_vertex_attributes<T, N, ArenaDimension, Attributes...>(i); })};
         struct null_texture {};
         using vao_t     = vertex_attribute_object<local_coordinates<T, ArenaDimension.value>, Attributes...>;
         using texture_t = std::conditional_t<is_textured_v, texture_2d, null_texture>;
