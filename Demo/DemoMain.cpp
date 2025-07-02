@@ -114,7 +114,7 @@ int main()
         };
 
         const avocet::unique_image princess{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
-        agl::polygon<GLfloat, 4, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
+        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     std::get<0>(verts[i]) += agl::local_coordinates<GLfloat, 2>{-0.5f, -0.5f};
