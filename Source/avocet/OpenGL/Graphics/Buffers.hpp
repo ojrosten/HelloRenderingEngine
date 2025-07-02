@@ -14,7 +14,20 @@
 #include <vector>
 
 namespace avocet::opengl {
+    template<class T>
+    struct legal_buffer_type : std::false_type {};
+
+    template<class T>
+    using legal_buffer_type_t = legal_buffer_type<T>::type;
+
+    template<class T>
+    inline constexpr bool legal_buffer_type_v{legal_buffer_type<T>::value};
+
+    template<gl_arithmetic_type T>
+    struct legal_buffer_type<T> : std::true_type {};
+
     template<class... Attributes>
+        requires (legal_buffer_type_v<Attributes> && ...)
     struct vao_lifecycle_events {
         using value_type = std::common_type_t<typename Attributes::value_type...>;
 
@@ -74,18 +87,6 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
-
-    template<class T>
-    struct legal_buffer_type : std::false_type {};
-
-    template<class T>
-    using legal_buffer_type_t = legal_buffer_type<T>::type;
-
-    template<class T>
-    inline constexpr bool legal_buffer_type_v{legal_buffer_type<T>::value};
-
-    template<gl_arithmetic_type T>
-    struct legal_buffer_type<T> : std::true_type {};
 
     template<buffer_species Species, class T>
         requires legal_buffer_type_v<T>
