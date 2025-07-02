@@ -22,13 +22,18 @@
 
 namespace avocet::opengl {
     struct texture_arena {};
-    struct geometry_arena {};
+    struct local_geometry_arena {};
 
     template<std::floating_point T, std::size_t D>
     using local_coordinates = sequoia::maths::vec_coords<T, D, geometry_arena>;
 
     template<std::floating_point T>
     using texture_coordinates = sequoia::maths::vec_coords<T, 2, texture_arena>;
+
+    template<std::floating_point T, std::size_t D, class Arena>
+    struct legal_buffer_type<euclidean_vector_coordinates<T, D, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, D, Arena>>, Arena>> 
+        : std::bool_constant<sizeof(euclidean_vector_coordinates<T, D, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, D, Arena>>, Arena>) == D * sizeof(T)>
+    {};
 
     struct dimensionality{
         std::size_t value{};
@@ -37,48 +42,56 @@ namespace avocet::opengl {
         constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
-    template<dimensionality ArenaDimension>
-    inline constexpr bool is_legal_dimension_v{(dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})};
-
     template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
     struct vertex_attributes {
         using value_type = T;
 
-        local_coordinates<T, ArenaDimension.value>          local_coordinates;
+        local_coordinates<T, ArenaDimension.value>          local_coords;
         SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
     };
 
+    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
+    struct legal_buffer_type<vertex_attributes<T, ArenaDimension, Attributes...>>
+        : std::bool_constant<
+                 legal_buffer_type_v<local_coordinates<T, ArenaDimension.value>>
+              && (legal_buffer_type_v<Attributes> && ...)
+              && (sizeof(vertex_attributes<T, ArenaDimension, Attributes...>) == (sizeof(local_coordinates<T, ArenaDimension.value>) + ... + sizeof(Attributes)))
+          >
+    {};
+
+    template<gl_floating_point T, dimensionality D>
+        requires (dimensionality{2} <= D)
+    [[nodiscard]]
+    constexpr local_coordinates<T, D.value> make_polygon_vertex(std::size_t i, std::size_t N) {
+        constexpr T pi{std::numbers::pi_v<T>};
+        const auto offset{N % 2 ? 0 : pi / N};
+        const auto theta_n{offset + 2 * pi * i / N};
+
+        return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
+    }
+
     template<class>
-    struct build_vertex_attribute;
-
-
-    template<gl_floating_point T, std::size_t D>
-    struct build_vertex_attribute<local_coordinates<T, D>> {
-        [[nodiscard]]
-        constexpr local_coordinates<T, D> operator() (std::size_t i, std::size_t N) const {
-            constexpr T pi{std::numbers::pi_v<T>};
-            const auto offset{N % 2 ? 0 : pi / N};
-            const auto theta_n{offset + 2 * pi * i / N};
-
-            return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
-        }
-    };
+    struct make_polygon_vertex_attribute;
 
     template<gl_floating_point T>
-    struct build_vertex_attribute<texture_coordinates<T>> {
+    struct make_polygon_vertex_attribute<texture_coordinates<T>> {
         [[nodiscard]]
         constexpr texture_coordinates<T> operator() (std::size_t i, std::size_t N) const {
-            constexpr T pi{std::numbers::pi_v<T>};
-            const auto offset{N % 2 ? 0 : pi / N};
-            const auto theta_n{offset + 2 * pi * i / N};
-
-            return {T{0.5}*(T{1.0} - std::sin(theta_n)), T{0.5}*(T{1.0} + std::cos(theta_n))};
+            return texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, dimensionality{2}> (i, N).values()};
         }
     };
 
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
+    [[nodiscard]]
+    constexpr vertex_attributes<T, ArenaDimension, Attributes...> make_polygon_vertex_attributes(std::size_t i) {
+        return {
+            .local_coords{make_polygon_vertex<T, ArenaDimension>(i, N)},
+            .additional_attributes{make_polygon_vertex_attribute<Attributes>{}(i, N)...}
+        };
+    }
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (3 <= N) && is_legal_dimension_v<ArenaDimension>
+        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
     class polygon_base{
     public:
         using value_type = T;
@@ -92,20 +105,18 @@ namespace avocet::opengl {
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
         polygon_base(Fn transformer, const std::optional<std::string>& label)
-            : m_VAO{label}
-            , m_VBO{transformer(st_Vertices), label}
+            : m_VBO{transformer(st_Vertices), label}
+            , m_VAO{label}
         {
-            set_attribute_ptrs();
         }
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
         polygon_base(Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
-            : m_VAO{label}
-            , m_VBO{transformer(st_Vertices), label}
+            : m_VBO{transformer(st_Vertices), label}
+            , m_VAO{label}
             , m_Texture{texConfig}
         {
-            set_attribute_ptrs();
         }
 
         [[nodiscard]]
@@ -123,47 +134,24 @@ namespace avocet::opengl {
             }
         }
     private:
-        [[nodiscard]]
-        constexpr static vertex_attribute_type to_vertex_attributes(std::size_t i) {
-            return {.local_coordinates{build_vertex_attribute<local_coordinates<T, ArenaDimension.value>>{}(i, N)}, .additional_attributes{build_vertex_attribute<Attributes>{}(i, N)...}};
-        }
-
-        const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(to_vertex_attributes)};
+        const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(
+            [](std::size_t i){ return make_polygon_vertex_attributes<T, N, ArenaDimension, Attributes...>(i); })};
         struct null_texture {};
+        using vao_t     = vertex_attribute_object<local_coordinates<T, ArenaDimension.value>, Attributes...>;
         using texture_t = std::conditional_t<is_textured_v, texture_2d, null_texture>;
 
-        vertex_attribute_object m_VAO;
         vertex_buffer_object<vertex_attribute_type> m_VBO;
+        vao_t m_VAO;
         SEQUOIA_NO_UNIQUE_ADDRESS texture_t m_Texture;
-
-        struct next_attribute_indices {
-            GLuint index{};
-            std::size_t offset{};
-        };
-
-        [[nodiscard]]
-        static next_attribute_indices do_set_attribute_ptr(next_attribute_indices indices, GLint components) {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto stride{arena_dimension.value * sizeof(value_type) + (0 + ... + sizeof(Attributes))};
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
-            }
-            else {
-                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
-            }
-            gl_function{glEnableVertexAttribArray}(indices.index);
-
-            return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(value_type)}};
-        }
-
-        static void set_attribute_ptrs() {
-            [[maybe_unused]] auto nextParams{do_set_attribute_ptr({.index{0}, .offset{0}}, to_gl_int(arena_dimension.value))};
-            ((nextParams = do_set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...);
-        }
     };
 
+    template<std::integral EBOValueType>
+    constexpr std::size_t max_num_supported_vertices() {
+        return 2 + (std::numeric_limits<EBOValueType>::max() / 3);
+    }
+
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (N <= 87)
+        requires (N <= max_num_supported_vertices<GLubyte>())
     class polygon : public polygon_base<T, N, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, N, ArenaDimension, Attributes...>;
