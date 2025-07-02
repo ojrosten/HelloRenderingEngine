@@ -25,14 +25,14 @@ namespace avocet::opengl {
     struct local_geometry_arena {};
 
     template<std::floating_point T, std::size_t D>
-    using local_coordinates = sequoia::maths::vec_coords<T, D, geometry_arena>;
+    using local_coordinates = sequoia::maths::vec_coords<T, D, local_geometry_arena>;
 
     template<std::floating_point T>
     using texture_coordinates = sequoia::maths::vec_coords<T, 2, texture_arena>;
 
     template<std::floating_point T, std::size_t D, class Arena>
-    struct legal_buffer_type<euclidean_vector_coordinates<T, D, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, D, Arena>>, Arena>> 
-        : std::bool_constant<sizeof(euclidean_vector_coordinates<T, D, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, D, Arena>>, Arena>) == D * sizeof(T)>
+    struct legal_buffer_type<sequoia::maths::vec_coords<T, D, Arena>> 
+        : std::bool_constant<sizeof(sequoia::maths::vec_coords<T, D, Arena>) == D * sizeof(T)>
     {};
 
     struct dimensionality{
