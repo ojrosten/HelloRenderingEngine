@@ -150,7 +150,7 @@ namespace avocet::opengl {
             vertex_buffer_object<std::tuple<Attributes...>>::do_bind(vbo);
             next_attribute_indices nextParams{naturally_ordered<Attributes...>(), sizeof...(Attributes)};
             constexpr auto stride{(sizeof(Attributes) + ...)};
-            ((nextParams = set_attribute_ptr<fundamental_type>(nextParams, sizeof(Attributes) / sizeof(fundamental_type), stride)), ...);
+            (set_attribute_ptr<fundamental_type>(nextParams, sizeof(Attributes) / sizeof(fundamental_type), stride), ...);
         }
 
         friend void bind(const vertex_attribute_object& vao) { base_type::do_bind(vao); }
@@ -178,8 +178,6 @@ namespace avocet::opengl {
             [[nodiscard]]
             std::size_t offset() const noexcept { return m_Offset; }
 
-
-            [[nodiscard]]
             next_attribute_indices& advance(std::size_t offsetIncrement) noexcept {
                 m_NaturallyOrdered ? ++m_Index : --m_Index;
                 m_Offset += offsetIncrement;
@@ -188,7 +186,7 @@ namespace avocet::opengl {
         };
 
         template<class ValueType>
-        static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components, GLsizei stride) {
+        static void set_attribute_ptr(next_attribute_indices& indices, GLint components, GLsizei stride) {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
             if constexpr(std::is_same_v<ValueType, GLdouble>) {
                 gl_function{glVertexAttribLPointer}(indices.index(), components, typeSpecifier, stride, (GLvoid*)indices.offset());
@@ -198,7 +196,7 @@ namespace avocet::opengl {
             }
             gl_function{glEnableVertexAttribArray}(indices.index());
 
-            return indices.advance(components * sizeof(ValueType));
+            indices.advance(components * sizeof(ValueType));
         }
     };
 
