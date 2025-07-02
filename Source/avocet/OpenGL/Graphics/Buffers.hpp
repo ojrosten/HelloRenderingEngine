@@ -47,7 +47,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components) {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto stride{(0 + ... + sizeof(Attributes))};
+            constexpr auto stride{(sizeof(Attributes) + ...)};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
                 gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
             }
