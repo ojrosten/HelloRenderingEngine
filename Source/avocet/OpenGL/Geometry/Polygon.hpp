@@ -21,24 +21,14 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-    template<std::floating_point T, std::size_t D, class Arena>
-    struct euclidean_vector_space : sequoia::maths::euclidean_vector_space<T, D>
-    {
-    };
-
     struct texture_arena {};
     struct geometry_arena {};
 
-    template<std::floating_point T, std::size_t D, sequoia::maths::basis Basis, class Arena>
-    using euclidean_vector_coordinates = sequoia::maths::vector_coordinates<euclidean_vector_space<T, D, Arena>, Basis>;
-
     template<std::floating_point T, std::size_t D>
-    using local_coordinates = euclidean_vector_coordinates<T, D, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, D, geometry_arena>>, geometry_arena>;
+    using local_coordinates = sequoia::maths::vec_coords<T, D, geometry_arena>;
 
     template<std::floating_point T>
-    using texture_coordinates = euclidean_vector_coordinates<T, 2, sequoia::maths::canonical_right_handed_basis<euclidean_vector_space<T, 2, texture_arena>>, texture_arena>;
-
-
+    using texture_coordinates = sequoia::maths::vec_coords<T, 2, texture_arena>;
 
     struct dimensionality{
         std::size_t value{};
