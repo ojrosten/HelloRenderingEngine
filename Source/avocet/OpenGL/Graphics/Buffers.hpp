@@ -148,30 +148,57 @@ namespace avocet::opengl {
             using fundamental_type = vertex_buffer_object<std::tuple<Attributes...>>::fundamental_type;
             static_assert(gl_floating_point<fundamental_type>);
             vertex_buffer_object<std::tuple<Attributes...>>::do_bind(vbo);
-            next_attribute_indices nextParams{};
+            next_attribute_indices nextParams{naturally_ordered<Attributes...>(), sizeof...(Attributes)};
             constexpr auto stride{(sizeof(Attributes) + ...)};
             ((nextParams = set_attribute_ptr<fundamental_type>(nextParams, sizeof(Attributes) / sizeof(fundamental_type), stride)), ...);
         }
 
         friend void bind(const vertex_attribute_object& vao) { base_type::do_bind(vao); }
     private:
-        struct next_attribute_indices {
-            GLuint index{};
-            std::size_t offset{};
+        template<class... Attributes>
+        [[nodiscard]]
+        consteval static bool naturally_ordered() noexcept {
+            std::tuple<Attributes...> t;
+            return static_cast<void*>(&t) == static_cast<void*>(&std::get<0>(t));
+        }
+
+        class next_attribute_indices {
+            bool m_NaturallyOrdered{};
+            GLuint m_Index{};
+            std::size_t m_Offset{};
+        public:
+            next_attribute_indices(bool naturallyOrdered, GLuint numAttributes)
+                : m_NaturallyOrdered{naturallyOrdered}
+                , m_Index{naturallyOrdered ? 0 : numAttributes - 1}
+            { }
+
+            [[nodiscard]]
+            GLuint index() const noexcept { return m_Index; }
+
+            [[nodiscard]]
+            std::size_t offset() const noexcept { return m_Offset; }
+
+
+            [[nodiscard]]
+            next_attribute_indices& advance(std::size_t offsetIncrement) noexcept {
+                m_NaturallyOrdered ? ++m_Index : --m_Index;
+                m_Offset += offsetIncrement;
+                return *this;
+            }
         };
 
         template<class ValueType>
         static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components, GLsizei stride) {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
             if constexpr(std::is_same_v<ValueType, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
+                gl_function{glVertexAttribLPointer}(indices.index(), components, typeSpecifier, stride, (GLvoid*)indices.offset());
             }
             else {
-                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
+                gl_function{glVertexAttribPointer}(indices.index(), components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset());
             }
-            gl_function{glEnableVertexAttribArray}(indices.index);
+            gl_function{glEnableVertexAttribArray}(indices.index());
 
-            return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(ValueType)}};
+            return indices.advance(components * sizeof(ValueType));
         }
     };
 

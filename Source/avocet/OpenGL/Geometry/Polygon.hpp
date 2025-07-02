@@ -42,23 +42,6 @@ namespace avocet::opengl {
         constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
-    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
-    struct vertex_attributes {
-        using value_type = T;
-
-        local_coordinates<T, ArenaDimension.value>          local_coords;
-        SEQUOIA_NO_UNIQUE_ADDRESS std::tuple<Attributes...> additional_attributes;
-    };
-
-    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
-    struct legal_buffer_type<vertex_attributes<T, ArenaDimension, Attributes...>>
-        : std::bool_constant<
-                 legal_buffer_type_v<local_coordinates<T, ArenaDimension.value>>
-              && (legal_buffer_type_v<Attributes> && ...)
-              && (sizeof(vertex_attributes<T, ArenaDimension, Attributes...>) == (sizeof(local_coordinates<T, ArenaDimension.value>) + ... + sizeof(Attributes)))
-          >
-    {};
-
     template<gl_floating_point T, dimensionality D>
         requires (dimensionality{2} <= D)
     [[nodiscard]]
