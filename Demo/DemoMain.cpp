@@ -73,7 +73,7 @@ int main()
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    verts[i].local_coords += agl::local_coordinates<GLdouble, 3>{0.5, -0.5, 0.0};
+                    std::get<0>(verts[i]) += agl::local_coordinates<GLdouble, 3>{0.5, -0.5, 0.0};
                 }
 
                 return verts;
@@ -88,7 +88,7 @@ int main()
           [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
                     constexpr auto scale{2 * radius / 0.5};
-                    for(auto&& [coord, middle] : std::views::zip(verts[i].local_coords, centre))
+                    for(auto&& [coord, middle] : std::views::zip(std::get<0>(verts[i]), centre))
                         (coord *= scale) += middle;
                 }
 
@@ -105,8 +105,7 @@ int main()
             [](std::ranges::random_access_range auto verts) {
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    verts[i].local_coords[0] += 0.5;
-                    verts[i].local_coords[1] += 0.5;
+                    std::get<0>(verts[i]) += agl::local_coordinates<GLfloat, 3>{0.5f, 0.5f, 0.0f};
                 }
 
                 return verts;
@@ -115,11 +114,10 @@ int main()
         };
 
         const avocet::unique_image princess{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
-        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
+        agl::polygon<GLfloat, 4, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    verts[i].local_coords[0] -= 0.5;
-                    verts[i].local_coords[1] -= 0.5;
+                    std::get<0>(verts[i]) += agl::local_coordinates<GLfloat, 2>{-0.5f, -0.5f};
                 }
 
                 return verts;

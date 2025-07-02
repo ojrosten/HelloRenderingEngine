@@ -83,11 +83,8 @@ namespace avocet::opengl {
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
     [[nodiscard]]
-    constexpr vertex_attributes<T, ArenaDimension, Attributes...> make_polygon_vertex_attributes(std::size_t i) {
-        return {
-            .local_coords{make_polygon_vertex<T, ArenaDimension>(i, N)},
-            .additional_attributes{make_polygon_vertex_attribute<Attributes>{}(i, N)...}
-        };
+    constexpr std::tuple<local_coordinates<T, ArenaDimension.value>, Attributes...> make_polygon_vertex_attributes(std::size_t i) {
+        return {make_polygon_vertex<T, ArenaDimension>(i, N), make_polygon_vertex_attribute<Attributes>{}(i, N)...};
     }
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
@@ -99,14 +96,14 @@ namespace avocet::opengl {
         constexpr static auto arena_dimension{ArenaDimension};
         constexpr static bool is_textured_v{(std::same_as<texture_coordinates<T>, Attributes> || ...)};
 
-        using vertex_attribute_type = vertex_attributes<T, ArenaDimension, Attributes...>;
+        using vertex_attribute_type = std::tuple<local_coordinates<T, ArenaDimension.value>, Attributes...>;
         using vertices_type         = std::array<vertex_attribute_type, N>;
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
         polygon_base(Fn transformer, const std::optional<std::string>& label)
             : m_VBO{transformer(st_Vertices), label}
-            , m_VAO{label}
+            , m_VAO{label, m_VBO}
         {
         }
 
@@ -114,7 +111,7 @@ namespace avocet::opengl {
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
         polygon_base(Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             : m_VBO{transformer(st_Vertices), label}
-            , m_VAO{label}
+            , m_VAO{label, m_VBO}
             , m_Texture{texConfig}
         {
         }
@@ -137,10 +134,10 @@ namespace avocet::opengl {
         const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(
             [](std::size_t i){ return make_polygon_vertex_attributes<T, N, ArenaDimension, Attributes...>(i); })};
         struct null_texture {};
-        using vao_t     = vertex_attribute_object<local_coordinates<T, ArenaDimension.value>, Attributes...>;
+        using vao_t     = vertex_attribute_object;
         using texture_t = std::conditional_t<is_textured_v, texture_2d, null_texture>;
 
-        vertex_buffer_object<vertex_attribute_type> m_VBO;
+        vertex_buffer_object<std::tuple<local_coordinates<T, ArenaDimension.value>, Attributes...>> m_VBO;
         vao_t m_VAO;
         SEQUOIA_NO_UNIQUE_ADDRESS texture_t m_Texture;
     };

@@ -11,6 +11,8 @@
 #include "avocet/OpenGL/Graphics/Labels.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
+#include "sequoia/Maths/Geometry/Spaces.hpp"
+
 #include <vector>
 
 namespace avocet::opengl {
@@ -26,11 +28,7 @@ namespace avocet::opengl {
     template<gl_arithmetic_type T>
     struct legal_buffer_type<T> : std::true_type {};
 
-    template<class... Attributes>
-        requires (legal_buffer_type_v<Attributes> && ...)
     struct vao_lifecycle_events {
-        using value_type = std::common_type_t<typename Attributes::value_type...>;
-
         constexpr static auto identifier{object_identifier::vertex_array};
 
         struct configurator {
@@ -47,30 +45,8 @@ namespace avocet::opengl {
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
-
-            next_attribute_indices nextParams{};
-            ((nextParams = set_attribute_ptr(nextParams, sizeof(Attributes) / sizeof(value_type))), ...); 
         }
     private:
-        struct next_attribute_indices {
-            GLuint index{};
-            std::size_t offset{};
-        };
-
-        [[nodiscard]]
-        static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components) {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto stride{(sizeof(Attributes) + ...)};
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
-            }
-            else {
-                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
-            }
-            gl_function{glEnableVertexAttribArray}(indices.index);
-
-            return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(value_type)}};
-        }
     };
 
     enum class buffer_species : GLenum {
@@ -89,7 +65,7 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, class T>
-        requires legal_buffer_type_v<T>
+    //    requires legal_buffer_type_v<T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         struct configurator {
             std::span<const T> buffer_data;
@@ -104,21 +80,8 @@ namespace avocet::opengl {
         }
     };
 
-    template<class... Attributes>
-    class vertex_attribute_object : public generic_resource<num_resources{1}, vao_lifecycle_events<Attributes...>> {
-    public:
-        using lifecycle_events_type = vao_lifecycle_events<Attributes...>;
-        using base_type = generic_resource<num_resources{1}, vao_lifecycle_events<Attributes...>>;
-
-        explicit vertex_attribute_object(const optional_label& label)
-            : base_type{{{label}}}
-        {}
-
-        friend void bind(const vertex_attribute_object& vao) { base_type::do_bind(vao); }
-    };
-
     template<buffer_species Species, class T>
-        requires legal_buffer_type_v<T>
+    //    requires legal_buffer_type_v<T>
     class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
     {
     public:
@@ -148,10 +111,22 @@ namespace avocet::opengl {
     };
 
     template<class T>
-        requires legal_buffer_type_v<T>
-    class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
+    class vertex_buffer_object;
+
+    template<gl_floating_point T>
+    class vertex_buffer_object<T> : public generic_buffer_object<buffer_species::array, T> {
+        friend class vertex_attribute_object;
     public:
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
+    };
+
+    template<class... Attributes>
+    class vertex_buffer_object<std::tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, std::tuple<Attributes...>> {
+        friend class vertex_attribute_object;
+    public:
+        using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
+
+        using generic_buffer_object<buffer_species::array, std::tuple<Attributes...>>::generic_buffer_object;
     };
 
     template<gl_integral_type T>
@@ -159,5 +134,46 @@ namespace avocet::opengl {
     public:
         using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
     };
+
+ 
+    class vertex_attribute_object : public generic_resource<num_resources{1}, vao_lifecycle_events> {
+    public:
+        using lifecycle_events_type = vao_lifecycle_events;
+        using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
+
+        template<class... Attributes>
+        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<std::tuple<Attributes...>>& vbo)
+            : base_type{{{label}}}
+        {
+            using fundamental_type = vertex_buffer_object<std::tuple<Attributes...>>::fundamental_type;
+            static_assert(gl_floating_point<fundamental_type>);
+            vertex_buffer_object<std::tuple<Attributes...>>::do_bind(vbo);
+            next_attribute_indices nextParams{};
+            constexpr auto stride{(sizeof(Attributes) + ...)};
+            ((nextParams = set_attribute_ptr<fundamental_type>(nextParams, sizeof(Attributes) / sizeof(fundamental_type), stride)), ...);
+        }
+
+        friend void bind(const vertex_attribute_object& vao) { base_type::do_bind(vao); }
+    private:
+        struct next_attribute_indices {
+            GLuint index{};
+            std::size_t offset{};
+        };
+
+        template<class ValueType>
+        static next_attribute_indices set_attribute_ptr(next_attribute_indices indices, GLint components, GLsizei stride) {
+            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
+            if constexpr(std::is_same_v<ValueType, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
+            }
+            else {
+                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
+            }
+            gl_function{glEnableVertexAttribArray}(indices.index);
+
+            return {.index{indices.index + 1}, .offset{indices.offset + components * sizeof(ValueType)}};
+        }
+    };
+
 
 }
