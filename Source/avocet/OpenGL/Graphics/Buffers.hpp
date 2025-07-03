@@ -25,7 +25,7 @@ namespace avocet::opengl {
     template<class T>
     inline constexpr bool legal_buffer_type_v{legal_buffer_type<T>::value};
 
-    template<gl_arithmetic_type T>
+    template<gl_arithmetic T>
     struct legal_buffer_type<T> : std::true_type {};
 
     struct vao_lifecycle_events {
@@ -113,7 +113,7 @@ namespace avocet::opengl {
     template<class... Ts>
     class vertex_buffer_object;
 
-    template<gl_arithmetic_type T>
+    template<gl_arithmetic T>
     class vertex_buffer_object<T> : public generic_buffer_object<buffer_species::array, T> {
         friend class vertex_attribute_object;
     public:
@@ -130,7 +130,7 @@ namespace avocet::opengl {
         using generic_buffer_object<buffer_species::array, std::tuple<Attributes...>>::generic_buffer_object;
     };
 
-    template<gl_integral_type T>
+    template<gl_integral T>
     class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
     public:
         using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
