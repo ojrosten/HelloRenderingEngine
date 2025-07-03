@@ -133,7 +133,7 @@ namespace avocet::opengl {
         using vao_t     = vertex_attribute_object;
         using texture_t = std::conditional_t<is_textured_v, texture_2d, null_texture>;
 
-        vertex_buffer_object<local_coordinates<T, ArenaDimension>, Attributes...> m_VBO;
+        vertex_buffer_object<vertex_attribute_type> m_VBO;
         vao_t m_VAO;
         SEQUOIA_NO_UNIQUE_ADDRESS texture_t m_Texture;
     };

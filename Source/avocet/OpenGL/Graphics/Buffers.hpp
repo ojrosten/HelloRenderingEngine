@@ -110,19 +110,20 @@ namespace avocet::opengl {
         }
     };
 
-    template<class... Ts>
+    template<class T>
     class vertex_buffer_object;
 
     template<gl_arithmetic T>
     class vertex_buffer_object<T> : public generic_buffer_object<buffer_species::array, T> {
-        friend class vertex_attribute_object;
     public:
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
     };
 
     template<class... Attributes>
         requires legal_buffer_type_v<std::tuple<Attributes...>>
-    class vertex_buffer_object<Attributes...> : public generic_buffer_object<buffer_species::array, std::tuple<Attributes...>> {
+    class vertex_buffer_object<std::tuple<Attributes...>>
+        : public generic_buffer_object<buffer_species::array, std::tuple<Attributes...>> {
+
         friend class vertex_attribute_object;
     public:
         using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
@@ -143,12 +144,12 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<Attributes...>& vbo)
+        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<std::tuple<Attributes...>>& vbo)
             : base_type{{{label}}}
         {
-            using fundamental_type = vertex_buffer_object<Attributes...>::fundamental_type;
-            static_assert(gl_floating_point<fundamental_type>);
-            vertex_buffer_object<Attributes...>::do_bind(vbo);
+            using vbo_t            = vertex_buffer_object<std::tuple<Attributes...>>;
+            using fundamental_type = vbo_t::fundamental_type;
+            vbo_t::do_bind(vbo);
             next_attribute_indices nextParams{naturally_ordered<Attributes...>(), sizeof...(Attributes)};
             constexpr auto stride{(sizeof(Attributes) + ...)};
             (set_attribute_ptr<fundamental_type>(nextParams, sizeof(Attributes) / sizeof(fundamental_type), stride), ...);
