@@ -73,7 +73,7 @@ int main()
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    std::get<0>(verts[i]) += agl::local_coordinates<GLdouble, 3>{0.5, -0.5, 0.0};
+                    std::get<0>(verts[i]) += agl::local_coordinates<GLdouble, agl::dimensionality{3}> {0.5, -0.5, 0.0};
                 }
 
                 return verts;
@@ -105,7 +105,7 @@ int main()
             [](std::ranges::random_access_range auto verts) {
 
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    std::get<0>(verts[i]) += agl::local_coordinates<GLfloat, 3>{0.5f, 0.5f, 0.0f};
+                    std::get<0>(verts[i]) += agl::local_coordinates<GLfloat, agl::dimensionality{3}>{0.5f, 0.5f, 0.0f};
                 }
 
                 return verts;
@@ -117,7 +117,7 @@ int main()
         agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             [](std::ranges::random_access_range auto verts) {
                 for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    std::get<0>(verts[i]) += agl::local_coordinates<GLfloat, 2>{-0.5f, -0.5f};
+                    std::get<0>(verts[i]) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.5f};
                 }
 
                 return verts;

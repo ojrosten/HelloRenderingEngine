@@ -21,11 +21,19 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    struct dimensionality{
+        std::size_t value{};
+
+        [[nodiscard]]
+        constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
+    };
+
+
     struct texture_arena {};
     struct local_geometry_arena {};
 
-    template<std::floating_point T, std::size_t D>
-    using local_coordinates = sequoia::maths::vec_coords<T, D, local_geometry_arena>;
+    template<std::floating_point T, dimensionality D>
+    using local_coordinates = sequoia::maths::vec_coords<T, D.value, local_geometry_arena>;
 
     template<std::floating_point T>
     using texture_coordinates = sequoia::maths::vec_coords<T, 2, texture_arena>;
@@ -35,17 +43,10 @@ namespace avocet::opengl {
         : std::bool_constant<sizeof(sequoia::maths::vec_coords<T, D, Arena>) == D * sizeof(T)>
     {};
 
-    struct dimensionality{
-        std::size_t value{};
-
-        [[nodiscard]]
-        constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
-    };
-
     template<gl_floating_point T, dimensionality D>
         requires (dimensionality{2} <= D)
     [[nodiscard]]
-    constexpr local_coordinates<T, D.value> make_polygon_vertex(std::size_t i, std::size_t N) {
+    constexpr local_coordinates<T, D> make_polygon_vertex(std::size_t i, std::size_t N) {
         constexpr T pi{std::numbers::pi_v<T>};
         const auto offset{N % 2 ? 0 : pi / N};
         const auto theta_n{offset + 2 * pi * i / N};
@@ -64,9 +65,21 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
+    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
+    using polygon_attributes = std::tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
+
+    template<gl_floating_point T, std::size_t D, class... Attributes>
+    struct legal_buffer_type<std::tuple<sequoia::maths::vec_coords<T, D, local_geometry_arena>, Attributes...>>
+        : std::bool_constant<
+                 legal_buffer_type_v<local_coordinates<T, dimensionality{D}>>
+              && (legal_buffer_type_v<Attributes> && ...)
+              && (sizeof(polygon_attributes<T, dimensionality{D}, Attributes...>) == (sizeof(local_coordinates<T, dimensionality{D}>) + ... + sizeof(Attributes)))
+          >
+    {};
+
+    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
     [[nodiscard]]
-    constexpr std::tuple<local_coordinates<T, ArenaDimension.value>, Attributes...> make_polygon_vertex_attributes(std::size_t i) {
+    constexpr polygon_attributes<T, ArenaDimension, Attributes...> make_polygon_vertex_attributes(std::size_t i, std::size_t N) {
         return {make_polygon_vertex<T, ArenaDimension>(i, N), make_polygon_vertex_attribute<Attributes>{}(i, N)...};
     }
 
@@ -79,7 +92,7 @@ namespace avocet::opengl {
         constexpr static auto arena_dimension{ArenaDimension};
         constexpr static bool is_textured_v{(std::same_as<texture_coordinates<T>, Attributes> || ...)};
 
-        using vertex_attribute_type = std::tuple<local_coordinates<T, ArenaDimension.value>, Attributes...>;
+        using vertex_attribute_type = polygon_attributes<T, ArenaDimension, Attributes...>;
         using vertices_type         = std::array<vertex_attribute_type, N>;
 
         template<class Fn>
@@ -115,12 +128,12 @@ namespace avocet::opengl {
         }
     private:
         const inline static vertices_type st_Vertices{sequoia::utilities::make_array<vertex_attribute_type, N>(
-            [](std::size_t i){ return make_polygon_vertex_attributes<T, N, ArenaDimension, Attributes...>(i); })};
+            [](std::size_t i){ return make_polygon_vertex_attributes<T,  ArenaDimension, Attributes...>(i, N); })};
         struct null_texture {};
         using vao_t     = vertex_attribute_object;
         using texture_t = std::conditional_t<is_textured_v, texture_2d, null_texture>;
 
-        vertex_buffer_object<std::tuple<local_coordinates<T, ArenaDimension.value>, Attributes...>> m_VBO;
+        vertex_buffer_object<std::tuple<local_coordinates<T, ArenaDimension>, Attributes...>> m_VBO;
         vao_t m_VAO;
         SEQUOIA_NO_UNIQUE_ADDRESS texture_t m_Texture;
     };
