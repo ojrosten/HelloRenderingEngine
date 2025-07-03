@@ -28,9 +28,9 @@ namespace avocet::opengl {
         constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
     };
 
+    struct local_geometry_arena {};
 
     struct texture_arena {};
-    struct local_geometry_arena {};
 
     template<std::floating_point T, dimensionality D>
     using local_coordinates = sequoia::maths::vec_coords<T, D.value, local_geometry_arena>;
