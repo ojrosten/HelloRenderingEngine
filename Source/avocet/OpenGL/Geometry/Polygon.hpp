@@ -65,7 +65,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        friend bool operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept = default;
+        friend bool operator==(const polygon_base&, const polygon_base&) noexcept = default;
     protected:
         ~polygon_base() = default;
 
