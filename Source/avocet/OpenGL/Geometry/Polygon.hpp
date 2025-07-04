@@ -35,6 +35,16 @@ namespace avocet::opengl {
     template<std::floating_point T>
     using texture_coordinates = sequoia::maths::vec_coords<T, 2, texture_arena>;
 
+    template<std::floating_point T, dimensionality D>
+    [[nodiscard]]
+    local_coordinates<T, D> make_polygon_coordinates(std::size_t i, std::size_t N) {
+        constexpr T pi{std::numbers::pi_v<T>};
+        const auto offset{N % 2 ? 0 : pi / N};
+        const auto theta_n{offset + 2 * pi * i / N};
+
+        return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
+    }
+
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
         requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
     class polygon_base{
@@ -42,30 +52,20 @@ namespace avocet::opengl {
         using value_type = T;
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
-        constexpr static auto num_coordinates{N * arena_dimension.value};
 
-        using vertices_type = std::array<T, num_coordinates>;
+        using vertex_attributes_type = std::tuple<local_coordinates<T, ArenaDimension>>;
+        using vertices_type          = std::array<vertex_attributes_type, N>;
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         polygon_base(Fn transformer, const std::optional<std::string>& label)
-            : m_VAO{label}
-            , m_VBO{transformer(st_Vertices), label}
+            : m_VBO{transformer(st_Vertices), label}
+            , m_VAO{label, m_VBO}
         {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            constexpr auto dimension{arena_dimension.value};
-            constexpr auto stride{dimension * sizeof(value_type)};
-            if constexpr(std::is_same_v<value_type, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(0, dimension, typeSpecifier, stride, (GLvoid*)0);
-            }
-            else {
-                gl_function{glVertexAttribPointer}(0, dimension, typeSpecifier, GL_FALSE, stride, (GLvoid*)0);
-            }
-            gl_function{glEnableVertexAttribArray}(0);
         }
 
         [[nodiscard]]
-        friend bool operator==(const polygon_base& lhs, const polygon_base& rhs) noexcept = default;
+        friend bool operator==(const polygon_base&, const polygon_base&) noexcept = default;
     protected:
         ~polygon_base() = default;
 
@@ -74,31 +74,18 @@ namespace avocet::opengl {
 
         static void do_bind(const polygon_base& pg) { bind(pg.m_VAO); }
     private:
+
         [[nodiscard]]
-        constexpr static T to_coordinate(std::size_t i) {
-            constexpr T
-                pi{std::numbers::pi_v<T>},
-                offset{N % 2 ? 0 : pi / N};
-
-            constexpr auto dim{arena_dimension.value};
-            const auto n{i / dim};
-            const auto theta_n{offset + 2 * pi * n / N};
-
-            if(const auto remainder{i % dim}; remainder == 0)
-                return -T{0.5}*std::sin(theta_n);
-            else if(remainder == 1)
-                return T{0.5}*std::cos(theta_n);
-
-            return T{};
+        constexpr static vertices_type vertices() {
+            return sequoia::utilities::make_array<vertex_attributes_type, N>(
+                [](std::size_t i){ return make_polygon_coordinates<T, ArenaDimension>(i, N); }
+            );
         }
-
-        [[nodiscard]]
-        constexpr static vertices_type vertices() { return sequoia::utilities::make_array<T, num_coordinates>(to_coordinate); }
 
         const inline static vertices_type st_Vertices{vertices()};
 
+        vertex_buffer_object<vertex_attributes_type> m_VBO;
         vertex_attribute_object m_VAO;
-        vertex_buffer_object<value_type> m_VBO;
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
