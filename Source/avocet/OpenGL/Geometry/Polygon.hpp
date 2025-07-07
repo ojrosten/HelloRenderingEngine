@@ -51,9 +51,19 @@ namespace avocet::opengl {
         texture_coordinates<T>{T{0.5}, T{0.5}} + make_polygon_coordinates<T, 2>(i, N);
     }
 
+    template<class T>
+    struct make_polygon_vertex_attribute;
+
+    template<std::floating_point T, std::size_t D>
+    struct make_polygon_vertex_attribute<sequoia::maths::vec_coords<T, D, local_geometry_arena>> {
+        [[nodiscard]]
+        local_coordinates<T, dimensionality{D}> operator()(std::size_t i, std::size_t N) const {
+            return make_polygon_coordinates<T, dimensionality{D}>(i, N);
+        }
+    };
+
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
-        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
-    class polygon_base{
+    class polygon_base {
     public:
         using value_type = T;
         constexpr static auto num_vertices{N};
@@ -84,7 +94,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         constexpr static vertices_type vertices() {
             return sequoia::utilities::make_array<vertex_attributes_type, N>(
-                [](std::size_t i){ return make_polygon_coordinates<T, ArenaDimension>(i, N); }
+                [](std::size_t i){ return std::tuple{make_polygon_vertex_attribute<local_coordinates<T, ArenaDimension>>{}(i, N)}; }
             );
         }
 
