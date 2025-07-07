@@ -45,6 +45,12 @@ namespace avocet::opengl {
         return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
     }
 
+    template<std::floating_point T>
+    [[nodiscard]]
+    texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
+        texture_coordinates<T>{0.5, 0.5} + make_polygon_coordinates<T, 2>(i, N);
+    }
+
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
         requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
     class polygon_base{
