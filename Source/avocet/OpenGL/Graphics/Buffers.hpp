@@ -80,14 +80,14 @@ namespace avocet::opengl {
 
             vbo_t::do_bind(vbo);
 
-            attribute_indices indices{};
+            attrib_pointer_info ptrInfo{};
             constexpr auto stride{(sizeof(Attributes) + ...)};
-            (set_attribute_ptr<fundamental_type>(indices, sizeof(Attributes), stride), ...);
+            (set_attribute_ptr<fundamental_type>(ptrInfo, sizeof(Attributes), stride), ...);
         }
 
         friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
     private:
-        struct attribute_indices {
+        struct attrib_pointer_info {
             GLint index{};
             std::size_t offset{};
 
@@ -98,18 +98,18 @@ namespace avocet::opengl {
         };
 
         template<gl_arithmetic_type ValueType>
-        static void set_attribute_ptr(attribute_indices& indices, std::size_t sizeofAtt, GLsizei stride) {
+        static void set_attribute_ptr(attrib_pointer_info& ptrInfo, std::size_t sizeofAtt, GLsizei stride) {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
             const auto components{to_gl_int(sizeofAtt / sizeof(ValueType))};
             if constexpr(std::is_same_v<ValueType, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(indices.index, components, typeSpecifier, stride, (GLvoid*)indices.offset);
+                gl_function{glVertexAttribLPointer}(ptrInfo.index, components, typeSpecifier, stride, (GLvoid*)ptrInfo.offset);
             }
             else {
-                gl_function{glVertexAttribPointer}(indices.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)indices.offset);
+                gl_function{glVertexAttribPointer}(ptrInfo.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)ptrInfo.offset);
             }
-            gl_function{glEnableVertexAttribArray}(indices.index);
+            gl_function{glEnableVertexAttribArray}(ptrInfo.index);
 
-            indices.advance(sizeofAtt);
+            ptrInfo.advance(sizeofAtt);
         }
     };
 
