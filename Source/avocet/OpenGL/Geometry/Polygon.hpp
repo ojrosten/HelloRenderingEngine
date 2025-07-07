@@ -61,7 +61,7 @@ namespace avocet::opengl {
     struct make_polygon_vertex_attribute<texture_coordinates<T>> {
         [[nodiscard]]
         constexpr texture_coordinates<T> operator() (std::size_t i, std::size_t N) const {
-            return texture_coordinates<T>{0.5f, 0.5f} + texture_coordinates<T>{make_polygon_vertex<T, dimensionality{2}> (i, N).values()};
+            return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{make_polygon_vertex<T, dimensionality{2}>(i, N).values()};
         }
     };
 
