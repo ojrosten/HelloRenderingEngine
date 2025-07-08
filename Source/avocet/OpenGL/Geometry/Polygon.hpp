@@ -9,7 +9,7 @@
 
 #include "avocet/OpenGL/Graphics/Buffers.hpp"
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
-#include "sequoia/maths/geometry/Spaces.hpp"
+#include "sequoia/Maths/Geometry/Spaces.hpp"
 
 #include <cmath>
 #include <limits>
