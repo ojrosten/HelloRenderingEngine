@@ -60,7 +60,7 @@ int main()
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    std::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.5, -0.5};
+                    std::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.5, -0.5, 0.0};
                 }
 
                 return verts;
@@ -69,15 +69,13 @@ int main()
         };
 
         constexpr GLfloat radius{0.4f};
-        constexpr std::array<GLfloat, 2> centre{-0.5, 0.5};
+        constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> disc{
           [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
                     constexpr auto scale{2 * radius / 0.5};
-                    for(auto&& [coord, middle] : std::views::zip(std::get<0>(vert), centre)) {
-                        (coord *= scale) += middle;
-                    }
+                    (std::get<0>(vert) *= scale) += centre;
                 }
 
                 return verts;
@@ -86,13 +84,13 @@ int main()
         };
 
         discShaderProgram.set_uniform("radius", radius);
-        discShaderProgram.set_uniform("centre", centre);
+        discShaderProgram.set_uniform("centre", centre.values());
 
 
         agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    std::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{3}>{0.5f, 0.5f};
+                    std::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{3}>{0.5f, 0.5f, 0.0f};
                 }
 
                 return verts;
