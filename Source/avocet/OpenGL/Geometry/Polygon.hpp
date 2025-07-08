@@ -37,7 +37,7 @@ namespace avocet::opengl {
 
     template<std::floating_point T, dimensionality D>
     [[nodiscard]]
-    local_coordinates<T, D> make_polygon_coordinates(std::size_t i, std::size_t N) {
+    constexpr local_coordinates<T, D> make_polygon_coordinates(std::size_t i, std::size_t N) {
         constexpr T pi{std::numbers::pi_v<T>};
         const auto offset{N % 2 ? 0 : pi / N};
         const auto theta_n{offset + 2 * pi * i / N};
@@ -47,7 +47,7 @@ namespace avocet::opengl {
 
     template<std::floating_point T>
     [[nodiscard]]
-    texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
+    constexpr texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
         texture_coordinates<T>{T{0.5}, T{0.5}} + make_polygon_coordinates<T, 2>(i, N);
     }
 
@@ -57,7 +57,7 @@ namespace avocet::opengl {
     template<std::floating_point T, std::size_t D>
     struct make_polygon_vertex_attribute<sequoia::maths::vec_coords<T, D, local_geometry_arena>> {
         [[nodiscard]]
-        local_coordinates<T, dimensionality{D}> operator()(std::size_t i, std::size_t N) const {
+        constexpr local_coordinates<T, dimensionality{D}> operator()(std::size_t i, std::size_t N) const {
             return make_polygon_coordinates<T, dimensionality{D}>(i, N);
         }
     };
