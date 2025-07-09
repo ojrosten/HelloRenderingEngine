@@ -8,8 +8,10 @@
 #pragma once
 
 #include "avocet/OpenGL/Graphics/Buffers.hpp"
+#include "avocet/OpenGL/Graphics/Textures.hpp"
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
 #include "sequoia/Maths/Geometry/Spaces.hpp"
+#include "sequoia/PlatformSpecific/Preprocessor.hpp"
 
 #include <cmath>
 #include <limits>
@@ -49,7 +51,7 @@ namespace avocet::opengl {
     template<std::floating_point T>
     [[nodiscard]]
     constexpr texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
-        return texture_coordinates<T>{T{0.5}, T{0.5}} + make_polygon_coordinates<T, 2>(i, N);
+        return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{make_polygon_coordinates<T, dimensionality{2}>(i, N). values()};
     }
 
     template<class T>
@@ -63,23 +65,40 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
+    template<std::floating_point T>
+    struct make_polygon_attribute<sequoia::maths::vec_coords<T, 2, texture_arena>>{
+        [[nodiscard]]
+        constexpr texture_coordinates<T> operator()(std::size_t i, std::size_t N) {
+            return make_polygon_tex_coordinates<T>(i, N);
+        }
+    };
+
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
         requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
     class polygon_base{
     public:
         using value_type = T;
-        using vertex_attribute_type = std::tuple<local_coordinates<T, ArenaDimension>>;
+        using vertex_attribute_type = std::tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
         using vertices_type         = std::array<vertex_attribute_type, N>;
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
+        constexpr static bool is_textured_v{(std::same_as<Attributes, texture_coordinates<T>> || ...)};
 
         template<class Fn>
-          requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+          requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
         polygon_base(Fn transformer, const std::optional<std::string>& label)
             : m_VBO{transformer(st_Vertices), label}
             , m_VAO{label, m_VBO}
         {
-            
+        }
+
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (is_textured_v)
+        polygon_base(Fn transformer, const texture_2d_configurator& config, const std::optional<std::string>& label)
+            : m_VBO{transformer(st_Vertices), label}
+            , m_VAO{label, m_VBO}
+            , m_Texture{config}
+        {
         }
 
         [[nodiscard]]
@@ -90,14 +109,21 @@ namespace avocet::opengl {
         polygon_base(polygon_base&&)            noexcept = default;
         polygon_base& operator=(polygon_base&&) noexcept = default;
 
-        static void do_bind(const polygon_base& pg) { bind(pg.m_VAO); }
+        static void do_bind(const polygon_base& pg) {
+            bind(pg.m_VAO);
+            if constexpr(is_textured_v) {
+                bind_for_rendering(pg.m_Texture);
+            }
+        }
     private:
+        struct null_texture {};
+        using texture_type = std::conditional_t<is_textured_v, texture_2d, null_texture>;
 
         [[nodiscard]]
         constexpr static vertices_type vertices() {
             return sequoia::utilities::make_array<vertex_attribute_type, N>(
-                [](std::size_t i) {
-                    return make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N);
+                [](std::size_t i) -> vertex_attribute_type {
+                    return {make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
                 }
             );
         }
@@ -106,19 +132,29 @@ namespace avocet::opengl {
 
         vertex_buffer_object<vertex_attribute_type> m_VBO;
         vertex_attribute_object m_VAO;
+        SEQUOIA_NO_UNIQUE_ADDRESS texture_type m_Texture;
     };
 
-    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension>
+    template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
         requires (N <= 87)
-    class polygon : public polygon_base<T, N, ArenaDimension> {
+    class polygon : public polygon_base<T, N, ArenaDimension, Attributes...> {
     public:
-        using polygon_base_type = polygon_base<T, N, ArenaDimension>;
+        using polygon_base_type = polygon_base<T, N, ArenaDimension, Attributes...>;
         using vertices_type     = polygon_base_type::vertices_type;
+        constexpr static bool is_textured_v{polygon_base_type::is_textured_v};
 
         template<class Fn>
-            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
         polygon(Fn transformer, const std::optional<std::string>& label)
             : polygon_base_type{transformer, label}
+            , m_EBO{st_Indices, label}
+        {
+        }
+
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
+        polygon(Fn transformer, const texture_2d_configurator& config, const std::optional<std::string>& label)
+            : polygon_base_type{transformer, config, label}
             , m_EBO{st_Indices, label}
         {
         }
@@ -150,11 +186,11 @@ namespace avocet::opengl {
         element_buffer_object<element_index_type> m_EBO;
     };
 
-    template<gl_floating_point T, dimensionality ArenaDimension>
-    class polygon<T, 3, ArenaDimension> : public polygon_base<T, 3, ArenaDimension> {
+    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
+    class polygon<T, 3, ArenaDimension, Attributes...> : public polygon_base<T, 3, ArenaDimension, Attributes...> {
     public:
-        using polygon_base_type = polygon_base<T, 3, ArenaDimension>;
-        using polygon_base<T, 3, ArenaDimension>::polygon_base;
+        using polygon_base_type = polygon_base<T, 3, ArenaDimension, Attributes...>;
+        using polygon_base_type::polygon_base;
 
         void draw() {
             polygon_base_type::do_bind(*this);

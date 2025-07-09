@@ -36,6 +36,19 @@ namespace {
     }
 
     [[nodiscard]]
+    fs::path get_image_dir() {
+        if(const fs::path file{std::source_location::current().file_name()}; file.is_absolute()) {
+            if(const auto dir{file.parent_path() / "Images"}; fs::exists(dir)) {
+                return dir;
+            }
+            else
+                throw std::runtime_error{std::format("Unable to find images directory {}", dir.generic_string())};
+        }
+
+        throw std::runtime_error{"Relative paths not supported"};
+    }
+
+    [[nodiscard]]
     std::string make_label(std::string_view name, std::source_location loc = std::source_location::current()) {
         return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
@@ -54,7 +67,7 @@ int main()
         agl::shader_program
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
-            shaderProgram2D{get_shader_dir() / "Identity2D.vs", get_shader_dir() / "Monochrome.fs"},
+            shaderProgram2DTextured{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
@@ -97,7 +110,9 @@ int main()
             make_label("Septagon")
         };
 
-        agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
+        avocet::unique_image pony{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
+
+        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
                     std::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.5f};
@@ -106,8 +121,16 @@ int main()
 
                 return verts;
             },
+            agl::texture_2d_configurator{
+                .data_view{pony},
+                .decoding{agl::sampling_decoding::srgb},
+                .parameter_setter{[](){ agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                .label{"Princess Twilight Sparkle"}
+            },
             make_label("Hexagon")
         };
+
+        shaderProgram2DTextured.set_uniform("image", 0);
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -119,7 +142,7 @@ int main()
             disc.draw();
             shaderProgram.use();
             sept.draw();
-            shaderProgram2D.use();
+            shaderProgram2DTextured.use();
             hex.draw();
 
             glfwSwapBuffers(&w.get());

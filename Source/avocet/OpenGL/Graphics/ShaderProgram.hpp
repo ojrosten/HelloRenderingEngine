@@ -83,6 +83,10 @@ namespace avocet::opengl {
             do_set_uniform(name, glUniform1f, val);
         }
 
+        void set_uniform(std::string_view name, GLint val) {
+            do_set_uniform(name, glUniform1i, val);
+        }
+
         void set_uniform(std::string_view name, std::span<const GLfloat, 2> vals) {
             do_set_uniform(name, glUniform2f, vals[0], vals[1]);
         }

@@ -74,6 +74,8 @@ namespace avocet::opengl {
     void texture_2d_lifecycle_events::configure(const resource_handle& h, const configurator& config) {
         add_label(identifier, h, config.label);
         load_to_gpu(config);
+        if(config.parameter_setter)
+            config.parameter_setter();
     }
 
     [[nodiscard]]

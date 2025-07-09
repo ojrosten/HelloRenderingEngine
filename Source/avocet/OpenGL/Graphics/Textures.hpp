@@ -57,6 +57,7 @@ namespace avocet::opengl {
 
         image_view        data_view;
         sampling_decoding decoding;
+        std::function<void()> parameter_setter;
         optional_label    label{};
     };
 
@@ -89,6 +90,11 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend unique_image extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
             return do_extract_data(tex2d, format, rowAlignment);
+        }
+
+        friend void bind_for_rendering(const texture_2d& texture) {
+            gl_function{glActiveTexture}(GL_TEXTURE0);
+            base_type::do_bind(texture);
         }
 
     private:
