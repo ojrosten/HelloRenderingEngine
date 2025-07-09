@@ -49,7 +49,7 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
     };
 
-    template<buffer_species Species, gl_arithmetic_type T>
+    template<buffer_species Species, class T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         struct configurator {
             std::span<const T> buffer_data;
@@ -64,18 +64,56 @@ namespace avocet::opengl {
         }
     };
 
+    template<class T>
+    class vertex_buffer_object;
+
     class vertex_attribute_object : public generic_resource<num_resources{1}, vao_lifecycle_events> {
     public:
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
-        explicit vertex_attribute_object(const optional_label& label)
+        template<class... Attributes>
+        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<std::tuple<Attributes...>>& vbo)
             : base_type{{{label}}}
-        {}
+        {
+            using vbo_t         = vertex_buffer_object<std::tuple<Attributes...>>;
+            using fundamental_t = vbo_t::fundamental_type;
+
+            vbo_t::do_bind(vbo);
+
+            attrib_ptr_info info{};
+            constexpr auto stride{(sizeof(Attributes) + ...)};
+            (set_attribute_ptr<fundamental_t>(info, sizeof(Attributes), stride), ...);
+        }
 
         friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
+    private:
+        struct attrib_ptr_info {
+            GLint index{};
+            std::size_t offset{};
+
+            void advance(std::size_t offsetIncrement) {
+                ++index;
+                offset += offsetIncrement;
+            }
+        };
+
+        template<gl_arithmetic_type ValueType>
+        void set_attribute_ptr(attrib_ptr_info& info, std::size_t sizeofAtt, GLsizei stride) {
+            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
+            const auto components{to_gl_int(sizeofAtt / sizeof(ValueType))};
+            if constexpr(std::is_same_v<ValueType, GLdouble>) {
+                gl_function{glVertexAttribLPointer}(info.index, components, typeSpecifier, stride, (GLvoid*)info.offset);
+            }
+            else {
+                gl_function{glVertexAttribPointer}(info.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)info.offset);
+            }
+            gl_function{glEnableVertexAttribArray}(info.index);
+
+            info.advance(sizeofAtt);
+        }
     };
 
-    template<buffer_species Species, gl_arithmetic_type T>
+    template<buffer_species Species, class T>
     class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
     {
     public:
@@ -105,9 +143,18 @@ namespace avocet::opengl {
     };
 
     template<gl_arithmetic_type T>
-    class vertex_buffer_object : public generic_buffer_object<buffer_species::array, T> {
+    class vertex_buffer_object<T> : public generic_buffer_object<buffer_species::array, T> {
     public:
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
+    };
+
+    template<class... Attributes>
+    class vertex_buffer_object<std::tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, std::tuple<Attributes...>> {
+        friend class vertex_attribute_object;
+    public:
+        using generic_buffer_object<buffer_species::array, std::tuple<Attributes...>>::generic_buffer_object;
+
+        using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
     };
 
     template<gl_arithmetic_type T>

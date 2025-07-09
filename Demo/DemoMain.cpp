@@ -59,9 +59,8 @@ int main()
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))       verts[i] += 0.5;
-                    if(!((i - 1) % 3)) verts[i] -= 0.5;
+                for(auto& vert : verts) {
+                    std::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.5, -0.5};
                 }
 
                 return verts;
@@ -70,13 +69,13 @@ int main()
         };
 
         constexpr GLfloat radius{0.4f};
-        constexpr std::array<GLfloat, 2> centre{-0.5, 0.5};
+        constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> disc{
           [radius, centre](std::ranges::random_access_range auto verts) {
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
+                for(auto& vert : verts) {
                     constexpr auto scale{2 * radius / 0.5};
-                    (verts[i] *= scale) += centre[i % 2];
+                    (std::get<0>(vert) *= scale) += centre;
                 }
 
                 return verts;
@@ -85,14 +84,12 @@ int main()
         };
 
         discShaderProgram.set_uniform("radius", radius);
-        discShaderProgram.set_uniform("centre", centre);
-
+        discShaderProgram.set_uniform("centre", centre.values());
 
         agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
             [](std::ranges::random_access_range auto verts) {
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 3))     verts[i] += 0.5;
-                    if(!((i-1) % 3)) verts[i] += 0.5;
+                for(auto& vert : verts) {
+                    std::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{3}>{0.5f, 0.5f};
                 }
 
                 return verts;
@@ -102,10 +99,10 @@ int main()
 
         agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
             [](std::ranges::random_access_range auto verts) {
-                for(auto i : std::views::iota(0, std::ssize(verts))) {
-                    if(!(i % 2))     verts[i] -= 0.5;
-                    if(!((i-1) % 2)) verts[i] -= 0.5;
+                for(auto& vert : verts) {
+                    std::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.5f};
                 }
+
 
                 return verts;
             },
