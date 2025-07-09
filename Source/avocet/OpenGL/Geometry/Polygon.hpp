@@ -49,7 +49,7 @@ namespace avocet::opengl {
     template<std::floating_point T>
     [[nodiscard]]
     constexpr texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
-        return texture_coordinates<T>{T{0.5}, T{0.5}} + make_polygon_coordinates<T, 2>(i, N);
+        return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{make_polygon_coordinates<T, dimensionality{2}>(i, N).values()};
     }
 
     template<class T>
@@ -79,7 +79,6 @@ namespace avocet::opengl {
             : m_VBO{transformer(st_Vertices), label}
             , m_VAO{label, m_VBO}
         {
-            
         }
 
         [[nodiscard]]
