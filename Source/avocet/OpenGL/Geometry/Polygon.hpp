@@ -75,13 +75,15 @@ namespace avocet::opengl {
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
         requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
-    class polygon_base{
+    class polygon_base {
     public:
-        using value_type = T;
+        using value_type            = T;
         using vertex_attribute_type = std::tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
         using vertices_type         = std::array<vertex_attribute_type, N>;
+
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
+
         constexpr static bool is_textured_v{(std::same_as<Attributes, texture_coordinates<T>> || ...)};
 
         template<class Fn>
@@ -93,7 +95,7 @@ namespace avocet::opengl {
         }
 
         template<class Fn>
-            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (is_textured_v)
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
         polygon_base(Fn transformer, const texture_2d_configurator& config, const std::optional<std::string>& label)
             : m_VBO{transformer(st_Vertices), label}
             , m_VAO{label, m_VBO}
@@ -112,12 +114,13 @@ namespace avocet::opengl {
         static void do_bind(const polygon_base& pg) {
             bind(pg.m_VAO);
             if constexpr(is_textured_v) {
-                bind_for_rendering(pg.m_Texture);
+                bind(pg.m_Texture);
             }
         }
     private:
-        struct null_texture {};
-        using texture_type = std::conditional_t<is_textured_v, texture_2d, null_texture>;
+        struct dummy_texture {};
+
+        using texture_type = std::conditional_t<is_textured_v, texture_2d, dummy_texture>;
 
         [[nodiscard]]
         constexpr static vertices_type vertices() {
@@ -132,6 +135,7 @@ namespace avocet::opengl {
 
         vertex_buffer_object<vertex_attribute_type> m_VBO;
         vertex_attribute_object m_VAO;
+
         SEQUOIA_NO_UNIQUE_ADDRESS texture_type m_Texture;
     };
 

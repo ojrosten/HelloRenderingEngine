@@ -72,7 +72,10 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteTextures}(N, indices.data()); }
 
-        static void bind(const resource_handle& h) { gl_function{glBindTexture}(GL_TEXTURE_2D, h.index()); }
+        static void bind(const resource_handle& h) {
+            gl_function{glActiveTexture}(GL_TEXTURE0);
+            gl_function{glBindTexture}(GL_TEXTURE_2D, h.index());
+        }
 
         static void configure(const resource_handle& h, const configurator& config);
     };
@@ -92,8 +95,7 @@ namespace avocet::opengl {
             return do_extract_data(tex2d, format, rowAlignment);
         }
 
-        friend void bind_for_rendering(const texture_2d& texture) {
-            gl_function{glActiveTexture}(GL_TEXTURE0);
+        friend void bind(const texture_2d& texture) {
             base_type::do_bind(texture);
         }
 

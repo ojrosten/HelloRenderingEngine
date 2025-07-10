@@ -64,6 +64,9 @@ int main()
         auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;
+
+        static_assert(sizeof(agl::triangle<float, agl::dimensionality{2}>) == 8);
+
         agl::shader_program
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
