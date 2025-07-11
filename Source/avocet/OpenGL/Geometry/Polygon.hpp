@@ -201,7 +201,7 @@ namespace avocet::opengl {
     class polygon<T, 3, ArenaDimension, Attributes...> : public polygon_base<T, 3, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, 3, ArenaDimension, Attributes...>;
-        using polygon_base_type::polygon_base;
+        using polygon_base<T, 3, ArenaDimension, Attributes...>::polygon_base;
         constexpr static bool is_textured_v{polygon_base_type::is_textured_v};
 
     private:
