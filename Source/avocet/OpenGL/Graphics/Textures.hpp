@@ -80,10 +80,10 @@ namespace avocet::opengl {
     };
 
     struct texture_unit {
-        std::size_t offset{};
+        std::size_t index{};
 
         [[nodiscard]]
-        GLenum raw_texture_unit() const { return GL_TEXTURE0 + to_gl_int(offset); }
+        GLenum gl_texture_unit() const { return GL_TEXTURE0 + to_gl_int(index); }
 
         [[nodiscard]]
         friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
@@ -105,7 +105,7 @@ namespace avocet::opengl {
         }
 
         friend void bind(const texture_2d& texture, texture_unit unit) {
-            gl_function{glActiveTexture}(unit.raw_texture_unit());
+            gl_function{glActiveTexture}(unit.gl_texture_unit());
             base_type::do_bind(texture);
         }
 

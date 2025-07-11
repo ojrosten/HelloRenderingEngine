@@ -133,7 +133,7 @@ int main()
             make_label("Hexagon")
         };
 
-        shaderProgram2DTextured.set_uniform("image", 0);
+        shaderProgram2DTextured.set_uniform("image", 8);
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -146,7 +146,7 @@ int main()
             shaderProgram.use();
             sept.draw();
             shaderProgram2DTextured.use();
-            hex.draw(agl::texture_unit{});
+            hex.draw(agl::texture_unit{8});
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
