@@ -103,6 +103,19 @@ namespace avocet::opengl {
         {
         }
 
+        template<class Self>
+        void draw(this Self& self) requires (!is_textured_v) {
+            bind(self.m_VAO);
+            self.do_draw();
+        }
+
+        template<class Self>
+        void draw(this Self& self, texture_unit unit) requires is_textured_v {
+            bind(self.m_VAO);
+            bind(self.m_Texture, unit);
+            self.do_draw();
+        }
+
         [[nodiscard]]
         friend bool operator==(const polygon_base&, const polygon_base&) noexcept = default;
     protected:
@@ -110,19 +123,6 @@ namespace avocet::opengl {
 
         polygon_base(polygon_base&&)            noexcept = default;
         polygon_base& operator=(polygon_base&&) noexcept = default;
-
-        static void do_bind(const polygon_base& pg)
-            requires (!is_textured_v)
-        {
-            bind(pg.m_VAO);
-        }
-
-        static void do_bind(const polygon_base& pg, texture_unit unit) 
-            requires is_textured_v
-        {
-            bind(pg.m_VAO);
-            bind(pg.m_Texture, unit);
-        }
     private:
         struct dummy_texture {};
 
@@ -168,17 +168,9 @@ namespace avocet::opengl {
             , m_EBO{st_Indices, label}
         {
         }
-
-        void draw() requires (!is_textured_v) {
-            polygon_base_type::do_bind(*this);
-            do_draw();
-        }
-
-        void draw(texture_unit unit) requires is_textured_v {
-            polygon_base_type::do_bind(*this, unit);
-            do_draw();
-        }
     private:
+        friend polygon_base<T, N, ArenaDimension, Attributes...>;
+
         using element_index_type = GLubyte;
         constexpr static auto num_elements{3 * (N - 2)};
         using element_array_type = std::array<element_index_type, num_elements>;
@@ -200,7 +192,7 @@ namespace avocet::opengl {
 
         element_buffer_object<element_index_type> m_EBO;
 
-        void do_draw() {
+        static void do_draw() {
             gl_function{glDrawElements}(GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
     };
@@ -212,17 +204,10 @@ namespace avocet::opengl {
         using polygon_base_type::polygon_base;
         constexpr static bool is_textured_v{polygon_base_type::is_textured_v};
 
-        void draw() requires (!is_textured_v) {
-            polygon_base_type::do_bind(*this);
-            do_draw();
-        }
-
-        void draw(texture_unit unit) requires is_textured_v {
-            polygon_base_type::do_bind(*this, unit);
-            do_draw();
-        }
     private:
-        void do_draw() {
+        friend polygon_base<T, 3, ArenaDimension, Attributes...>;
+
+        static void do_draw() {
             gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
         }
     };
