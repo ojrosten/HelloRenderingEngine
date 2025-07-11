@@ -73,11 +73,20 @@ namespace avocet::opengl {
         static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteTextures}(N, indices.data()); }
 
         static void bind(const resource_handle& h) {
-            gl_function{glActiveTexture}(GL_TEXTURE0);
             gl_function{glBindTexture}(GL_TEXTURE_2D, h.index());
         }
 
         static void configure(const resource_handle& h, const configurator& config);
+    };
+
+    struct texture_unit {
+        std::size_t offset{};
+
+        [[nodiscard]]
+        GLenum raw_texture_unit() const { return GL_TEXTURE0 + to_gl_int(offset); }
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
     };
 
     class texture_2d : public generic_resource<num_resources{1}, texture_2d_lifecycle_events> {
@@ -95,7 +104,8 @@ namespace avocet::opengl {
             return do_extract_data(tex2d, format, rowAlignment);
         }
 
-        friend void bind(const texture_2d& texture) {
+        friend void bind(const texture_2d& texture, texture_unit unit) {
+            gl_function{glActiveTexture}(unit.raw_texture_unit());
             base_type::do_bind(texture);
         }
 

@@ -146,7 +146,7 @@ int main()
             shaderProgram.use();
             sept.draw();
             shaderProgram2DTextured.use();
-            hex.draw();
+            hex.draw(agl::texture_unit{});
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();

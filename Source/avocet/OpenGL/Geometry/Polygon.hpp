@@ -111,11 +111,17 @@ namespace avocet::opengl {
         polygon_base(polygon_base&&)            noexcept = default;
         polygon_base& operator=(polygon_base&&) noexcept = default;
 
-        static void do_bind(const polygon_base& pg) {
+        static void do_bind(const polygon_base& pg)
+            requires (!is_textured_v)
+        {
             bind(pg.m_VAO);
-            if constexpr(is_textured_v) {
-                bind(pg.m_Texture);
-            }
+        }
+
+        static void do_bind(const polygon_base& pg, texture_unit unit) 
+            requires is_textured_v
+        {
+            bind(pg.m_VAO);
+            bind(pg.m_Texture, unit);
         }
     private:
         struct dummy_texture {};
@@ -163,9 +169,14 @@ namespace avocet::opengl {
         {
         }
 
-        void draw() {
+        void draw() requires (!is_textured_v) {
             polygon_base_type::do_bind(*this);
-            gl_function{glDrawElements}(GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
+            do_draw();
+        }
+
+        void draw(texture_unit unit) requires is_textured_v {
+            polygon_base_type::do_bind(*this, unit);
+            do_draw();
         }
     private:
         using element_index_type = GLubyte;
@@ -188,6 +199,10 @@ namespace avocet::opengl {
         };
 
         element_buffer_object<element_index_type> m_EBO;
+
+        void do_draw() {
+            gl_function{glDrawElements}(GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
+        }
     };
 
     template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
@@ -195,9 +210,19 @@ namespace avocet::opengl {
     public:
         using polygon_base_type = polygon_base<T, 3, ArenaDimension, Attributes...>;
         using polygon_base_type::polygon_base;
+        constexpr static bool is_textured_v{polygon_base_type::is_textured_v};
 
-        void draw() {
+        void draw() requires (!is_textured_v) {
             polygon_base_type::do_bind(*this);
+            do_draw();
+        }
+
+        void draw(texture_unit unit) requires is_textured_v {
+            polygon_base_type::do_bind(*this, unit);
+            do_draw();
+        }
+    private:
+        void do_draw() {
             gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
         }
     };
