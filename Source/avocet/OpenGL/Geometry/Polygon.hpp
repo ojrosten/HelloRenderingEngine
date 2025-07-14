@@ -58,7 +58,7 @@ namespace avocet::opengl {
     template<std::floating_point T, std::size_t D>
     struct make_polygon_attribute<sequoia::maths::vec_coords<T, D, local_geometry_arena>>{
         [[nodiscard]]
-        constexpr local_coordinates<T, dimensionality{D}> operator()(std::size_t i, std::size_t N) {
+        constexpr local_coordinates<T, dimensionality{D}> operator()(std::size_t i, std::size_t N) const {
             return make_polygon_coordinates< T, dimensionality{D}>(i, N);
         }
     };
