@@ -8,14 +8,14 @@
 #pragma once
 
 #include "avocet/OpenGL/Graphics/Buffers.hpp"
+#include "avocet/OpenGL/Graphics/Textures.hpp"
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
 #include "sequoia/Maths/Geometry/Spaces.hpp"
+#include "sequoia/PlatformSpecific/Preprocessor.hpp"
 
 #include <cmath>
 #include <limits>
 #include <numbers>
-
-#include "glad/gl.h"
 
 namespace avocet::opengl {
     struct dimensionality{
