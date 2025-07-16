@@ -60,7 +60,7 @@ int main()
         agl::shader_program
             shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
             discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
-            shaderProgram2D{get_shader_dir() / "Identity2D.vs", get_shader_dir() / "Monochrome.fs"},
+            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
             shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
@@ -103,17 +103,26 @@ int main()
             make_label("Septagon")
         };
 
-        agl::polygon<GLfloat, 6, agl::dimensionality{2}> hex{
+        avocet::unique_image pony{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
+
+        agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
                     std::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.5f};
                 }
 
-
                 return verts;
+            },
+            agl::texture_2d_configurator{
+                .data_view{pony},
+                .decoding{agl::sampling_decoding::srgb},
+                .parameter_setter{ [](){ agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                .label{"Princess TS"}
             },
             make_label("Hexagon")
         };
+
+        shaderProgram2D.set_uniform("image", 8);
 
         while(!glfwWindowShouldClose(&w.get())) {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -126,7 +135,7 @@ int main()
             shaderProgram.use();
             sept.draw();
             shaderProgram2D.use();
-            hex.draw();
+            hex.draw(agl::texture_unit{8});
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();

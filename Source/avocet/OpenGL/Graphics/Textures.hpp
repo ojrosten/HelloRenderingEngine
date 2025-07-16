@@ -57,6 +57,7 @@ namespace avocet::opengl {
 
         image_view        data_view;
         sampling_decoding decoding;
+        std::function<void()> parameter_setter;
         optional_label    label{};
     };
 
@@ -76,6 +77,16 @@ namespace avocet::opengl {
         static void configure(const resource_handle& h, const configurator& config);
     };
 
+    struct texture_unit {
+        std::size_t index{};
+
+        [[nodiscard]]
+        GLenum gl_texture_unit() const { return GL_TEXTURE0 + to_gl_int(index); }
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
+    };
+
     class texture_2d : public generic_resource<num_resources{1}, texture_2d_lifecycle_events> {
     public:
         using base_type         = generic_resource<num_resources{1}, texture_2d_lifecycle_events> ;
@@ -91,6 +102,10 @@ namespace avocet::opengl {
             return do_extract_data(tex2d, format, rowAlignment);
         }
 
+        friend void bind(const texture_2d& tex, texture_unit unit) {
+            gl_function{glActiveTexture}(unit.gl_texture_unit());
+            base_type::do_bind(tex);
+        }
     private:
         static unique_image do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
     };
