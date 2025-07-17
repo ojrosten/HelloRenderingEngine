@@ -76,7 +76,7 @@ namespace avocet::opengl {
     class polygon_base{
     public:
         using value_type = T;
-        using vertex_attribute_type = std::tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
+        using vertex_attribute_type = sequoia::mem_ordered_tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
         using vertices_type         = std::array<vertex_attribute_type, N>;
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
@@ -128,7 +128,7 @@ namespace avocet::opengl {
         constexpr static vertices_type vertices() {
             return sequoia::utilities::make_array<vertex_attribute_type, N>(
                 [](std::size_t i) -> vertex_attribute_type {
-                    return {make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
+                    return vertex_attribute_type{make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
                 }
             );
         }

@@ -11,6 +11,8 @@
 #include "avocet/OpenGL/Graphics/Labels.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
+#include "sequoia/Core/DataStructures/MemOrderedTuple.hpp"
+
 #include <vector>
 
 namespace avocet::opengl {
@@ -72,10 +74,10 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<std::tuple<Attributes...>>& vbo)
+        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{{{label}}}
         {
-            using vbo_t         = vertex_buffer_object<std::tuple<Attributes...>>;
+            using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
             using fundamental_t = vbo_t::fundamental_type;
 
             vbo_t::do_bind(vbo);
@@ -149,10 +151,10 @@ namespace avocet::opengl {
     };
 
     template<class... Attributes>
-    class vertex_buffer_object<std::tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, std::tuple<Attributes...>> {
+    class vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>> {
         friend class vertex_attribute_object;
     public:
-        using generic_buffer_object<buffer_species::array, std::tuple<Attributes...>>::generic_buffer_object;
+        using generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>>::generic_buffer_object;
 
         using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
     };
