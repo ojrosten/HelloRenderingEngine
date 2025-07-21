@@ -41,24 +41,6 @@ namespace avocet::opengl {
         requires { typename gl_arithmetic_type_of_t<T>; }
     };
 
-    template<class... Ts>
-    struct all_the_same : std::false_type {};
-
-    template<class... Ts>
-    using all_the_same_t = all_the_same<Ts...>::type;
-
-    template<class... Ts>
-    constexpr inline bool all_the_same_v{all_the_same<Ts...>::value};
-
-    template<>
-    struct all_the_same<> : std::true_type {};
-
-    template<class T>
-    struct all_the_same<T> : std::true_type {};
-
-    template<class T, class... Ts>
-    struct all_the_same<T, Ts...> : std::bool_constant<(std::same_as<T, Ts> && ...)> {};
-
     template<class T>
     struct is_legal_buffer_type : std::false_type
     {};
@@ -78,7 +60,7 @@ namespace avocet::opengl {
     struct is_legal_buffer_type<sequoia::mem_ordered_tuple<Ts...>>
         : std::bool_constant<
                  (is_legal_buffer_type_v<Ts> && ...)
-              && all_the_same_v<gl_arithmetic_type_of_t<Ts>...>
+              && sequoia::are_same_v<gl_arithmetic_type_of_t<Ts>...>
               && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
           >
     {};
