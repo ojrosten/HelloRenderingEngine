@@ -42,24 +42,24 @@ namespace avocet::opengl {
     };
 
     template<class T>
-    struct is_legal_buffer_type : std::false_type
+    struct is_legal_buffer_value_type : std::false_type
     {};
 
     template<class T>
-    using is_legal_buffer_type_t = is_legal_buffer_type<T>::type;
+    using is_legal_buffer_value_type_t = is_legal_buffer_value_type<T>::type;
 
     template<class T>
-    inline constexpr bool is_legal_buffer_type_v{is_legal_buffer_type<T>::value};
+    inline constexpr bool is_legal_buffer_value_type_v{is_legal_buffer_value_type<T>::value};
 
     template<gl_arithmetic T>
-    struct is_legal_buffer_type<T> : std::true_type
+    struct is_legal_buffer_value_type<T> : std::true_type
     {};
 
     template<class... Ts>
         requires (has_gl_arithmetic_type_of_v<Ts> && ...)
-    struct is_legal_buffer_type<sequoia::mem_ordered_tuple<Ts...>>
+    struct is_legal_buffer_value_type<sequoia::mem_ordered_tuple<Ts...>>
         : std::bool_constant<
-                 (is_legal_buffer_type_v<Ts> && ...)
+                 (is_legal_buffer_value_type_v<Ts> && ...)
               && sequoia::are_same_v<gl_arithmetic_type_of_t<Ts>...>
               && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
           >
@@ -101,7 +101,7 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, class T>
-        requires is_legal_buffer_type_v<T>
+        requires is_legal_buffer_value_type_v<T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         struct configurator {
             std::span<const T> buffer_data;
@@ -166,7 +166,7 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, class T>
-        requires is_legal_buffer_type_v<T>
+        requires is_legal_buffer_value_type_v<T>
     class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
     {
     public:
