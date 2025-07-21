@@ -23,7 +23,7 @@ namespace avocet::opengl {
     template<class T>
     using arithmetic_type_of_t = arithmetic_type_of<T>::type;
 
-    template<std::floating_point T>
+    template<gl_arithmetic T>
     struct arithmetic_type_of<T>
     {
         using type = T;
@@ -37,7 +37,7 @@ namespace avocet::opengl {
     };
 
     template<class T>
-    inline constexpr bool has_fundamental_type_v{
+    inline constexpr bool has_arithmetic_type_v{
         requires { typename arithmetic_type_of_t<T>; }
     };
 
@@ -74,7 +74,7 @@ namespace avocet::opengl {
     {};
 
     template<class... Ts>
-        requires (has_fundamental_type_v<Ts> && ...)
+        requires (has_arithmetic_type_v<Ts> && ...)
     struct is_legal_buffer_type<sequoia::mem_ordered_tuple<Ts...>>
         : std::bool_constant<
                  (is_legal_buffer_type_v<Ts> && ...)
