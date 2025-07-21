@@ -13,7 +13,7 @@
 
 namespace avocet::opengl {
     template<class T>
-    concept gl_arithmetic_type = 
+    concept gl_arithmetic = 
            std::is_same_v<T, GLhalf> || std::is_same_v<T, GLfloat> || std::is_same_v<T, GLdouble> || std::is_same_v<T, GLfixed>
         || std::is_same_v<T, GLbyte> || std::is_same_v<T, GLubyte> || std::is_same_v<T, GLshort>  || std::is_same_v<T, GLint>
         || std::is_same_v<T, GLuint>;
@@ -34,10 +34,10 @@ namespace avocet::opengl {
         gl_uint   = GL_UNSIGNED_INT,
     };
 
-    template<gl_arithmetic_type T>
+    template<gl_arithmetic T>
     struct to_gl_type_specifier;
 
-    template<gl_arithmetic_type T>
+    template<gl_arithmetic T>
     inline constexpr auto to_gl_type_specifier_v{to_gl_type_specifier<T>::value};
 
     template<>

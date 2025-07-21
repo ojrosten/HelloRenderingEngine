@@ -69,7 +69,7 @@ namespace avocet::opengl {
     template<class T>
     inline constexpr bool is_legal_buffer_type_v{is_legal_buffer_type<T>::value};
 
-    template<gl_arithmetic_type T>
+    template<gl_arithmetic T>
     struct is_legal_buffer_type<T> : std::true_type
     {};
 
@@ -167,7 +167,7 @@ namespace avocet::opengl {
             }
         };
 
-        template<gl_arithmetic_type ValueType>
+        template<gl_arithmetic ValueType>
         void set_attribute_ptr(attrib_ptr_info& info, std::size_t sizeofAtt, GLsizei stride) {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
             const auto components{to_gl_int(sizeofAtt / sizeof(ValueType))};
@@ -213,7 +213,7 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_arithmetic_type T>
+    template<gl_arithmetic T>
     class vertex_buffer_object<T> : public generic_buffer_object<buffer_species::array, T> {
     public:
         using generic_buffer_object<buffer_species::array, T>::generic_buffer_object;
@@ -230,7 +230,7 @@ namespace avocet::opengl {
         using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
     };
 
-    template<gl_arithmetic_type T>
+    template<gl_arithmetic T>
     class element_buffer_object : public generic_buffer_object<buffer_species::element_array, T> {
     public:
         using generic_buffer_object<buffer_species::element_array, T>::generic_buffer_object;
