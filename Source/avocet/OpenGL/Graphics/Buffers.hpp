@@ -16,6 +16,28 @@
 #include <vector>
 
 namespace avocet::opengl {
+    template<class T>
+    struct is_legal_buffer_type : std::false_type
+    {};
+
+    template<class T>
+    using is_legal_buffer_type_t = typename is_legal_buffer_type<T>::type;
+
+    template<class T>
+    inline constexpr bool is_legal_buffer_type_v{is_legal_buffer_type<T>::value};
+
+    template<gl_arithmetic_type T>
+    struct is_legal_buffer_type<T> : std::true_type
+    {};
+
+    template<class... Ts>
+    struct is_legal_buffer_type<sequoia::mem_ordered_tuple<Ts...>>
+        : std::bool_constant<
+                 (is_legal_buffer_type_v<Ts> && ...)
+              && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
+          >
+    {};
+
     struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
 
@@ -151,6 +173,7 @@ namespace avocet::opengl {
     };
 
     template<class... Attributes>
+        requires is_legal_buffer_type_v<sequoia::mem_ordered_tuple<Attributes...>>
     class vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>> {
         friend class vertex_attribute_object;
     public:
