@@ -224,7 +224,7 @@ namespace avocet::opengl {
     public:
         using generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>>::generic_buffer_object;
 
-        using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
+        using fundamental_type = std::common_type_t<fundamental_type_of_t<Attributes>...>;
     };
 
     template<gl_arithmetic_type T>
