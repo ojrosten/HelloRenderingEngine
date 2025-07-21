@@ -20,6 +20,7 @@
 #include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
+#include "OpenGL/Graphics/BufferMetaFreeTest.hpp"
 #include "OpenGL/Graphics/BufferObjectLabellingTest.hpp"
 #include "OpenGL/Graphics/BufferObjectTest.hpp"
 #include "OpenGL/Graphics/BufferObjectTestingDiagnostics.hpp"
@@ -75,6 +76,7 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Buffer Object",
+            buffer_meta_free_test{"Buffer Meta Free Test"},
             buffer_object_false_negative_test{"False Negative Test"},
             buffer_object_test{"Semantics Test"},
             buffer_object_labelling_free_test{"Labelling Test"}
