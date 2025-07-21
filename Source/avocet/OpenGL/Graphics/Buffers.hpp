@@ -119,6 +119,7 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, class T>
+        requires is_legal_buffer_type_v<T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         struct configurator {
             std::span<const T> buffer_data;
@@ -183,6 +184,7 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, class T>
+        requires is_legal_buffer_type_v<T>
     class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
     {
     public:
