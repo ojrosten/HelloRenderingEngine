@@ -18,27 +18,27 @@
 
 namespace avocet::opengl {
     template<class T>
-    struct fundamental_type_of {};
+    struct arithmetic_type_of {};
 
     template<class T>
-    using fundamental_type_of_t = fundamental_type_of<T>::type;
+    using arithmetic_type_of_t = arithmetic_type_of<T>::type;
 
     template<std::floating_point T>
-    struct fundamental_type_of<T>
+    struct arithmetic_type_of<T>
     {
         using type = T;
     };
 
     template<class T>
         requires sequoia::has_value_type_v<T>
-    struct fundamental_type_of<T>
+    struct arithmetic_type_of<T>
     {
-        using type = fundamental_type_of_t<typename T::value_type>;
+        using type = arithmetic_type_of_t<typename T::value_type>;
     };
 
     template<class T>
     inline constexpr bool has_fundamental_type_v{
-        requires { typename fundamental_type_of_t<T>; }
+        requires { typename arithmetic_type_of_t<T>; }
     };
 
     template<class... Ts>
@@ -78,7 +78,7 @@ namespace avocet::opengl {
     struct is_legal_buffer_type<sequoia::mem_ordered_tuple<Ts...>>
         : std::bool_constant<
                  (is_legal_buffer_type_v<Ts> && ...)
-              && all_the_same_v<fundamental_type_of_t<Ts>...>
+              && all_the_same_v<arithmetic_type_of_t<Ts>...>
               && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
           >
     {};
@@ -220,13 +220,14 @@ namespace avocet::opengl {
     };
 
     template<class... Attributes>
-        requires is_legal_buffer_type_v<sequoia::mem_ordered_tuple<Attributes...>>
-    class vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>> {
+    class vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>
+        : public generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>> {
+
         friend class vertex_attribute_object;
     public:
         using generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>>::generic_buffer_object;
 
-        using fundamental_type = std::common_type_t<fundamental_type_of_t<Attributes>...>;
+        using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
     };
 
     template<gl_arithmetic_type T>
