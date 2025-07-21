@@ -18,27 +18,27 @@
 
 namespace avocet::opengl {
     template<class T>
-    struct arithmetic_type_of {};
+    struct gl_arithmetic_type_of {};
 
     template<class T>
-    using arithmetic_type_of_t = arithmetic_type_of<T>::type;
+    using gl_arithmetic_type_of_t = gl_arithmetic_type_of<T>::type;
 
     template<gl_arithmetic T>
-    struct arithmetic_type_of<T>
+    struct gl_arithmetic_type_of<T>
     {
         using type = T;
     };
 
     template<class T>
         requires sequoia::has_value_type_v<T>
-    struct arithmetic_type_of<T>
+    struct gl_arithmetic_type_of<T>
     {
-        using type = arithmetic_type_of_t<typename T::value_type>;
+        using type = gl_arithmetic_type_of_t<typename T::value_type>;
     };
 
     template<class T>
-    inline constexpr bool has_arithmetic_type_v{
-        requires { typename arithmetic_type_of_t<T>; }
+    inline constexpr bool has_gl_arithmetic_type_of_v{
+        requires { typename gl_arithmetic_type_of_t<T>; }
     };
 
     template<class... Ts>
@@ -74,11 +74,11 @@ namespace avocet::opengl {
     {};
 
     template<class... Ts>
-        requires (has_arithmetic_type_v<Ts> && ...)
+        requires (has_gl_arithmetic_type_of_v<Ts> && ...)
     struct is_legal_buffer_type<sequoia::mem_ordered_tuple<Ts...>>
         : std::bool_constant<
                  (is_legal_buffer_type_v<Ts> && ...)
-              && all_the_same_v<arithmetic_type_of_t<Ts>...>
+              && all_the_same_v<gl_arithmetic_type_of_t<Ts>...>
               && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
           >
     {};
