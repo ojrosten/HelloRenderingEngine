@@ -12,16 +12,59 @@
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
 #include "sequoia/Core/DataStructures/MemOrderedTuple.hpp"
+#include "sequoia/Core/Meta/TypeTraits.hpp"
 
 #include <vector>
 
 namespace avocet::opengl {
     template<class T>
+    struct fundamental_type_of {};
+
+    template<class T>
+    using fundamental_type_of_t = fundamental_type_of<T>::type;
+
+    template<std::floating_point T>
+    struct fundamental_type_of<T>
+    {
+        using type = T;
+    };
+
+    template<class T>
+        requires sequoia::has_value_type_v<T>
+    struct fundamental_type_of<T>
+    {
+        using type = fundamental_type_of_t<typename T::value_type>;
+    };
+
+    template<class T>
+    inline constexpr bool has_fundamental_type_v{
+        requires { typename fundamental_type_of_t<T>; }
+    };
+
+    template<class... Ts>
+    struct all_the_same : std::false_type {};
+
+    template<class... Ts>
+    using all_the_same_t = all_the_same<Ts...>::type;
+
+    template<class... Ts>
+    constexpr inline bool all_the_same_v{all_the_same<Ts...>::value};
+
+    template<>
+    struct all_the_same<> : std::true_type {};
+
+    template<class T>
+    struct all_the_same<T> : std::true_type {};
+
+    template<class T, class... Ts>
+    struct all_the_same<T, Ts...> : std::bool_constant<(std::same_as<T, Ts> && ...)> {};
+
+    template<class T>
     struct is_legal_buffer_type : std::false_type
     {};
 
     template<class T>
-    using is_legal_buffer_type_t = typename is_legal_buffer_type<T>::type;
+    using is_legal_buffer_type_t = is_legal_buffer_type<T>::type;
 
     template<class T>
     inline constexpr bool is_legal_buffer_type_v{is_legal_buffer_type<T>::value};
@@ -31,9 +74,11 @@ namespace avocet::opengl {
     {};
 
     template<class... Ts>
+        requires (has_fundamental_type_v<Ts> && ...)
     struct is_legal_buffer_type<sequoia::mem_ordered_tuple<Ts...>>
         : std::bool_constant<
                  (is_legal_buffer_type_v<Ts> && ...)
+              && all_the_same_v<fundamental_type_of_t<Ts>...>
               && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
           >
     {};
