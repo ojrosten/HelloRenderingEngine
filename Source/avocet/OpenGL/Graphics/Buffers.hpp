@@ -18,21 +18,20 @@
 
 namespace avocet::opengl {
     template<class T>
-    struct gl_arithmetic_type_of {};
+    struct gl_arithmetic_type_of;
 
     template<class T>
     using gl_arithmetic_type_of_t = gl_arithmetic_type_of<T>::type;
 
     template<gl_arithmetic T>
-    struct gl_arithmetic_type_of<T>
-    {
+    struct gl_arithmetic_type_of<T> {
         using type = T;
     };
 
     template<class T>
-        requires sequoia::has_value_type_v<T>
-    struct gl_arithmetic_type_of<T>
-    {
+        requires     sequoia::has_value_type_v<T>
+                 && (gl_arithmetic<typename T::value_type> || sequoia::has_value_type_v<typename T::value_type>)
+    struct gl_arithmetic_type_of<T> {
         using type = gl_arithmetic_type_of_t<typename T::value_type>;
     };
 
@@ -42,8 +41,7 @@ namespace avocet::opengl {
     };
 
     template<class T>
-    struct is_legal_buffer_value_type : std::false_type
-    {};
+    struct is_legal_buffer_value_type : std::false_type {};
 
     template<class T>
     using is_legal_buffer_value_type_t = is_legal_buffer_value_type<T>::type;
@@ -52,8 +50,7 @@ namespace avocet::opengl {
     inline constexpr bool is_legal_buffer_value_type_v{is_legal_buffer_value_type<T>::value};
 
     template<gl_arithmetic T>
-    struct is_legal_buffer_value_type<T> : std::true_type
-    {};
+    struct is_legal_buffer_value_type<T> : std::true_type {};
 
     template<class... Ts>
         requires (has_gl_arithmetic_type_of_v<Ts> && ...)
