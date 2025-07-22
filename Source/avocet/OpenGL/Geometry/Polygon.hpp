@@ -35,6 +35,9 @@ namespace avocet::opengl {
     template<std::floating_point T>
     using texture_coordinates = sequoia::maths::vec_coords<T, 2, texture_arena>;
 
+    template<std::floating_point T, std::size_t D, class Arena>
+    struct is_legal_gl_buffer_value_type<sequoia::maths::vec_coords<T, D, Arena>> : std::true_type {};
+
     template<std::floating_point T, dimensionality D>
     [[nodiscard]]
     constexpr local_coordinates<T, D> make_polygon_coordinates(std::size_t i, std::size_t N) {
@@ -72,11 +75,11 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4})
+        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4}) && (is_legal_gl_buffer_value_type_v<Attributes> && ...)
     class polygon_base{
     public:
         using value_type = T;
-        using vertex_attribute_type = std::tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
+        using vertex_attribute_type = sequoia::mem_ordered_tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
         using vertices_type         = std::array<vertex_attribute_type, N>;
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
@@ -128,7 +131,7 @@ namespace avocet::opengl {
         constexpr static vertices_type vertices() {
             return sequoia::utilities::make_array<vertex_attribute_type, N>(
                 [](std::size_t i) -> vertex_attribute_type {
-                    return {make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
+                    return vertex_attribute_type{make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
                 }
             );
         }
@@ -147,7 +150,7 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (N <= 87)
+        requires (N <= 87) && (is_legal_gl_buffer_value_type_v<Attributes> && ...)
     class polygon : public polygon_base<T, N, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, N, ArenaDimension, Attributes...>;
@@ -200,6 +203,7 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
+        requires (is_legal_gl_buffer_value_type_v<Attributes> && ...)
     class polygon<T, 3, ArenaDimension, Attributes...> : public polygon_base<T, 3, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, 3, ArenaDimension, Attributes...>;
