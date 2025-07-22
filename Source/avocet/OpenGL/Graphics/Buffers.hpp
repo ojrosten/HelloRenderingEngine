@@ -192,6 +192,7 @@ namespace avocet::opengl {
     };
 
     template<class... Attributes>
+        requires is_legal_buffer_value_type_v<sequoia::mem_ordered_tuple<Attributes...>>
     class vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>
         : public generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>> {
 
@@ -199,7 +200,7 @@ namespace avocet::opengl {
     public:
         using generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>>::generic_buffer_object;
 
-        using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
+        using fundamental_type = std::common_type_t<gl_arithmetic_type_of_t<Attributes>...>;
     };
 
     template<gl_arithmetic T>
