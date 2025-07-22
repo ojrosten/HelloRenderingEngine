@@ -114,7 +114,7 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-            requires is_legal_buffer_value_type_v<sequoia::mem_ordered_tuple<Attributes...>>
+            requires (is_legal_buffer_value_type_v<Attributes> && ...)
         vertex_attribute_object(const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{{{label}}}
         {
@@ -193,7 +193,7 @@ namespace avocet::opengl {
     };
 
     template<class... Attributes>
-        requires is_legal_buffer_value_type_v<sequoia::mem_ordered_tuple<Attributes...>>
+        requires (is_legal_buffer_value_type_v<Attributes> && ...)
     class vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>
         : public generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>> {
 

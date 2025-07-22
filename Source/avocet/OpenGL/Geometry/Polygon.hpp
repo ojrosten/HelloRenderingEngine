@@ -77,7 +77,7 @@ namespace avocet::opengl {
     {};
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4}) && is_legal_buffer_value_type_v<sequoia::mem_ordered_tuple<local_coordinates<T, ArenaDimension>, Attributes...>>
+        requires (3 <= N) && (dimensionality{2} <= ArenaDimension) && (ArenaDimension <= dimensionality{4}) && (is_legal_buffer_value_type_v<Attributes> && ...)
     class polygon_base{
     public:
         using value_type = T;
@@ -152,7 +152,7 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (N <= 87) && is_legal_buffer_value_type_v<sequoia::mem_ordered_tuple<local_coordinates<T, ArenaDimension>, Attributes...>>
+        requires (N <= 87) && (is_legal_buffer_value_type_v<Attributes> && ...)
     class polygon : public polygon_base<T, N, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, N, ArenaDimension, Attributes...>;
@@ -205,7 +205,7 @@ namespace avocet::opengl {
     };
 
     template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes> 
-        requires is_legal_buffer_value_type_v<sequoia::mem_ordered_tuple<local_coordinates<T, ArenaDimension>, Attributes...>>
+        requires (is_legal_buffer_value_type_v<Attributes> && ...)
     class polygon<T, 3, ArenaDimension, Attributes...> : public polygon_base<T, 3, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, 3, ArenaDimension, Attributes...>;
