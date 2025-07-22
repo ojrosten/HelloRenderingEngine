@@ -24,5 +24,9 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+    private:
+        void check_arithmetic_type_of();
+
+        void check_legal_buffer_value_type();
     };
 }

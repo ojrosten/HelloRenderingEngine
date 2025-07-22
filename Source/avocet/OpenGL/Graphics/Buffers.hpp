@@ -36,11 +36,6 @@ namespace avocet::opengl {
     };
 
     template<class T>
-    inline constexpr bool has_gl_arithmetic_type_of_v{
-        requires { typename gl_arithmetic_type_of_t<T>; }
-    };
-
-    template<class T>
     struct is_legal_buffer_value_type : std::false_type {};
 
     template<class T>
@@ -53,13 +48,11 @@ namespace avocet::opengl {
     struct is_legal_buffer_value_type<T> : std::true_type {};
 
     template<class... Ts>
-        requires (has_gl_arithmetic_type_of_v<Ts> && ...)
-    struct is_legal_buffer_value_type<sequoia::mem_ordered_tuple<Ts...>>
-        : std::bool_constant<
-                 (is_legal_buffer_value_type_v<Ts> && ...)
+        requires (is_legal_buffer_value_type_v<Ts> && ...)
               && sequoia::are_same_v<gl_arithmetic_type_of_t<Ts>...>
               && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
-          >
+    struct is_legal_buffer_value_type<sequoia::mem_ordered_tuple<Ts...>>
+        : std::true_type
     {};
 
     struct vao_lifecycle_events {
