@@ -131,7 +131,7 @@ namespace avocet::opengl {
         constexpr static vertices_type vertices() {
             return sequoia::utilities::make_array<vertex_attribute_type, N>(
                 [](std::size_t i) -> vertex_attribute_type {
-                    return vertex_attribute_type{make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
+                    return {make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
                 }
             );
         }
