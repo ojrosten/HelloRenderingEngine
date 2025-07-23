@@ -10,6 +10,10 @@
 #include "UniqueImageTest.hpp"
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 
+#include <future>
+#include <latch>
+#include <thread>
+
 namespace avocet::testing
 {
     [[nodiscard]]
@@ -85,5 +89,29 @@ namespace avocet::testing
             unique_image{working_materials() / "red_2w_3h_3c.png", flip_vertically::no, colour_channels{4}},
             make_red(2, 3, colour_channels{4}, alignment{1}, monochrome_intensity{.red{255}, .alpha{255}})
         );
+
+        std::promise<unique_image> promisedFlippedImage{}, promisedUnflippedImage{};
+        auto flippedImageFuture{promisedFlippedImage.get_future()}, unflippedImageFuture{promisedUnflippedImage.get_future()};
+        std::latch synchronize{2};
+
+        std::array<std::jthread, 2> workers{
+            std::jthread{
+                [this, &synchronize](std::promise<unique_image> p) {
+                    synchronize.arrive_and_wait();
+                    p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
+                },
+                std::move(promisedFlippedImage)
+            },
+            std::jthread{
+                [this, &synchronize](std::promise<unique_image> p){
+                    synchronize.arrive_and_wait();
+                    p.set_value(unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image});
+                },
+                std::move(promisedUnflippedImage)
+            }
+        };
+
+        check(equivalence, "", flippedImageFuture.get(),   make_rgb_striped(2, 3, colour_channels{3}, alignment{1}));
+        check(equivalence, "", unflippedImageFuture.get(), make_red        (2, 3, colour_channels{3}, alignment{1}));
     }
 }
