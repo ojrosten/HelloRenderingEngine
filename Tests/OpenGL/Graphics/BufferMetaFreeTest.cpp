@@ -17,7 +17,7 @@ namespace avocet::testing
         struct foo {};
 
         template<class T>
-        constexpr bool has_gl_arithmetic_type_of{
+        constexpr bool has_gl_arithmetic_type_of_v{
             requires { typename opengl::gl_arithmetic_type_of_t<T>; }
         };
     }
@@ -36,13 +36,14 @@ namespace avocet::testing
 
     void buffer_meta_free_test::check_arithmetic_type_of()
     {
-        STATIC_CHECK(not has_gl_arithmetic_type_of<foo>);
-        STATIC_CHECK(has_gl_arithmetic_type_of<float>);
+        STATIC_CHECK(not has_gl_arithmetic_type_of_v<foo>);
+        STATIC_CHECK(    has_gl_arithmetic_type_of_v<float>);
 
-        STATIC_CHECK(not has_gl_arithmetic_type_of<std::array<foo, 2>>);
-        STATIC_CHECK(has_gl_arithmetic_type_of<std::array<float, 2>>);
+        STATIC_CHECK(not has_gl_arithmetic_type_of_v<std::vector<foo>>);
+        STATIC_CHECK(    has_gl_arithmetic_type_of_v<std::vector<float>>);
 
-        STATIC_CHECK(has_gl_arithmetic_type_of<std::array<std::array<float, 2>, 3>>);
+        STATIC_CHECK(not has_gl_arithmetic_type_of_v<std::vector<std::vector<foo>>>);
+        STATIC_CHECK(    has_gl_arithmetic_type_of_v<std::vector<std::vector<float>>>);
     }
 
     void buffer_meta_free_test::check_legal_buffer_value_type()

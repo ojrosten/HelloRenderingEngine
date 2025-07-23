@@ -18,7 +18,7 @@
 
 namespace avocet::opengl {
     template<class T>
-    struct gl_arithmetic_type_of;
+    struct gl_arithmetic_type_of {};
 
     template<class T>
     using gl_arithmetic_type_of_t = gl_arithmetic_type_of<T>::type;
@@ -29,10 +29,10 @@ namespace avocet::opengl {
     };
 
     template<class T>
-        requires sequoia::has_value_type_v<T> && (gl_arithmetic<typename T::value_type> || sequoia::has_value_type_v<typename T::value_type>)
-    struct gl_arithmetic_type_of<T> {
-        using type = gl_arithmetic_type_of_t<typename T::value_type>;
-    };
+        requires sequoia::has_value_type_v<T>
+    struct gl_arithmetic_type_of<T>
+        : gl_arithmetic_type_of<typename T::value_type>
+    {};
 
     template<class T>
     struct is_legal_gl_buffer_value_type : std::false_type {};
