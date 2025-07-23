@@ -17,6 +17,41 @@
 #include <vector>
 
 namespace avocet::opengl {
+    template<class T>
+    struct gl_arithmetic_type_of {};
+
+    template<class T>
+    using gl_arithmetic_type_of_t = gl_arithmetic_type_of<T>::type;
+
+    template<gl_arithmetic T>
+    struct gl_arithmetic_type_of<T> {
+        using type = T;
+    };
+
+    template<class T>
+        requires sequoia::has_value_type_v<T>
+    struct gl_arithmetic_type_of<T> : gl_arithmetic_type_of<typename T::value_type>{
+    };
+
+    template<class T>
+    struct is_legal_gl_buffer_value_type : std::false_type {};
+
+    template<class T>
+    using is_legal_gl_buffer_value_type_t = is_legal_gl_buffer_value_type<T>::type;
+
+    template<class T>
+    inline constexpr bool is_legal_gl_buffer_value_type_v{is_legal_gl_buffer_value_type<T>::value};
+
+    template<gl_arithmetic T>
+    struct is_legal_gl_buffer_value_type<T> : std::true_type {};
+
+    template<class... Ts>
+        requires (is_legal_gl_buffer_value_type_v<Ts> && ...)
+              && (sequoia::are_same_v<gl_arithmetic_type_of_t<Ts>...>)
+              && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
+    struct is_legal_gl_buffer_value_type<sequoia::mem_ordered_tuple<Ts...>> : std::true_type
+    {};
+
     struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
 
@@ -53,6 +88,7 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, class T>
+        requires is_legal_gl_buffer_value_type_v<T>
     struct buffer_lifecycle_events : common_buffer_lifecycle_events {
         struct configurator {
             std::span<const T> buffer_data;
@@ -75,10 +111,10 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<std::tuple<Attributes...>>& vbo)
+        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{{{label}}}
         {
-            using vbo_t         = vertex_buffer_object<std::tuple<Attributes...>>;
+            using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
             using fundamental_t = vbo_t::fundamental_type;
 
             vbo_t::do_bind(vbo);
@@ -117,6 +153,7 @@ namespace avocet::opengl {
     };
 
     template<buffer_species Species, class T>
+        requires is_legal_gl_buffer_value_type_v<T>
     class generic_buffer_object : public generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>>
     {
     public:
@@ -152,12 +189,13 @@ namespace avocet::opengl {
     };
 
     template<class... Attributes>
-    class vertex_buffer_object<std::tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, std::tuple<Attributes...>> {
+        requires (is_legal_gl_buffer_value_type_v<Attributes> && ...)
+    class vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>> : public generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>> {
         friend class vertex_attribute_object;
     public:
-        using generic_buffer_object<buffer_species::array, std::tuple<Attributes...>>::generic_buffer_object;
+        using generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>>::generic_buffer_object;
 
-        using fundamental_type = std::common_type_t<typename Attributes::value_type...>;
+        using fundamental_type = std::common_type_t<gl_arithmetic_type_of_t<Attributes>...>;
     };
 
     template<gl_integral T>
