@@ -1,11 +1,2 @@
 Shader Program Threading Free Test
-Standard Top Level Checks:                 5;  Failures:  1  [Deep checks: 5]
-
-Tests/OpenGL/Graphics/ShaderProgramThreadingFreeTest.cpp, Line 57
-prog1 should report > 0
-
-[bool]
-check failed
-
-=======================================
-
+Standard Top Level Checks:                 5;  Failures:  0  [Deep checks: 5]

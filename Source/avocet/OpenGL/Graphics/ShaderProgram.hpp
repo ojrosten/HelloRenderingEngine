@@ -78,7 +78,7 @@ namespace avocet::opengl {
 
         shader_program& operator=(shader_program&&) noexcept = default;
 
-        ~shader_program() { /*program_tracker::reset(m_Resource);*/ }
+        ~shader_program() { program_tracker::reset(m_Resource); }
 
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.handle()); }
