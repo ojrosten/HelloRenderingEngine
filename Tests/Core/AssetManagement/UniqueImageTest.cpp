@@ -98,7 +98,7 @@ namespace avocet::testing
         //const auto data = make_bgr_striped(100, 3, colour_channels{3}, alignment{1});
         //stbi_write_png((working_materials() / "bgr_striped_100w_3h_3c.png").generic_string().data(), 100, 3, 3, data.data.data(), 100 * 3);
 
-        constexpr std::size_t numThreads{6};
+        constexpr std::size_t numThreads{8};
         using promise_t = std::promise<unique_image>;
         using future_t  = std::future<unique_image>;
         std::array<promise_t, numThreads> imagePromises{};
