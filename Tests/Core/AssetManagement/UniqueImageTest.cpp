@@ -8,16 +8,7 @@
 /*! \file */
 
 #include "UniqueImageTest.hpp"
-#include "curlew/TestFramework/GraphicsTestCore.hpp"
-
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
-
-#include <future>
-#include <latch>
-#include <thread>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "stb_image_write.h"
 
 namespace avocet::testing
 {
@@ -94,52 +85,5 @@ namespace avocet::testing
             unique_image{working_materials() / "red_2w_3h_3c.png", flip_vertically::no, colour_channels{4}},
             make_red(2, 3, colour_channels{4}, alignment{1}, monochrome_intensity{.red{255}, .alpha{255}})
         );
-
-        //const auto data = make_bgr_striped(100, 3, colour_channels{3}, alignment{1});
-        //stbi_write_png((working_materials() / "bgr_striped_100w_3h_3c.png").generic_string().data(), 100, 3, 3, data.data.data(), 100 * 3);
-
-        constexpr std::size_t numThreads{8};
-        using promise_t = std::promise<unique_image>;
-        using future_t  = std::future<unique_image>;
-        std::array<promise_t, numThreads> imagePromises{};
-        std::array<future_t, numThreads> imageFutures{
-            sequoia::utilities::make_array<future_t, numThreads>(
-                [&imagePromises](std::size_t i) { return imagePromises[i].get_future(); }
-            )
-        };
-
-        std::latch holdYourHorses{numThreads};
-
-        std::array<std::jthread, numThreads> workers{
-            sequoia::utilities::make_array<std::jthread, numThreads>(
-                [this, &imagePromises, &holdYourHorses](std::size_t i){
-                    return
-                        std::jthread{
-                             [this, &imagePromises, &holdYourHorses, i](std::promise<unique_image> p) {
-                                 holdYourHorses.arrive_and_wait();
-                                 if(i % 2)
-                                     p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::no,  all_channels_in_image});
-                                 else
-                                     p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
-                             },
-                             std::move(imagePromises[i])
-                        };
-                }
-            )
-        };
-
-        const bool allPassed{
-            [numThreads, &imageFutures]() {
-                for(auto i : std::views::iota(0uz, numThreads)) {
-                    const auto comparison{i % 2 ? make_bgr_striped(2, 3, colour_channels{3}, alignment{1}) : make_rgb_striped(2, 3, colour_channels{3}, alignment{1})};
-                    if(!std::ranges::equal(imageFutures[i].get().span(), comparison.data))
-                        return false;
-                }
-
-                return true;
-            }()
-        };
- 
-       check("", allPassed);
     }
 }

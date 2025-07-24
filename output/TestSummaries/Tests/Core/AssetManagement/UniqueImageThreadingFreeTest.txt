@@ -1,0 +1,10 @@
+Unique Image Threading Free Test
+Standard Top Level Checks:                 1;  Failures:  1  [Deep checks: 1]
+
+Tests/Core/AssetManagement/UniqueImageThreadingFreeTest.cpp, Line 69
+
+[bool]
+check failed
+
+=======================================
+
