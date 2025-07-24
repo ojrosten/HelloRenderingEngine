@@ -110,9 +110,8 @@ namespace avocet::testing
 
         std::latch holdYourHorses{numThreads};
 
-        using jthread_t = std::jthread;
-        std::array<jthread_t, numThreads> workers{
-            sequoia::utilities::make_array<jthread_t, numThreads>(
+        std::array<std::jthread, numThreads> workers{
+            sequoia::utilities::make_array<std::jthread, numThreads>(
                 [this, &imagePromises, &holdYourHorses](std::size_t i){
                     return
                         std::jthread{
