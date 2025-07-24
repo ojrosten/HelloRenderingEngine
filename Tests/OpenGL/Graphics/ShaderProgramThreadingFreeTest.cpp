@@ -11,8 +11,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
 
-#include <print>
-
+#include <memory>
 #include <thread>
 
 namespace avocet::testing
@@ -40,6 +39,19 @@ namespace avocet::testing
         glfw_manager manager{};
         const auto shaderDir{working_materials()};
 
+        std::unique_ptr<agl::shader_program> spPtr{};
+
+        {
+            std::jthread worker{
+                [&, this]() {
+                    auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+                    spPtr = std::make_unique<agl::shader_program>(shaderDir / "Identity.vs", shaderDir / "Monochrome.fs");
+                    spPtr->use();
+                    check("", get_program_index() > 0);
+                }
+            };
+        }
+
         {
             std::jthread worker{
                 [&, this]() {
@@ -54,10 +66,13 @@ namespace avocet::testing
         {
             std::jthread worker{
                 [&, this]() {
-                    auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-                    agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-                    sp.use();
-                    check("", get_program_index() > 0);
+                    {
+                        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+                        agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+                        sp.use();
+                        check("", get_program_index() > 0);
+                    }
+
                 }
             };
         }
