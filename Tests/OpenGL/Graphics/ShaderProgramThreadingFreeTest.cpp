@@ -72,7 +72,12 @@ namespace avocet::testing
                         sp.use();
                         check("", get_program_index() > 0);
                     }
-
+                    {
+                        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+                        agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+                        sp.use();
+                        check("", get_program_index() > 0);
+                    }
                 }
             };
         }

@@ -1,2 +1,2 @@
 Shader Program Threading Free Test
-Standard Top Level Checks:                 3;  Failures:  0  [Deep checks: 3]
+Standard Top Level Checks:                 4;  Failures:  0  [Deep checks: 4]
