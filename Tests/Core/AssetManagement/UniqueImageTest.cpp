@@ -98,63 +98,49 @@ namespace avocet::testing
         //const auto data = make_bgr_striped(100, 3, colour_channels{3}, alignment{1});
         //stbi_write_png((working_materials() / "bgr_striped_100w_3h_3c.png").generic_string().data(), 100, 3, 3, data.data.data(), 100 * 3);
 
-        constexpr std::size_t numThreadPairs{3};
-        using promise_pair_t = std::pair<std::promise<unique_image>, std::promise<unique_image>>;
-        using future_pair_t  = std::pair<std::future<unique_image>, std::future<unique_image>>;
-        std::array<promise_pair_t, numThreadPairs> imagePromises{};
-        std::array<future_pair_t, numThreadPairs> imageFutures{
-            sequoia::utilities::make_array<future_pair_t, numThreadPairs>(
-                [&imagePromises](std::size_t i) {
-                    return std::pair{imagePromises[i].first.get_future(), imagePromises[i].second.get_future()};
-                }
+        constexpr std::size_t numThreads{6};
+        using promise_t = std::promise<unique_image>;
+        using future_t  = std::future<unique_image>;
+        std::array<promise_t, numThreads> imagePromises{};
+        std::array<future_t, numThreads> imageFutures{
+            sequoia::utilities::make_array<future_t, numThreads>(
+                [&imagePromises](std::size_t i) { return imagePromises[i].get_future(); }
             )
         };
 
-        std::latch synchronize{numThreadPairs * 2};
+        std::latch holdYourHorses{numThreads};
 
-        using jthread_pair_t = std::pair<std::jthread, std::jthread>;
-        std::array<jthread_pair_t, numThreadPairs> workers{
-            sequoia::utilities::make_array<jthread_pair_t, numThreadPairs>(
-                [this, &imagePromises, &synchronize](std::size_t i){
+        using jthread_t = std::jthread;
+        std::array<jthread_t, numThreads> workers{
+            sequoia::utilities::make_array<jthread_t, numThreads>(
+                [this, &imagePromises, &holdYourHorses](std::size_t i){
                     return
-                        std::pair{
-                            std::jthread{
-                                [this, &imagePromises, &synchronize](std::promise<unique_image> p) {
-                                    synchronize.arrive_and_wait();
-                                    p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
-                                },
-                                std::move(imagePromises[i].first)
-                            },
-                            std::jthread{
-                                [this, &imagePromises, &synchronize](std::promise<unique_image> p){
-                                    synchronize.arrive_and_wait();
-                                    p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::no,  all_channels_in_image});
-                                },
-                                std::move(imagePromises[i].second)
-                            }
+                        std::jthread{
+                             [this, &imagePromises, &holdYourHorses, i](std::promise<unique_image> p) {
+                                 holdYourHorses.arrive_and_wait();
+                                 if(i % 2)
+                                     p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::no,  all_channels_in_image});
+                                 else
+                                     p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
+                             },
+                             std::move(imagePromises[i])
                         };
                 }
             )
         };
 
-        using image_pair_t = std::pair<unique_image, unique_image>;
-        std::array<image_pair_t, numThreadPairs> loadedImages{
-            sequoia::utilities::make_array<image_pair_t, numThreadPairs>(
-                [&imageFutures](std::size_t i) {
-                    return std::pair{imageFutures[i].first.get(), imageFutures[i].second.get()};
+        const bool allPassed{
+            [numThreads, &imageFutures]() {
+                for(auto i : std::views::iota(0uz, numThreads)) {
+                    const auto comparison{i % 2 ? make_bgr_striped(2, 3, colour_channels{3}, alignment{1}) : make_rgb_striped(2, 3, colour_channels{3}, alignment{1})};
+                    if(!std::ranges::equal(imageFutures[i].get().span(), comparison.data))
+                        return false;
                 }
-            )
-        };
 
-        const auto allPassed{
-            std::ranges::all_of(
-                loadedImages,
-                [&](const image_pair_t& fp){
-                    return std::ranges::equal(fp.first.span(),  make_rgb_striped(2, 3, colour_channels{3}, alignment{1}).data)
-                        && std::ranges::equal(fp.second.span(), make_bgr_striped(2, 3, colour_channels{3}, alignment{1}).data);
-                }
-            )
+                return true;
+            }()
         };
-        check("", allPassed);
+ 
+       check("", allPassed);
     }
 }

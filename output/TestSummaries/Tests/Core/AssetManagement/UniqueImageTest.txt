@@ -1,7 +1,7 @@
 Semantics Test
 Standard Top Level Checks:                10;  Failures:  1  [Deep checks: 655]
 
-Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 158
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 144
 
 [bool]
 check failed
