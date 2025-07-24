@@ -63,7 +63,7 @@ namespace avocet::testing
         {
             std::unique_ptr<agl::shader_program> spPtr{};
             std::packaged_task<GLint(void)>  task0{
-                [&, this]() {
+                [&]() {
                     auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
                     spPtr = std::make_unique<agl::shader_program>(shaderDir / "Identity.vs", shaderDir / "Monochrome.fs");
                     spPtr->use();
@@ -74,12 +74,7 @@ namespace avocet::testing
             auto future0{task0.get_future()};
 
             std::packaged_task<GLint(void)> task1{
-                [&, this]() {
-                    auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-                    agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-                    sp.use();
-                    return get_program_index();
-                }
+                [&]() { return make_and_use_shader_program(manager, shaderDir); }
             };
 
             auto future1{task1.get_future()};
