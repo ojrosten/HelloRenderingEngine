@@ -10,6 +10,8 @@
 #include "UniqueImageTest.hpp"
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 
+#include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
+
 #include <future>
 #include <latch>
 #include <thread>
@@ -90,28 +92,63 @@ namespace avocet::testing
             make_red(2, 3, colour_channels{4}, alignment{1}, monochrome_intensity{.red{255}, .alpha{255}})
         );
 
-        std::promise<unique_image> promisedFlippedImage{}, promisedUnflippedImage{};
-        auto flippedImageFuture{promisedFlippedImage.get_future()}, unflippedImageFuture{promisedUnflippedImage.get_future()};
-        std::latch synchronize{2};
-
-        std::array<std::jthread, 2> workers{
-            std::jthread{
-                [this, &synchronize](std::promise<unique_image> p) {
-                    synchronize.arrive_and_wait();
-                    p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
-                },
-                std::move(promisedFlippedImage)
-            },
-            std::jthread{
-                [this, &synchronize](std::promise<unique_image> p){
-                    synchronize.arrive_and_wait();
-                    p.set_value(unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image});
-                },
-                std::move(promisedUnflippedImage)
-            }
+        constexpr std::size_t numThreadPairs{1};
+        using promise_pair_t = std::pair<std::promise<unique_image>, std::promise<unique_image>>;
+        using future_pair_t  = std::pair<std::future<unique_image>, std::future<unique_image>>;
+        std::array<promise_pair_t, numThreadPairs> imagePromises{};
+        std::array<future_pair_t, numThreadPairs> imageFutures{
+            sequoia::utilities::make_array<future_pair_t, numThreadPairs>(
+                [&imagePromises](std::size_t i) {
+                    return std::pair{imagePromises[i].first.get_future(), imagePromises[i].second.get_future()};
+                }
+            )
         };
 
-        check(equivalence, "", flippedImageFuture.get(),   make_rgb_striped(2, 3, colour_channels{3}, alignment{1}));
-        check(equivalence, "", unflippedImageFuture.get(), make_red        (2, 3, colour_channels{3}, alignment{1}));
+        std::latch synchronize{numThreadPairs * 2};
+
+        using jthread_pair_t = std::pair<std::jthread, std::jthread>;
+        std::array<jthread_pair_t, numThreadPairs> workers{
+            sequoia::utilities::make_array<jthread_pair_t, numThreadPairs>(
+                [this, &imagePromises, &synchronize](std::size_t i){
+                    return
+                        std::pair{
+                            std::jthread{
+                                [this, &imagePromises, &synchronize](std::promise<unique_image> p) {
+                                    synchronize.arrive_and_wait();
+                                    p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
+                                },
+                                std::move(imagePromises[i].first)
+                            },
+                            std::jthread{
+                                [this, &imagePromises, &synchronize](std::promise<unique_image> p){
+                                    synchronize.arrive_and_wait();
+                                    p.set_value(unique_image{working_materials() / "red_2w_3h_3c.png",         flip_vertically::no,  all_channels_in_image});
+                                },
+                                std::move(imagePromises[i].second)
+                            }
+                        };
+                }
+            )
+        };
+
+        using image_pair_t = std::pair<unique_image, unique_image>;
+        std::array<image_pair_t, numThreadPairs> loadedImages{
+            sequoia::utilities::make_array<image_pair_t, numThreadPairs>(
+                [&imageFutures](std::size_t i) {
+                    return std::pair{imageFutures[i].first.get(), imageFutures[i].second.get()};
+                }
+            )
+        };
+
+        const auto allPassed{
+            std::ranges::all_of(
+                loadedImages,
+                [&](const image_pair_t& fp){
+                    return std::ranges::equal(fp.first.span(),  make_rgb_striped(2, 3, colour_channels{3}, alignment{1}).data)
+                        && std::ranges::equal(fp.second.span(), make_red(        2, 3, colour_channels{3}, alignment{1}).data);
+                }
+            )
+        };
+        check("", allPassed);
     }
 }
