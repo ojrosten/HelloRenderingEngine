@@ -17,6 +17,7 @@
 namespace avocet::testing
 {
     namespace agl = avocet::opengl;
+    namespace fs = std::filesystem;
 
     namespace
     {
@@ -24,6 +25,13 @@ namespace avocet::testing
             GLint param{};
             agl::gl_function{glGetIntegerv}(GL_CURRENT_PROGRAM, &param);
             return param;
+        }
+
+        GLint make_and_use_shader_program(curlew::glfw_manager& manager, const fs::path& shaderDir) {
+            auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
+            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+            sp.use();
+            return get_program_index();
         }
     }
 
@@ -39,17 +47,14 @@ namespace avocet::testing
         glfw_manager manager{};
         const auto shaderDir{working_materials()};
 
+        const auto
+            prog0{make_and_use_shader_program(manager, shaderDir)},
+            prog1{make_and_use_shader_program(manager, shaderDir)};
+
+        if(check("Bounded Context", (!prog1) || (prog0 == prog1)))
         {
-            auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-            sp.use();
-            check("", get_program_index() > 0);
-        }
-        {
-            auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-            sp.use();
-            check("", get_program_index() > 0);
+            check("prog0 should report > 0", prog0 > 0);
+            check("prog1 should report > 0", prog1 > 0);
         }
 
         std::unique_ptr<agl::shader_program> spPtr{};
