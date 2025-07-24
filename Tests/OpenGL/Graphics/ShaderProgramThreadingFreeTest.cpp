@@ -39,6 +39,19 @@ namespace avocet::testing
         glfw_manager manager{};
         const auto shaderDir{working_materials()};
 
+        {
+            auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+            sp.use();
+            check("", get_program_index() > 0);
+        }
+        {
+            auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+            sp.use();
+            check("", get_program_index() > 0);
+        }
+
         std::unique_ptr<agl::shader_program> spPtr{};
 
         {
@@ -59,25 +72,6 @@ namespace avocet::testing
                     agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
                     sp.use();
                     check("", get_program_index() > 0);
-                }
-            };
-        }
-
-        {
-            std::jthread worker{
-                [&, this]() {
-                    {
-                        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-                        agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-                        sp.use();
-                        check("", get_program_index() > 0);
-                    }
-                    {
-                        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-                        agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-                        sp.use();
-                        check("", get_program_index() > 0);
-                    }
                 }
             };
         }
