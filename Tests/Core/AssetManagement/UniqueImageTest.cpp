@@ -16,6 +16,9 @@
 #include <latch>
 #include <thread>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+
 namespace avocet::testing
 {
     [[nodiscard]]
@@ -92,6 +95,9 @@ namespace avocet::testing
             make_red(2, 3, colour_channels{4}, alignment{1}, monochrome_intensity{.red{255}, .alpha{255}})
         );
 
+        //const auto data = make_bgr_striped(100, 3, colour_channels{3}, alignment{1});
+        //stbi_write_png((working_materials() / "bgr_striped_100w_3h_3c.png").generic_string().data(), 100, 3, 3, data.data.data(), 100 * 3);
+
         constexpr std::size_t numThreadPairs{1};
         using promise_pair_t = std::pair<std::promise<unique_image>, std::promise<unique_image>>;
         using future_pair_t  = std::pair<std::future<unique_image>, std::future<unique_image>>;
@@ -115,7 +121,7 @@ namespace avocet::testing
                             std::jthread{
                                 [this, &imagePromises, &synchronize](std::promise<unique_image> p) {
                                     synchronize.arrive_and_wait();
-                                    p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
+                                    p.set_value(unique_image{working_materials() / "bgr_striped_100w_3h_3c.png", flip_vertically::yes, all_channels_in_image});
                                 },
                                 std::move(imagePromises[i].first)
                             },
@@ -144,8 +150,8 @@ namespace avocet::testing
             std::ranges::all_of(
                 loadedImages,
                 [&](const image_pair_t& fp){
-                    return std::ranges::equal(fp.first.span(),  make_rgb_striped(2, 3, colour_channels{3}, alignment{1}).data)
-                        && std::ranges::equal(fp.second.span(), make_red(        2, 3, colour_channels{3}, alignment{1}).data);
+                    return std::ranges::equal(fp.first.span(),  make_rgb_striped(100, 3, colour_channels{3}, alignment{1}).data)
+                        && std::ranges::equal(fp.second.span(), make_red(          2, 3, colour_channels{3}, alignment{1}).data);
                 }
             )
         };

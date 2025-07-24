@@ -41,6 +41,9 @@ namespace avocet::testing {
 
     [[nodiscard]]
     image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment);
+
+    [[nodiscard]]
+    image_data make_bgr_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment);
 }
 
 namespace sequoia::testing
