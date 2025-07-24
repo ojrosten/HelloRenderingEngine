@@ -8,10 +8,26 @@
 /*! \file */
 
 #include "ShaderProgramThreadingFreeTest.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
+
+#include <print>
+
+#include <thread>
 
 namespace avocet::testing
 {
+    namespace agl = avocet::opengl;
+
+    namespace
+    {
+        GLint get_program_index() {
+            GLint param{};
+            agl::gl_function{glGetIntegerv}(GL_CURRENT_PROGRAM, &param);
+            return param;
+        }
+    }
+
     [[nodiscard]]
     std::filesystem::path shader_program_threading_free_test::source_file() const
     {
@@ -20,5 +36,30 @@ namespace avocet::testing
 
     void shader_program_threading_free_test::run_tests()
     {
+        using namespace curlew;
+        glfw_manager manager{};
+        const auto shaderDir{working_materials()};
+
+        {
+            std::jthread worker{
+                [&, this]() {
+                    auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+                    agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+                    sp.use();
+                    check("", get_program_index() > 0);
+                }
+            };
+        }
+
+        {
+            std::jthread worker{
+                [&, this]() {
+                    auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+                    agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+                    sp.use();
+                    check("", get_program_index() > 0);
+                }
+            };
+        }
     }
 }
