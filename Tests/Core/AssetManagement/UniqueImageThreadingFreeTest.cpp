@@ -37,16 +37,17 @@ namespace avocet::testing
         };
 
         std::latch holdYourHorses{numThreads};
+        const auto imagePath{working_materials().append("bgr_striped_2w_3h_3c.png")};
 
         std::array<std::jthread, numThreads> workers{
             sequoia::utilities::make_array<std::jthread, numThreads>(
-                [this, &imagePromises, &holdYourHorses](std::size_t i){
+                [&imagePromises, &holdYourHorses, &imagePath](std::size_t i){
                     return
                         std::jthread{
-                             [this, &imagePromises, &holdYourHorses, i](std::promise<unique_image> p) {
+                             [&](std::promise<unique_image> p) {
                                  holdYourHorses.arrive_and_wait();
                                  const auto flip{i % 2 ? flip_vertically::no : flip_vertically::yes};
-                                 p.set_value(unique_image{working_materials() / "bgr_striped_2w_3h_3c.png", flip, all_channels_in_image});
+                                 p.set_value(unique_image{imagePath, flip, all_channels_in_image});
                              },
                              std::move(imagePromises[i])
                         };
