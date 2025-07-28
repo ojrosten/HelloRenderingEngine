@@ -33,6 +33,6 @@ namespace avocet::testing
 
         void check_threaded_tracking(curlew::glfw_manager& manager);
 
-        void check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, const std::source_location& loc=std::source_location::current());
+        void check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, std::string_view tag);
     };
 }

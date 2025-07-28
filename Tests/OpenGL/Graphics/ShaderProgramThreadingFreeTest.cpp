@@ -11,7 +11,7 @@
 #include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
 
 #include <future>
-#include <memory>
+#include <latch>
 #include <thread>
 
 namespace avocet::testing
@@ -30,11 +30,20 @@ namespace avocet::testing
             return agl::resource_handle{static_cast<GLuint>(param)};
         }
 
-        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager, const fs::path& shaderDir) {
+        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager, const fs::path& shaderDir, std::latch* pLatch) {
             auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
             agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
             sp.use();
+            if(pLatch) pLatch->arrive_and_wait();
             return get_program_index();
+        }
+
+        constexpr std::latch* no_latch{};
+
+        [[nodiscard]]
+        std::string make_description(std::string_view tag, std::string_view description)
+        {
+            return std::format("{}: {}", tag, description);
         }
     }
 
@@ -57,47 +66,39 @@ namespace avocet::testing
     {
         const auto shaderDir{working_materials()};
         const auto
-            prog0{make_and_use_shader_program(manager, shaderDir)},
-            prog1{make_and_use_shader_program(manager, shaderDir)};
+            prog0{make_and_use_shader_program(manager, shaderDir, no_latch)},
+            prog1{make_and_use_shader_program(manager, shaderDir, no_latch)};
 
-        check_program_indices(prog0, prog1);
+        check_program_indices(prog0, prog1, "serial");
     }
 
 
     void shader_program_threading_free_test::check_threaded_tracking(curlew::glfw_manager& manager)
     {
         const auto shaderDir{working_materials()};
-        std::unique_ptr<agl::shader_program> spPtr{};
-        std::packaged_task<agl::resource_handle(void)>  task0{
-            [&]() {
-                auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
-                spPtr = std::make_unique<agl::shader_program>(shaderDir / "Identity.vs", shaderDir / "Monochrome.fs");
-                spPtr->use();
-                return get_program_index();
-            }
-        };
+        std::latch holdYourHorses{2};
+        std::packaged_task<agl::resource_handle(void)>
+            task0{[&]() { return make_and_use_shader_program(manager, shaderDir, &holdYourHorses); } },
+            task1{[&]() { return make_and_use_shader_program(manager, shaderDir, &holdYourHorses); } };
 
         auto future0{task0.get_future()};
         std::jthread worker0{std::move(task0)};
-        const auto prog0{future0.get()};
-
-        std::packaged_task<agl::resource_handle(void)> task1{
-            [&]() { return make_and_use_shader_program(manager, shaderDir); }
-        };
 
         auto future1{task1.get_future()};
         std::jthread worker1{std::move(task1)};
+
+        const auto prog0{future0.get()};
         const auto prog1{future1.get()};
 
-        check_program_indices(prog0, prog1);
+        check_program_indices(prog0, prog1, "threaded");
     }
 
-    void shader_program_threading_free_test::check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, const std::source_location& loc)
+    void shader_program_threading_free_test::check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, std::string_view tag)
     {
-        if(check(reporter{"Bounded Context: Either program 1 should have failed to be utilized or programs 0 and 1 have the same index", loc}, (!prog1) || (prog0 == prog1)))
+        if(check(make_description(tag, "Bounded Context: Either one of the programs isn't utilized or they both are and have the same index"), (!prog0 || !prog1 || (prog0 == prog1))))
         {
-            check(reporter{"prog0 should report > 0", loc}, prog0.index() > 0);
-            check(reporter{"prog1 should report > 0", loc}, prog1.index() > 0);
+            check(make_description(tag, "prog0 should report > 0"), prog0.index() > 0);
+            check(make_description(tag, "prog1 should report > 0"), prog1.index() > 0);
         }
     }
 }
