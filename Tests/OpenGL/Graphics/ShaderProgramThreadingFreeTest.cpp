@@ -78,16 +78,17 @@ namespace avocet::testing
         };
 
         auto future0{task0.get_future()};
+        std::jthread worker0{std::move(task0)};
+        const auto prog0{future0.get()};
 
         std::packaged_task<agl::resource_handle(void)> task1{
             [&]() { return make_and_use_shader_program(manager, shaderDir); }
         };
 
         auto future1{task1.get_future()};
+        std::jthread worker1{std::move(task1)};
+        const auto prog1{future1.get()};
 
-        std::jthread worker0{std::move(task0)}, worker1{std::move(task1)};
-
-        const auto prog0{future0.get()}, prog1{future1.get()};
         check_program_indices(prog0, prog1);
     }
 
