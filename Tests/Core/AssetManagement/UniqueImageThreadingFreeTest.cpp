@@ -44,7 +44,7 @@ namespace avocet::testing
                 [&imagePromises, &holdYourHorses, &imagePath](std::size_t i){
                     return
                         std::jthread{
-                             [&](std::promise<unique_image> p) {
+		      [&, i](std::promise<unique_image> p) {
                                  holdYourHorses.arrive_and_wait();
                                  const auto flip{i % 2 ? flip_vertically::no : flip_vertically::yes};
                                  p.set_value(unique_image{imagePath, flip, all_channels_in_image});
