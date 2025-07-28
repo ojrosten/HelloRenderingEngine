@@ -11,6 +11,8 @@
 
 #include "sequoia/TestFramework/FreeTestCore.hpp"
 
+#include "curlew/Window/GLFWWrappers.hpp"
+
 namespace avocet::testing
 {
     using namespace sequoia::testing;
@@ -24,5 +26,9 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+    private:
+        void check_serial_tracking(curlew::glfw_manager& manager);
+
+        void check_threaded_tracking(curlew::glfw_manager& manager);
     };
 }
