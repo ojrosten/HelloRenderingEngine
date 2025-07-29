@@ -127,12 +127,17 @@ namespace avocet::opengl {
                 // This will fail if
                 // a. The context is different from the creation context
                 // b. The requested context was never shared with the creation context
-                // This could be fixed by propagating shared contexts for use()
+                // This could be fixed by propagating shared contexts for use().
                 // Alternatively, the entire optimization could be removed, and only
                 // retained for things like FBOs which aren't shareable. There could still
                 // be an issue, though: calling use() on a shader program in a non-shared
                 // context that happens to have a shader_program wrapping the same index.
                 // Similar considerations apply to binding textures.
+                //
+                // Note that propagating shared contexts would not be very robust. A different
+                // approach would be a boolean flag as to whether or not to even consider
+                // shared contexts and then simply *assume*, if yes, that the requested context
+                // is a shared one. Any errors would be on the head of clients...
                 auto[iter, inserted]{st_ContextToCurrentProgram.insert(std::pair{context, spr.handle().index()})};
                 if(inserted)
                     gl_function{glUseProgram}(iter->second);
