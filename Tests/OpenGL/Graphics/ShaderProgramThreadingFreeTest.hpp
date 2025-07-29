@@ -31,6 +31,8 @@ namespace avocet::testing
     private:
         void check_serial_tracking(curlew::glfw_manager& manager);
 
+        void check_serial_tracking_overlapping_lifetimes(curlew::glfw_manager& manager);
+
         void check_threaded_tracking(curlew::glfw_manager& manager);
 
         void check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, std::string_view tag);

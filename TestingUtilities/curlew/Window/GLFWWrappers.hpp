@@ -81,6 +81,8 @@ namespace curlew {
 
         ~window_resource();
 
+        [[nodiscard]] const GLFWwindow& get() const noexcept { return m_Window; }
+
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window; }
     };
 
@@ -98,6 +100,11 @@ namespace curlew {
 
         ~window() = default;
 
+        [[nodiscard]] const GLFWwindow& get() const noexcept { return m_Window.get(); }
+
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
+
+        [[nodiscard]]
+        avocet::opengl::opengl_context_index context_index() const noexcept { return avocet::opengl::opengl_context_index{reinterpret_cast<std::uintptr_t>(&get())}; }
     };
 }

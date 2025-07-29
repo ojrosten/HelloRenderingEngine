@@ -30,40 +30,44 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Missing Vertex Shader",
-            [&shaderDir](){
+            [&w, &shaderDir](){
                 agl::shader_program sp{
                     shaderDir,
-                    shaderDir / "Monochrome.fs"
+                    shaderDir / "Monochrome.fs",
+                    w.context_index()
                 };
             }
         );
 
         check_exception_thrown<std::runtime_error>(
             "Misnamed Vertex Shader",
-            [&shaderDir](){
+            [&w, &shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "foo.vs",
-                    shaderDir / "Monochrome.fs"
+                    shaderDir / "Monochrome.fs",
+                    w.context_index()
                 };
             }
         );
 
         check_exception_thrown<std::runtime_error>(
             "Missing Fragment Shader",
-            [&shaderDir](){
+            [&w, &shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
-                    shaderDir
+                    shaderDir,
+                    w.context_index()
                 };
             }
         );
 
         check_exception_thrown<std::runtime_error>(
             "Misnamed Fragment Shader",
-            [&shaderDir](){
+            [&w, &shaderDir](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
-                    shaderDir / "bar.fs"
+                    shaderDir / "bar.fs",
+                    w.context_index()
                 };
             }
         );

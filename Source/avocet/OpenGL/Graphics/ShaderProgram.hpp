@@ -70,20 +70,29 @@ namespace avocet::opengl {
         }
     };
 
+    struct context_hash {
+        using is_transparent = void;
+
+        [[nodiscard]]
+        std::size_t operator()(const opengl_context_index& context) const noexcept {
+            return context.value();
+        }
+    };
+
     class shader_program {
     public:
-        shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
+        shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource, opengl_context_index context);
 
         shader_program(shader_program&&) noexcept = default;
 
         shader_program& operator=(shader_program&&) noexcept = default;
 
-        ~shader_program() { program_tracker::reset(m_Resource); }
+        ~shader_program() { m_Tracker.reset(m_Resource); }
 
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.handle()); }
 
-        void use() { program_tracker::utilize(m_Resource); }
+        void use(opengl_context_index context) { m_Tracker.utilize(context, m_Resource); }
 
         void set_uniform(std::string_view name, GLfloat val) {
             do_set_uniform(name, glUniform1f, val);
@@ -100,33 +109,54 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
+        class program_tracker {
+            inline static thread_local std::unordered_map<opengl_context_index, GLuint, context_hash, std::ranges::equal_to> st_ContextToProgram{};
+            //inline static thread_local std::unordered_multimap<opengl_context_index, opengl_context_index> st_ContextToContext{};
+           
+            opengl_context_index m_CreationContext{};
+        public:
+            explicit program_tracker(opengl_context_index context)
+                : m_CreationContext{context}
+            {
+                st_ContextToProgram.insert(std::pair{m_CreationContext, GLuint{}});
+            }
+
+            [[nodiscard]]
+            opengl_context_index context() const noexcept { return m_CreationContext; }
+
+            void utilize(opengl_context_index context, const shader_program_resource& spr) {
+                auto found{st_ContextToProgram.find(context)};
+                if(found == st_ContextToProgram.end()) // Breaks down if there is sharing of contexts across threads
+                    throw std::runtime_error{std::format("shader_program::program_tracker: Unable to find context {}", context.value())};
+
+                if(const auto index{spr.handle().index()}; index != found->second) {
+                    gl_function{glUseProgram}(index);
+                    found->second = index;
+                }
+            }
+
+            void reset(const shader_program_resource& spr) {
+                auto found{st_ContextToProgram.find(m_CreationContext)};
+                if(found == st_ContextToProgram.end())
+                    throw std::runtime_error{std::format("shader_program::program_tracker: Unable to find context {}", m_CreationContext.value())};
+
+                if(spr.handle().index() == found->second)
+                    found->second = {};
+            }
+        };
+
         shader_program_resource m_Resource;
         using map_t = std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to>;
         map_t m_Uniforms;
+        program_tracker m_Tracker;
 
         [[nodiscard]]
         GLint extract_uniform_location(std::string_view name);
 
         template<class... Args>
         void do_set_uniform(std::string_view name, void(*glFn)(GLint, Args...), Args... args) {
-            use();
+            use(m_Tracker.context());
             gl_function{glFn}(extract_uniform_location(name), args...);
         }
-
-        class program_tracker {
-            inline static thread_local GLuint st_Current{};
-        public:
-            static void utilize(shader_program_resource& spr) {
-                if(const auto index{spr.handle().index()}; index != st_Current) {
-                    gl_function{glUseProgram}(index);
-                    st_Current = index;
-                }
-            }
-
-            static void reset(const shader_program_resource& spr) noexcept {
-                if(spr.handle().index() == st_Current)
-                    st_Current = 0;
-            }
-        };
     };
 }

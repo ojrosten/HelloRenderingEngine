@@ -10,7 +10,7 @@ SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, ""
 
 =======================================
 
-Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
+Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 43
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -22,12 +22,12 @@ SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, ""
 
 =======================================
 
-Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 52
+Tests/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp, Line 54
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/OpenGL/Graphics/ShaderProgram.cpp, line 184:
+OpenGL error detected in Source/avocet/OpenGL/Graphics/ShaderProgram.cpp, line 186:
 Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": Varying "colour" has different type width across different shaders.
 

@@ -20,7 +20,7 @@ namespace avocet::testing
         return std::source_location::current().file_name();
     }
 
-    void buffer_object_labelling_free_test::labelling_tests()
+    void buffer_object_labelling_free_test::labelling_tests(curlew::window&)
     {
         execute<agl::vertex_buffer_object<GLfloat>>();
         execute<agl::element_buffer_object<GLubyte>>();

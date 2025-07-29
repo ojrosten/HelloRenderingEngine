@@ -18,14 +18,15 @@ namespace avocet::testing
         return std::source_location::current().file_name();
     }
 
-    void labelling_false_negative_test::labelling_tests()
+    void labelling_false_negative_test::labelling_tests(curlew::window& w)
     {
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
 
         agl::shader_program sp{
             shaderDir / "Identity.vs",
-            shaderDir / "Monochrome.fs"
+            shaderDir / "Monochrome.fs",
+            w.context_index()
         };
 
         check(equivalence, "Label is too short", sp.extract_label(), "Identity.vs / Monochrome.fss");

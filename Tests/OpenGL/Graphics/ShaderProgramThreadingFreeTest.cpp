@@ -32,8 +32,8 @@ namespace avocet::testing
 
         agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager, const fs::path& shaderDir, std::latch* pLatch) {
             auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
-            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-            sp.use();
+            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs", w.context_index()};
+            sp.use(w.context_index());
             if(pLatch) pLatch->arrive_and_wait();
             return get_program_index();
         }
@@ -59,6 +59,7 @@ namespace avocet::testing
         curlew::glfw_manager manager{};
 
         check_serial_tracking(manager);
+        check_serial_tracking_overlapping_lifetimes(manager);
         check_threaded_tracking(manager);
     }
 
@@ -70,6 +71,22 @@ namespace avocet::testing
             prog1{make_and_use_shader_program(manager, shaderDir, no_latch)};
 
         check_program_indices(prog0, prog1, "serial");
+    }
+
+    void shader_program_threading_free_test::check_serial_tracking_overlapping_lifetimes(curlew::glfw_manager& manager)
+    {
+        const auto shaderDir{working_materials()};
+        auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs", w.context_index()};
+        sp.use(w.context_index());
+        const auto prog0{get_program_index()};
+
+        auto w1{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::shader_program sp1{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs", w1.context_index()};
+        sp1.use(w1.context_index());
+        const auto prog1{get_program_index()};
+
+        check_program_indices(prog0, prog1, "serial overlapping");
     }
 
 

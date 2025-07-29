@@ -24,7 +24,7 @@ namespace avocet::testing
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
-        void labelling_tests();
+        void labelling_tests(curlew::window&);
     private:
         template<class Buffer>
             requires is_gl_buffer_v<Buffer>

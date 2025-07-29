@@ -20,7 +20,7 @@ namespace avocet::testing
         return std::source_location::current().file_name();
     }
 
-    void texture_2d_labelling_free_test::labelling_tests()
+    void texture_2d_labelling_free_test::labelling_tests(curlew::window&)
     {
         std::string label{"This is a nice label!"};
         unique_image image{{1}, 1, 1, colour_channels{1}, alignment{1}};

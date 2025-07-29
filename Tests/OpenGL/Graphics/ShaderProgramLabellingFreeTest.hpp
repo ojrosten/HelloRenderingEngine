@@ -14,7 +14,9 @@
 namespace avocet::testing
 {
     using namespace sequoia::testing;
-
+    /// <summary>
+    /// 
+    /// </summary>
     class shader_program_labelling_free_test final : public curlew::graphics_labelling_test
     {
     public:
@@ -23,6 +25,6 @@ namespace avocet::testing
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
-        void labelling_tests();
+        void labelling_tests(curlew::window& w);
     };
 }

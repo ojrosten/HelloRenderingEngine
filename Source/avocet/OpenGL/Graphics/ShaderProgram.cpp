@@ -172,7 +172,9 @@ namespace avocet::opengl {
         static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
-    shader_program::shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
+    shader_program::shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource, opengl_context_index context)
+        : m_Tracker{context}
+    {
         shader_compiler
             vertexShader{shader_species::vertex, vertexShaderSource},
             fragmentShader{shader_species::fragment, fragmentShaderSource};

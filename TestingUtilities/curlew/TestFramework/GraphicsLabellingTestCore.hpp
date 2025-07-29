@@ -16,7 +16,7 @@
 namespace curlew {
     template<class T>
     inline constexpr bool has_labelling_tests_v{
-        requires (T & t) { t.labelling_tests(); }
+        requires (T& t, window& w) { t.labelling_tests(w); }
     };
 
     template<test_mode Mode>
@@ -37,7 +37,7 @@ namespace curlew {
                 glfw_manager manager{};
                 auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
                 if(avocet::opengl::object_labels_activated()) {
-                    self.labelling_tests();
+                    self.labelling_tests(w);
                 }
             }
         }

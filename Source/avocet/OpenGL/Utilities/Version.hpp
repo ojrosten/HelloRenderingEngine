@@ -30,4 +30,21 @@ namespace avocet::opengl{
 
     [[nodiscard]]
     opengl_version extract_opengl_version();
+
+
+    class opengl_context_index {
+        std::uintptr_t m_Index{};
+    public:
+        opengl_context_index() noexcept = default;
+
+        explicit opengl_context_index(std::uintptr_t i) noexcept
+            : m_Index{i}
+        {}
+
+        [[nodiscard]]
+        std::uintptr_t value() const noexcept { return m_Index; }
+
+        [[nodiscard]]
+        friend constexpr bool operator==(const opengl_context_index&, const opengl_context_index&) noexcept = default;
+    };
 }
