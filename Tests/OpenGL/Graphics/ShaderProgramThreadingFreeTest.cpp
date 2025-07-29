@@ -103,7 +103,7 @@ namespace avocet::testing
         sp.use(w1.context_index());
         const auto sharedProg0{get_program_index()};
 
-        check("", prog0 == sharedProg0);
+        check(equality, "", sharedProg0.index(), prog0.index());
     }
 
 

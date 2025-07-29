@@ -111,7 +111,6 @@ namespace avocet::opengl {
     private:
         class program_tracker {
             inline static thread_local std::unordered_map<opengl_context_index, GLuint, context_hash, std::ranges::equal_to> st_ContextToCurrentProgram{};
-            //inline static thread_local std::unordered_multimap<opengl_context_index, opengl_context_index> st_ContextToContext{};
            
             opengl_context_index m_CreationContext{};
         public:
@@ -125,6 +124,15 @@ namespace avocet::opengl {
             opengl_context_index context() const noexcept { return m_CreationContext; }
 
             void utilize(opengl_context_index context, const shader_program_resource& spr) {
+                // This will fail if
+                // a. The context is different from the creation context
+                // b. The requested context was never shared with the creation context
+                // This could be fixed by propagating shared contexts for use()
+                // Alternatively, the entire optimization could be removed, and only
+                // retained for things like FBOs which aren't shareable. There could still
+                // be an issue, though: calling use() on a shader program in a non-shared
+                // context that happens to have a shader_program wrapping the same index.
+                // Similar considerations apply to binding textures.
                 auto[iter, inserted]{st_ContextToCurrentProgram.insert(std::pair{context, spr.handle().index()})};
                 if(inserted)
                     gl_function{glUseProgram}(iter->second);
