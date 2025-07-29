@@ -138,6 +138,9 @@ namespace avocet::opengl {
                 // approach would be a boolean flag as to whether or not to even consider
                 // shared contexts and then simply *assume*, if yes, that the requested context
                 // is a shared one. Any errors would be on the head of clients...
+                //
+                // It is likely that, regardless, use() will end up with a precondition that
+                // may not be expressible in code.
                 auto[iter, inserted]{st_ContextToCurrentProgram.insert(std::pair{context, spr.handle().index()})};
                 if(inserted)
                     gl_function{glUseProgram}(iter->second);
