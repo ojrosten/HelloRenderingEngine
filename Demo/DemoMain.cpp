@@ -58,10 +58,10 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program
-            shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
-            discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
-            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
-            shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
+            shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs", w.context_index()},
+            discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs", w.context_index()},
+            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs", w.context_index()},
+            shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs", w.context_index()};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
@@ -128,13 +128,13 @@ int main()
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            shaderProgramDouble.use();
+            shaderProgramDouble.use(w.context_index());
             q.draw();
-            discShaderProgram.use();
+            discShaderProgram.use(w.context_index());
             disc.draw();
-            shaderProgram.use();
+            shaderProgram.use(w.context_index());
             sept.draw();
-            shaderProgram2D.use();
+            shaderProgram2D.use(w.context_index());
             hex.draw(agl::texture_unit{8});
 
             glfwSwapBuffers(&w.get());
