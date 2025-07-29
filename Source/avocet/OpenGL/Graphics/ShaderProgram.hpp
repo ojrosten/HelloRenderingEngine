@@ -110,7 +110,7 @@ namespace avocet::opengl {
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
         class program_tracker {
-            inline static thread_local std::unordered_map<opengl_context_index, GLuint, context_hash, std::ranges::equal_to> st_ContextToProgram{};
+            inline static thread_local std::unordered_map<opengl_context_index, GLuint, context_hash, std::ranges::equal_to> st_ContextToCurrentProgram{};
             //inline static thread_local std::unordered_multimap<opengl_context_index, opengl_context_index> st_ContextToContext{};
            
             opengl_context_index m_CreationContext{};
@@ -118,26 +118,25 @@ namespace avocet::opengl {
             explicit program_tracker(opengl_context_index context)
                 : m_CreationContext{context}
             {
-                st_ContextToProgram.insert(std::pair{m_CreationContext, GLuint{}});
+                st_ContextToCurrentProgram.insert(std::pair{m_CreationContext, GLuint{}});
             }
 
             [[nodiscard]]
             opengl_context_index context() const noexcept { return m_CreationContext; }
 
             void utilize(opengl_context_index context, const shader_program_resource& spr) {
-                auto found{st_ContextToProgram.find(context)};
-                if(found == st_ContextToProgram.end()) // Breaks down if there is sharing of contexts across threads
-                    throw std::runtime_error{std::format("shader_program::program_tracker: Unable to find context {}", context.value())};
-
-                if(const auto index{spr.handle().index()}; index != found->second) {
+                auto[iter, inserted]{st_ContextToCurrentProgram.insert(std::pair{context, spr.handle().index()})};
+                if(inserted)
+                    gl_function{glUseProgram}(iter->second);
+                else if(const auto index{spr.handle().index()}; index != iter->second) {
                     gl_function{glUseProgram}(index);
-                    found->second = index;
+                    iter->second = index;
                 }
             }
 
             void reset(const shader_program_resource& spr) {
-                auto found{st_ContextToProgram.find(m_CreationContext)};
-                if(found == st_ContextToProgram.end())
+                auto found{st_ContextToCurrentProgram.find(m_CreationContext)};
+                if(found == st_ContextToCurrentProgram.end())
                     throw std::runtime_error{std::format("shader_program::program_tracker: Unable to find context {}", m_CreationContext.value())};
 
                 if(spr.handle().index() == found->second)

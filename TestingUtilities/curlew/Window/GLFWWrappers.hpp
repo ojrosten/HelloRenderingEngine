@@ -64,6 +64,9 @@ namespace curlew {
         window create_window(const window_config& config);
 
         [[nodiscard]]
+        window create_window(const window_config& config, window& sharedContext);
+
+        [[nodiscard]]
         static rendering_setup find_rendering_setup();
     };
 
@@ -72,7 +75,7 @@ namespace curlew {
 
         GLFWwindow& m_Window;
 
-        window_resource(const window_config& config, const avocet::opengl::opengl_version& version);
+        window_resource(const window_config& config, const avocet::opengl::opengl_version& version, window* sharedContext);
     public:
 
         window_resource(const window_resource&) = delete;
@@ -91,7 +94,7 @@ namespace curlew {
 
         window_resource m_Window;
 
-        window(const window_config& config, const avocet::opengl::opengl_version& version);
+        window(const window_config& config, const avocet::opengl::opengl_version& version, window* sharedContext);
     public:
 
         window(const window&) = delete;

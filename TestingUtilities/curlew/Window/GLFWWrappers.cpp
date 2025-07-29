@@ -37,7 +37,7 @@ namespace curlew {
         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
         [[nodiscard]]
-        GLFWwindow& make_window(const window_config& config, const avocet::opengl::opengl_version& version) {
+        GLFWwindow& make_window(const window_config& config, const avocet::opengl::opengl_version& version, GLFWwindow* sharedContext) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -46,7 +46,7 @@ namespace curlew {
 
             set_debug_context(version);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, sharedContext)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
         }
 
@@ -66,6 +66,8 @@ namespace curlew {
                     GL_TRUE);
             }
         }
+
+        constexpr window* no_shared_context{};
     }
 
 
@@ -84,7 +86,7 @@ namespace curlew {
 
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
-        auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
+        auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion, no_shared_context)};
         return { agl::extract_opengl_version(), agl::get_renderer()};
     }
 
@@ -105,13 +107,20 @@ namespace curlew {
         return setup;
     }
 
-    window glfw_manager::create_window(const window_config& config) { return window{config, m_OpenGLVersion}; }
+    [[nodiscard]]
+    window glfw_manager::create_window(const window_config& config) { return window{config, m_OpenGLVersion, nullptr}; }
 
-    window_resource::window_resource(const window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
+    [[nodiscard]]
+    window glfw_manager::create_window(const window_config& config, window& sharedContext) {
+        return window{config, m_OpenGLVersion, &sharedContext};
+    }
+
+
+    window_resource::window_resource(const window_config& config, const agl::opengl_version& version, window* sharedContext) : m_Window{make_window(config, version, sharedContext ? &sharedContext->get() : nullptr)} {}
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
-    window::window(const window_config& config, const agl::opengl_version& version) : m_Window{config, version} {
+    window::window(const window_config& config, const agl::opengl_version& version, window* sharedContext) : m_Window{config, version, sharedContext} {
         glfwMakeContextCurrent(&m_Window.get());
 
         if(!gladLoadGL(glfwGetProcAddress))

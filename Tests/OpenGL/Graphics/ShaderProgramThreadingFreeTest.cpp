@@ -60,7 +60,9 @@ namespace avocet::testing
 
         check_serial_tracking(manager);
         check_serial_tracking_overlapping_lifetimes(manager);
+        check_serial_shared_context_tracking(manager);
         check_threaded_tracking(manager);
+        check_threaded_shared_context_tracking(manager);
     }
 
     void shader_program_threading_free_test::check_serial_tracking(curlew::glfw_manager& manager)
@@ -87,6 +89,21 @@ namespace avocet::testing
         const auto prog1{get_program_index()};
 
         check_program_indices(prog0, prog1, "serial overlapping");
+    }
+
+    void shader_program_threading_free_test::check_serial_shared_context_tracking(curlew::glfw_manager& manager)
+    {
+        const auto shaderDir{working_materials()};
+        auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs", w.context_index()};
+        sp.use(w.context_index());
+        const auto prog0{get_program_index()};
+
+        auto w1{manager.create_window({.hiding{curlew::window_hiding_mode::on}}, w)};
+        sp.use(w1.context_index());
+        const auto sharedProg0{get_program_index()};
+
+        check("", prog0 == sharedProg0);
     }
 
 
@@ -117,5 +134,9 @@ namespace avocet::testing
             check(make_description(tag, "prog0 should report > 0"), prog0.index() > 0);
             check(make_description(tag, "prog1 should report > 0"), prog1.index() > 0);
         }
+    }
+
+    void shader_program_threading_free_test::check_threaded_shared_context_tracking(curlew::glfw_manager& manager)
+    {
     }
 }
