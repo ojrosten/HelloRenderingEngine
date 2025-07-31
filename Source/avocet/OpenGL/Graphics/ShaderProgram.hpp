@@ -116,7 +116,7 @@ namespace avocet::opengl {
         class program_tracker {
             inline static thread_local GLuint st_Current{};
         public:
-            static void utilize(shader_program_resource& spr) {
+            static void utilize(const shader_program_resource& spr) {
                 if(const auto index{spr.handle().index()}; index != st_Current) {
                     gl_function{glUseProgram}(index);
                     st_Current = index;
