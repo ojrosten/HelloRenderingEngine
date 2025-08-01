@@ -32,9 +32,6 @@ namespace avocet::opengl {
         GLuint index() const noexcept { return m_Index; }
 
         [[nodiscard]]
-        explicit operator bool() const noexcept { return m_Index != 0; }
-
-        [[nodiscard]]
         friend bool operator==(const resource_handle&, const resource_handle&) noexcept = default;
     };
 }

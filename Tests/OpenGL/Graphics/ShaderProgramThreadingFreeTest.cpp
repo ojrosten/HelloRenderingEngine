@@ -21,7 +21,7 @@ namespace avocet::testing
 
     namespace
     {
-        agl::resource_handle get_program_index() {
+        agl::resource_handle get_current_program_index() {
             GLint param{};
             agl::gl_function{glGetIntegerv}(GL_CURRENT_PROGRAM, &param);
             if(param < 0)
@@ -40,7 +40,7 @@ namespace avocet::testing
 
             if(pLatch) pLatch->arrive_and_wait();
 
-            return get_program_index();
+            return get_current_program_index();
         }
 
         constexpr std::latch* no_latch{};
@@ -98,10 +98,11 @@ namespace avocet::testing
         check_program_indices(prog0, prog1, "threaded");
     }
 
-    void shader_program_threading_free_test::check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, std::string_view tag)
+    void shader_program_threading_free_test::check_program_indices(const agl::resource_handle& prog0, const agl::resource_handle& prog1, std::string_view tag)
     {
-        check(make_description(tag, "prog0 should report non-null"), static_cast<bool>(prog0));
-        check(make_description(tag, "prog1 should report non-null"), static_cast<bool>(prog1));
+        check(make_description(tag, "prog0 should not be null"), prog0 != agl::resource_handle{});
+        check(make_description(tag, "prog1 should not be null"), prog1 != agl::resource_handle{});
+
         check(make_description(tag, "Assumption required for sensitivity to program 0 utilization accidentally suppressing program 1 utilization"), prog0 == prog1);
     }
 }
