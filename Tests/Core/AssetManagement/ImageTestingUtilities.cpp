@@ -59,7 +59,6 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    [[nodiscard]]
     image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment) {
         auto fn{
             [channels](std::size_t row, std::size_t channelIndex) {

@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 24
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 23
 Absent image
 
 Expected Exception Type:
@@ -7,7 +7,7 @@ unique_image: texture output/TestsTemporaryData/Core/AssetManagement/UniqueImage
 
 =======================================
 
-Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 31
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 30
 Invalid image
 
 Expected Exception Type:
@@ -16,7 +16,7 @@ unique_image: texture output/TestsTemporaryData/Core/AssetManagement/UniqueImage
 
 =======================================
 
-Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 38
+Tests/Core/AssetManagement/UniqueImageTest.cpp, Line 37
 Inconsistent image data
 
 Expected Exception Type:
