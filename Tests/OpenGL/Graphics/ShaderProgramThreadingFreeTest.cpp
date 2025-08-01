@@ -30,11 +30,16 @@ namespace avocet::testing
             return agl::resource_handle{static_cast<GLuint>(param)};
         }
 
-        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager, const fs::path& shaderDir, std::latch* pLatch) {
+        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager,
+                                                         const fs::path& shaderDir,
+                                                         std::latch* pLatch) {
             auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
+
             agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
             sp.use();
+
             if(pLatch) pLatch->arrive_and_wait();
+
             return get_program_index();
         }
 
@@ -95,10 +100,8 @@ namespace avocet::testing
 
     void shader_program_threading_free_test::check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, std::string_view tag)
     {
-        if(check(make_description(tag, "Bounded Context: Either one of the programs isn't utilized or they both are and have the same index"), (!prog0 || !prog1 || (prog0 == prog1))))
-        {
-            check(make_description(tag, "prog0 should report > 0"), prog0.index() > 0);
-            check(make_description(tag, "prog1 should report > 0"), prog1.index() > 0);
-        }
+        check(make_description(tag, "prog0 should report non-null"), static_cast<bool>(prog0));
+        check(make_description(tag, "prog1 should report non-null"), static_cast<bool>(prog1));
+        check(make_description(tag, "Assumption required for sensitivity to program 0 utilization accidentally suppressing program 1 utilization"), prog0 == prog1);
     }
 }
