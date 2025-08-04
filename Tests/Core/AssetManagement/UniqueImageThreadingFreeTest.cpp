@@ -26,5 +26,55 @@ namespace avocet::testing
 
     void unique_image_threading_free_test::run_tests()
     {
+        using promise_t = std::promise<unique_image>;
+        using future_t  = std::future<unique_image>;
+
+        constexpr std::size_t numThreads{6};
+
+        std::array<promise_t, numThreads> imagePromises{};
+
+        auto imageFutures{
+            sequoia::utilities::make_array<future_t, numThreads>(
+                [&imagePromises](std::size_t i) { return imagePromises[i].get_future(); }
+            )
+        };
+
+        {
+            std::latch holdYourHorses{numThreads};
+            const auto imagePath{working_materials() / "bgr_striped_2w_3h_3c.png"};
+
+            auto workers{
+                sequoia::utilities::make_array<std::jthread, numThreads>(
+                    [&imagePromises, &holdYourHorses, &imagePath](std::size_t i) {
+                        return std::jthread{
+                            [&holdYourHorses, &imagePath, i](promise_t p) {
+                                const auto flip{i % 2 ? flip_vertically::no : flip_vertically::yes};
+                                holdYourHorses.arrive_and_wait();
+                                p.set_value(unique_image(imagePath, flip, all_channels_in_image));
+                            },
+                            std::move(imagePromises[i])
+                        };
+                    }
+                )
+            };
+        }
+
+        const bool allPassed{
+            [numThreads, &imageFutures](){
+                for(auto i : std::views::iota(0u, numThreads)) {
+                    const auto comparison{
+                        i % 2 ? make_bgr_striped(2, 3, colour_channels{3}, alignment{1})
+                              : make_rgb_striped(2, 3, colour_channels{3}, alignment{1})
+                    };
+
+                    if(!std::ranges::equal(imageFutures[i].get().span(), comparison.data))
+                        return false;
+                }
+
+                return true;
+            }()
+        };
+
+        check("All images correct", allPassed);
     }
 }
