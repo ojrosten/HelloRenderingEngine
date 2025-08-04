@@ -114,18 +114,18 @@ namespace avocet::opengl {
         }
 
         class program_tracker {
-            inline static thread_local GLuint st_Current{};
+            inline static thread_local resource_handle st_Current{};
         public:
             static void utilize(const shader_program_resource& spr) {
-                if(const auto index{spr.handle().index()}; index != st_Current) {
-                    gl_function{glUseProgram}(index);
-                    st_Current = index;
+                if(const auto& handle{spr.handle()}; handle != st_Current) {
+                    gl_function{glUseProgram}(handle.index());
+                    st_Current = resource_handle{handle.index()};
                 }
             }
 
             static void reset(const shader_program_resource& spr) noexcept {
-                if(spr.handle().index() == st_Current)
-                    st_Current = 0;
+                if(spr.handle() == st_Current)
+                    st_Current = {};
             }
         };
     };
