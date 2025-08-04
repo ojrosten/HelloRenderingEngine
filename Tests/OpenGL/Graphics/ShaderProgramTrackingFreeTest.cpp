@@ -105,6 +105,6 @@ namespace avocet::testing
         check(make_description(tag, "prog0 should not be null"), prog0 != agl::resource_handle{});
         check(make_description(tag, "prog1 should not be null"), prog1 != agl::resource_handle{});
 
-        check(make_description(tag, "Assumption required for sensitivity to program 0 utilization accidentally suppressing program 1 utilization"), prog0 == prog1);
+        check(make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), prog0 == prog1);
     }
 }
