@@ -62,25 +62,27 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::run_tests()
     {
-        check_serial_tracking_non_overlapping_lifetimes();
-        check_threaded_tracking_overlapping_lifetimes();
+        curlew::glfw_manager manager{};
+
+        check_serial_tracking_non_overlapping_lifetimes(manager);
+        check_threaded_tracking_overlapping_lifetimes(manager);
     }
 
-    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes(curlew::glfw_manager& manager)
     {
 
     }
 
-    void shader_program_tracking_free_test::check_threaded_tracking_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_threaded_tracking_overlapping_lifetimes(curlew::glfw_manager& manager)
     {
 
     }
 
-    void shader_program_tracking_free_test::check_program_indices(const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, std::string_view tag)
+    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)
     {
         check(make_description(tag, "prog0 should not be null"), prog0 != agl::resource_handle{});
         check(make_description(tag, "prog1 should not be null"), prog1 != agl::resource_handle{});
 
-        check(make_description(tag, "Assumption required for sensitivity to program 0 utilization accidentally suppressing program 1 utilization"), prog0 == prog1);
+        check(make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), prog0 == prog1);
     }
 }
