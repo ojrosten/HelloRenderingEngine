@@ -16,6 +16,7 @@
 #include "Core/AssetManagement/PaddedImageSizeFreeTest.hpp"
 #include "Core/AssetManagement/UniqueImageTest.hpp"
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
+#include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
@@ -29,6 +30,7 @@
 #include "OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.hpp"
 #include "OpenGL/Graphics/ShaderProgramLabellingFreeTest.hpp"
+#include "OpenGL/Graphics/ShaderProgramTrackingFreeTest.hpp"
 #include "OpenGL/Graphics/Texture2dLabellingTest.hpp"
 #include "OpenGL/Graphics/Texture2dTest.hpp"
 #include "OpenGL/Graphics/Texture2dTestingDiagnostics.hpp"
@@ -71,7 +73,8 @@ int main(int argc, char** argv)
             "Shader Program",
             shader_program_file_existence_free_test{"Shader Program File Existence Free Test"},
             shader_program_broken_stages_free_test{"Shader Program Broken Stages Free Test"},
-            shader_program_labelling_free_test{"Shader Program Labelling Free Test"}
+            shader_program_labelling_free_test{"Shader Program Labelling Free Test"},
+            shader_program_tracking_free_test{"Shader Program Tracking Free Test"}
         );
 
         runner.add_test_suite(
@@ -92,7 +95,8 @@ int main(int argc, char** argv)
             image_false_negative_test{"False Negative Test"},
             unique_image_test{"Semantics Test"},
             image_view_false_negative_test{"False Negative Test"},
-            image_view_test{"Unit Test"}
+            image_view_test{"Unit Test"},
+            unique_image_threading_free_test{"Unique Image Threading Free Test"}
         );
 
         runner.add_test_suite(

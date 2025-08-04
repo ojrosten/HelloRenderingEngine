@@ -24,6 +24,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/PaddedImageSizeFreeTest.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageTest.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp
+               ${TestDir}/Core/AssetManagement/UniqueImageThreadingFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/InfiniteLoopFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
@@ -37,6 +38,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Graphics/ShaderProgramBrokenStagesFreeTest.cpp
                ${TestDir}/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp
                ${TestDir}/OpenGL/Graphics/ShaderProgramLabellingFreeTest.cpp
+               ${TestDir}/OpenGL/Graphics/ShaderProgramTrackingFreeTest.cpp
                ${TestDir}/OpenGL/Graphics/Texture2dLabellingTest.cpp
                ${TestDir}/OpenGL/Graphics/Texture2dTest.cpp
                ${TestDir}/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp
