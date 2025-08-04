@@ -74,15 +74,14 @@ namespace avocet::testing
         const auto prog0{make_and_use_shader_program(manager, shaderDir, no_latch)},
                    prog1{make_and_use_shader_program(manager, shaderDir, no_latch)};
 
-        check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
+        check_program_indices("Serial with non-overlapping lifetimes", prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_threaded_tracking_overlapping_lifetimes(curlew::glfw_manager& manager)
     {
         const auto shaderDir{working_materials()};
 
-        constexpr std::size_t numThreads{2};
-        std::latch holdYourHorses{numThreads};
+        std::latch holdYourHorses{2};
 
         std::packaged_task<agl::resource_handle()>
             shaderProgTask0{[&]() { return make_and_use_shader_program(manager, shaderDir, &holdYourHorses); }},
@@ -97,7 +96,7 @@ namespace avocet::testing
         const auto prog0{shaderProgIndexFuture0.get()},
                    prog1{shaderProgIndexFuture1.get()};
 
-        check_program_indices("Parallel overlapping lifetimes", prog0, prog1);
+        check_program_indices("Parallel with overlapping lifetimes", prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)
