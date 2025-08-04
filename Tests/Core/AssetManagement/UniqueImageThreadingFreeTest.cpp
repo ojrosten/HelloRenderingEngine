@@ -29,7 +29,7 @@ namespace avocet::testing
         using promise_t = std::promise<unique_image>;
         using future_t  = std::future<unique_image>;
 
-        constexpr std::size_t numThreads{6};
+        constexpr std::size_t numThreads{8};
 
         std::array<promise_t, numThreads> imagePromises{};
 
