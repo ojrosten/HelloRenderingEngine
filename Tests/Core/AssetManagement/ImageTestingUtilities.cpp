@@ -68,4 +68,15 @@ namespace avocet::testing {
 
         return make_image(w, h, channels, rowAlignment, fn);
     }
+
+    [[nodiscard]]
+    image_data make_bgr_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment) {
+        auto fn{
+            [channels](std::size_t row, std::size_t channelIndex) {
+                return static_cast<unsigned char>((channels.raw_value() - 1 - row % channels.raw_value()) == channelIndex ? 255 : 0);
+            }
+        };
+
+        return make_image(w, h, channels, rowAlignment, fn);
+    }
 }
