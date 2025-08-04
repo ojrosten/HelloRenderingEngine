@@ -9,7 +9,6 @@
 
 #include "ShaderProgramTrackingFreeTest.hpp"
 
-#include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
 
 #include <future>
@@ -62,13 +61,14 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::run_tests()
     {
-        check_serial_tracking_non_overlapping_lifetimes();
-        check_threaded_tracking_overlapping_lifetimes();
+        curlew::glfw_manager manager{};
+
+        check_serial_tracking_non_overlapping_lifetimes(manager);
+        check_threaded_tracking_overlapping_lifetimes(manager);
     }
 
-    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes(curlew::glfw_manager& manager)
     {
-        curlew::glfw_manager manager{};
         const auto shaderDir{working_materials()};
 
         const auto prog0{make_and_use_shader_program(manager, shaderDir, no_latch)},
@@ -77,9 +77,8 @@ namespace avocet::testing
         check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
     }
 
-    void shader_program_tracking_free_test::check_threaded_tracking_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_threaded_tracking_overlapping_lifetimes(curlew::glfw_manager& manager)
     {
-        curlew::glfw_manager manager{};
         const auto shaderDir{working_materials()};
 
         constexpr std::size_t numThreads{2};
