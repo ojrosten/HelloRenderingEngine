@@ -40,8 +40,8 @@ namespace avocet::testing
         };
 
         {
-            const auto imagePath{working_materials() / "bgr_striped_2w_3h_3c.png"};
             std::latch holdYouHorses{numThreads};
+            const auto imagePath{working_materials() / "bgr_striped_2w_3h_3c.png"};
 
             auto workers{
                 sequoia::utilities::make_array<std::jthread, numThreads>(
@@ -64,8 +64,7 @@ namespace avocet::testing
             [numThreads, &imageFutures](){
                 for(auto i : std::views::iota(0uz, numThreads)) {
                     const auto comparison{i % 2 ? make_rgb_striped(2, 3, colour_channels{3}, alignment{1})
-                                                : make_bgr_striped(2, 3, colour_channels{3}, alignment{1})
-                    };
+                                                : make_bgr_striped(2, 3, colour_channels{3}, alignment{1})};
 
                     if(!std::ranges::equal(imageFutures[i].get().span(), comparison.data))
                         return false;
