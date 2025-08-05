@@ -70,12 +70,32 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes(curlew::glfw_manager& manager)
     {
+        const auto shaderDir{working_materials()};
+        const auto prog0{make_and_use_shader_program(manager, shaderDir, no_latch)},
+                   prog1{make_and_use_shader_program(manager, shaderDir, no_latch)};
 
+        check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_threaded_tracking_overlapping_lifetimes(curlew::glfw_manager& manager)
     {
+        const auto shaderDir{working_materials()};
+        std::latch holdYourHorses{2};
 
+        std::packaged_task<agl::resource_handle()>
+            shaderProgTask0{[&]() { return make_and_use_shader_program(manager, shaderDir, &holdYourHorses); }},
+            shaderProgTask1{[&]() { return make_and_use_shader_program(manager, shaderDir, &holdYourHorses); }};
+
+        auto shaderProgFuture0{shaderProgTask0.get_future()},
+             shaderProgFuture1{shaderProgTask1.get_future()};
+
+        std::jthread worker0{std::move(shaderProgTask0)},
+                     worker1{std::move(shaderProgTask1)};
+
+        const auto prog0{shaderProgFuture0.get()},
+                   prog1{shaderProgFuture1.get()};
+
+        check_program_indices("Threaded overlapping lifetimes", prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)

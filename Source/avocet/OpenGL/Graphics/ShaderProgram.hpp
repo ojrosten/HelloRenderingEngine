@@ -74,6 +74,12 @@ namespace avocet::opengl {
     public:
         shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
+        shader_program(shader_program&&) noexcept = default;
+
+        shader_program& operator=(shader_program&&) noexcept = default;
+
+        ~shader_program() { program_tracker::reset(m_Resource); }
+
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.handle()); }
 
@@ -108,13 +114,18 @@ namespace avocet::opengl {
         }
 
         class program_tracker {
-            inline static GLuint st_Current{};
+            inline static thread_local GLuint st_Current{};
         public:
             static void utilize(const shader_program_resource& spr) {
                 if(const auto index{spr.handle().index()}; index != st_Current) {
                     gl_function{glUseProgram}(index);
                     st_Current = index;
                 }
+            }
+
+            static void reset(const shader_program_resource& spr) {
+                if(spr.handle().index() == st_Current)
+                    st_Current = 0;
             }
         };
     };

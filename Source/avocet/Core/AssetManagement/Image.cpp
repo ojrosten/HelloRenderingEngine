@@ -36,7 +36,7 @@ namespace avocet {
                 throw std::runtime_error{std::format("unique_image: {} channels requested, but only 1--4 supported by stbi_load", requestedChannels.value().raw_value())};
         }
 
-        stbi_set_flip_vertically_on_load_thread(static_cast<bool>(flip));
+        stbi_set_flip_vertically_on_load(static_cast<bool>(flip));
 
         int width{}, height{}, channels{}, channelsSelection{requestedChannels ? static_cast<int>(requestedChannels.value().raw_value()) : 0};
         auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, channelsSelection)};
