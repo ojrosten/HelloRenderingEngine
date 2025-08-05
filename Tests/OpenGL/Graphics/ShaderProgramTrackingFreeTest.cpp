@@ -34,7 +34,8 @@ namespace avocet::testing
             return agl::resource_handle{static_cast<GLuint>(param)};
         }
 
-        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager, const fs::path& shaderDir) {
+        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager,
+                                                         const fs::path& shaderDir) {
             auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
 
             agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
@@ -69,7 +70,7 @@ namespace avocet::testing
         const auto prog0{make_and_use_shader_program(manager, shaderDir)},
                    prog1{make_and_use_shader_program(manager, shaderDir)};
 
-        check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
+        check_program_indices("Serial with non-overlapping lifetimes", prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)
@@ -77,6 +78,9 @@ namespace avocet::testing
         check(make_description(tag, "prog0 should not be null"), prog0 != agl::resource_handle{});
         check(make_description(tag, "prog1 should not be null"), prog1 != agl::resource_handle{});
 
-        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), prog0, prog1);
+        check(equality,
+              make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"),
+              prog0,
+              prog1);
     }
 }
