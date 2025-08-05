@@ -16,6 +16,8 @@
 
 #include <iostream>
 #include <format>
+#include <mutex>
+
 
 namespace curlew {
     namespace {
@@ -36,8 +38,11 @@ namespace curlew {
         [[nodiscard]]
         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
+        std::mutex glfw_mutex{};
+
         [[nodiscard]]
         GLFWwindow& make_window(const window_config& config, const avocet::opengl::opengl_version& version) {
+            std::lock_guard lock{glfw_mutex};
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -109,7 +114,10 @@ namespace curlew {
 
     window_resource::window_resource(const window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
 
-    window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
+    window_resource::~window_resource() {
+      std::lock_guard lock{glfw_mutex};
+      glfwDestroyWindow(&m_Window);
+    }
 
     window::window(const window_config& config, const agl::opengl_version& version) : m_Window{config, version} {
         glfwMakeContextCurrent(&m_Window.get());
