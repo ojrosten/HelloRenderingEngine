@@ -25,9 +25,9 @@ namespace avocet::testing
 
     namespace
     {
-        agl::resource_handle get_current_program_index() {
+        agl::resource_handle get_current_program_index(const GladGLContext& ctx) {
             GLint param{};
-            agl::gl_function{glGetIntegerv}(GL_CURRENT_PROGRAM, &param);
+            agl::gl_function{ctx.GetIntegerv}(GL_CURRENT_PROGRAM, &param);
             if(param < 0)
                 throw std::runtime_error{std::format("Negative program index: {}", param)};
 

@@ -18,19 +18,19 @@ namespace avocet::opengl {
     using optional_label = std::optional<std::string>;
     inline constexpr optional_label null_label{std::nullopt};
 
-    inline void add_label(object_identifier identifier, const resource_handle& h, const optional_label& label) {
+    inline void add_label(const GladGLContext& ctx, object_identifier identifier, const resource_handle& h, const optional_label& label) {
         if(label && object_labels_activated()) {
             const auto& str{label.value()};
-            gl_function{glObjectLabel}(to_gl_enum(identifier), h.index(), to_gl_sizei(str.size()), str.data());
+            gl_function{ctx.ObjectLabel}(to_gl_enum(identifier), h.index(), to_gl_sizei(str.size()), str.data());
         }
     }
 
     [[nodiscard]]
-    inline GLint get_max_label_length() {
+    inline GLint get_max_label_length(const GladGLContext& ctx) {
         const static GLint length{
-            [](){
+            [&](){
                 GLint param{};
-                gl_function{glGetIntegerv}(GL_MAX_LABEL_LENGTH, &param);
+                gl_function{ctx.GetIntegerv}(GL_MAX_LABEL_LENGTH, &param);
                 return param;
             }()
         };
@@ -39,10 +39,10 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle) {
-        std::string label(get_max_label_length(), ' ');
+    inline std::string get_object_label(const GladGLContext& ctx, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle) {
+        std::string label(get_max_label_length(ctx), ' ');
         GLsizei numChars{};
-        gl_function{glGetObjectLabel}(
+        gl_function{ctx.GetObjectLabel}(
             to_gl_enum(identifier),
             handle.index(),
             to_gl_sizei(label.size()),
