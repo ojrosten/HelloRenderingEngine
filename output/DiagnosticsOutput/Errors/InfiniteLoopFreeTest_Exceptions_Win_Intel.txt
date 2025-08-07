@@ -1,14 +1,9 @@
 Tests/OpenGL/Debugging/InfiniteLoopFreeTest.cpp, Line 32
-Repeatedly call glGetError
+Check for basic errors with no context
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/InfiniteLoopFreeTest.cpp, line 33:
-Invalid operation
-Invalid operation
-Invalid operation
-Invalid operation
-Invalid operation
+gl_function: attempting to construct with a nullptr coming via Source/avocet/OpenGL/Debugging/Errors.cpp, line 188
 
 =======================================
 

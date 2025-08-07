@@ -29,7 +29,7 @@ namespace avocet::testing
             if(is_intel(manager.find_rendering_setup().renderer)) {
                 namespace agl = avocet::opengl;
                 check_exception_thrown<std::runtime_error>(
-                    "Repeatedly call glGetError",
+                    "Check for basic errors with no context",
                     [](){
                         GladGLContext ctx{};
                         agl::check_for_basic_errors(ctx, agl::num_messages{5}, std::source_location::current());
