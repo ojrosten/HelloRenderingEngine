@@ -30,7 +30,10 @@ namespace avocet::testing
                 namespace agl = avocet::opengl;
                 check_exception_thrown<std::runtime_error>(
                     "Repeatedly call glGetError",
-                    [](){ agl::check_for_basic_errors(agl::num_messages{5}, std::source_location::current()); }
+                    [](){
+                        GladGLContext ctx{};
+                        agl::check_for_basic_errors(ctx, agl::num_messages{5}, std::source_location::current());
+                    }
                 );
             }
         }

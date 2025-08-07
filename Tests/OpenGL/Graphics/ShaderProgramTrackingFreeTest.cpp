@@ -25,23 +25,23 @@ namespace avocet::testing
 
     namespace
     {
-        agl::resource_handle get_current_program_index(const GladGLContext& ctx) {
+        agl::gl_handle get_current_program_index(const GladGLContext& ctx) {
             GLint param{};
             agl::gl_function{ctx, ctx.GetIntegerv}(GL_CURRENT_PROGRAM, &param);
             if(param < 0)
                 throw std::runtime_error{std::format("Negative program index: {}", param)};
 
-            return agl::resource_handle{static_cast<GLuint>(param)};
+            return agl::gl_handle{static_cast<GLuint>(param)};
         }
 
-        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager,
+        agl::gl_handle make_and_use_shader_program(curlew::glfw_manager& manager,
                                                          const fs::path& shaderDir) {
             auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
 
-            agl::shader_program sp{shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+            agl::shader_program sp{w.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
             sp.use();
 
-            return get_current_program_index();
+            return get_current_program_index(w.context());
         }
 
         [[nodiscard]]
@@ -73,10 +73,10 @@ namespace avocet::testing
         check_program_indices("Serial with non-overlapping lifetimes", prog0, prog1);
     }
 
-    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)
+    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::gl_handle& prog0, const avocet::opengl::gl_handle& prog1)
     {
-        check(make_description(tag, "prog0 should not be null"), prog0 != agl::resource_handle{});
-        check(make_description(tag, "prog1 should not be null"), prog1 != agl::resource_handle{});
+        check(make_description(tag, "prog0 should not be null"), prog0 != agl::gl_handle{});
+        check(make_description(tag, "prog1 should not be null"), prog1 != agl::gl_handle{});
 
         check(equality,
               make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"),

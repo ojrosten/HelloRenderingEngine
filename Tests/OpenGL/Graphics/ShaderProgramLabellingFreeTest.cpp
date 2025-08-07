@@ -18,12 +18,13 @@ namespace avocet::testing
         return std::source_location::current().file_name();
     }
 
-    void shader_program_labelling_free_test::labelling_tests()
+    void shader_program_labelling_free_test::labelling_tests(const GladGLContext& ctx)
     {
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
 
         agl::shader_program sp{
+            ctx,
             shaderDir / "Identity.vs",
             shaderDir / "Monochrome.fs"
         };

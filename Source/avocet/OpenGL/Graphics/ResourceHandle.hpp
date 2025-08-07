@@ -40,6 +40,8 @@ namespace avocet {
 }
 
 namespace avocet::opengl {
+    using gl_handle = gpu_resource_handle<GLuint>;
+
     class contextual_handle {
     public:
         using handle_type = gpu_resource_handle<GLuint>;

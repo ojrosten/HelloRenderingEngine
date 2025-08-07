@@ -30,6 +30,6 @@ namespace avocet::testing
     private:
         template<class Buffer>
             requires is_gl_buffer_v<Buffer>
-        void execute();
+        void execute(const GladGLContext& ctx);
     };
 }

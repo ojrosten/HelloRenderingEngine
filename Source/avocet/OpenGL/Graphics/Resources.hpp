@@ -109,14 +109,14 @@ namespace avocet::opengl {
         [[nodiscard]]
         bool is_null() const noexcept {
             auto isNull{[](const contextual_handle& h){ return h == contextual_handle{}; }};
-            assert(std::ranges::all_of(get_contextual_handles().resources(), isNull) or std::ranges::none_of(get_contextual_handles(), isNull));
+            assert(std::ranges::all_of(get_contextual_handles().get(), isNull) or std::ranges::none_of(get_contextual_handles().get(), isNull));
             return isNull(get_contextual_handle(index<0>{}));
         }
 
         template<std::size_t I>
             requires (I < N)
         [[nodiscard]]
-        std::string extract_label(index<I> i) const { return get_object_label(context(), LifeEvents::identifier, get_contextual_handle(i)); }
+        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, get_contextual_handle(i)); }
 
         [[nodiscard]]
         std::string extract_label() const requires (N == 1) { return extract_label(index<0>{}); }

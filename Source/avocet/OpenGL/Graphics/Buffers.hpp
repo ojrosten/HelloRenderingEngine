@@ -170,7 +170,7 @@ namespace avocet::opengl {
             base_type::do_bind(gbo);
             const auto size{get_buffer_size(gbo.context())};
             std::vector<T> buffer(size / sizeof(T));
-            gl_function{gbo.context().GetBufferSubData}(to_gl_enum(Species), 0, size, buffer.data());
+            gl_function{gbo.context(), gbo.context().GetBufferSubData}(to_gl_enum(Species), 0, size, buffer.data());
             return buffer;
         }
     private:

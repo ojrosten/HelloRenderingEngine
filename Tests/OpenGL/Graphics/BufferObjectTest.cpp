@@ -26,19 +26,19 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        execute<agl::vertex_buffer_object<GLfloat>>();
-        execute<agl::element_buffer_object<GLubyte>>();
+        execute<agl::vertex_buffer_object<GLfloat>>(w.context());
+        execute<agl::element_buffer_object<GLubyte>>(w.context());
     }
 
     template<class Buffer>
         requires is_gl_buffer_v<Buffer>
-    void buffer_object_test::execute()
+    void buffer_object_test::execute(const GladGLContext& ctx)
     {
         using T = Buffer::value_type;
 
         const std::vector<T> xBuffer{0, 1, 2, 4}, yBuffer{5, 6, 7};
         using opt_span = std::optional<std::span<const T>>;
 
-        check_semantics("", Buffer{xBuffer, agl::null_label}, Buffer{yBuffer, agl::null_label}, opt_span{xBuffer}, opt_span{yBuffer}, opt_span{}, opt_span{xBuffer});
+        check_semantics("", Buffer{ctx, xBuffer, agl::null_label}, Buffer{ctx, yBuffer, agl::null_label}, opt_span{xBuffer}, opt_span{yBuffer}, opt_span{}, opt_span{xBuffer});
     }
 }

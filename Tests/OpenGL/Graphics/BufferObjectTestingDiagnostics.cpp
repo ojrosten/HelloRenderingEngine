@@ -27,20 +27,20 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        execute<agl::vertex_buffer_object<GLfloat>>();
-        execute<agl::vertex_buffer_object<GLubyte>>();
+        execute<agl::vertex_buffer_object<GLfloat>>(w.context());
+        execute<agl::vertex_buffer_object<GLubyte>>(w.context());
     }
 
     template<class Buffer>
         requires is_gl_buffer_v<Buffer>
-    void buffer_object_false_negative_test::execute()
+    void buffer_object_false_negative_test::execute(const GladGLContext& ctx)
     {
         using T = Buffer::value_type;
         using opt_span = std::optional<std::span<const T>>;
         std::vector<T> buffer{40, 41, 42, 43};
-        check(equivalence, "Buffer which should be null", Buffer{buffer, agl::null_label}, opt_span{});
-        check(equivalence, "Too much buffer data",        Buffer{buffer, agl::null_label}, opt_span{std::vector<T>{}});
-        check(equivalence, "Incorrect buffer data",       Buffer{buffer, agl::null_label}, opt_span{std::vector<T>{40, 42, 42, 43}});
-        check(equivalence, "Not enough buffer data",      Buffer{buffer, agl::null_label}, opt_span{std::vector<T>{40, 41, 42, 43, 44}});
+        check(equivalence, "Buffer which should be null", Buffer{ctx, buffer, agl::null_label}, opt_span{});
+        check(equivalence, "Too much buffer data",        Buffer{ctx, buffer, agl::null_label}, opt_span{std::vector<T>{}});
+        check(equivalence, "Incorrect buffer data",       Buffer{ctx, buffer, agl::null_label}, opt_span{std::vector<T>{40, 42, 42, 43}});
+        check(equivalence, "Not enough buffer data",      Buffer{ctx, buffer, agl::null_label}, opt_span{std::vector<T>{40, 41, 42, 43, 44}});
     }
 }

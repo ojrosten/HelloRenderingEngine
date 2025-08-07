@@ -35,13 +35,13 @@ namespace avocet::testing
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
         namespace agl = avocet::opengl;
-        if(agl::debug_output_supported()) {
+        if(agl::debug_output_supported(w.context())) {
             check_exception_thrown<std::runtime_error>(
                 "At least two errors",
-                [](){
-                    glBindBuffer(GL_ARRAY_BUFFER, 42);
-                    glCreateShader(0);
-                    agl::check_for_advanced_errors(agl::num_messages{10}, std::source_location::current());
+                [&w](){
+                    w.context().BindBuffer(GL_ARRAY_BUFFER, 42);
+                    w.context().CreateShader(0);
+                    agl::check_for_advanced_errors(w.context(), agl::num_messages{10}, std::source_location::current());
                 }
             );
         }
