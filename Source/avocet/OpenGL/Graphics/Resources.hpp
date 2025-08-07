@@ -108,7 +108,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         bool is_null() const noexcept {
-            auto isNull{[](const contextual_handle& h){ return h.handle() == gl_handle{}; }};
+            auto isNull{[](const contextual_handle& h){ return h == contextual_handle{}; }};
             assert(std::ranges::all_of(get_contextual_handles().get(), isNull) or std::ranges::none_of(get_contextual_handles().get(), isNull));
             return isNull(get_contextual_handle(index<0>{}));
         }
