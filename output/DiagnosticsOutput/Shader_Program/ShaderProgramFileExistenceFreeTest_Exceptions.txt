@@ -7,7 +7,7 @@ Attempting to open something which isn't a file: output/TestsTemporaryData/OpenG
 
 =======================================
 
-Tests/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp, Line 42
+Tests/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp, Line 43
 Misnamed Vertex Shader
 
 Expected Exception Type:
@@ -16,7 +16,7 @@ Unable to open file output/TestsTemporaryData/OpenGL/Graphics/ShaderProgramFileE
 
 =======================================
 
-Tests/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp, Line 52
+Tests/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp, Line 54
 Missing Fragment Shader
 
 Expected Exception Type:
@@ -25,7 +25,7 @@ Attempting to open something which isn't a file: output/TestsTemporaryData/OpenG
 
 =======================================
 
-Tests/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp, Line 62
+Tests/OpenGL/Graphics/ShaderProgramFileExistenceFreeTest.cpp, Line 65
 Misnamed Fragment Shader
 
 Expected Exception Type:
