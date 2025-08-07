@@ -88,7 +88,7 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
-        GladGLContext m_Context;
+        GladGLContext m_Context{};
 
         window(const window_config& config, const avocet::opengl::opengl_version& version);
     public:
