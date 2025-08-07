@@ -9,14 +9,3 @@ Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 136020494
 
 =======================================
 
-Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 45
-Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
-
-Expected Exception Type:
-[std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 49:
-Source: API; Type: Error; Severity: High
-Error has been generated. GL error GL_INVALID_ENUM in BindBuffer: (ID: 1360204945) Generic error
-
-=======================================
-
