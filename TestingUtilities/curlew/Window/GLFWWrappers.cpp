@@ -28,8 +28,8 @@ namespace curlew {
         void set_debug_context(const avocet::opengl::opengl_version& version) {
             const auto mode{agl::inferred_debugging_mode()};
 	          if constexpr((mode == agl::debugging_mode::dynamic) || (mode == agl::debugging_mode::advanced)) {
-              if(agl::debug_output_supported(version))
-                glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+                if(agl::debug_output_supported(version))
+                    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 	          }
         }
 
@@ -52,6 +52,10 @@ namespace curlew {
 
         void init_debug(const GladGLContext& ctx)
         {
+            // TO DO: Figure out why this is necessary. For some reason the GL_CONTEXT_FLAGS
+            // are picking up the debug bit for 4.1, in some situations
+            if(!ctx.VERSION_4_3) return;
+
             GLint flags{};
             agl::gl_function{agl::unchecked_debug_output, ctx, ctx.GetIntegerv}(GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
