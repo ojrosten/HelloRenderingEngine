@@ -11,6 +11,8 @@
 
 #include <string>
 
+#include "glad/gl.h"
+
 namespace avocet::opengl{
     struct opengl_version {
         std::size_t major{4}, minor{1};
@@ -20,14 +22,14 @@ namespace avocet::opengl{
     };
 
     [[nodiscard]]
-    std::string get_vendor();
+    std::string get_vendor(const GladGLContext& ctx);
 
     [[nodiscard]]
-    std::string get_renderer();
+    std::string get_renderer(const GladGLContext& ctx);
 
     [[nodiscard]]
-    std::string get_opengl_version_string();
+    std::string get_opengl_version_string(const GladGLContext& ctx);
 
     [[nodiscard]]
-    opengl_version extract_opengl_version();
+    opengl_version extract_opengl_version(const GladGLContext& ctx);
 }

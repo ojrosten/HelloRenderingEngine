@@ -15,18 +15,18 @@
 
 namespace avocet::opengl{
     [[nodiscard]]
-    std::string get_vendor() {
-        return {std::bit_cast<const char*>(glGetString(GL_VENDOR))};
+    std::string get_vendor(const GladGLContext& ctx) {
+        return {std::bit_cast<const char*>(ctx.GetString(GL_VENDOR))};
     }
 
     [[nodiscard]]
-    std::string get_renderer() {
-        return {std::bit_cast<const char*>(glGetString(GL_RENDERER))};
+    std::string get_renderer(const GladGLContext& ctx) {
+        return {std::bit_cast<const char*>(ctx.GetString(GL_RENDERER))};
     }
 
     [[nodiscard]]
-    std::string get_opengl_version_string() {
-        return {std::bit_cast<const char*>(glGetString(GL_VERSION))};
+    std::string get_opengl_version_string(const GladGLContext& ctx) {
+        return {std::bit_cast<const char*>(ctx.GetString(GL_VERSION))};
     }
 
     namespace {
@@ -37,8 +37,8 @@ namespace avocet::opengl{
     }
 
     [[nodiscard]]
-    opengl_version extract_opengl_version() {
-        const std::string version{get_opengl_version_string()};
+    opengl_version extract_opengl_version(const GladGLContext& ctx) {
+        const std::string version{get_opengl_version_string(ctx)};
         const auto npos{std::string::npos};
         if(const auto pos{version.find_first_of('.')}; pos != npos) {
             return {to_digit(version, pos - 1), to_digit(version, pos + 1)};

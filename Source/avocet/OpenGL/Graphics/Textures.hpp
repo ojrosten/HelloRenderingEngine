@@ -67,14 +67,14 @@ namespace avocet::opengl {
         constexpr static auto identifier{object_identifier::texture};
 
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenTextures}(N, indices.data()); }
+        static void generate(const GladGLContext& ctx, raw_indices<N>& indices) { gl_function{ctx, ctx.GenTextures}(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteTextures}(N, indices.data()); }
+        static void destroy(const GladGLContext& ctx, const raw_indices<N>& indices) { gl_function{ctx, ctx.DeleteTextures}(N, indices.data()); }
 
-        static void bind(const resource_handle& h) { gl_function{glBindTexture}(GL_TEXTURE_2D, h.index()); }
+        static void bind(const contextual_handle& h) { gl_function{h.context(), h.context().BindTexture}(GL_TEXTURE_2D, h.handle().index()); }
 
-        static void configure(const resource_handle& h, const configurator& config);
+        static void configure(const contextual_handle& h, const configurator& config);
     };
 
     struct texture_unit {
@@ -93,8 +93,8 @@ namespace avocet::opengl {
         using configurator_type = base_type::configurator_type;
         using value_type        = configurator_type::value_type;
 
-        explicit texture_2d(const configurator_type& textureConfig)
-            : base_type{{textureConfig}}
+        explicit texture_2d(const GladGLContext& ctx, const configurator_type& textureConfig)
+            : base_type{ctx, {textureConfig}}
         {}
 
         [[nodiscard]]
@@ -103,7 +103,7 @@ namespace avocet::opengl {
         }
 
         friend void bind(const texture_2d& tex, texture_unit unit) {
-            gl_function{glActiveTexture}(unit.gl_texture_unit());
+            gl_function{tex.context(), tex.context().ActiveTexture}(unit.gl_texture_unit());
             base_type::do_bind(tex);
         }
     private:

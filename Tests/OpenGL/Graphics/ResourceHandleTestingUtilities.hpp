@@ -14,8 +14,8 @@
 
 namespace sequoia::testing
 {
-    template<> struct value_tester<avocet::opengl::resource_handle> {
-        using handle = avocet::opengl::resource_handle;
+    template<> struct value_tester<avocet::gpu_resource_handle<GLuint>> {
+        using handle = avocet::gpu_resource_handle<GLuint>;
 
         template<test_mode Mode>
         static void test(equivalence_check_t, test_logger<Mode>& logger, const handle& actual, GLuint prediction) {

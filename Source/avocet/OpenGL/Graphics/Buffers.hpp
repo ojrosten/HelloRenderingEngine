@@ -60,14 +60,14 @@ namespace avocet::opengl {
         };
 
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenVertexArrays}(N, indices.data()); }
+        static void generate(const GladGLContext& ctx, raw_indices<N>& indices) { gl_function{ctx, ctx.GenVertexArrays}(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
+        static void destroy(const GladGLContext& ctx, const raw_indices<N>& indices) { gl_function{ctx, ctx.DeleteVertexArrays}(N, indices.data()); }
 
-        static void bind(const resource_handle& h) { gl_function{glBindVertexArray}(h.index()); }
+        static void bind(const contextual_handle& h) { gl_function{h.context(), h.context().BindVertexArray}(h.handle().index()); }
 
-        static void configure(const resource_handle& h, const configurator& config) {
+        static void configure(const contextual_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
         }
     };
@@ -81,10 +81,10 @@ namespace avocet::opengl {
         constexpr static auto identifier{object_identifier::buffer};
 
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
+        static void generate(const GladGLContext& ctx, raw_indices<N>& indices) { gl_function{ctx, ctx.GenBuffers}(N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
+        static void destroy(const GladGLContext& ctx, const raw_indices<N>& indices) { gl_function{ctx, ctx.DeleteBuffers}(N, indices.data()); }
     };
 
     template<buffer_species Species, class T>
@@ -95,11 +95,11 @@ namespace avocet::opengl {
             optional_label label;
         };
 
-        static void bind(const resource_handle& h) { gl_function{glBindBuffer}(to_gl_enum(Species), h.index()); }
+        static void bind(const contextual_handle& h) { gl_function{h.context(), h.context().BindBuffer}(to_gl_enum(Species), h.handle().index()); }
 
-        static void configure(const resource_handle& h, const configurator& config) {
+        static void configure(const contextual_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
-            gl_function{glBufferData}(to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
+            gl_function{h.context(), h.context().BufferData}(to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
         }
     };
 
@@ -111,8 +111,8 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-        vertex_attribute_object(const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
-            : base_type{{{label}}}
+        vertex_attribute_object(const GladGLContext& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
+            : base_type{ctx, {{label}}}
         {
             using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
             using fundamental_t = vbo_t::fundamental_type;
@@ -141,12 +141,12 @@ namespace avocet::opengl {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
             const auto components{to_gl_int(sizeofAtt / sizeof(ValueType))};
             if constexpr(std::is_same_v<ValueType, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(info.index, components, typeSpecifier, stride, (GLvoid*)info.offset);
+                gl_function{context(), context().VertexAttribLPointer}(info.index, components, typeSpecifier, stride, (GLvoid*)info.offset);
             }
             else {
-                gl_function{glVertexAttribPointer}(info.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)info.offset);
+                gl_function{context(), context().VertexAttribPointer}(info.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)info.offset);
             }
-            gl_function{glEnableVertexAttribArray}(info.index);
+            gl_function{context(), context().EnableVertexAttribArray}(info.index);
 
             info.advance(sizeofAtt);
         }
@@ -161,23 +161,23 @@ namespace avocet::opengl {
         using value_type = T;
         using base_type = generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>> ;
 
-        generic_buffer_object(std::span<const T> data, const optional_label& label)
-            : base_type{{{data, label}}}
+        generic_buffer_object(const GladGLContext& ctx, std::span<const T> data, const optional_label& label)
+            : base_type{ctx, {{data, label}}}
         {}
 
         [[nodiscard]]
         friend std::vector<T> extract_data(const generic_buffer_object& gbo) {
             base_type::do_bind(gbo);
-            const auto size{get_buffer_size()};
+            const auto size{get_buffer_size(gbo.context())};
             std::vector<T> buffer(size / sizeof(T));
-            gl_function{glGetBufferSubData}(to_gl_enum(Species), 0, size, buffer.data());
+            gl_function{gbo.context().GetBufferSubData}(to_gl_enum(Species), 0, size, buffer.data());
             return buffer;
         }
     private:
         [[nodiscard]]
-        static GLint get_buffer_size() {
+        static GLint get_buffer_size(const GladGLContext& ctx) {
             GLint param{};
-            gl_function{glGetBufferParameteriv}(to_gl_enum(Species), GL_BUFFER_SIZE, &param);
+            gl_function{ctx, ctx.GetBufferParameteriv}(to_gl_enum(Species), GL_BUFFER_SIZE, &param);
             return param;
         }
     };
