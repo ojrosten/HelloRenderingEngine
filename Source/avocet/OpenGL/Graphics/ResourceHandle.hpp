@@ -98,8 +98,8 @@ namespace avocet::opengl {
     std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
         return
             [&] <std::size_t... Is> (std::index_sequence<Is...>) {
-            return std::array<To, N>{fn(from[Is])...};
-        }(std::make_index_sequence<N>{});
+                return std::array<To, N>{fn(from[Is])...};
+            }(std::make_index_sequence<N>{});
     }
 
     template<std::size_t N>
