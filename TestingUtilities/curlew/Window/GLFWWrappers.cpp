@@ -27,9 +27,9 @@ namespace curlew {
 
         void set_debug_context(const avocet::opengl::opengl_version& version) {
             const auto mode{agl::inferred_debugging_mode()};
-	          if constexpr((mode == agl::debugging_mode::dynamic) || (mode == agl::debugging_mode::advanced)) {
-              if(agl::debug_output_supported(version))
-                glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
+	          if constexpr(mode != agl::debugging_mode::none) {
+                if(agl::debug_output_supported(version))
+                    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 	          }
         }
 
@@ -85,7 +85,7 @@ namespace curlew {
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
-        return {agl::extract_opengl_version(), agl::get_vendor(), agl::get_renderer()};
+        return {agl::get_opengl_version(), agl::get_vendor(), agl::get_renderer()};
     }
 
     [[nodiscard]]
