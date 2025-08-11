@@ -112,7 +112,10 @@ namespace avocet::opengl {
         {}
 
         [[nodiscard]]
-        std::span<const contextual_handle, N> get() const noexcept { return m_Handles; }
+        auto begin() const noexcept { return m_Handles.begin(); }
+
+        [[nodiscard]]
+        auto end() const noexcept { return m_Handles.end(); }
 
         [[nodiscard]]
         raw_indices<N> get_raw_indices() const noexcept {
