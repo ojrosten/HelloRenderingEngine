@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Utilities/Version.hpp"
+#include "avocet/OpenGL/Graphics/GLFunction.hpp"
 
 #include"glad/gl.h"
 
@@ -14,36 +15,49 @@
 #include <stdexcept>
 
 namespace avocet::opengl{
+    namespace {
+        std::size_t get_version(const GladGLContext& ctx, GLenum name) {
+
+            GLint param{};
+            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, name, &param);
+            if(param < 0)
+                throw std::runtime_error{std::format("Unrecognized OpenGL version contribution {}", param)};
+
+            return static_cast<std::size_t>(param);
+        }
+    }
+
     [[nodiscard]]
     std::string get_vendor(const GladGLContext& ctx) {
-        return {std::bit_cast<const char*>(ctx.GetString(GL_VENDOR))};
+        return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_VENDOR))};
     }
 
     [[nodiscard]]
     std::string get_renderer(const GladGLContext& ctx) {
-        return {std::bit_cast<const char*>(ctx.GetString(GL_RENDERER))};
+        return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_RENDERER))};
     }
 
     [[nodiscard]]
-    std::string get_opengl_version_string(const GladGLContext& ctx) {
-        return {std::bit_cast<const char*>(ctx.GetString(GL_VERSION))};
-    }
+    opengl_version get_opengl_version(const GladGLContext& ctx) {
+        if(ctx.VERSION_4_6) return {4, 6};
+        if(ctx.VERSION_4_5) return {4, 5};
+        if(ctx.VERSION_4_4) return {4, 4};
+        if(ctx.VERSION_4_3) return {4, 3};
+        if(ctx.VERSION_4_2) return {4, 2};
+        if(ctx.VERSION_4_1) return {4, 1};
+        if(ctx.VERSION_4_0) return {4, 0};
+        if(ctx.VERSION_3_3) return {3, 3};
+        if(ctx.VERSION_3_2) return {3, 2};
+        if(ctx.VERSION_3_1) return {3, 1};
+        if(ctx.VERSION_3_0) return {3, 0};
+        if(ctx.VERSION_2_1) return {2, 1};
+        if(ctx.VERSION_2_0) return {2, 0};
+        if(ctx.VERSION_1_5) return {1, 5};
+        if(ctx.VERSION_1_4) return {1, 4};
+        if(ctx.VERSION_1_3) return {1, 3};
+        if(ctx.VERSION_1_2) return {1, 2};
+        if(ctx.VERSION_1_1) return {1, 1};
 
-    namespace {
-        [[nodiscard]]
-        std::size_t to_digit(const std::string& version, std::string::size_type pos) {
-            return static_cast<std::size_t>(std::stoi(version.substr(pos, pos + 1)));
-        }
-    }
-
-    [[nodiscard]]
-    opengl_version extract_opengl_version(const GladGLContext& ctx) {
-        const std::string version{get_opengl_version_string(ctx)};
-        const auto npos{std::string::npos};
-        if(const auto pos{version.find_first_of('.')}; pos != npos) {
-            return {to_digit(version, pos - 1), to_digit(version, pos + 1)};
-        }
-
-        throw std::runtime_error{std::format("Unable to divine OpenGL version number from: {}", version)};
+        return {1, 0};
     }
 }

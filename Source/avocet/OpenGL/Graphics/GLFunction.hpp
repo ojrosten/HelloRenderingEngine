@@ -71,11 +71,7 @@ namespace avocet::opengl {
         }
 
         static void check_for_errors(const GladGLContext& ctx, std::source_location loc) {
-            if constexpr(Mode == debugging_mode::basic)
-                check_for_basic_errors(ctx, max_reported_messages, loc);
-            else if constexpr(Mode == debugging_mode::advanced)
-                check_for_advanced_errors(ctx, max_reported_messages, loc);
-            else if constexpr(Mode == debugging_mode::dynamic) {
+            if constexpr(Mode != debugging_mode::none) {
                 if(debug_output_supported(ctx))
                     check_for_advanced_errors(ctx, max_reported_messages, loc);
                 else

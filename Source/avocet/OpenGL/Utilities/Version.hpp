@@ -28,8 +28,5 @@ namespace avocet::opengl{
     std::string get_renderer(const GladGLContext& ctx);
 
     [[nodiscard]]
-    std::string get_opengl_version_string(const GladGLContext& ctx);
-
-    [[nodiscard]]
-    opengl_version extract_opengl_version(const GladGLContext& ctx);
+    opengl_version get_opengl_version(const GladGLContext& ctx);
 }
