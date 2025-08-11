@@ -41,7 +41,7 @@ namespace avocet::opengl {
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        const contextual_handle& contextual_handle() const noexcept { return m_ContextualHandle; }
+        const contextual_handle& get_contextual_handle() const noexcept { return m_ContextualHandle; }
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
@@ -81,7 +81,7 @@ namespace avocet::opengl {
         ~shader_program() { program_tracker::reset(m_Resource); }
 
         [[nodiscard]]
-        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.contextual_handle()); }
+        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.get_contextual_handle()); }
 
         void use() { program_tracker::utilize(m_Resource); }
 
@@ -105,7 +105,7 @@ namespace avocet::opengl {
         map_t m_Uniforms;
 
         [[nodiscard]]
-        const GladGLContext& context() const noexcept { return m_Resource.contextual_handle().context(); }
+        const GladGLContext& context() const noexcept { return m_Resource.get_contextual_handle().context(); }
 
         [[nodiscard]]
         GLint extract_uniform_location(std::string_view name);
@@ -120,15 +120,15 @@ namespace avocet::opengl {
             inline static thread_local GLuint st_Current{};
         public:
             static void utilize(const shader_program_resource& spr) {
-                if(const auto index{spr.contextual_handle().handle().index()}; index != st_Current) {
-                    const auto& context{spr.contextual_handle().context()};
+                if(const auto index{spr.get_contextual_handle().handle().index()}; index != st_Current) {
+                    const auto& context{spr.get_contextual_handle().context()};
                     gl_function{&GladGLContext::UseProgram}(context, index);
                     st_Current = index;
                 }
             }
 
             static void reset(const shader_program_resource& spr) {
-                if(spr.contextual_handle().handle().index() == st_Current)
+                if(spr.get_contextual_handle().handle().index() == st_Current)
                     st_Current = 0;
             }
         };

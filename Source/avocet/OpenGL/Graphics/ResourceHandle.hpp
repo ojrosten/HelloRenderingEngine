@@ -115,7 +115,7 @@ namespace avocet::opengl {
         std::span<const contextual_handle, N> get() const noexcept { return m_Handles; }
 
         [[nodiscard]]
-        raw_indices<N> raw_indices() const noexcept {
+        raw_indices<N> get_raw_indices() const noexcept {
             return to_array<GLuint>(m_Handles, [](const contextual_handle& ch){ return ch.handle().index(); });
         }
 

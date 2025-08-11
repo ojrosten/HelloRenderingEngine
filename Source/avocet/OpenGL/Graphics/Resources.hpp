@@ -49,7 +49,7 @@ namespace avocet::opengl {
         }
 
         static void destroy(const contextual_handles<N>& h) {
-            LifeEvents::destroy(h.context(), h.raw_indices());
+            LifeEvents::destroy(h.context(), h.get_raw_indices());
         }
 
         static void bind(const contextual_handle& h) { LifeEvents::bind(h); }
