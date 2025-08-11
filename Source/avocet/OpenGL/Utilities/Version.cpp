@@ -15,18 +15,6 @@
 #include <stdexcept>
 
 namespace avocet::opengl{
-    namespace {
-        std::size_t get_version(const GladGLContext& ctx, GLenum name) {
-
-            GLint param{};
-            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, name, &param);
-            if(param < 0)
-                throw std::runtime_error{std::format("Unrecognized OpenGL version contribution {}", param)};
-
-            return static_cast<std::size_t>(param);
-        }
-    }
-
     [[nodiscard]]
     std::string get_vendor(const GladGLContext& ctx) {
         return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_VENDOR))};
