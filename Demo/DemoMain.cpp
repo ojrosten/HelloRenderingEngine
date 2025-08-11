@@ -51,9 +51,9 @@ int main()
 {
     try
     {
-        std::cout << curlew::rendering_setup_summary();
-
         curlew::glfw_manager manager{};
+        std::cout << curlew::rendering_setup_summary(manager.get_rendering_setup());
+
         auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
 
         namespace agl = avocet::opengl;

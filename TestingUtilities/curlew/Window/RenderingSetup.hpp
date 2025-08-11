@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "avocet/OpenGL/Utilities/Version.hpp"
+
 #include "sequoia/Core/Logic/Bitmask.hpp"
 
 #include <string>
@@ -44,14 +46,19 @@ namespace curlew {
     [[nodiscard]]
     bool is_nvidia(std::string_view renderer);
 
-    [[nodiscard]]
-    std::string rendering_setup_discriminator(selectivity_flavour selectivity);
+    struct rendering_setup {
+        avocet::opengl::opengl_version version;
+        std::string vendor{}, renderer{};
+    };
 
     [[nodiscard]]
-    std::string rendering_setup_discriminator(specificity_flavour specificity);
+    std::string rendering_setup_discriminator(rendering_setup setup, selectivity_flavour selectivity);
 
     [[nodiscard]]
-    std::string rendering_setup_summary();
+    std::string rendering_setup_discriminator(rendering_setup setup, specificity_flavour specificity);
+
+    [[nodiscard]]
+    std::string rendering_setup_summary(const rendering_setup& setup);
 
     [[nodiscard]]
     constexpr specificity_flavour full_specificity() noexcept {

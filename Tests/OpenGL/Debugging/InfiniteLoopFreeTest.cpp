@@ -26,7 +26,7 @@ namespace avocet::testing
         if(is_windows()) {
             using namespace curlew;
             glfw_manager manager{};
-            if(is_intel(manager.find_rendering_setup().renderer)) {
+            if(is_intel(find_rendering_setup().renderer)) {
                 namespace agl = avocet::opengl;
                 check_exception_thrown<std::runtime_error>(
                     "Repeatedly call glGetError",

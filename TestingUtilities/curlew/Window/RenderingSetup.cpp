@@ -6,7 +6,6 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "curlew/Window/RenderingSetup.hpp"
-#include "curlew/Window/GLFWWrappers.hpp"
 
 #include <format>
 
@@ -62,17 +61,16 @@ namespace curlew {
         template<class Flavour>
             requires(std::is_scoped_enum_v<Flavour>)
         [[nodiscard]]
-        std::string do_make_discriminator(Flavour flavour) {
+        std::string do_make_discriminator(rendering_setup setup, Flavour flavour) {
             std::string str{};
-            const auto [version, renderer]{glfw_manager::find_rendering_setup()};
             if(os_dependent(flavour))
                 str += operating_system();
 
             if(renderer_dependent(flavour))
-                add_separator(str) += concise_renderer(renderer);
+                add_separator(str) += concise_renderer(setup.renderer);
 
             if(ogl_version_dependent(flavour)) {
-                add_separator(str) += std::format("OpenGL_{}_{}", version.major, version.minor);
+                add_separator(str) += std::format("OpenGL_{}_{}", setup.version.major, setup.version.minor);
             }
 
             if(build_dependent(flavour)) {
@@ -103,16 +101,13 @@ namespace curlew {
 
 
     [[nodiscard]]
-    std::string rendering_setup_discriminator(selectivity_flavour selectivity) { return do_make_discriminator(selectivity); }
+    std::string rendering_setup_discriminator(rendering_setup setup, selectivity_flavour selectivity) { return do_make_discriminator(setup, selectivity); }
 
     [[nodiscard]]
-    std::string rendering_setup_discriminator(specificity_flavour specificity) { return do_make_discriminator(specificity); }
+    std::string rendering_setup_discriminator(rendering_setup setup, specificity_flavour specificity) { return do_make_discriminator(setup, specificity); }
 
     [[nodiscard]]
-    std::string rendering_setup_summary() {
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
-        namespace agl = avocet::opengl;
-        return std::format("GL Vendor  : {}\nGL Renderer: {}\nGL Version : {}\n", agl::get_vendor(), agl::get_renderer(), agl::get_opengl_version_string());
+    std::string rendering_setup_summary(const rendering_setup& setup) {
+        return std::format("GL Vendor  : {}\nGL Renderer: {}\nGL Version : {}.{}\n", setup.vendor, setup.renderer, setup.version.major, setup.version.minor);
     }
 }
