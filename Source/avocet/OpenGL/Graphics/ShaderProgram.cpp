@@ -169,7 +169,7 @@ namespace avocet::opengl {
                 , m_ProgIndex{progResource.get_contextual_handle().handle().index()}
                 , m_ShaderIndex{shader.resource().get_contextual_handle().handle().index()}
             {
-                gl_function{&GladGLContext::AttachShader}(ctx,m_ProgIndex, m_ShaderIndex);
+                gl_function{&GladGLContext::AttachShader}(ctx, m_ProgIndex, m_ShaderIndex);
             }
 
             ~shader_attacher() { gl_function{&GladGLContext::DetachShader}(context(), m_ProgIndex, m_ShaderIndex); }
