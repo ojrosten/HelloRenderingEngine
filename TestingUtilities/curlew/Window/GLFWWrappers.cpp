@@ -52,13 +52,12 @@ namespace curlew {
 
         void init_debug(const GladGLContext& ctx)
         {
-            // TO DO: Figure out why this is necessary. For some reason the GL_CONTEXT_FLAGS
-            // are picking up the debug bit for 4.1, in some situations
-            //if(!ctx.VERSION_4_3) return;
-
             GLint flags{};
             agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+                if(const auto version{agl::get_opengl_version(ctx)}; !agl::debug_output_supported(version))
+                    throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}.{}", flags, version.major, version.minor)};
+
                 agl::gl_function{agl::unchecked_debug_output, &GladGLContext::Enable}(ctx, GL_DEBUG_OUTPUT);
                 agl::gl_function{agl::unchecked_debug_output, &GladGLContext::Enable}(ctx, GL_DEBUG_OUTPUT_SYNCHRONOUS);
                 agl::gl_function{agl::unchecked_debug_output, &GladGLContext::DebugMessageControl}(
