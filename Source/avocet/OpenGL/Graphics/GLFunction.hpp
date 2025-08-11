@@ -18,49 +18,56 @@ namespace avocet::opengl {
 
     inline constexpr unchecked_debug_output_t unchecked_debug_output{};
 
-    template<class, debugging_mode Mode=inferred_debugging_mode()> class gl_function;
+    template<class, debugging_mode Mode = inferred_debugging_mode()> class gl_function;
+
+    template<class R, class... Args>
+    using function_pointer_type = R(*)(Args...);
+
+    template<class R, class... Args>
+    using glad_pointer_to_member_fn_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
     template<class R, class... Args, debugging_mode Mode>
     class [[nodiscard]] gl_function<R(Args...), Mode> {
     public:
-        using function_pointer_type = R(*)(Args...);
+        using pointer_to_member_type = glad_pointer_to_member_fn_ptr_type<R, Args...>;
 
         constexpr static num_messages max_reported_messages{10};
 
-        gl_function(const GladGLContext& ctx, function_pointer_type f, std::source_location loc = std::source_location::current())
-            : m_Context{&ctx}
-            , m_Fn{validate(f, loc)}
-        {}
+        gl_function(pointer_to_member_type pMember, std::source_location loc = std::source_location::current())
+            : m_Fn{validate(pMember, loc)}
+        {
+        }
 
-        gl_function(unchecked_debug_output_t, const GladGLContext& ctx, function_pointer_type f, std::source_location loc = std::source_location::current())
-            : m_Context{&ctx}
-            , m_Fn{validate(f, loc)}
+        gl_function(unchecked_debug_output_t, pointer_to_member_type pMember, std::source_location loc = std::source_location::current())
+            : m_Fn{validate(pMember, loc)}
         {
             static_assert(Mode == debugging_mode::none);
         }
 
         [[nodiscard]]
-        R operator()(Args... args, std::source_location loc = std::source_location::current()) const {
-            const auto ret{m_Fn(args...)};
-            check_for_errors(context(), loc);
+        R operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
+
+            const auto ret{validate(ctx, loc)(args...)};
+            check_for_errors(ctx, loc);
             return ret;
         }
 
-        void operator()(Args... args, std::source_location loc = std::source_location::current()) const
+        void operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const
             requires std::is_void_v<R>
         {
-            m_Fn(args...);
-            check_for_errors(context(), loc);
+            validate(ctx, loc)(args...);
+            check_for_errors(ctx, loc);
         }
     private:
-        const GladGLContext* m_Context{};
-        function_pointer_type m_Fn;
+        pointer_to_member_type m_Fn;
 
-        [[nodiscard]]
-        const GladGLContext& context() const noexcept { return *m_Context; }
+        static pointer_to_member_type validate(pointer_to_member_type pm, std::source_location loc) {
+            return pm ? pm : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
+        }
 
-        static function_pointer_type validate(function_pointer_type f, std::source_location loc) {
-            return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
+        function_pointer_type<R, Args...> validate(const GladGLContext& ctx, std::source_location loc) const {
+            auto fptr{ctx.*m_Fn};
+            return fptr ? fptr : throw std::runtime_error{std::format("gl_function: attempting to use a nullptr coming via {}", to_string(loc))};
         }
 
         static void check_for_errors(const GladGLContext& ctx, std::source_location loc) {
@@ -78,11 +85,11 @@ namespace avocet::opengl {
     };
 
     template<class R, class... Args>
-    gl_function(const GladGLContext&, R(*)(Args...)) -> gl_function<R(Args...)>;
+    gl_function(glad_pointer_to_member_fn_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
 
     template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, const GladGLContext&, R(*)(Args...)) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(unchecked_debug_output_t, glad_pointer_to_member_fn_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
 
     template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, const GladGLContext&, R(*)(Args...), std::source_location) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(unchecked_debug_output_t, glad_pointer_to_member_fn_ptr_type<R, Args...>, std::source_location) -> gl_function<R(Args...), debugging_mode::none>;
 }

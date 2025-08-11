@@ -67,12 +67,12 @@ namespace avocet::opengl {
         constexpr static auto identifier{object_identifier::texture};
 
         template<std::size_t N>
-        static void generate(const GladGLContext& ctx, raw_indices<N>& indices) { gl_function{ctx, ctx.GenTextures}(N, indices.data()); }
+        static void generate(const GladGLContext& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenTextures}(ctx, N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const GladGLContext& ctx, const raw_indices<N>& indices) { gl_function{ctx, ctx.DeleteTextures}(N, indices.data()); }
+        static void destroy(const GladGLContext& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
 
-        static void bind(const contextual_handle& h) { gl_function{h.context(), h.context().BindTexture}(GL_TEXTURE_2D, h.handle().index()); }
+        static void bind(const contextual_handle& h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, h.handle().index()); }
 
         static void configure(const contextual_handle& h, const configurator& config);
     };
@@ -103,7 +103,7 @@ namespace avocet::opengl {
         }
 
         friend void bind(const texture_2d& tex, texture_unit unit) {
-            gl_function{tex.context(), tex.context().ActiveTexture}(unit.gl_texture_unit());
+            gl_function{&GladGLContext::ActiveTexture}(tex.context(), unit.gl_texture_unit());
             base_type::do_bind(tex);
         }
     private:

@@ -57,11 +57,12 @@ namespace curlew {
             if(!ctx.VERSION_4_3) return;
 
             GLint flags{};
-            agl::gl_function{agl::unchecked_debug_output, ctx, ctx.GetIntegerv}(GL_CONTEXT_FLAGS, &flags);
+            agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-                agl::gl_function{agl::unchecked_debug_output, ctx, ctx.Enable}(GL_DEBUG_OUTPUT);
-                agl::gl_function{agl::unchecked_debug_output, ctx, ctx.Enable}(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                agl::gl_function{agl::unchecked_debug_output, ctx, ctx.DebugMessageControl}(
+                agl::gl_function{agl::unchecked_debug_output, &GladGLContext::Enable}(ctx, GL_DEBUG_OUTPUT);
+                agl::gl_function{agl::unchecked_debug_output, &GladGLContext::Enable}(ctx, GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                agl::gl_function{agl::unchecked_debug_output, &GladGLContext::DebugMessageControl}(
+                    ctx,
                     GL_DONT_CARE,
                     GL_DONT_CARE,
                     GL_DONT_CARE,

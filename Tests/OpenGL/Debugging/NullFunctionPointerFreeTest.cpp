@@ -30,16 +30,14 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Constructing gl_function with a null pointer",
             [](){
-                GladGLContext ctx{};
-                return agl::gl_function{agl::unchecked_debug_output, ctx, ctx.GetError}();
+                return agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetError}(GladGLContext{});
             }
         );
 
         check_exception_thrown<std::runtime_error>(
             "Null glGetError when checking for basic errors",
             [](){
-                GladGLContext ctx{};
-                agl::check_for_basic_errors(ctx, agl::num_messages{10}, std::source_location::current());
+                agl::check_for_basic_errors(GladGLContext{}, agl::num_messages{10}, std::source_location::current());
             }
         );
 
@@ -49,8 +47,7 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Null glBindBuffer",
             [](){
-                GladGLContext ctx{};
-                agl::gl_function{ctx, ctx.BindBuffer}(42, 42);
+                agl::gl_function{&GladGLContext::BindBuffer}(GladGLContext{}, 42, 42);
             }
         );
     }

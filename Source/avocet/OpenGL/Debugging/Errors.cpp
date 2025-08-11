@@ -145,7 +145,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         GLint get_max_message_length(const GladGLContext& ctx, std::source_location loc) {
             GLint maxLen{};
-            gl_function{unchecked_debug_output, ctx, ctx.GetIntegerv, loc}(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
+            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv, loc}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
             return maxLen;
         }
 
@@ -163,7 +163,7 @@ namespace avocet::opengl {
             GLuint id{};
             GLsizei length{};
 
-            const auto numFound{gl_function{unchecked_debug_output, ctx, ctx.GetDebugMessageLog}(1, to_gl_sizei(message.size()), &source, &type, &id, &severity, &length, message.data())};
+            const auto numFound{gl_function{unchecked_debug_output, &GladGLContext::GetDebugMessageLog}(ctx, 1, to_gl_sizei(message.size()), &source, &type, &id, &severity, &length, message.data())};
             const auto trimLen{((length > 0) && message[length - 1] == '\0') ? length - 1 : length};
             message.resize(trimLen);
 
@@ -185,7 +185,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         STD_GENERATOR<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{gl_function{unchecked_debug_output, ctx, ctx.GetError}()};
+                const error_code e{gl_function{unchecked_debug_output, &GladGLContext::GetError}(ctx)};
                 if(e == error_code::none) co_return;
 
                 co_yield e;
@@ -206,7 +206,7 @@ namespace avocet::opengl {
         std::vector<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
             std::vector<error_code> errors;
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{gl_function{unchecked_debug_output, ctx, ctx.GetError}()};
+                const error_code e{gl_function{unchecked_debug_output, &GladGLContext::GetError}(ctx)};
                 if(e == error_code::none) break;
 
                 errors.push_back(e);

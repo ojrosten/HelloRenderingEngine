@@ -21,7 +21,7 @@ namespace avocet::opengl {
     inline void add_label(object_identifier identifier, const contextual_handle& h, const optional_label& label) {
         if(label && object_labels_activated(h.context())) {
             const auto& str{label.value()};
-            gl_function{h.context(), h.context().ObjectLabel}(to_gl_enum(identifier), h.handle().index(), to_gl_sizei(str.size()), str.data());
+            gl_function{&GladGLContext::ObjectLabel}(h.context(), to_gl_enum(identifier), h.handle().index(), to_gl_sizei(str.size()), str.data());
         }
     }
 
@@ -30,7 +30,7 @@ namespace avocet::opengl {
         const static GLint length{
             [&](){
                 GLint param{};
-                gl_function{ctx, ctx.GetIntegerv}(GL_MAX_LABEL_LENGTH, &param);
+                gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_LABEL_LENGTH, &param);
                 return param;
             }()
         };
@@ -42,7 +42,8 @@ namespace avocet::opengl {
     inline std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::contextual_handle& h) {
         std::string label(get_max_label_length(h.context()), ' ');
         GLsizei numChars{};
-        gl_function{h.context(), h.context().GetObjectLabel}(
+        gl_function{&GladGLContext::GetObjectLabel}(
+            h.context(),
             to_gl_enum(identifier),
             h.handle().index(),
             to_gl_sizei(label.size()),
