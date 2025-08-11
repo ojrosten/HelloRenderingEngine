@@ -98,7 +98,7 @@ namespace avocet::opengl {
             : m_Resource{ctx}
         {
             for(const auto& [contextualHandle, config] : std::views::zip(get_contextual_handles().get(), configs)) {
-                if(contextualHandle == contextual_handle{})
+                if(contextualHandle == contextual_handle{ctx})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
                 lifecycle_type::bind(contextualHandle);
@@ -108,7 +108,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         bool is_null() const noexcept {
-            auto isNull{[](const contextual_handle& h){ return h.handle() == gl_handle{}; }};
+            auto isNull{[](const contextual_handle& h){ return h == contextual_handle{h.context()}; }};
             assert(std::ranges::all_of(get_contextual_handles().get(), isNull) or std::ranges::none_of(get_contextual_handles().get(), isNull));
             return isNull(get_contextual_handle(index<0>{}));
         }

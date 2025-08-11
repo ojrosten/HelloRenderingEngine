@@ -8,13 +8,3 @@ Invalid enum
 
 =======================================
 
-Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 45
-Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
-
-Expected Exception Type:
-[std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 49:
-Invalid enum
-
-=======================================
-
