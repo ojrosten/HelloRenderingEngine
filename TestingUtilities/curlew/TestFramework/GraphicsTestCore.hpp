@@ -24,6 +24,9 @@ namespace curlew {
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
+    [[nodiscard]]
+    rendering_setup find_rendering_setup();
+
     template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none>
     class basic_graphics_test : public basic_test<Mode, trivial_extender>
     {
@@ -37,14 +40,14 @@ namespace curlew {
         std::string summary_discriminator() const
             requires (Selectivity != selectivity_flavour::none)
         {
-            return rendering_setup_discriminator(Selectivity);
+            return rendering_setup_discriminator(find_rendering_setup(), Selectivity);
         }
 
         [[nodiscard]]
         std::string output_discriminator() const
             requires (Specificity != specificity_flavour::none)
         {
-            return rendering_setup_discriminator(Specificity);
+            return rendering_setup_discriminator(find_rendering_setup(), Specificity);
         }
     protected:
         ~basic_graphics_test() = default;

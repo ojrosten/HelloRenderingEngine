@@ -54,7 +54,7 @@ namespace curlew {
         {
             // TO DO: Figure out why this is necessary. For some reason the GL_CONTEXT_FLAGS
             // are picking up the debug bit for 4.1, in some situations
-            if(!ctx.VERSION_4_3) return;
+            //if(!ctx.VERSION_4_3) return;
 
             GLint flags{};
             agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_CONTEXT_FLAGS, &flags);
@@ -84,13 +84,13 @@ namespace curlew {
     glfw_resource::~glfw_resource() { glfwTerminate(); }
 
     glfw_manager::glfw_manager()
-        : m_OpenGLVersion{do_find_rendering_setup().version}
+        : m_RenderingSetup{do_find_rendering_setup()}
     {}
 
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
-        return { agl::extract_opengl_version(w.context()), agl::get_renderer(w.context())};
+        return {agl::extract_opengl_version(w.context()), agl::get_vendor(w.context()), agl::get_renderer(w.context())};
     }
 
     [[nodiscard]]
@@ -99,18 +99,16 @@ namespace curlew {
       if((setup.version != agl::opengl_version{}) || avocet::is_apple())
           return setup;
 
-      // Assume we only get here if the version is 4.6
+      // Assume we only get here if we're on windows, in which case
+      // the version is 4.6.
       // If this ever fails in practice, it can be fixed.
       return attempt_to_find_rendering_setup(agl::opengl_version{.major{4}, .minor{6}});
     }
 
     [[nodiscard]]
-    rendering_setup glfw_manager::find_rendering_setup() {
-        static rendering_setup setup{glfw_manager{}.do_find_rendering_setup()};
-        return setup;
-    }
+    rendering_setup glfw_manager::find_rendering_setup() { return glfw_manager{}.get_rendering_setup(); }
 
-    window glfw_manager::create_window(const window_config& config) { return window{config, m_OpenGLVersion}; }
+    window glfw_manager::create_window(const window_config& config) { return window{config, m_RenderingSetup.version}; }
 
     window_resource::window_resource(const window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
 
