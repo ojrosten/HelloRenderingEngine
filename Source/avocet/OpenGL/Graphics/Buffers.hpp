@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Graphics/Resources.hpp"
+#include "avocet/OpenGL/Graphics/GenericResource.hpp"
 #include "avocet/OpenGL/Graphics/Labels.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
