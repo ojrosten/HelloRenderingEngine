@@ -12,7 +12,7 @@
 #include "ResourceHandleTestingUtilities.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
-#include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
+#include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
 namespace avocet::testing
 {

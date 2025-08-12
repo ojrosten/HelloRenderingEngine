@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Graphics/ResourceHandle.hpp"
+#include "avocet/OpenGL/Resources/ResourceHandle.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 #include "avocet/OpenGL/Utilities/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"

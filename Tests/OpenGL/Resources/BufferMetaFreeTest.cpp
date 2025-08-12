@@ -8,7 +8,7 @@
 /*! \file */
 
 #include "BufferMetaFreeTest.hpp"
-#include "avocet/OpenGL/Graphics/Buffers.hpp"
+#include "avocet/OpenGL/Resources/Buffers.hpp"
 
 namespace avocet::testing
 {

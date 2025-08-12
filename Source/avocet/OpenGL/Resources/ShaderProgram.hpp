@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Graphics/ResourceHandle.hpp"
-#include "avocet/OpenGL/Graphics/Labels.hpp"
+#include "avocet/OpenGL/Resources/ResourceHandle.hpp"
+#include "avocet/OpenGL/Resources/Labels.hpp"
 
 #include <filesystem>
 #include <unordered_map>

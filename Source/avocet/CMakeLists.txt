@@ -9,8 +9,8 @@ sequoia_init()
 set(SourceList
     Core/AssetManagement/Image.cpp
     OpenGL/Debugging/Errors.cpp
-    OpenGL/Graphics/ShaderProgram.cpp
-    OpenGL/Graphics/Textures.cpp
+    OpenGL/Resources/ShaderProgram.cpp
+    OpenGL/Resources/Textures.cpp
     OpenGL/Utilities/Version.cpp)
 
 add_library(avocet STATIC ${SourceList})

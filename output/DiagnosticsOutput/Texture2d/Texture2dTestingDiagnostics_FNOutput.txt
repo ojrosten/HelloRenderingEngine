@@ -1,4 +1,4 @@
-Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 39
+Tests/OpenGL/Resources/Texture2dTestingDiagnostics.cpp, Line 39
 Texture which should be null
 
 Comparison performed using:
@@ -12,7 +12,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 40
+Tests/OpenGL/Resources/Texture2dTestingDiagnostics.cpp, Line 40
 Empty texture
 
 Comparison performed using:
@@ -49,7 +49,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 41
+Tests/OpenGL/Resources/Texture2dTestingDiagnostics.cpp, Line 41
 Incorrect texture data
 
 Comparison performed using:
@@ -92,7 +92,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 42
+Tests/OpenGL/Resources/Texture2dTestingDiagnostics.cpp, Line 42
 Mismatched textures
 
 Comparison performed using:
@@ -123,7 +123,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Graphics/Texture2dTestingDiagnostics.cpp, Line 43
+Tests/OpenGL/Resources/Texture2dTestingDiagnostics.cpp, Line 43
 Mismatched padding
 
 Comparison performed using:

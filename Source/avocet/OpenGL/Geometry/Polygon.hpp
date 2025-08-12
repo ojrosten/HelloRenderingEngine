@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Graphics/Buffers.hpp"
-#include "avocet/OpenGL/Graphics/Textures.hpp"
+#include "avocet/OpenGL/Resources/Buffers.hpp"
+#include "avocet/OpenGL/Resources/Textures.hpp"
 #include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
 #include "sequoia/Maths/Geometry/Spaces.hpp"
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"

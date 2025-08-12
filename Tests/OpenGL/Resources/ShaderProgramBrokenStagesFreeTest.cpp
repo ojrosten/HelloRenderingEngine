@@ -7,19 +7,19 @@
 
 /*! \file */
 
-#include "ShaderProgramFileExistenceFreeTest.hpp"
+#include "ShaderProgramBrokenStagesFreeTest.hpp"
 #include "curlew/Window/GLFWWrappers.hpp"
-#include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
+#include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
 namespace avocet::testing
 {
     [[nodiscard]]
-    std::filesystem::path shader_program_file_existence_free_test::source_file() const
+    std::filesystem::path shader_program_broken_stages_free_test::source_file() const
     {
         return std::source_location::current().file_name();
     }
 
-    void shader_program_file_existence_free_test::run_tests()
+    void shader_program_broken_stages_free_test::run_tests()
     {
         using namespace curlew;
         glfw_manager manager{};
@@ -29,41 +29,31 @@ namespace avocet::testing
         const auto shaderDir{working_materials()};
 
         check_exception_thrown<std::runtime_error>(
-            "Missing Vertex Shader",
+            "Broken Vertex Shader",
             [&shaderDir](){
                 agl::shader_program sp{
-                    shaderDir,
+                    shaderDir / "Broken_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
             }
         );
 
         check_exception_thrown<std::runtime_error>(
-            "Misnamed Vertex Shader",
+            "Broken Fragment Shader",
             [&shaderDir](){
                 agl::shader_program sp{
-                    shaderDir / "foo.vs",
-                    shaderDir / "Monochrome.fs"
+                    shaderDir / "Identity.vs",
+                    shaderDir / "Broken_Monochrome.fs"
                 };
             }
         );
 
         check_exception_thrown<std::runtime_error>(
-            "Missing Fragment Shader",
+            "Unlinkable Vertex Shader / Fragment Shader Combo",
             [&shaderDir](){
                 agl::shader_program sp{
-                    shaderDir / "Identity.vs",
-                    shaderDir
-                };
-            }
-        );
-
-        check_exception_thrown<std::runtime_error>(
-            "Misnamed Fragment Shader",
-            [&shaderDir](){
-                agl::shader_program sp{
-                    shaderDir / "Identity.vs",
-                    shaderDir / "bar.fs"
+                    shaderDir / "Output_vec3.vs",
+                    shaderDir / "Input_float.fs"
                 };
             }
         );

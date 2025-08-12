@@ -13,7 +13,7 @@
 
 #include "curlew/Window/GLFWWrappers.hpp"
 
-#include "avocet/OpenGL/Graphics/ResourceHandle.hpp"
+#include "avocet/OpenGL/Resources/ResourceHandle.hpp"
 
 namespace avocet::testing
 {

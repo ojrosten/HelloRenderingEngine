@@ -10,7 +10,7 @@
 /*! \file */
 
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
-#include "avocet/OpenGL/Graphics/Textures.hpp"
+#include "avocet/OpenGL/Resources/Textures.hpp"
 
 #include "../../Core/AssetManagement/ImageTestingUtilities.hpp"
 
