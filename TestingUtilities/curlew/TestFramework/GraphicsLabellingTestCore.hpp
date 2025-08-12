@@ -11,7 +11,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/OpenGL/Debugging/Errors.hpp"
-#include "avocet/OpenGL/Graphics/ObjectIdentifiers.hpp"
+#include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
 
 namespace curlew {
     template<class T>

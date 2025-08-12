@@ -10,7 +10,7 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-        enum class object_identifier : GLenum {
+    enum class object_identifier : GLenum {
         buffer             = GL_BUFFER,
         shader             = GL_SHADER,
         program            = GL_PROGRAM,

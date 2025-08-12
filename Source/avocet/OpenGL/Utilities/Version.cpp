@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Utilities/Version.hpp"
-#include "avocet/OpenGL/Graphics/GLFunction.hpp"
+#include "avocet/OpenGL/Utilities/GLFunction.hpp"
 
 #include"glad/gl.h"
 

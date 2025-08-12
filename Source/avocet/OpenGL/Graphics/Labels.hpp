@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Utilities/Casts.hpp"
-#include "avocet/OpenGL/Graphics/GLFunction.hpp"
-#include "avocet/OpenGL/Graphics/ObjectIdentifiers.hpp"
 #include "avocet/OpenGL/Graphics/ResourceHandle.hpp"
+#include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/OpenGL/Utilities/GLFunction.hpp"
+#include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
 
 #include <optional>
 

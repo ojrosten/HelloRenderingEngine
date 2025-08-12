@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Graphics/ShaderProgram.hpp"
-#include "avocet/OpenGL/Graphics/GLFunction.hpp"
+#include "avocet/OpenGL/Utilities/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include "sequoia/FileSystem/FileSystem.hpp"

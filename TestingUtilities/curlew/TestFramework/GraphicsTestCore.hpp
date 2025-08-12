@@ -9,9 +9,6 @@
 
 #include "curlew/Window/RenderingSetup.hpp"
 
-#include "avocet/OpenGL/Graphics/GLFunction.hpp"
-#include "avocet/OpenGL/Graphics/ResourceHandle.hpp"
-
 #include "sequoia/TestFramework/FreeTestCore.hpp"
 
 namespace curlew {
