@@ -33,7 +33,9 @@ namespace avocet::opengl {
 
         gl_function(unchecked_debug_output_t, function_pointer_type f, std::source_location loc = std::source_location::current())
             : m_Fn{validate(f, loc)}
-        {}
+        {
+            static_assert(Mode == debugging_mode::none);
+        }
 
         [[nodiscard]]
         R operator()(Args... args, std::source_location loc = std::source_location::current()) const {
