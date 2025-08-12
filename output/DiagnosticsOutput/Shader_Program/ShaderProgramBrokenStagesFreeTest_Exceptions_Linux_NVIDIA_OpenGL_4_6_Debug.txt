@@ -1,4 +1,4 @@
-Tests/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp, Line 31
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 31
 Broken Vertex Shader
 
 Expected Exception Type:
@@ -8,7 +8,7 @@ Error: vertex shader compilation failed
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp, Line 41
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 41
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -18,12 +18,12 @@ Error: fragment shader compilation failed
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp, Line 51
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 51
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/Graphics/OpenGL/ShaderProgram.cpp, line 184:
+OpenGL error detected in Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 184:
 Source: API; Type: Other; Severity: Low
 Program/shader state info: GLSL program 1 failed to link
 
