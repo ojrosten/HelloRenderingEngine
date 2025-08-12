@@ -55,6 +55,9 @@ namespace curlew {
             GLint flags{};
             agl::gl_function{agl::unchecked_debug_output, glGetIntegerv}(GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+                if(const auto version{agl::get_opengl_version()}; !agl::debug_output_supported(version))
+                    throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
+
                 agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT);
                 agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT_SYNCHRONOUS);
                 agl::gl_function{agl::unchecked_debug_output, glDebugMessageControl}(
