@@ -108,6 +108,6 @@ namespace curlew {
 
     [[nodiscard]]
     std::string rendering_setup_summary(const rendering_setup& setup) {
-        return std::format("GL Vendor  : {}\nGL Renderer: {}\nGL Version : {}.{}\n", setup.vendor, setup.renderer, setup.version.major, setup.version.minor);
+        return std::format("GL Vendor  : {}\nGL Renderer: {}\nGL Version : {}\n", setup.vendor, setup.renderer, setup.version);
     }
 }

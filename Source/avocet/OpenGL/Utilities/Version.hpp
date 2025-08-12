@@ -9,7 +9,7 @@
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 
-#include <string>
+#include <format>
 
 namespace avocet::opengl{
     struct opengl_version {
@@ -27,4 +27,16 @@ namespace avocet::opengl{
 
     [[nodiscard]]
     opengl_version get_opengl_version();
+}
+
+
+namespace std {
+    template<>
+    struct formatter<avocet::opengl::opengl_version> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::opengl_version version, auto& ctx) const {
+            return format_to(ctx.out(), "{}.{}", version.major, version.minor);
+        }
+    };
 }
