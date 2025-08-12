@@ -187,9 +187,8 @@ namespace avocet::opengl {
         /// This caused some test output to differe between platforms, due to the
         /// defaulted final argument of gl_function picking up the source_location
         /// from different locations. Pulling the gl_function out into a helper
-        /// function gives platform-independent output,  albeit at the minor cost
-        /// of a slightly sub-optimal source_location. Once std::generator is
-        /// available everywhere, this code can be removed.
+        /// function gives platform-independent output. Once std::generator is
+        /// available everywhere, the platform-dependent code can be removed.
         [[nodiscard]]
         error_code get_error() { return error_code{gl_function{unchecked_debug_output, glGetError}()}; }
 
