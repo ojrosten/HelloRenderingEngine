@@ -181,11 +181,23 @@ namespace avocet::opengl {
         std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
             return std::format("OpenGL error detected in {}:\n{}\n", avocet::opengl::to_string(loc), errorMessage);
         }
+
+        /// The code below exemplifies how to use std::generator. However, since
+        /// this is unavailable on libc++, and alternative approach must be taken.
+        /// This caused some test output to differe between platforms, due to the
+        /// defaulted final argument of gl_function picking up the source_location
+        /// from different locations. Pulling the gl_function out into a helper
+        /// function gives platform-independent output,  albeit at the minor cost
+        /// of a slightly sub-optimal source_location. Once std::generator is
+        /// available everywhere, this code can be removed.
+        [[nodiscard]]
+        error_code get_error() { return error_code{gl_function{unchecked_debug_output, glGetError}()}; }
+
 #ifndef __clang__
         [[nodiscard]]
         STD_GENERATOR<error_code> get_errors(num_messages maxNum) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{gl_function{unchecked_debug_output, glGetError}()};
+                const error_code e{get_error()};
                 if(e == error_code::none) co_return;
 
                 co_yield e;
@@ -206,7 +218,7 @@ namespace avocet::opengl {
         std::vector<error_code> get_errors(num_messages maxNum) {
             std::vector<error_code> errors;
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{gl_function{unchecked_debug_output, glGetError}()};
+                const error_code e{get_error()};
                 if(e == error_code::none) break;
 
                 errors.push_back(e);
