@@ -33,16 +33,20 @@ namespace avocet::opengl {
 
         constexpr static num_messages max_reported_messages{10};
 
-        gl_function(pointer_to_member_type pMember, std::source_location loc = std::source_location::current())
-            : m_Fn{validate(pMember, loc)}
+        explicit gl_function(pointer_to_member_type pMember)
+            : m_Fn{pMember}
         {
         }
 
-        gl_function(unchecked_debug_output_t, pointer_to_member_type pMember, std::source_location loc = std::source_location::current())
-            : m_Fn{validate(pMember, loc)}
+        gl_function(unchecked_debug_output_t, pointer_to_member_type pMember)
+            : gl_function{pMember}
         {
             static_assert(Mode == debugging_mode::none);
         }
+
+        gl_function(nullptr_t, std::source_location loc = std::source_location::current()) = delete;
+
+        gl_function(nullptr_t, unchecked_debug_output_t, std::source_location loc = std::source_location::current()) = delete;
 
         [[nodiscard]]
         R operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
@@ -60,10 +64,6 @@ namespace avocet::opengl {
         }
     private:
         pointer_to_member_type m_Fn;
-
-        static pointer_to_member_type validate(pointer_to_member_type pm, std::source_location loc) {
-            return pm ? pm : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
-        }
 
         function_pointer_type<R, Args...> validate(const GladGLContext& ctx, std::source_location loc) const {
             auto fptr{ctx.*m_Fn};
@@ -85,7 +85,4 @@ namespace avocet::opengl {
 
     template<class R, class...Args>
     gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
-
-    template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>, std::source_location) -> gl_function<R(Args...), debugging_mode::none>;
 }

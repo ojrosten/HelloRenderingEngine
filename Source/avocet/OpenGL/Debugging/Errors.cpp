@@ -143,9 +143,9 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        GLint get_max_message_length(const GladGLContext& ctx, std::source_location loc) {
+        GLint get_max_message_length(const GladGLContext& ctx) {
             GLint maxLen{};
-            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv, loc}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
+            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
             return maxLen;
         }
 
@@ -155,8 +155,8 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        std::optional<debug_info> get_next_message(const GladGLContext& ctx, std::source_location loc) {
-            const static GLint maxLen{get_max_message_length(ctx, loc)};
+        std::optional<debug_info> get_next_message(const GladGLContext& ctx) {
+            const static GLint maxLen{get_max_message_length(ctx)};
 
             std::string message(maxLen, ' ');
             GLenum source{}, type{}, severity{};
@@ -195,7 +195,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         STD_GENERATOR<debug_info> get_messages(const GladGLContext& ctx, num_messages maxNum, std::source_location loc) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const std::optional<debug_info> message{get_next_message(ctx, loc)};
+                const std::optional<debug_info> message{get_next_message(ctx)};
                 if(!message) co_return;
 
                 co_yield message.value();
@@ -216,10 +216,10 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        std::vector<debug_info> get_messages(const GladGLContext& ctx, num_messages maxNum, std::source_location loc) {
+        std::vector<debug_info> get_messages(const GladGLContext& ctx, num_messages maxNum) {
             std::vector<debug_info> info;
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const std::optional<debug_info> message{get_next_message(ctx, loc)};
+                const std::optional<debug_info> message{get_next_message(ctx)};
                 if(!message) break;
 
                 info.push_back(message.value());
