@@ -111,7 +111,7 @@ namespace avocet::opengl {
         GLint extract_uniform_location(std::string_view name);
 
         template<class R, class... Args>
-        void do_set_uniform(std::string_view name, glad_pointer_to_member_fn_ptr_type<R, GLint, Args...> pm, Args... args) {
+        void do_set_uniform(std::string_view name, glad_ctx_ptr_to_mem_fn_ptr_type<R, GLint, Args...> pm, Args... args) {
             use();
             gl_function{pm}(context(), extract_uniform_location(name), args...);
         }

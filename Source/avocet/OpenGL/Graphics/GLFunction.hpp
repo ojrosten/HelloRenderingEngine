@@ -24,12 +24,12 @@ namespace avocet::opengl {
     using function_pointer_type = R(*)(Args...);
 
     template<class R, class... Args>
-    using glad_pointer_to_member_fn_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
+    using glad_ctx_ptr_to_mem_fn_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
     template<class R, class... Args, debugging_mode Mode>
     class [[nodiscard]] gl_function<R(Args...), Mode> {
     public:
-        using pointer_to_member_type = glad_pointer_to_member_fn_ptr_type<R, Args...>;
+        using pointer_to_member_type = glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>;
 
         constexpr static num_messages max_reported_messages{10};
 
@@ -81,11 +81,11 @@ namespace avocet::opengl {
     };
 
     template<class R, class... Args>
-    gl_function(glad_pointer_to_member_fn_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
+    gl_function(glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
 
     template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, glad_pointer_to_member_fn_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
 
     template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, glad_pointer_to_member_fn_ptr_type<R, Args...>, std::source_location) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>, std::source_location) -> gl_function<R(Args...), debugging_mode::none>;
 }
