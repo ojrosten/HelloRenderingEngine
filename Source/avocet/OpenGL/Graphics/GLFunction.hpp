@@ -44,9 +44,9 @@ namespace avocet::opengl {
             static_assert(Mode == debugging_mode::none);
         }
 
-        gl_function(nullptr_t, std::source_location loc = std::source_location::current()) = delete;
+        gl_function(nullptr_t) = delete;
 
-        gl_function(nullptr_t, unchecked_debug_output_t, std::source_location loc = std::source_location::current()) = delete;
+        gl_function(unchecked_debug_output_t, nullptr_t) = delete;
 
         [[nodiscard]]
         R operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
