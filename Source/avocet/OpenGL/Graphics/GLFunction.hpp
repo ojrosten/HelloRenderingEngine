@@ -33,10 +33,9 @@ namespace avocet::opengl {
 
         constexpr static num_messages max_reported_messages{10};
 
-        explicit gl_function(pointer_to_member_type pMember)
+        gl_function(pointer_to_member_type pMember)
             : m_Fn{pMember}
-        {
-        }
+        {}
 
         gl_function(unchecked_debug_output_t, pointer_to_member_type pMember)
             : gl_function{pMember}
