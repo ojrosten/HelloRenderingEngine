@@ -84,8 +84,7 @@ namespace avocet::opengl {
     using raw_indices = std::array<GLuint, N>;
 
 
-    template<class To, class From, class Fn, std::size_t N>
-        requires std::is_invocable_r_v<To, Fn, From>
+    template<class From, std::size_t N, std::invocable<From> Fn, class To=std::invoke_result_t<Fn, From>>
     [[nodiscard]]
     std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
         return
@@ -98,7 +97,7 @@ namespace avocet::opengl {
     class contextual_resources {
     public:
         contextual_resources(const GladGLContext& ctx, const raw_indices<N>& indices)
-            : m_Handles{to_array<contextual_resource>(indices, [&ctx](GLuint i){ return contextual_resource{ctx, resource_handle{i}}; })}
+            : m_Handles{to_array(indices, [&ctx](GLuint i){ return contextual_resource{ctx, resource_handle{i}}; })}
         {}
 
         [[nodiscard]]
@@ -109,7 +108,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         raw_indices<N> get_raw_indices() const noexcept {
-            return to_array<GLuint>(m_Handles, [](const contextual_resource& ch){ return ch.handle().index(); });
+            return to_array(m_Handles, [](const contextual_resource& ch){ return ch.handle().index(); });
         }
 
         [[nodiscard]]
