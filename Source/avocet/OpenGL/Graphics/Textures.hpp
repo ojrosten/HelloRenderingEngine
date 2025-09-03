@@ -72,9 +72,9 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const GladGLContext& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
 
-        static void bind(const contextual_handle& h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, h.handle().index()); }
+        static void bind(const contextual_resource& h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, h.handle().index()); }
 
-        static void configure(const contextual_handle& h, const configurator& config);
+        static void configure(const contextual_resource& h, const configurator& config);
     };
 
     struct texture_unit {

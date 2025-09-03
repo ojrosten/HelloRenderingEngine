@@ -42,14 +42,14 @@ namespace avocet {
 namespace avocet::opengl {
     using gl_handle = gpu_resource_handle<GLuint>;
 
-    class gpu_context {
+    class context_handle {
         const GladGLContext* m_Context{};
     public:
-        explicit gpu_context(const GladGLContext& ctx) noexcept : m_Context{&ctx} {}
+        explicit context_handle(const GladGLContext& ctx) noexcept : m_Context{&ctx} {}
 
-        gpu_context(gpu_context&&) noexcept =  default;
+        context_handle(context_handle&&) noexcept =  default;
 
-        gpu_context& operator=(gpu_context&& other) noexcept
+        context_handle& operator=(context_handle&& other) noexcept
         {
             std::ranges::swap(m_Context, other.m_Context);
             return *this;
@@ -59,18 +59,18 @@ namespace avocet::opengl {
         const GladGLContext& get() const noexcept { return *m_Context; }
 
         [[nodiscard]]
-        friend bool operator==(const gpu_context&, const gpu_context&) noexcept = default;
+        friend bool operator==(const context_handle&, const context_handle&) noexcept = default;
     };
 
-    class contextual_handle {
+    class contextual_resource {
     public:
         using handle_type = gpu_resource_handle<GLuint>;
 
-        contextual_handle(const GladGLContext& ctx) noexcept
+        contextual_resource(const GladGLContext& ctx) noexcept
           : m_Context{ctx}
         {}
 
-        contextual_handle(const GladGLContext& ctx, handle_type h) noexcept
+        contextual_resource(const GladGLContext& ctx, handle_type h) noexcept
             : m_Context{ctx}
             , m_Handle{std::move(h)}
         {}
@@ -82,9 +82,9 @@ namespace avocet::opengl {
         const GladGLContext& context() const noexcept { return m_Context.get(); }
 
         [[nodiscard]]
-        friend bool operator==(const contextual_handle&, const contextual_handle&) noexcept = default;
+        friend bool operator==(const contextual_resource&, const contextual_resource&) noexcept = default;
     private:
-        gpu_context m_Context;
+        context_handle m_Context;
         handle_type m_Handle{};
     };
 
@@ -103,12 +103,12 @@ namespace avocet::opengl {
     }
 
     template<std::size_t N>
-    class contextual_handles {
+    class contextual_resources {
     public:
         using handle_type = gpu_resource_handle<GLuint>;
 
-        contextual_handles(const GladGLContext& ctx, const raw_indices<N>& indices)
-            : m_Handles{to_array<contextual_handle>(indices, [&ctx](GLuint i){ return contextual_handle{ctx, handle_type{i}}; })}
+        contextual_resources(const GladGLContext& ctx, const raw_indices<N>& indices)
+            : m_Handles{to_array<contextual_resource>(indices, [&ctx](GLuint i){ return contextual_resource{ctx, handle_type{i}}; })}
         {}
 
         [[nodiscard]]
@@ -119,7 +119,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         raw_indices<N> get_raw_indices() const noexcept {
-            return to_array<GLuint>(m_Handles, [](const contextual_handle& ch){ return ch.handle().index(); });
+            return to_array<GLuint>(m_Handles, [](const contextual_resource& ch){ return ch.handle().index(); });
         }
 
         [[nodiscard]]
@@ -130,8 +130,8 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        friend bool operator==(const contextual_handles&, const contextual_handles&) noexcept = default;
+        friend bool operator==(const contextual_resources&, const contextual_resources&) noexcept = default;
     private:
-        std::array<contextual_handle, N> m_Handles{};
+        std::array<contextual_resource, N> m_Handles{};
     };
 }

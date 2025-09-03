@@ -45,7 +45,7 @@ namespace avocet::opengl {
             using gl_param_getter    = gl_function<void(GLuint, GLenum, GLint*)>;
             using gl_info_log_getter = gl_function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
 
-            shader_checker(const contextual_handle& h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
+            shader_checker(const contextual_resource& h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
                 : m_ContextualHandle{h}
                 , m_ParamGetter{paramGetter}
                 , m_InfoLogGetter{logGetter}
@@ -61,7 +61,7 @@ namespace avocet::opengl {
         protected:
             ~shader_checker() = default;
         private:
-            const contextual_handle& m_ContextualHandle;
+            const contextual_resource& m_ContextualHandle;
             gl_param_getter    m_ParamGetter;
             gl_info_log_getter m_InfoLogGetter;
 
@@ -87,9 +87,9 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            contextual_handle create(const GladGLContext& ctx) { return contextual_handle{ctx, gpu_resource_handle<GLuint>{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}}; }
+            contextual_resource create(const GladGLContext& ctx) { return contextual_resource{ctx, gpu_resource_handle<GLuint>{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}}; }
 
-            static void destroy(const contextual_handle& h) {
+            static void destroy(const contextual_resource& h) {
                 gl_function{&GladGLContext::DeleteShader}(h.context(), h.handle().index());
             }
         };
@@ -103,7 +103,7 @@ namespace avocet::opengl {
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
             shader_compiler_checker(const shader_resource& r, shader_species species)
-                : shader_checker{r.get_contextual_handle(), gl_function{&GladGLContext::GetShaderiv}, gl_function{&GladGLContext::GetShaderInfoLog}}
+                : shader_checker{r.get_contextual_resource(), gl_function{&GladGLContext::GetShaderiv}, gl_function{&GladGLContext::GetShaderInfoLog}}
                 , m_Species{species}
             {}
 
@@ -117,7 +117,7 @@ namespace avocet::opengl {
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
             explicit shader_program_checker(const shader_program_resource& r)
-                : shader_checker{r.get_contextual_handle(), gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
+                : shader_checker{r.get_contextual_resource(), gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
             {}
 
             [[nodiscard]]
@@ -142,7 +142,7 @@ namespace avocet::opengl {
             shader_compiler(const GladGLContext& ctx, shader_species species, const fs::path& sourceFile)
                 : m_Resource{ctx, species}
             {
-                const auto index{m_Resource.get_contextual_handle().handle().index()};
+                const auto index{m_Resource.get_contextual_resource().handle().index()};
                 const auto source{read_to_string(sourceFile)};
                 const auto data{source.data()};
                 gl_function{&GladGLContext::ShaderSource} (ctx, index, 1, &data, nullptr);
@@ -166,8 +166,8 @@ namespace avocet::opengl {
         public:
             shader_attacher(const GladGLContext& ctx, const shader_program_resource& progResource, const shader_compiler& shader)
                 : m_Context{&ctx}
-                , m_ProgIndex{progResource.get_contextual_handle().handle().index()}
-                , m_ShaderIndex{shader.resource().get_contextual_handle().handle().index()}
+                , m_ProgIndex{progResource.get_contextual_resource().handle().index()}
+                , m_ShaderIndex{shader.resource().get_contextual_resource().handle().index()}
             {
                 gl_function{&GladGLContext::AttachShader}(ctx, m_ProgIndex, m_ShaderIndex);
             }
@@ -186,7 +186,7 @@ namespace avocet::opengl {
             vertexShader{context(),   shader_species::vertex,   vertexShaderSource},
             fragmentShader{context(), shader_species::fragment, fragmentShaderSource};
 
-        const auto progIndex{m_Resource.get_contextual_handle().handle().index()};
+        const auto progIndex{m_Resource.get_contextual_resource().handle().index()};
 
         {
             shader_attacher verteAttacher{context(), m_Resource, vertexShader}, fragmentAttacher{context(), m_Resource, fragmentShader};
@@ -210,7 +210,7 @@ namespace avocet::opengl {
         if(auto found{m_Uniforms.find(name)}; found != m_Uniforms.end())
             return found->second;
 
-        const auto location{gl_function{&GladGLContext::GetUniformLocation}(context(), m_Resource.get_contextual_handle().handle().index(), name.data())};
+        const auto location{gl_function{&GladGLContext::GetUniformLocation}(context(), m_Resource.get_contextual_resource().handle().index(), name.data())};
         if(location == -1)
             throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", extract_label(), name)};
 

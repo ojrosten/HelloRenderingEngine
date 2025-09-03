@@ -17,8 +17,8 @@
 namespace avocet::opengl {
     template<class T>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, const contextual_handle& h) {
-            { t.create(h.context()) } -> std::same_as<contextual_handle>;
+        requires(T& t, const contextual_resource& h) {
+            { t.create(h.context()) } -> std::same_as<contextual_resource>;
             T::destroy(h);
         }
     };
@@ -26,7 +26,7 @@ namespace avocet::opengl {
     template<class LifeEvents>
         requires has_shader_lifecycle_events_v<LifeEvents>
     class generic_shader_resource {        
-        contextual_handle m_ContextualHandle;
+        contextual_resource m_ContextualHandle;
     public:
         template<class... Args>
             requires std::is_constructible_v<LifeEvents, Args...>
@@ -41,7 +41,7 @@ namespace avocet::opengl {
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        const contextual_handle& get_contextual_handle() const noexcept { return m_ContextualHandle; }
+        const contextual_resource& get_contextual_resource() const noexcept { return m_ContextualHandle; }
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
@@ -49,9 +49,9 @@ namespace avocet::opengl {
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
-        static contextual_handle create(const GladGLContext& ctx) { return contextual_handle{ctx, gpu_resource_handle<GLuint>{gl_function{&GladGLContext::CreateProgram}(ctx)}}; }
+        static contextual_resource create(const GladGLContext& ctx) { return contextual_resource{ctx, gpu_resource_handle<GLuint>{gl_function{&GladGLContext::CreateProgram}(ctx)}}; }
 
-        static void destroy(const contextual_handle& h) { gl_function{&GladGLContext::DeleteProgram}(h.context(), h.handle().index()); }
+        static void destroy(const contextual_resource& h) { gl_function{&GladGLContext::DeleteProgram}(h.context(), h.handle().index()); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
@@ -81,7 +81,7 @@ namespace avocet::opengl {
         ~shader_program() { program_tracker::reset(m_Resource); }
 
         [[nodiscard]]
-        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.get_contextual_handle()); }
+        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.get_contextual_resource()); }
 
         void use() { program_tracker::utilize(m_Resource); }
 
@@ -105,7 +105,7 @@ namespace avocet::opengl {
         map_t m_Uniforms;
 
         [[nodiscard]]
-        const GladGLContext& context() const noexcept { return m_Resource.get_contextual_handle().context(); }
+        const GladGLContext& context() const noexcept { return m_Resource.get_contextual_resource().context(); }
 
         [[nodiscard]]
         GLint extract_uniform_location(std::string_view name);
@@ -120,15 +120,15 @@ namespace avocet::opengl {
             inline static thread_local GLuint st_Current{};
         public:
             static void utilize(const shader_program_resource& spr) {
-                if(const auto index{spr.get_contextual_handle().handle().index()}; index != st_Current) {
-                    const auto& context{spr.get_contextual_handle().context()};
+                if(const auto index{spr.get_contextual_resource().handle().index()}; index != st_Current) {
+                    const auto& context{spr.get_contextual_resource().context()};
                     gl_function{&GladGLContext::UseProgram}(context, index);
                     st_Current = index;
                 }
             }
 
             static void reset(const shader_program_resource& spr) {
-                if(spr.get_contextual_handle().handle().index() == st_Current)
+                if(spr.get_contextual_resource().handle().index() == st_Current)
                     st_Current = 0;
             }
         };

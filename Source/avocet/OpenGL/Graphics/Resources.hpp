@@ -24,7 +24,7 @@ namespace avocet::opengl {
 
     template<num_resources NumResources, class T>
     inline constexpr bool has_resource_lifecycle_events_v{
-        requires(const GladGLContext& ctx, raw_indices<NumResources.value>& indices, const contextual_handle& h) {
+        requires(const GladGLContext& ctx, raw_indices<NumResources.value>& indices, const contextual_resource& h) {
             T::generate(ctx, indices);
             T::destroy(ctx, indices);
             { T::identifier } -> std::convertible_to<object_identifier>;
@@ -42,19 +42,19 @@ namespace avocet::opengl {
         constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
-        static contextual_handles<N> generate(const GladGLContext& ctx) {
+        static contextual_resources<N> generate(const GladGLContext& ctx) {
             raw_indices<N> indices{};
             LifeEvents::generate(ctx, indices);
-            return contextual_handles{ctx, indices};
+            return contextual_resources{ctx, indices};
         }
 
-        static void destroy(const contextual_handles<N>& h) {
+        static void destroy(const contextual_resources<N>& h) {
             LifeEvents::destroy(h.context(), h.get_raw_indices());
         }
 
-        static void bind(const contextual_handle& h) { LifeEvents::bind(h); }
+        static void bind(const contextual_resource& h) { LifeEvents::bind(h); }
 
-        static void configure(const contextual_handle& h, const configurator_type& config) {
+        static void configure(const contextual_resource& h, const configurator_type& config) {
             LifeEvents::configure(h, config);
         }
     };
@@ -76,12 +76,12 @@ namespace avocet::opengl {
         resource_wrapper& operator=(resource_wrapper&&) noexcept = default;
 
         [[nodiscard]]
-        const contextual_handles<N>& get_contextual_handles() const noexcept { return m_ContextualHandles; }
+        const contextual_resources<N>& get_contextual_resources() const noexcept { return m_ContextualHandles; }
 
         [[nodiscard]]
         friend bool operator==(const resource_wrapper&, const resource_wrapper&) noexcept = default;
     private:
-        contextual_handles<N> m_ContextualHandles;
+        contextual_resources<N> m_ContextualHandles;
     };
 
     template<num_resources NumResources, class LifeEvents>
@@ -97,8 +97,8 @@ namespace avocet::opengl {
         explicit generic_resource(const GladGLContext& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
-            for(const auto& [contextualHandle, config] : std::views::zip(get_contextual_handles(), configs)) {
-                if(contextualHandle == contextual_handle{ctx})
+            for(const auto& [contextualHandle, config] : std::views::zip(get_contextual_resources(), configs)) {
+                if(contextualHandle == contextual_resource{ctx})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
                 lifecycle_type::bind(contextualHandle);
@@ -108,21 +108,21 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         bool is_null() const noexcept {
-            auto isNull{[](const contextual_handle& h){ return h == contextual_handle{h.context()}; }};
-            assert(std::ranges::all_of(get_contextual_handles(), isNull) or std::ranges::none_of(get_contextual_handles(), isNull));
-            return isNull(get_contextual_handle(index<0>{}));
+            auto isNull{[](const contextual_resource& h){ return h == contextual_resource{h.context()}; }};
+            assert(std::ranges::all_of(get_contextual_resources(), isNull) or std::ranges::none_of(get_contextual_resources(), isNull));
+            return isNull(get_contextual_resource(index<0>{}));
         }
 
         template<std::size_t I>
             requires (I < N)
         [[nodiscard]]
-        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, get_contextual_handle(i)); }
+        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, get_contextual_resource(i)); }
 
         [[nodiscard]]
         std::string extract_label() const requires (N == 1) { return extract_label(index<0>{}); }
 
         [[nodiscard]]
-        const GladGLContext& context() const noexcept { return get_contextual_handles().context(); }
+        const GladGLContext& context() const noexcept { return get_contextual_resources().context(); }
 
         [[nodiscard]]
         friend bool operator==(const generic_resource&, const generic_resource&) noexcept = default;
@@ -134,15 +134,15 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        static void do_bind(const generic_resource& gbo, index<I> i) { lifecycle_type::bind(gbo.get_contextual_handle(i)); }
+        static void do_bind(const generic_resource& gbo, index<I> i) { lifecycle_type::bind(gbo.get_contextual_resource(i)); }
 
         static void do_bind(const generic_resource& gbo) requires (N == 1) { do_bind(gbo, index<0>{}); }
     private:
         [[nodiscard]]
-        const contextual_handles<N>& get_contextual_handles() const noexcept { return m_Resource.get_contextual_handles(); }
+        const contextual_resources<N>& get_contextual_resources() const noexcept { return m_Resource.get_contextual_resources(); }
 
         template<std::size_t I>
             requires (I < N)
-        const contextual_handle& get_contextual_handle(index<I>) const noexcept { return get_contextual_handles().begin()[I]; }
+        const contextual_resource& get_contextual_resource(index<I>) const noexcept { return get_contextual_resources().begin()[I]; }
     };
 }
