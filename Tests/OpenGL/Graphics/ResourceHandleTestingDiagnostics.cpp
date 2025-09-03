@@ -19,7 +19,7 @@ namespace avocet::testing
 
     void resource_handle_false_negative_test::run_tests()
     {
-        using rh = avocet::gpu_resource_handle<GLuint>;
+        using rh = avocet::opengl::resource_handle;
 
         check(equivalence, "Wrong wrapped value", rh{43}, 42);
     }

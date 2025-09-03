@@ -49,7 +49,7 @@ namespace avocet::opengl {
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
-        static contextual_resource create(const GladGLContext& ctx) { return contextual_resource{ctx, gpu_resource_handle<GLuint>{gl_function{&GladGLContext::CreateProgram}(ctx)}}; }
+        static contextual_resource create(const GladGLContext& ctx) { return contextual_resource{ctx, resource_handle{gl_function{&GladGLContext::CreateProgram}(ctx)}}; }
 
         static void destroy(const contextual_resource& h) { gl_function{&GladGLContext::DeleteProgram}(h.context(), h.handle().index()); }
     };

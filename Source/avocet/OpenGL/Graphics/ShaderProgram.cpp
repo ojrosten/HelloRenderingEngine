@@ -87,7 +87,7 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            contextual_resource create(const GladGLContext& ctx) { return contextual_resource{ctx, gpu_resource_handle<GLuint>{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}}; }
+            contextual_resource create(const GladGLContext& ctx) { return contextual_resource{ctx, resource_handle{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}}; }
 
             static void destroy(const contextual_resource& h) {
                 gl_function{&GladGLContext::DeleteShader}(h.context(), h.handle().index());

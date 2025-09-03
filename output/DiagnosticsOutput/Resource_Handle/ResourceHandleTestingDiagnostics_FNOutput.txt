@@ -2,7 +2,7 @@ Tests/OpenGL/Graphics/ResourceHandleTestingDiagnostics.cpp, Line 24
 Wrong wrapped value
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::gpu_resource_handle<unsigned int> >]
+[sequoia::testing::value_tester<avocet::opengl::resource_handle>]
 Checking for equivalence with:
 [int]
 
