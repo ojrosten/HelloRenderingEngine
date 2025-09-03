@@ -100,6 +100,6 @@ namespace curlew {
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
-        const GladGLContext& context() const noexcept { return m_Context; }
+        [[nodiscard]] const GladGLContext& context() const noexcept { return m_Context; }
     };
 }
