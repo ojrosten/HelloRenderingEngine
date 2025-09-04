@@ -89,7 +89,7 @@ namespace avocet::opengl {
             [[nodiscard]]
             resource_handle create() { return resource_handle{gl_function{glCreateShader}(to_gl_enum(m_Species))}; }
 
-            static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
+            static void destroy(const resource_handle& handle) { gl_function{glDeleteShader}(handle.index()); }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
