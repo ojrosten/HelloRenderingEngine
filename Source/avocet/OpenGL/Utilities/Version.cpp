@@ -17,12 +17,12 @@
 namespace avocet::opengl{
     [[nodiscard]]
     std::string get_vendor() {
-        return {std::bit_cast<const char*>(gl_function{glGetString}(GL_VENDOR))};
+        return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_VENDOR))};
     }
 
     [[nodiscard]]
     std::string get_renderer() {
-        return {std::bit_cast<const char*>(gl_function{glGetString}(GL_RENDERER))};
+        return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_RENDERER))};
     }
 
     [[nodiscard]]

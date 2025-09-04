@@ -60,12 +60,12 @@ namespace avocet::opengl {
         };
 
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenVertexArrays}(N, indices.data()); }
+        static void generate(raw_indices<N>& indices) { gl_function{&GladGLContext::GenVertexArrays}(ctx, N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteVertexArrays}(N, indices.data()); }
+        static void destroy(const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteVertexArrays}(ctx, N, indices.data()); }
 
-        static void bind(const resource_handle& h) { gl_function{glBindVertexArray}(h.index()); }
+        static void bind(const resource_handle& h) { gl_function{&GladGLContext::BindVertexArray}(ctx, h.index()); }
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
@@ -81,10 +81,10 @@ namespace avocet::opengl {
         constexpr static auto identifier{object_identifier::buffer};
 
         template<std::size_t N>
-        static void generate(raw_indices<N>& indices) { gl_function{glGenBuffers}(N, indices.data()); }
+        static void generate(raw_indices<N>& indices) { gl_function{&GladGLContext::GenBuffers}(ctx, N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const raw_indices<N>& indices) { gl_function{glDeleteBuffers}(N, indices.data()); }
+        static void destroy(const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteBuffers}(ctx, N, indices.data()); }
     };
 
     template<buffer_species Species, class T>
@@ -95,11 +95,11 @@ namespace avocet::opengl {
             optional_label label;
         };
 
-        static void bind(const resource_handle& h) { gl_function{glBindBuffer}(to_gl_enum(Species), h.index()); }
+        static void bind(const resource_handle& h) { gl_function{&GladGLContext::BindBuffer}(ctx, to_gl_enum(Species), h.index()); }
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
-            gl_function{glBufferData}(to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
+            gl_function{&GladGLContext::BufferData}(ctx, to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
         }
     };
 
@@ -141,12 +141,12 @@ namespace avocet::opengl {
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
             const auto components{to_gl_int(sizeofAtt / sizeof(ValueType))};
             if constexpr(std::is_same_v<ValueType, GLdouble>) {
-                gl_function{glVertexAttribLPointer}(info.index, components, typeSpecifier, stride, (GLvoid*)info.offset);
+                gl_function{&GladGLContext::VertexAttribLPointer}(ctx, info.index, components, typeSpecifier, stride, (GLvoid*)info.offset);
             }
             else {
-                gl_function{glVertexAttribPointer}(info.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)info.offset);
+                gl_function{&GladGLContext::VertexAttribPointer}(ctx, info.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)info.offset);
             }
-            gl_function{glEnableVertexAttribArray}(info.index);
+            gl_function{&GladGLContext::EnableVertexAttribArray}(ctx, info.index);
 
             info.advance(sizeofAtt);
         }
@@ -170,14 +170,14 @@ namespace avocet::opengl {
             base_type::do_bind(gbo);
             const auto size{get_buffer_size()};
             std::vector<T> buffer(size / sizeof(T));
-            gl_function{glGetBufferSubData}(to_gl_enum(Species), 0, size, buffer.data());
+            gl_function{&GladGLContext::GetBufferSubData}(ctx, to_gl_enum(Species), 0, size, buffer.data());
             return buffer;
         }
     private:
         [[nodiscard]]
         static GLint get_buffer_size() {
             GLint param{};
-            gl_function{glGetBufferParameteriv}(to_gl_enum(Species), GL_BUFFER_SIZE, &param);
+            gl_function{&GladGLContext::GetBufferParameteriv}(ctx, to_gl_enum(Species), GL_BUFFER_SIZE, &param);
             return param;
         }
     };

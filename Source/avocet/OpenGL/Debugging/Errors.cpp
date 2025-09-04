@@ -145,7 +145,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         GLint get_max_message_length(std::source_location loc) {
             GLint maxLen{};
-            gl_function{unchecked_debug_output, glGetIntegerv, loc}(GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
+            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv, loc}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
             return maxLen;
         }
 
@@ -163,7 +163,7 @@ namespace avocet::opengl {
             GLuint id{};
             GLsizei length{};
 
-            const auto numFound{gl_function{unchecked_debug_output, glGetDebugMessageLog}(1, to_gl_sizei(message.size()), &source, &type, &id, &severity, &length, message.data())};
+            const auto numFound{gl_function{unchecked_debug_output, &GladGLContext::GetDebugMessageLog}(ctx, 1, to_gl_sizei(message.size()), &source, &type, &id, &severity, &length, message.data())};
             const auto trimLen{((length > 0) && message[length - 1] == '\0') ? length - 1 : length};
             message.resize(trimLen);
 
@@ -190,7 +190,7 @@ namespace avocet::opengl {
         /// function gives platform-independent output. Once std::generator is
         /// available everywhere, the platform-dependent code can be removed.
         [[nodiscard]]
-        error_code get_error() { return error_code{gl_function{unchecked_debug_output, glGetError}()}; }
+        error_code get_error() { return error_code{gl_function{unchecked_debug_output, &GladGLContext::GetError}(ctx)}; }
 
 #ifndef __clang__
         [[nodiscard]]

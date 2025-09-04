@@ -28,29 +28,14 @@ namespace avocet::testing
         using namespace curlew;
 
         check_exception_thrown<std::runtime_error>(
-            "Constructing gl_function with a null pointer",
-            [](){
-                gl_breaker breaker{glGetError};
-                return agl::gl_function{agl::unchecked_debug_output, glGetError}();
-            }
+            "Invoking gl_function such that it delegates to a null function pointer",
+            [](){ return agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetError}(GladGLContext{}); }
         );
 
         check_exception_thrown<std::runtime_error>(
-            "Null glGetError when checking for basic errors",
+            "Check for basic errors with no context",
             [](){
-                gl_breaker breaker{glGetError};
-                agl::check_for_basic_errors(agl::num_messages{10}, std::source_location::current());
-            }
-        );
-
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-
-        check_exception_thrown<std::runtime_error>(
-            "Null glBindBuffer",
-            [](){
-                gl_breaker breaker{glBindBuffer};
-                agl::gl_function{glBindBuffer}(42, 42);
+                agl::check_for_basic_errors(GladGLContext{}, agl::num_messages{10}, std::source_location::current());
             }
         );
     }

@@ -21,16 +21,6 @@ namespace curlew {
     constexpr inline specificity_flavour target_specific{platform_specific | specificity_flavour::build};
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
-    template<class Fn>
-    class [[nodiscard]] gl_breaker{
-        Fn* m_pFn{};
-        Fn m_Fn;
-    public:
-        gl_breaker(Fn& fn) : m_pFn{&fn}, m_Fn{std::exchange(fn, nullptr)} {}
-
-        ~gl_breaker() { *m_pFn = m_Fn; }
-    };
-
     [[nodiscard]]
     rendering_setup find_rendering_setup();
 

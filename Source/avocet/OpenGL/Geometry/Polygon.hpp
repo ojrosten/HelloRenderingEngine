@@ -197,7 +197,7 @@ namespace avocet::opengl {
         };
 
         static void do_draw() {
-            gl_function{glDrawElements}(GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
+            gl_function{&GladGLContext::DrawElements}(ctx, GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
 
         element_buffer_object<element_index_type> m_EBO;
@@ -214,7 +214,7 @@ namespace avocet::opengl {
         friend polygon_base_type;
 
         static void do_draw() {
-            gl_function{glDrawArrays}(GL_TRIANGLES, 0, 3);
+            gl_function{&GladGLContext::DrawArrays}(ctx, GL_TRIANGLES, 0, 3);
         }
     };
 

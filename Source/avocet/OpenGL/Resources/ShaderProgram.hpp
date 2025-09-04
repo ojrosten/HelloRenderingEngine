@@ -49,9 +49,9 @@ namespace avocet::opengl {
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
-        static resource_handle create() { return resource_handle{gl_function{glCreateProgram}()}; }
+        static resource_handle create() { return resource_handle{gl_function{&GladGLContext::CreateProgram}(ctx)}; }
 
-        static void destroy(const resource_handle& handle) { gl_function{glDeleteProgram}(handle.index()); }
+        static void destroy(const resource_handle& handle) { gl_function{&GladGLContext::DeleteProgram}(ctx, handle.index()); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
@@ -110,7 +110,7 @@ namespace avocet::opengl {
         template<class... Args>
         void do_set_uniform(std::string_view name, void(*glFn)(GLint, Args...), Args... args) {
             use();
-            gl_function{glFn}(extract_uniform_location(name), args...);
+            gl_function{&GladGLContext::Fn}(ctx, extract_uniform_location(name), args...);
         }
 
         class program_tracker {
@@ -118,7 +118,7 @@ namespace avocet::opengl {
         public:
             static void utilize(const shader_program_resource& spr) {
                 if(const auto index{spr.handle().index()}; index != st_Current) {
-                    gl_function{glUseProgram}(index);
+                    gl_function{&GladGLContext::UseProgram}(ctx, index);
                     st_Current = index;
                 }
             }

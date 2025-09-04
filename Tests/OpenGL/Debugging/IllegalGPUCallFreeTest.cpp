@@ -38,16 +38,7 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Illegal call to glBindBuffer",
-            [](){ agl::gl_function{glBindBuffer}(42, 42); }
-        );
-
-        check_exception_thrown<std::runtime_error>(
-            "Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function",
-            [](){
-                agl::gl_function f{glBindBuffer};
-                gl_breaker breaker{glBindBuffer};
-                f(42, 42);
-            }
+            [](){ agl::gl_function{&GladGLContext::BindBuffer}(42, 42); }
         );
     }
 }

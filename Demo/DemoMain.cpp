@@ -116,7 +116,7 @@ int main()
             agl::texture_2d_configurator{
                 .data_view{pony},
                 .decoding{agl::sampling_decoding::srgb},
-                .parameter_setter{ [](){ agl::gl_function{glTexParameteri}(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                .parameter_setter{ [](){ agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
                 .label{"Princess TS"}
             },
             make_label("Hexagon")

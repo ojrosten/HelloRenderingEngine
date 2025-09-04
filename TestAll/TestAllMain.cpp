@@ -18,7 +18,6 @@
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
-#include "OpenGL/Debugging/InfiniteLoopFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
 #include "OpenGL/Resources/BufferMetaFreeTest.hpp"
@@ -60,8 +59,7 @@ int main(int argc, char** argv)
             "Errors",
             null_function_pointer_free_test{"Null Function Pointer Free Test"},
             illegal_gpu_call_free_test{"Illegal GPU Call Free Test"},
-            multiple_illegal_gpu_calls_free_test{"Multiple Illegal GPU Calls Free Test"},
-            infinite_loop_free_test{"Infinite Loop Free Test"}
+            multiple_illegal_gpu_calls_free_test{"Multiple Illegal GPU Calls Free Test"}
         );
 
         runner.add_test_suite(
