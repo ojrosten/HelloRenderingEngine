@@ -89,7 +89,7 @@ namespace avocet::opengl {
             [[nodiscard]]
             resource_handle create() { return resource_handle{gl_function{glCreateShader}(to_gl_enum(m_Species))}; }
 
-            static void destroy(const resource_handle& handle) { glDeleteShader(handle.index()); }
+            static void destroy(const resource_handle& handle) { gl_function{glDeleteShader}(handle.index()); }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
@@ -101,7 +101,7 @@ namespace avocet::opengl {
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
             shader_compiler_checker(const shader_resource& r, shader_species species)
-                : shader_checker{r.handle(), glGetShaderiv, glGetShaderInfoLog}
+                : shader_checker{r.handle(), gl_function{glGetShaderiv}, gl_function{glGetShaderInfoLog}}
                 , m_Species{species}
             {}
 
@@ -115,7 +115,7 @@ namespace avocet::opengl {
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
             explicit shader_program_checker(const shader_program_resource& r)
-                : shader_checker{r.handle(), glGetProgramiv, glGetProgramInfoLog}
+                : shader_checker{r.handle(), gl_function{glGetProgramiv}, gl_function{glGetProgramInfoLog}}
             {}
 
             [[nodiscard]]
