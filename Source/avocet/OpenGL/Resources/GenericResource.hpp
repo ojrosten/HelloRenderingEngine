@@ -140,6 +140,6 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        const contextual_resource_handle& get_handle(index<I>) const noexcept { return get_handles().begin()[N]; }
+        const contextual_resource_handle& get_handle(index<I>) const noexcept { return get_handles().begin()[I]; }
     };
 }
