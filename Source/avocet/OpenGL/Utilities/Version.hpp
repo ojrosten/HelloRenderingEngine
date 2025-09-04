@@ -11,6 +11,8 @@
 
 #include <format>
 
+#include "glad/gl.h"
+
 namespace avocet::opengl{
     struct opengl_version {
         std::size_t major{4}, minor{1};
