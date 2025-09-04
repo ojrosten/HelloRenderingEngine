@@ -13,8 +13,6 @@
 
 #include <string>
 
-#include "glad/gl.h"
-
 struct GLFWwindow;
 
 namespace curlew {

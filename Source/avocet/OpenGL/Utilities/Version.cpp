@@ -8,8 +8,6 @@
 #include "avocet/OpenGL/Utilities/Version.hpp"
 #include "avocet/OpenGL/Utilities/GLFunction.hpp"
 
-#include"glad/gl.h"
-
 #include <format>
 #include <string>
 #include <stdexcept>
