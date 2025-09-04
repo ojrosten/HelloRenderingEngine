@@ -39,13 +39,13 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline std::string get_object_label(const GladGLContext& ctx, avocet::opengl::object_identifier identifier, const avocet::opengl::resource_handle& handle) {
-        std::string label(get_max_label_length(ctx), ' ');
+    inline std::string get_object_label(avocet::opengl::object_identifier identifier, const avocet::opengl::contextual_resource_handle& crh) {
+        std::string label(get_max_label_length(crh.context()), ' ');
         GLsizei numChars{};
         gl_function{&GladGLContext::GetObjectLabel}(
-            ctx,
+            crh.context(),
             to_gl_enum(identifier),
-            handle.index(),
+            crh.handle().index(),
             to_gl_sizei(label.size()),
             &numChars,
             label.data()
