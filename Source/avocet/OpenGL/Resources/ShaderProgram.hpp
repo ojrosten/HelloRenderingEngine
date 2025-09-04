@@ -86,15 +86,15 @@ namespace avocet::opengl {
         void use() { program_tracker::utilize(m_Resource); }
 
         void set_uniform(std::string_view name, GLfloat val) {
-            do_set_uniform(name, glUniform1f, val);
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform1f}, val);
         }
 
         void set_uniform(std::string_view name, GLint val) {
-            do_set_uniform(name, glUniform1i, val);
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform1i}, val);
         }
 
         void set_uniform(std::string_view name, std::span<const GLfloat, 2> vals) {
-            do_set_uniform(name, glUniform2f, vals[0], vals[1]);
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform2f}, vals[0], vals[1]);
         }
 
         [[nodiscard]]
@@ -108,9 +108,9 @@ namespace avocet::opengl {
         GLint extract_uniform_location(std::string_view name);
 
         template<class... Args>
-        void do_set_uniform(std::string_view name, void(*glFn)(GLint, Args...), Args... args) {
+        void do_set_uniform(std::string_view name, gl_function<void(GLint, Args...)> fn, Args... args) {
             use();
-            gl_function{&GladGLContext::Fn}(ctx, extract_uniform_location(name), args...);
+            fn(extract_uniform_location(name), args...);
         }
 
         class program_tracker {
