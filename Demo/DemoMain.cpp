@@ -125,8 +125,8 @@ int main()
         shaderProgram2D.set_uniform("image", 8);
 
         while(!glfwWindowShouldClose(&w.get())) {
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            agl::gl_function{glClearColor}(0.2f, 0.3f, 0.3f, 1.0f);
+            agl::gl_function{glClear}(GL_COLOR_BUFFER_BIT);
 
             shaderProgramDouble.use();
             q.draw();
