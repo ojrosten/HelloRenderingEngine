@@ -47,6 +47,11 @@ namespace avocet::opengl {
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
     };
 
+
+    template<class LifeEvents>
+    [[nodiscard]]
+    static GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return gsr.handle().index(); }
+
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
         static resource_handle create() { return resource_handle{gl_function{&GladGLContext::CreateProgram}(ctx)}; }
@@ -117,14 +122,14 @@ namespace avocet::opengl {
             inline static GLuint st_Current{};
         public:
             static void utilize(const shader_program_resource& spr) {
-                if(const auto index{spr.handle().index()}; index != st_Current) {
+                if(const auto index{get_index(spr)}; index != st_Current) {
                     gl_function{&GladGLContext::UseProgram}(ctx, index);
                     st_Current = index;
                 }
             }
 
             static void reset(const shader_program_resource& spr) {
-                if(spr.handle().index() == st_Current)
+                if(get_index(spr) == st_Current)
                     st_Current = 0;
             }
         };

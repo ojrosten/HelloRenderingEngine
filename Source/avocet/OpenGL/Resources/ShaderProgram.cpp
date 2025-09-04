@@ -140,7 +140,7 @@ namespace avocet::opengl {
             shader_compiler(shader_species species, const fs::path& sourceFile)
                 : m_Resource{species}
             {
-                const auto index{m_Resource.handle().index()};
+                const auto index{get_index(m_Resource)};
                 const auto source{read_to_string(sourceFile)};
                 const auto data{source.data()};
                 gl_function{&GladGLContext::ShaderSource}(ctx, index, 1, &data, nullptr);
@@ -159,8 +159,8 @@ namespace avocet::opengl {
             GLuint m_ProgIndex{}, m_ShaderIndex{};
         public:
             shader_attacher(const shader_program_resource& progResource, const shader_compiler& shader)
-                : m_ProgIndex{progResource.handle().index()}
-                , m_ShaderIndex{shader.resource().handle().index()}
+                : m_ProgIndex{get_index(progResource)}
+                , m_ShaderIndex{get_index(shader.resource())}
             {
                 gl_function{&GladGLContext::AttachShader}(ctx, m_ProgIndex, m_ShaderIndex);
             }
@@ -177,7 +177,7 @@ namespace avocet::opengl {
             vertexShader{shader_species::vertex, vertexShaderSource},
             fragmentShader{shader_species::fragment, fragmentShaderSource};
 
-        const auto progIndex{m_Resource.handle().index()};
+        const auto progIndex{get_index(m_Resource)};
 
         {
             shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
@@ -201,7 +201,7 @@ namespace avocet::opengl {
         if(auto found{m_Uniforms.find(name)}; found != m_Uniforms.end())
             return found->second;
 
-        const auto location{gl_function{&GladGLContext::GetUniformLocation}(ctx, m_Resource.handle().index(), name.data())};
+        const auto location{gl_function{&GladGLContext::GetUniformLocation}(ctx, get_index(m_Resource), name.data())};
         if(location == -1)
             throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", extract_label(), name)};
 
