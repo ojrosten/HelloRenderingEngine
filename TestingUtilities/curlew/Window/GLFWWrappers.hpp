@@ -13,6 +13,8 @@
 
 #include <string>
 
+#include "glad/gl.h"
+
 struct GLFWwindow;
 
 namespace curlew {
@@ -87,6 +89,7 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
+        GladGLContext m_Context{};
 
         window(const window_config& config, const avocet::opengl::opengl_version& version);
     public:
@@ -98,5 +101,7 @@ namespace curlew {
         ~window() = default;
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
+
+        [[nodiscard]] const GladGLContext& context() const noexcept { return m_Context; }
     };
 }

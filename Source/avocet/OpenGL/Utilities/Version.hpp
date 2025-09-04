@@ -22,13 +22,13 @@ namespace avocet::opengl{
     };
 
     [[nodiscard]]
-    std::string get_vendor();
+    std::string get_vendor(const GladGLContext& ctx);
 
     [[nodiscard]]
-    std::string get_renderer();
+    std::string get_renderer(const GladGLContext& ctx);
 
     [[nodiscard]]
-    opengl_version get_opengl_version();
+    opengl_version get_opengl_version(const GladGLContext& ctx);
 }
 
 
