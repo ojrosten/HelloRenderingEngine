@@ -23,8 +23,7 @@ namespace avocet::opengl {
     template<std::size_t N>
     using handles = std::array<resource_handle, N>;
 
-    template<class From, class To, class Fn, std::size_t N>
-        requires std::is_invocable_r_v<To, Fn, From>
+    template<class From, std::size_t N, std::invocable<From> Fn, class To = std::invoke_result_t<Fn, From>>
     [[nodiscard]]
     std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
         return
@@ -36,13 +35,13 @@ namespace avocet::opengl {
     template<std::size_t N>
     [[nodiscard]]
     handles<N> to_handles(const raw_indices<N>& indices) {
-        return to_array<GLuint, resource_handle>(indices, [](GLuint i){ return resource_handle{i}; });
+        return to_array(indices, [](GLuint i){ return resource_handle{i}; });
     }
 
     template<std::size_t N>
     [[nodiscard]]
     raw_indices<N> to_raw_indices(const handles<N>& handles) {
-        return to_array<resource_handle, GLuint>(handles, [](const resource_handle& h){ return h.index(); });
+        return to_array(handles, [](const resource_handle& h){ return h.index(); });
     }
 
     struct num_resources { std::size_t value{}; };
