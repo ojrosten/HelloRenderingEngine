@@ -9,8 +9,9 @@
 
 #include "glad/gl.h"
 
-#include <utility>
+#include <array>
 #include <concepts>
+#include <utility>
 
 namespace avocet::opengl {
     class resource_handle {
@@ -34,4 +35,31 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const resource_handle&, const resource_handle&) noexcept = default;
     };
+
+    template<std::size_t N>
+    using raw_indices = std::array<GLuint, N>;
+
+    template<std::size_t N>
+    using handles = std::array<resource_handle, N>;
+
+    template<class From, std::size_t N, std::invocable<From> Fn, class To = std::invoke_result_t<Fn, From>>
+    [[nodiscard]]
+    std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
+        return
+            [&] <std::size_t... Is> (std::index_sequence<Is...>) {
+            return std::array<To, N>{fn(from[Is])...};
+        }(std::make_index_sequence<N>{});
+    }
+
+    template<std::size_t N>
+    [[nodiscard]]
+    handles<N> to_handles(const raw_indices<N>& indices) {
+        return to_array(indices, [](GLuint i) { return resource_handle{i}; });
+    }
+
+    template<std::size_t N>
+    [[nodiscard]]
+    raw_indices<N> to_raw_indices(const handles<N>& handles) {
+        return to_array(handles, [](const resource_handle& h) { return h.index(); });
+    }
 }
