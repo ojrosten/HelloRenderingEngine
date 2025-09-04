@@ -36,11 +36,49 @@ namespace avocet::opengl {
         friend bool operator==(const resource_handle&, const resource_handle&) noexcept = default;
     };
 
-    template<std::size_t N>
-    using raw_indices = std::array<GLuint, N>;
+    class context_ref {
+        const GladGLContext* m_Context{};
+    public:
+        context_ref(const GladGLContext& ctx)
+            : m_Context{&ctx}
+        {}
+
+        context_ref(context_ref&&) noexcept = default;
+
+        context_ref& operator=(context_ref&& other) noexcept {
+            std::ranges::swap(m_Context, other.m_Context);
+            return *this;
+        }
+
+        [[nodiscard]]
+        const GladGLContext& get() const noexcept { return *m_Context; }
+
+        [[nodiscard]]
+        friend bool operator==(const context_ref&, const context_ref&) noexcept = default;
+    };
+
+    class contextual_resource_handle {
+        context_ref m_Context;
+        resource_handle m_Handle;
+    public:
+        contextual_resource_handle(const GladGLContext& ctx, resource_handle h)
+            : m_Context{ctx}
+            , m_Handle{std::move(h)}
+        {}
+
+        [[nodiscard]]
+        const GladGLContext& context() const noexcept { return m_Context.get(); }
+
+        [[nodiscard]]
+        const resource_handle& handle() const noexcept { return m_Handle; }
+
+        [[nodiscard]]
+        friend bool operator==(const contextual_resource_handle&, const contextual_resource_handle&) noexcept = default;
+    };
+
 
     template<std::size_t N>
-    using handles = std::array<resource_handle, N>;
+    using raw_indices = std::array<GLuint, N>;
 
     template<class From, std::size_t N, std::invocable<From> Fn, class To = std::invoke_result_t<Fn, From>>
     [[nodiscard]]
@@ -50,16 +88,32 @@ namespace avocet::opengl {
             return std::array<To, N>{fn(from[Is])...};
         }(std::make_index_sequence<N>{});
     }
+   
 
     template<std::size_t N>
-    [[nodiscard]]
-    handles<N> to_handles(const raw_indices<N>& indices) {
-        return to_array(indices, [](GLuint i) { return resource_handle{i}; });
-    }
+    class contextual_resource_handles {
+        std::array<contextual_resource_handle, N> m_Handles;
+    public:
+        contextual_resource_handles(const GladGLContext& ctx, const raw_indices<N>& indices)
+            : m_Handles{to_array(indices, [&](GLuint i) { return contextual_resource_handle{ctx, resource_handle{i}}; })}
+        {}
 
-    template<std::size_t N>
-    [[nodiscard]]
-    raw_indices<N> to_raw_indices(const handles<N>& handles) {
-        return to_array(handles, [](const resource_handle& h) { return h.index(); });
-    }
+        auto begin() const noexcept { return m_Handles.begin(); }
+
+        auto end() const noexcept { return m_Handles.end(); }
+
+        [[nodiscard]]
+        raw_indices<N> get_raw_indices() const {
+            return to_array(m_Handles, [](const contextual_resource_handle& h) { return h.handle().index(); });
+        }
+
+        const GladGLContext& context() const noexcept
+            requires (N > 0)
+        {
+            return m_Handles.front().context();
+        }
+
+        [[nodiscard]]
+        friend bool operator==(const contextual_resource_handles&, const contextual_resource_handles&) noexcept = default;
+    };
 }
