@@ -36,6 +36,9 @@ namespace avocet::opengl {
         friend bool operator==(const resource_handle&, const resource_handle&) noexcept = default;
     };
 
+    [[nodiscard]]
+    inline GLuint get_index(const resource_handle& h) { return h.index(); }
+
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
 

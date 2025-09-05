@@ -21,7 +21,7 @@ namespace avocet::opengl {
     inline void add_label(object_identifier identifier, const resource_handle& h, const optional_label& label) {
         if(label && object_labels_activated()) {
             const auto& str{label.value()};
-            gl_function{glObjectLabel}(to_gl_enum(identifier), h.index(), to_gl_sizei(str.size()), str.data());
+            gl_function{glObjectLabel}(to_gl_enum(identifier), get_index(h), to_gl_sizei(str.size()), str.data());
         }
     }
 
@@ -44,7 +44,7 @@ namespace avocet::opengl {
         GLsizei numChars{};
         gl_function{glGetObjectLabel}(
             to_gl_enum(identifier),
-            handle.index(),
+            get_index(handle),
             to_gl_sizei(label.size()),
             &numChars,
             label.data()

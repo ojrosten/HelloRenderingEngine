@@ -50,13 +50,13 @@ namespace avocet::opengl {
 
     template<class LifeEvents>
     [[nodiscard]]
-    static GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return gsr.handle().index(); }
+    GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.handle()); }
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
         static resource_handle create() { return resource_handle{gl_function{glCreateProgram}()}; }
 
-        static void destroy(const resource_handle& handle) { gl_function{glDeleteProgram}(handle.index()); }
+        static void destroy(const resource_handle& handle) { gl_function{glDeleteProgram}(get_index(handle)); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
