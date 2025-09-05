@@ -38,9 +38,9 @@ namespace avocet::testing
         if(agl::debug_output_supported()) {
             check_exception_thrown<std::runtime_error>(
                 "At least two errors",
-                [](){
-                    glBindBuffer(GL_ARRAY_BUFFER, 42);
-                    glCreateShader(0);
+                [&](){
+                    w.context().BindBuffer(GL_ARRAY_BUFFER, 42);
+                    w.context().CreateShader(0);
                     agl::check_for_advanced_errors(agl::num_messages{10}, std::source_location::current());
                 }
             );

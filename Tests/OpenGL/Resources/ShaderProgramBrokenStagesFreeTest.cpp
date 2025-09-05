@@ -30,8 +30,9 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Broken Vertex Shader",
-            [&shaderDir](){
+            [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Broken_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
@@ -40,8 +41,9 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Broken Fragment Shader",
-            [&shaderDir](){
+            [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Identity.vs",
                     shaderDir / "Broken_Monochrome.fs"
                 };
@@ -50,8 +52,9 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Unlinkable Vertex Shader / Fragment Shader Combo",
-            [&shaderDir](){
+            [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Output_vec3.vs",
                     shaderDir / "Input_float.fs"
                 };
