@@ -53,6 +53,7 @@ namespace avocet::opengl {
     private:
         function_pointer_type m_Fn;
 
+        [[nodiscard]]
         static function_pointer_type validate(function_pointer_type f, std::source_location loc) {
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
         }
