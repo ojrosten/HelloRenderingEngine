@@ -30,7 +30,7 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Missing Vertex Shader",
-            [&shaderDir](){
+            [&](){
                 agl::shader_program sp{
                     shaderDir,
                     shaderDir / "Monochrome.fs"
@@ -40,7 +40,7 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Misnamed Vertex Shader",
-            [&shaderDir](){
+            [&](){
                 agl::shader_program sp{
                     shaderDir / "foo.vs",
                     shaderDir / "Monochrome.fs"
@@ -50,7 +50,7 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Missing Fragment Shader",
-            [&shaderDir](){
+            [&](){
                 agl::shader_program sp{
                     shaderDir / "Identity.vs",
                     shaderDir

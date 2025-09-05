@@ -24,6 +24,6 @@ namespace avocet::testing
         [[nodiscard]]
         std::filesystem::path source_file() const;
 
-        void labelling_tests();
+        void labelling_tests(const curlew::window& w);
     };
 }
