@@ -97,14 +97,30 @@ namespace avocet::opengl {
     }
 
     template<std::size_t N>
-    [[nodiscard]]
-    handles<N> to_handles(const raw_indices<N>& indices) {
-        return to_array(indices, [](GLuint i) { return resource_handle{i}; });
-    }
+    class contextual_resource_handles {
+        std::array<contextual_resource_handle, N> m_Handles;
+    public:
+        contextual_resource_handles(const GladGLContext& ctx, const raw_indices<N>& indices)
+            : m_Handles{to_array(indices, [&ctx](GLuint i) { return contextual_resource_handle{ctx, resource_handle{i}}; })}
+        {}
 
-    template<std::size_t N>
-    [[nodiscard]]
-    raw_indices<N> to_raw_indices(const handles<N>& handles) {
-        return to_array(handles, [](const resource_handle& h) { return h.index(); });
-    }
+        [[nodiscard]] auto begin() const noexcept { return m_Handles.begin(); }
+
+        [[nodiscard]] auto end() const noexcept { return m_Handles.end(); }
+
+        [[nodiscard]]
+        raw_indices<N> get_raw_indices() const {
+            return to_array(m_Handles, [](const contextual_resource_handle& h) { return get_index(h); });
+        }
+
+        [[nodiscard]]
+        const GladGLContext& context() const noexcept
+            requires (N > 0)
+        {
+            return m_Handles.front().context();
+        }
+
+        [[nodiscard]]
+        friend bool operator==(const contextual_resource_handles&, const contextual_resource_handles&) noexcept = default;
+    };
 }

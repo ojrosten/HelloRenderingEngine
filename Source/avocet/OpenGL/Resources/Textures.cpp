@@ -44,7 +44,7 @@ namespace avocet::opengl {
             return to_gl_int(rowAlignment.raw_value());
         }
 
-        void load_to_gpu(const texture_2d_configurator& config) {
+        void load_to_gpu(const GladGLContext& ctx, const texture_2d_configurator& config) {
             gl_function{&GladGLContext::PixelStorei}(ctx, GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
 
             const auto format{to_texture_format(config.data_view.num_channels())};
@@ -65,16 +65,16 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        GLint extract_texture_2d_param(GLenum paramName) {
+        GLint extract_texture_2d_param(const GladGLContext& ctx, GLenum paramName) {
             GLint param{};
             gl_function{&GladGLContext::GetTexLevelParameteriv}(ctx, GL_TEXTURE_2D, 0, paramName, &param);
             return param;
         }
     }
 
-    void texture_2d_lifecycle_events::configure(const resource_handle& h, const configurator& config) {
+    void texture_2d_lifecycle_events::configure(const contextual_resource_handle& h, const configurator& config) {
         add_label(identifier, h, config.label);
-        load_to_gpu(config);
+        load_to_gpu(h.context(), config);
         if(config.parameter_setter)
             config.parameter_setter();
     }
@@ -83,9 +83,10 @@ namespace avocet::opengl {
     unique_image texture_2d::do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment) {
         texture_2d::do_bind(tex2d);
 
+        const auto& ctx{tex2d.context()};
         using value_type = texture_2d::value_type;
-        const auto width{static_cast<std::size_t>(extract_texture_2d_param(GL_TEXTURE_WIDTH))},
-                  height{static_cast<std::size_t>(extract_texture_2d_param(GL_TEXTURE_HEIGHT))};
+        const auto width{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH))},
+                  height{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
 
         const auto numChannels{to_num_channels(format)};
         const auto size{safe_image_size(padded_row_size(width, numChannels, sizeof(value_type), rowAlignment), height)};

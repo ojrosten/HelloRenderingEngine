@@ -49,12 +49,12 @@ namespace curlew {
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
         }
 
-        void init_debug()
+        void init_debug(const GladGLContext& ctx)
         {
             GLint flags{};
             agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-                if(const auto version{agl::get_opengl_version()}; !agl::debug_output_supported(version))
+                if(const auto version{agl::get_opengl_version(ctx)}; !agl::debug_output_supported(version))
                     throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
 
                 agl::gl_function{agl::unchecked_debug_output, &GladGLContext::Enable}(ctx, GL_DEBUG_OUTPUT);
@@ -88,7 +88,7 @@ namespace curlew {
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
-        return {agl::get_opengl_version(), agl::get_vendor(), agl::get_renderer()};
+        return {agl::get_opengl_version(w.context()), agl::get_vendor(w.context()), agl::get_renderer(w.context())};
     }
 
     [[nodiscard]]
@@ -114,9 +114,9 @@ namespace curlew {
     window::window(const window_config& config, const agl::opengl_version& version) : m_Window{config, version} {
         glfwMakeContextCurrent(&m_Window.get());
 
-        if(!gladLoadGL(glfwGetProcAddress))
+        if(!gladLoadGLContext(&m_Context, glfwGetProcAddress))
             throw std::runtime_error{"Failed to initialize GLAD"};
 
-        init_debug();
+        init_debug(m_Context);
     }
 }
