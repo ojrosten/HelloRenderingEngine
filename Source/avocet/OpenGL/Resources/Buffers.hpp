@@ -65,7 +65,7 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteVertexArrays}(ctx, N, indices.data()); }
 
-        static void bind(const resource_handle& h) { gl_function{&GladGLContext::BindVertexArray}(ctx, h.index()); }
+        static void bind(const resource_handle& h) { gl_function{&GladGLContext::BindVertexArray}(ctx, get_index(h)); }
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);
@@ -95,7 +95,7 @@ namespace avocet::opengl {
             optional_label label;
         };
 
-        static void bind(const resource_handle& h) { gl_function{&GladGLContext::BindBuffer}(ctx, to_gl_enum(Species), h.index()); }
+        static void bind(const resource_handle& h) { gl_function{&GladGLContext::BindBuffer}(ctx, to_gl_enum(Species), get_index(h)); }
 
         static void configure(const resource_handle& h, const configurator& config) {
             add_label(identifier, h, config.label);

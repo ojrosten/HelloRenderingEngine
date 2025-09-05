@@ -68,7 +68,7 @@ namespace avocet::opengl {
             [[nodiscard]]
             GLint get_parameter_value(GLenum paramName) const {
                 GLint param{};
-                m_ParamGetter(m_Handle.index(), paramName, &param);
+                m_ParamGetter(get_index(m_Handle), paramName, &param);
                 return param;
             }
 
@@ -76,7 +76,7 @@ namespace avocet::opengl {
             std::string get_info_log() const {
                 const GLint logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
                 std::string info(logLen, ' ');
-                m_InfoLogGetter(m_Handle.index(), logLen, nullptr, info.data());
+                m_InfoLogGetter(get_index(m_Handle), logLen, nullptr, info.data());
                 return info;
             }
         };
@@ -89,7 +89,7 @@ namespace avocet::opengl {
             [[nodiscard]]
             resource_handle create() { return resource_handle{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}; }
 
-            static void destroy(const resource_handle& handle) { gl_function{&GladGLContext::DeleteShader}(ctx, handle.index()); }
+            static void destroy(const resource_handle& handle) { gl_function{&GladGLContext::DeleteShader}(ctx, get_index(handle)); }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;

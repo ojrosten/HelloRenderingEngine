@@ -58,10 +58,10 @@ int main()
 
         namespace agl = avocet::opengl;
         agl::shader_program
-            shaderProgram{get_shader_dir() / "Identity.vs", get_shader_dir() / "Monochrome.fs"},
-            discShaderProgram{get_shader_dir() / "Disc2D.vs", get_shader_dir() / "Disc.fs"},
-            shaderProgram2D{get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
-            shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs", get_shader_dir() / "Monochrome.fs"};
+            shaderProgram      {get_shader_dir() / "Identity.vs",           get_shader_dir() / "Monochrome.fs"},
+            discShaderProgram  {get_shader_dir() / "Disc2D.vs",             get_shader_dir() / "Disc.fs"},
+            shaderProgram2D    {get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
+            shaderProgramDouble{get_shader_dir() / "IdentityDouble.vs",     get_shader_dir() / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             [](std::ranges::random_access_range auto verts) {
@@ -78,7 +78,7 @@ int main()
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> disc{
-          [radius, centre](std::ranges::random_access_range auto verts) {
+            [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
                     constexpr auto scale{2 * radius / 0.5};
                     (sequoia::get<0>(vert) *= scale) += centre;
