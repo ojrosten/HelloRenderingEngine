@@ -63,6 +63,6 @@ namespace avocet::opengl {
     template<std::size_t N>
     [[nodiscard]]
     raw_indices<N> to_raw_indices(const handles<N>& handles) {
-        return to_array(handles, [](const resource_handle& h) { return h.index(); });
+        return to_array(handles, [](const resource_handle& h) { return get_index(h); });
     }
 }
