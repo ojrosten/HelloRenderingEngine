@@ -98,8 +98,8 @@ namespace avocet::opengl {
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
         polygon_base(Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
-            : m_VBO{transformer(st_Vertices), label}
-            , m_VAO{label, m_VBO}
+            :     m_VBO{transformer(st_Vertices), label}
+            ,     m_VAO{label, m_VBO}
             , m_Texture{texConfig}
         {
         }
@@ -163,7 +163,7 @@ namespace avocet::opengl {
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
         polygon(Fn transformer, const std::optional<std::string>& label)
             : polygon_base_type{transformer, label}
-            , m_EBO{st_Indices, label}
+            ,             m_EBO{st_Indices, label}
         {
         }
 
@@ -171,7 +171,7 @@ namespace avocet::opengl {
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
         polygon(Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             : polygon_base_type{transformer, texConfig, label}
-            , m_EBO{st_Indices, label}
+            ,             m_EBO{st_Indices, label}
         {
         }
     private:
