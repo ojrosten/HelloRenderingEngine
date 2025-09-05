@@ -30,7 +30,7 @@ namespace avocet::opengl {
     public:
         template<class... Args>
             requires std::is_constructible_v<LifeEvents, Args...>
-        explicit(sizeof...(Args) == 1) generic_shader_resource(const GladGLContext& ctx, const Args&... args)
+        explicit(sizeof...(Args) == 0) generic_shader_resource(const GladGLContext& ctx, const Args&... args)
             : m_Handle{LifeEvents{args...}.create(ctx)}
         {}
 
