@@ -10,6 +10,7 @@
 /*! \file */
 
 #include "Texture2dTestingUtilities.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
 
 namespace avocet::testing
 {
@@ -35,8 +36,7 @@ namespace avocet::testing
     private:
         using opt_data = std::optional<avocet::testing::image_data>;
 
-        void check_semantics_via_texture_data(const reporter& description, const texture_data& first, const texture_data& second) {
-
+        void check_semantics_via_texture_data(const reporter& description, const curlew::window& w, const texture_data& first, const texture_data& second) {
             check_semantics(
                 description,
                 opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data( first.image)},  .decoding{first.decoding},  .parameter_setter{}, .label{ first.label}}},
@@ -48,7 +48,7 @@ namespace avocet::testing
             );
         }
 
-        void check_semantics_via_texture_data(const reporter& description, const texture_data& sent1, const image_data& extracted1, const texture_data& sent2, const image_data& extracted2) {
+        void check_semantics_via_texture_data(const reporter& description, const curlew::window& w, const texture_data& sent1, const image_data& extracted1, const texture_data& sent2, const image_data& extracted2) {
             check_semantics(
                 description,
                 opengl::texture_2d{opengl::texture_2d_configurator{.data_view{image_view_over_data(sent1.image)}, .decoding{sent1.decoding}, .parameter_setter{}, .label{sent1.label}}},
