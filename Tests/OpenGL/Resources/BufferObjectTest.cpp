@@ -8,7 +8,6 @@
 /*! \file */
 
 #include "BufferObjectTest.hpp"
-#include "curlew/Window/GLFWWrappers.hpp"
 
 namespace avocet::testing
 {
@@ -26,13 +25,13 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        execute<agl::vertex_buffer_object<GLfloat>>();
-        execute<agl::element_buffer_object<GLubyte>>();
+        execute<agl::vertex_buffer_object<GLfloat>>(w);
+        execute<agl::element_buffer_object<GLubyte>>(w);
     }
 
     template<class Buffer>
         requires is_gl_buffer_v<Buffer>
-    void buffer_object_test::execute()
+    void buffer_object_test::execute(const curlew::window& w)
     {
         using T = Buffer::value_type;
 

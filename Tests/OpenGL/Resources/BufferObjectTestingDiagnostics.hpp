@@ -29,6 +29,6 @@ namespace avocet::testing
 
         template<class Buffer>
             requires is_gl_buffer_v<Buffer>
-        void execute();
+        void execute(const curlew::window& w);
     };
 }

@@ -11,6 +11,7 @@
 
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
 #include "avocet/OpenGL/Resources/Buffers.hpp"
+#include "curlew/Window/GLFWWrappers.hpp"
 
 namespace sequoia::testing
 {
