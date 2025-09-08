@@ -15,6 +15,7 @@
 #include <span>
 #include <utility>
 #include <variant>
+#include <vector>
 
 #include "sequoia/Core/Meta/Utilities.hpp"
 

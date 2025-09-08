@@ -10,7 +10,6 @@
 /*! \file */
 
 #include "BufferObjectTestingUtilities.hpp"
-#include "curlew/TestFramework/GraphicsLabellingTestCore.hpp"
 
 namespace avocet::testing
 {
@@ -30,6 +29,6 @@ namespace avocet::testing
     private:
         template<class Buffer>
             requires is_gl_buffer_v<Buffer>
-        void execute();
+        void execute(const curlew::window& w);
     };
 }
