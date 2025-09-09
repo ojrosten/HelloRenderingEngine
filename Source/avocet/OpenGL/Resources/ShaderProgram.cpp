@@ -174,7 +174,7 @@ namespace avocet::opengl {
 
     shader_program::shader_program(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
         shader_compiler
-            vertexShader{shader_species::vertex, vertexShaderSource},
+            vertexShader  {shader_species::vertex,   vertexShaderSource},
             fragmentShader{shader_species::fragment, fragmentShaderSource};
 
         const auto progIndex{get_index(m_Resource)};
