@@ -13,7 +13,8 @@ FUNCTION(curlew_glfw_compile_options target)
         target_compile_options(${target} PRIVATE -Wno-unused-parameter
                                                  -Wno-sign-compare
                                                  -Wno-pedantic
-                                                 -Wno-missing-field-initializers)
+                                                 -Wno-missing-field-initializers
+                                                 -Wno-deprecated-declarations)
     endif()
 ENDFUNCTION()
 
