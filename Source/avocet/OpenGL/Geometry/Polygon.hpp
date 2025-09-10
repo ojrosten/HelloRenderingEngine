@@ -89,18 +89,18 @@ namespace avocet::opengl {
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
-        polygon_base(Fn transformer, const std::optional<std::string>& label)
-            : m_VBO{transformer(st_Vertices), label}
-            , m_VAO{label, m_VBO}
+        polygon_base(const GladGLContext& ctx, Fn transformer, const std::optional<std::string>& label)
+            : m_VBO{ctx, transformer(st_Vertices), label}
+            , m_VAO{ctx, label, m_VBO}
         {
         }
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
-        polygon_base(Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
-            :     m_VBO{transformer(st_Vertices), label}
-            ,     m_VAO{label, m_VBO}
-            , m_Texture{texConfig}
+        polygon_base(const GladGLContext& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+            :     m_VBO{ctx, transformer(st_Vertices), label}
+            ,     m_VAO{ctx, label, m_VBO}
+            , m_Texture{ctx, texConfig}
         {
         }
 
@@ -147,7 +147,7 @@ namespace avocet::opengl {
         template<class Self>
         void bind_vao_and_draw(this const Self& self) {
             bind(self.m_VAO);
-            self.do_draw();
+            self.do_draw(self.m_VAO.context());
         }
     };
 
@@ -161,17 +161,17 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
-        polygon(Fn transformer, const std::optional<std::string>& label)
-            : polygon_base_type{transformer, label}
-            ,             m_EBO{st_Indices, label}
+        polygon(const GladGLContext& ctx, Fn transformer, const std::optional<std::string>& label)
+            : polygon_base_type{ctx, transformer, label}
+            ,             m_EBO{ctx, st_Indices, label}
         {
         }
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
-        polygon(Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
-            : polygon_base_type{transformer, texConfig, label}
-            ,             m_EBO{st_Indices, label}
+        polygon(const GladGLContext& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+            : polygon_base_type{ctx, transformer, texConfig, label}
+            ,             m_EBO{ctx, st_Indices, label}
         {
         }
     private:
@@ -196,7 +196,7 @@ namespace avocet::opengl {
             sequoia::utilities::make_array<element_index_type, num_elements>(to_element_index)
         };
 
-        static void do_draw() {
+        static void do_draw(const GladGLContext& ctx) {
             gl_function{&GladGLContext::DrawElements}(ctx, GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
 
@@ -213,7 +213,7 @@ namespace avocet::opengl {
     private:
         friend polygon_base_type;
 
-        static void do_draw() {
+        static void do_draw(const GladGLContext& ctx) {
             gl_function{&GladGLContext::DrawArrays}(ctx, GL_TRIANGLES, 0, 3);
         }
     };

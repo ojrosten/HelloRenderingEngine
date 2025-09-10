@@ -143,9 +143,9 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        GLint get_max_message_length(std::source_location loc) {
+        GLint get_max_message_length(const GladGLContext& ctx) {
             GLint maxLen{};
-            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv, loc}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
+            gl_function{unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
             return maxLen;
         }
 
@@ -155,8 +155,8 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        std::optional<debug_info> get_next_message(std::source_location loc) {
-            const static GLint maxLen{get_max_message_length(loc)};
+        std::optional<debug_info> get_next_message(const GladGLContext& ctx) {
+            const static GLint maxLen{get_max_message_length(ctx)};
 
             std::string message(maxLen, ' ');
             GLenum source{}, type{}, severity{};
@@ -190,13 +190,13 @@ namespace avocet::opengl {
         /// function gives platform-independent output. Once std::generator is
         /// available everywhere, the platform-dependent code can be removed.
         [[nodiscard]]
-        error_code get_error() { return error_code{gl_function{unchecked_debug_output, &GladGLContext::GetError}(ctx)}; }
+        error_code get_error(const GladGLContext& ctx) { return error_code{gl_function{unchecked_debug_output, &GladGLContext::GetError}(ctx)}; }
 
 #ifndef __clang__
         [[nodiscard]]
-        STD_GENERATOR<error_code> get_errors(num_messages maxNum) {
+        STD_GENERATOR<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{get_error()};
+                const error_code e{get_error(ctx)};
                 if(e == error_code::none) co_return;
 
                 co_yield e;
@@ -204,9 +204,9 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        STD_GENERATOR<debug_info> get_messages(num_messages maxNum, std::source_location loc) {
+        STD_GENERATOR<debug_info> get_messages(const GladGLContext& ctx, num_messages maxNum) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const std::optional<debug_info> message{get_next_message(loc)};
+                const std::optional<debug_info> message{get_next_message(ctx)};
                 if(!message) co_return;
 
                 co_yield message.value();
@@ -214,10 +214,10 @@ namespace avocet::opengl {
         }
 #else
         [[nodiscard]]
-        std::vector<error_code> get_errors(num_messages maxNum) {
+        std::vector<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
             std::vector<error_code> errors;
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{get_error()};
+                const error_code e{get_error(ctx)};
                 if(e == error_code::none) break;
 
                 errors.push_back(e);
@@ -227,10 +227,10 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        std::vector<debug_info> get_messages(num_messages maxNum, std::source_location loc) {
+        std::vector<debug_info> get_messages(const GladGLContext& ctx, num_messages maxNum) {
             std::vector<debug_info> info;
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const std::optional<debug_info> message{get_next_message(loc)};
+                const std::optional<debug_info> message{get_next_message(ctx)};
                 if(!message) break;
 
                 info.push_back(message.value());
@@ -244,11 +244,11 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
 
-    void check_for_basic_errors(num_messages maxNum, std::source_location loc)
+    void check_for_basic_errors(const GladGLContext& ctx, num_messages maxNum, std::source_location loc)
     {
         const std::string errorMessage{
             std::ranges::fold_left(
-                get_errors(maxNum),
+                get_errors(ctx, maxNum),
                 std::string{},
                 [](std::string message, error_code e){
                     const auto separator{message.empty() ? "" : "\n"};
@@ -261,10 +261,10 @@ namespace avocet::opengl {
             throw std::runtime_error{compose_error_message(errorMessage, loc)};
     }
 
-    void check_for_advanced_errors(num_messages maxNum, std::source_location loc) {
+    void check_for_advanced_errors(const GladGLContext& ctx, num_messages maxNum, std::source_location loc) {
         const std::string errorMessage{
             std::ranges::fold_left(
-                get_messages(maxNum, loc),
+                get_messages(ctx, maxNum),
                 std::string{},
                 [](std::string message, const debug_info& info){
                     const auto separator{message.empty() ? "" : "\n\n"};

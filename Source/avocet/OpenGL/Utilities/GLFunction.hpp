@@ -20,59 +20,67 @@ namespace avocet::opengl {
 
     template<class, debugging_mode Mode=inferred_debugging_mode()> class gl_function;
 
+    template<class R, class... Args>
+    using function_pointer_type = R(*)(Args...);
+
+    template<class R, class... Args>
+    using glad_ctx_ptr_to_mem_fn_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
+
     template<class R, class... Args, debugging_mode Mode>
     class [[nodiscard]] gl_function<R(Args...), Mode> {
     public:
-        using function_pointer_type = R(*)(Args...);
+        using pointer_to_member_type = glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>;
 
         constexpr static num_messages max_reported_messages{10};
 
-        gl_function(function_pointer_type f, std::source_location loc = std::source_location::current())
-            : m_Fn{validate(f, loc)}
+        gl_function(pointer_to_member_type ptrToMem)
+            : m_Fn{ptrToMem}
         {}
 
-        gl_function(unchecked_debug_output_t, function_pointer_type f, std::source_location loc = std::source_location::current())
-            : m_Fn{validate(f, loc)}
+        gl_function(unchecked_debug_output_t, pointer_to_member_type ptrToMem)
+            : gl_function{ptrToMem}
         {
             static_assert(Mode == debugging_mode::none);
         }
 
+        gl_function(nullptr_t) = delete;
+
+        gl_function(unchecked_debug_output_t, nullptr_t) = delete;
+
         [[nodiscard]]
-        R operator()(Args... args, std::source_location loc = std::source_location::current()) const {
-            const auto ret{m_Fn(args...)};
-            check_for_errors(loc);
+        R operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
+            const auto ret{validate(ctx, loc)(args...)};
+            check_for_errors(ctx, loc);
             return ret;
         }
 
-        void operator()(Args... args, std::source_location loc = std::source_location::current()) const
+        void operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const
             requires std::is_void_v<R>
         {
-            m_Fn(args...);
-            check_for_errors(loc);
+            validate(ctx, loc)(args...);
+            check_for_errors(ctx, loc);
         }
     private:
-        function_pointer_type m_Fn;
+        pointer_to_member_type m_Fn;
 
         [[nodiscard]]
-        static function_pointer_type validate(function_pointer_type f, std::source_location loc) {
+        function_pointer_type<R, Args...> validate(const GladGLContext& ctx, std::source_location loc) const {
+            auto f{ctx.*m_Fn};
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
         }
-        static void check_for_errors(std::source_location loc) {
+        static void check_for_errors(const GladGLContext& ctx, std::source_location loc) {
             if constexpr(Mode != debugging_mode::none) {
-                if(debug_output_supported())
-                    check_for_advanced_errors(max_reported_messages, loc);
+                if(debug_output_supported(ctx))
+                    check_for_advanced_errors(ctx, max_reported_messages, loc);
                 else
-                    check_for_basic_errors(max_reported_messages, loc);
+                    check_for_basic_errors(ctx, max_reported_messages, loc);
             }
         }
     };
 
     template<class R, class... Args>
-    gl_function(R(*)(Args...)) -> gl_function<R(Args...)>;
+    gl_function(glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
 
     template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, R(*)(Args...)) -> gl_function<R(Args...), debugging_mode::none>;
-
-    template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, R(*)(Args...), std::source_location) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
 }
