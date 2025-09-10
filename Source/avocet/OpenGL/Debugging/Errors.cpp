@@ -20,7 +20,8 @@
 #if defined(_MSC_VER)
     #include <experimental/generator>
     #define STD_GENERATOR std::experimental::generator
-#elif defined(__linux__)
+#elif defined (__clang__)
+#elif defined(__GNUG__)
     #include <generator>
     #define STD_GENERATOR std::generator
 #endif
@@ -192,7 +193,36 @@ namespace avocet::opengl {
         [[nodiscard]]
         error_code get_error(const GladGLContext& ctx) { return error_code{gl_function{unchecked_debug_output, &GladGLContext::GetError}(ctx)}; }
 
-#ifndef __clang__
+        /// lib++ does not currently support std::generator, a fact which we need to work around
+        namespace libcpp_workaround {
+            [[nodiscard]]
+            std::vector<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
+                std::vector<error_code> errors;
+                for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                    const error_code e{get_error(ctx)};
+                    if(e == error_code::none) break;
+
+                    errors.push_back(e);
+                }
+
+                return errors;
+            }
+
+            [[nodiscard]]
+            std::vector<debug_info> get_messages(const GladGLContext& ctx, num_messages maxNum) {
+                std::vector<debug_info> info;
+                for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+                    const std::optional<debug_info> message{get_next_message(ctx)};
+                    if(!message) break;
+
+                    info.push_back(message.value());
+                }
+
+                return info;
+            }
+        }
+
+#ifdef __cpp_lib_generator
         [[nodiscard]]
         STD_GENERATOR<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
             for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
@@ -215,28 +245,12 @@ namespace avocet::opengl {
 #else
         [[nodiscard]]
         std::vector<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
-            std::vector<error_code> errors;
-            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{get_error(ctx)};
-                if(e == error_code::none) break;
-
-                errors.push_back(e);
-            }
-
-            return errors;
+            return libcpp_workaround::get_errors(ctx, maxNum);
         }
 
         [[nodiscard]]
         std::vector<debug_info> get_messages(const GladGLContext& ctx, num_messages maxNum) {
-            std::vector<debug_info> info;
-            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const std::optional<debug_info> message{get_next_message(ctx)};
-                if(!message) break;
-
-                info.push_back(message.value());
-            }
-
-            return info;
+            return libcpp_workaround::get_messages(ctx, maxNum);
         }
 #endif
     }
