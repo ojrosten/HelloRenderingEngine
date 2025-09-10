@@ -1,4 +1,4 @@
-Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 31
+Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 32
 Label is too short
 
 Comparison performed using:
@@ -20,7 +20,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 32
+Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 33
 Label is too long
 
 Comparison performed using:
@@ -42,7 +42,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 33
+Tests/TestFramework/OpenGL/LabellingTestDiagnostics.cpp, Line 34
 Label has a typo
 
 Comparison performed using:

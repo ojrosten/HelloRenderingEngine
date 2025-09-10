@@ -3,24 +3,24 @@ Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 147:
+OpenGL error detected in Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 149:
 Source: Shader Compiler; Type: Error; Severity: High
 0:8(1): error: syntax error, unexpected '}', expecting ',' or ';'
 
 =======================================
 
-Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 43
 Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 147:
+OpenGL error detected in Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 149:
 Source: Shader Compiler; Type: Error; Severity: High
 0:6(1): error: syntax error, unexpected '{'
 
 =======================================
 
-Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 52
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 54
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
