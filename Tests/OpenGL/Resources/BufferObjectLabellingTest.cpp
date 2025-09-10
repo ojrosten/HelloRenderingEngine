@@ -22,7 +22,7 @@ namespace avocet::testing
 
     void buffer_object_labelling_free_test::labelling_tests(const curlew::window& w)
     {
-        execute<agl::vertex_buffer_object<GLfloat>>(w);
+        execute<agl::vertex_buffer_object <GLfloat>>(w);
         execute<agl::element_buffer_object<GLubyte>>(w);
     }
 
@@ -31,7 +31,7 @@ namespace avocet::testing
     void buffer_object_labelling_free_test::execute(const curlew::window& w)
     {
         std::string label{"This is a nice label!"};
-        Buffer buffer{{}, label};
+        Buffer buffer{w.context(), {}, label};
         check(equality, "", buffer.extract_label(), label);
     }
 }

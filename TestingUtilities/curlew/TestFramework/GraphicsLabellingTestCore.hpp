@@ -36,7 +36,7 @@ namespace curlew {
                 using namespace curlew;
                 glfw_manager manager{};
                 auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-                if(avocet::opengl::object_labels_activated()) {
+                if(avocet::opengl::object_labels_activated(w.context())) {
                     self.labelling_tests(w);
                 }
             }

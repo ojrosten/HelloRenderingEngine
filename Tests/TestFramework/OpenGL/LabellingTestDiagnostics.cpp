@@ -24,6 +24,7 @@ namespace avocet::testing
         const auto shaderDir{working_materials()};
 
         agl::shader_program sp{
+            w.context(),
             shaderDir / "Identity.vs",
             shaderDir / "Monochrome.fs"
         };

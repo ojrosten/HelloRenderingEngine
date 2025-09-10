@@ -33,15 +33,16 @@ namespace avocet::testing
         using namespace curlew;
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+        const auto& ctx{w.context()};
 
         namespace agl = avocet::opengl;
-        if(agl::debug_output_supported()) {
+        if(agl::debug_output_supported(ctx)) {
             check_exception_thrown<std::runtime_error>(
                 "At least two errors",
-                [](){
-                    glBindBuffer(GL_ARRAY_BUFFER, 42);
-                    glCreateShader(0);
-                    agl::check_for_advanced_errors(agl::num_messages{10}, std::source_location::current());
+                [&ctx](){
+                    ctx.BindBuffer(GL_ARRAY_BUFFER, 42);
+                    ctx.CreateShader(0);
+                    agl::check_for_advanced_errors(ctx, agl::num_messages{10}, std::source_location::current());
                 }
             );
         }

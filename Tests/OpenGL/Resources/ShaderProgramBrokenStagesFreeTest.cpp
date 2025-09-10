@@ -32,6 +32,7 @@ namespace avocet::testing
             "Broken Vertex Shader",
             [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Broken_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
@@ -42,6 +43,7 @@ namespace avocet::testing
             "Broken Fragment Shader",
             [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Identity.vs",
                     shaderDir / "Broken_Monochrome.fs"
                 };
@@ -52,6 +54,7 @@ namespace avocet::testing
             "Unlinkable Vertex Shader / Fragment Shader Combo",
             [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Output_vec3.vs",
                     shaderDir / "Input_float.fs"
                 };

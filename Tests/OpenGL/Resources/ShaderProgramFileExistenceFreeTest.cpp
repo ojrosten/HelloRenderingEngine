@@ -32,6 +32,7 @@ namespace avocet::testing
             "Missing Vertex Shader",
             [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir,
                     shaderDir / "Monochrome.fs"
                 };
@@ -42,6 +43,7 @@ namespace avocet::testing
             "Misnamed Vertex Shader",
             [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "foo.vs",
                     shaderDir / "Monochrome.fs"
                 };
@@ -52,6 +54,7 @@ namespace avocet::testing
             "Missing Fragment Shader",
             [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Identity.vs",
                     shaderDir
                 };
@@ -62,6 +65,7 @@ namespace avocet::testing
             "Misnamed Fragment Shader",
             [&](){
                 agl::shader_program sp{
+                    w.context(),
                     shaderDir / "Identity.vs",
                     shaderDir / "bar.fs"
                 };

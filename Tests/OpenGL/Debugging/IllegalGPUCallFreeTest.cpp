@@ -35,10 +35,11 @@ namespace avocet::testing
 
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+        const auto& ctx{w.context()};
 
         check_exception_thrown<std::runtime_error>(
             "Illegal call to glBindBuffer",
-            [](){ agl::gl_function{&GladGLContext::BindBuffer}(ctx, 42, 42); }
+            [&ctx](){ agl::gl_function{&GladGLContext::BindBuffer}(ctx, 42, 42); }
         );
     }
 }
