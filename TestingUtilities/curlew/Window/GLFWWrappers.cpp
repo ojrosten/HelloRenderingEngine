@@ -134,7 +134,7 @@ namespace curlew {
         , m_Context{
               [&win=m_Window](GladGLContext& ctx) { load_gl_fuctions(win, ctx); },
               agl::null_prologue,
-              [](const agl::extended_context& ctx, agl::debugging_mode mode, std::source_location loc) { check_for_errors(ctx, mode, agl::num_messages{10}, loc); }
+              [](const agl::extended_context& ctx, agl::debugging_mode mode, std::string_view name, std::source_location loc) { check_for_errors(ctx, mode, agl::num_messages{10}, loc); }
           }
     {
         init_debug(m_Context);

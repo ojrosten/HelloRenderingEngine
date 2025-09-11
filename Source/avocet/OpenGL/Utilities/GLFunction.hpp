@@ -9,6 +9,7 @@
 
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 
+#include <algorithm>
 #include <concepts>
 #include <format>
 #include <stdexcept>
@@ -44,18 +45,20 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            ctx.invoke_prologue(Mode, loc);
+            const auto name{get_name(ctx.glad_context())};
+            ctx.invoke_prologue(Mode, name, loc);
             const auto ret{get_validated_fn_ptr(ctx, loc)(args...)};
-            ctx.invoke_epilogue(Mode, loc);
+            ctx.invoke_epilogue(Mode, name, loc);
             return ret;
         }
 
         void operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const
             requires std::is_void_v<R>
         {
-            ctx.invoke_prologue(Mode, loc);
+            const auto name{get_name(ctx.glad_context())};
+            ctx.invoke_prologue(Mode, name, loc);
             get_validated_fn_ptr(ctx, loc)(args...);
-            ctx.invoke_epilogue(Mode, loc);
+            ctx.invoke_epilogue(Mode, name, loc);
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -64,6 +67,16 @@ namespace avocet::opengl {
         function_pointer_type<R, Args...> get_validated_fn_ptr(const extended_context& ctx, std::source_location loc) const {
             auto f{ctx.glad_context().*m_PtrToMem};
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
+        }
+
+        [[nodiscard]]
+       std::string_view get_name(const GladGLContext& ctx) const {
+            const auto offset{reinterpret_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - reinterpret_cast<uintptr_t>(&ctx)};
+            auto found{std::ranges::lower_bound(glad_ctx_member_info, offset, std::ranges::less{}, [](const member_info& info) { return info.offset; })};
+            if(found == glad_ctx_member_info.end())
+                throw std::runtime_error{std::format("offset {} not found in GladGLContext", offset)};
+
+            return found->name;
         }
     };
 
