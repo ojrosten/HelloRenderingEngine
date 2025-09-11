@@ -14,9 +14,6 @@
 #include <stdexcept>
 
 namespace avocet::opengl {
-    struct unchecked_debug_output_t {};
-
-    inline constexpr unchecked_debug_output_t unchecked_debug_output{};
 
     template<class, debugging_mode Mode=inferred_debugging_mode()> class gl_function;
 
@@ -35,7 +32,7 @@ namespace avocet::opengl {
             : m_PtrToMem{ptrToMem}
         {}
 
-        gl_function(unchecked_debug_output_t, pointer_to_member_type ptrToMem)
+        gl_function(debugging_mode_off_type, pointer_to_member_type ptrToMem)
             : gl_function{ptrToMem}
         {
             static_assert(Mode == debugging_mode::none);
@@ -43,7 +40,7 @@ namespace avocet::opengl {
 
         gl_function(nullptr_t) = delete;
 
-        gl_function(unchecked_debug_output_t, nullptr_t) = delete;
+        gl_function(debugging_mode_off_type, nullptr_t) = delete;
 
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
@@ -74,5 +71,5 @@ namespace avocet::opengl {
     gl_function(glad_ctx_ptr_to_mem_PtrToMem_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
 
     template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_PtrToMem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(debugging_mode_off_type, glad_ctx_ptr_to_mem_PtrToMem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
 }
