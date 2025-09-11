@@ -45,20 +45,20 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            const auto name{get_name(ctx.glad_context())};
-            ctx.invoke_prologue(Mode, name, loc);
+            auto nameMaker{[this, &ctx]() { return get_name(ctx.glad_context()); }};
+            ctx.invoke_prologue(Mode, nameMaker, loc);
             const auto ret{get_validated_fn_ptr(ctx, loc)(args...)};
-            ctx.invoke_epilogue(Mode, name, loc);
+            ctx.invoke_epilogue(Mode, nameMaker, loc);
             return ret;
         }
 
         void operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const
             requires std::is_void_v<R>
         {
-            const auto name{get_name(ctx.glad_context())};
-            ctx.invoke_prologue(Mode, name, loc);
+            auto nameMaker{[this, &ctx]() { return get_name(ctx.glad_context()); }};
+            ctx.invoke_prologue(Mode, nameMaker, loc);
             get_validated_fn_ptr(ctx, loc)(args...);
-            ctx.invoke_epilogue(Mode, name, loc);
+            ctx.invoke_epilogue(Mode, nameMaker, loc);
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -70,7 +70,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-       std::string_view get_name(const GladGLContext& ctx) const {
+        std::string_view get_name(const GladGLContext& ctx) const {
             const auto offset{reinterpret_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - reinterpret_cast<uintptr_t>(&ctx)};
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(int*)};
             if(index >= glad_ctx_member_info.size())
