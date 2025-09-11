@@ -31,8 +31,6 @@ namespace avocet::opengl {
     public:
         using pointer_to_member_type = glad_ctx_ptr_to_mem_PtrToMem_ptr_type<R, Args...>;
 
-        constexpr static num_messages max_reported_messages{10};
-
         gl_function(pointer_to_member_type ptrToMem)
             : m_PtrToMem{ptrToMem}
         {}
@@ -49,16 +47,18 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
+            ctx.invoke_prologue(Mode, loc);
             const auto ret{get_validated_fn_ptr(ctx, loc)(args...)};
-            check_for_errors(ctx, loc);
+            ctx.invoke_epilogue(Mode, loc);
             return ret;
         }
 
         void operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const
             requires std::is_void_v<R>
         {
+            ctx.invoke_prologue(Mode, loc);
             get_validated_fn_ptr(ctx, loc)(args...);
-            check_for_errors(ctx, loc);
+            ctx.invoke_epilogue(Mode, loc);
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -67,14 +67,6 @@ namespace avocet::opengl {
         function_pointer_type<R, Args...> get_validated_fn_ptr(const extended_context& ctx, std::source_location loc) const {
             auto f{ctx.glad_context().*m_PtrToMem};
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
-        }
-        static void check_for_errors(const extended_context& ctx, std::source_location loc) {
-            if constexpr(Mode != debugging_mode::none) {
-                if(debug_output_supported(ctx))
-                    check_for_advanced_errors(ctx, max_reported_messages, loc);
-                else
-                    check_for_basic_errors(ctx, max_reported_messages, loc);
-            }
         }
     };
 

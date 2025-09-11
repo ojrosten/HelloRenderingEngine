@@ -69,6 +69,22 @@ namespace curlew {
                     GL_TRUE);
             }
         }
+
+        void load_gl_fuctions(window_resource& win, GladGLContext& ctx) {
+            glfwMakeContextCurrent(&win.get());
+
+            if(!gladLoadGLContext(&ctx, glfwGetProcAddress))
+                throw std::runtime_error{"Failed to initialize GLAD"};
+        }
+
+        void check_for_errors(const agl::extended_context& ctx, agl::debugging_mode mode, agl::num_messages maxReported, std::source_location loc) {
+            if(mode != agl::debugging_mode::none) {
+                if(agl::debug_output_supported(ctx))
+                    agl::check_for_advanced_errors(ctx, maxReported, loc);
+                else
+                    agl::check_for_basic_errors(ctx, maxReported, loc);
+            }
+        }
     }
 
 
@@ -115,12 +131,11 @@ namespace curlew {
 
     window::window(const window_config& config, const agl::opengl_version& version)
         : m_Window{config, version}
-        , m_Context{[&win{m_Window}](GladGLContext& ctx) {
-           glfwMakeContextCurrent(&win.get());
-
-           if(!gladLoadGLContext(&ctx, glfwGetProcAddress))
-               throw std::runtime_error{"Failed to initialize GLAD"};
-        }}
+        , m_Context{
+              [&win{m_Window}](GladGLContext& ctx) { load_gl_fuctions(win, ctx); },
+              agl::null_prologue,
+              [](const agl::extended_context& ctx, agl::debugging_mode mode, std::source_location loc) { check_for_errors(ctx, mode, agl::num_messages{10}, loc); }
+          }
     {
         init_debug(m_Context);
     }
