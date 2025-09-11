@@ -9,7 +9,7 @@ ERROR: 1 compilation errors.  No code generated.
 
 =======================================
 
-Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 43
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -20,7 +20,7 @@ ERROR: 1 compilation errors.  No code generated.
 
 =======================================
 
-Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 52
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 54
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
