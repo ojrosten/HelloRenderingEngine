@@ -49,7 +49,7 @@ namespace curlew {
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
         }
 
-        void init_debug(const GladGLContext& ctx)
+        void init_debug(const agl::extended_context& ctx)
         {
             GLint flags{};
             agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_CONTEXT_FLAGS, &flags);
@@ -113,12 +113,15 @@ namespace curlew {
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
-    window::window(const window_config& config, const agl::opengl_version& version) : m_Window{config, version} {
-        glfwMakeContextCurrent(&m_Window.get());
+    window::window(const window_config& config, const agl::opengl_version& version)
+        : m_Window{config, version}
+        , m_Context{[&win{m_Window}](GladGLContext& ctx) {
+           glfwMakeContextCurrent(&win.get());
 
-        if(!gladLoadGLContext(&m_Context, glfwGetProcAddress))
-            throw std::runtime_error{"Failed to initialize GLAD"};
-
+           if(!gladLoadGLContext(&ctx, glfwGetProcAddress))
+               throw std::runtime_error{"Failed to initialize GLAD"};
+        }}
+    {
         init_debug(m_Context);
     }
 }

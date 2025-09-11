@@ -19,9 +19,9 @@ namespace avocet::opengl {
 
     struct num_messages { std::size_t value{}; };
 
-    void check_for_basic_errors(const GladGLContext& ctx, num_messages maxNum, std::source_location loc);
+    void check_for_basic_errors(const extended_context& ctx, num_messages maxNum, std::source_location loc);
 
-    void check_for_advanced_errors(const GladGLContext& ctx, num_messages maxNum, std::source_location loc);
+    void check_for_advanced_errors(const extended_context& ctx, num_messages maxNum, std::source_location loc);
 
     [[nodiscard]]
     constexpr bool debug_output_supported(opengl_version version) noexcept {
@@ -29,10 +29,10 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline bool debug_output_supported(const GladGLContext& ctx) {
+    inline bool debug_output_supported(const extended_context& ctx) {
         return debug_output_supported(get_opengl_version(ctx));
     }
 
     [[nodiscard]]
-    inline bool object_labels_activated(const GladGLContext& ctx) { return debug_output_supported(ctx); }
+    inline bool object_labels_activated(const extended_context& ctx) { return debug_output_supported(ctx); }
 }
