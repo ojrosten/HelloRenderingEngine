@@ -93,13 +93,15 @@ namespace curlew {
 
     [[nodiscard]]
     rendering_setup glfw_manager::do_find_rendering_setup() const {
-      const auto setup{attempt_to_find_rendering_setup(agl::opengl_version{})};
-      if((setup.version != agl::opengl_version{}) || avocet::is_apple())
-          return setup;
+        constexpr agl::opengl_version trialVersion{.major{4}, .minor{avocet::is_windows() ? 6 : 1}};
 
-      // Assume we only get here if we're on windows, in which case
-      // the version is 4.6. If this ever fails in practice, it can be fixed.
-      return attempt_to_find_rendering_setup(agl::opengl_version{.major{4}, .minor{6}});
+        const auto setup{attempt_to_find_rendering_setup(trialVersion)};
+        if(avocet::is_windows() || avocet::is_apple()) {
+            if(setup.version != trialVersion)
+                throw std::runtime_error{std::format("On {} expected OpenGL version {} but found {}", avocet::is_windows() ? "Windows" : "Apple", trialVersion, setup.version)};
+        }
+
+        return setup;
     }
 
     [[nodiscard]]

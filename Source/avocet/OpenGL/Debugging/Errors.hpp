@@ -24,7 +24,7 @@ namespace avocet::opengl {
     void check_for_advanced_errors(const GladGLContext& ctx, num_messages maxNum, std::source_location loc);
 
     [[nodiscard]]
-    inline bool debug_output_supported(opengl_version version) {
+    constexpr bool debug_output_supported(opengl_version version) noexcept {
         return (version.major > 3) && (version.minor >= 3);
     }
 

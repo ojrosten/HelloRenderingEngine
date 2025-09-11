@@ -195,8 +195,10 @@ namespace avocet::opengl {
 
         /// lib++ does not currently support std::generator, a fact which we need to work around
         namespace libcpp_workaround {
-	    #pragma GCC diagnostic ignored "-Wunused-function"
-	    #pragma GCC diagnostic push
+#ifndef _MSC_VER
+    #pragma GCC diagnostic ignored "-Wunused-function"
+    #pragma GCC diagnostic push
+#endif
 
             [[nodiscard]]
             std::vector<error_code> get_errors(const GladGLContext& ctx, num_messages maxNum) {
@@ -224,7 +226,9 @@ namespace avocet::opengl {
                 return info;
             }
 
-	    #pragma GCC diagnostic pop
+#ifndef _MSC_VER
+    #pragma GCC diagnostic pop
+#endif
         }
 
 #ifdef __cpp_lib_generator
