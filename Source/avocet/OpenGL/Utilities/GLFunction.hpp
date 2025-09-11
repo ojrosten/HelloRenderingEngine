@@ -72,11 +72,17 @@ namespace avocet::opengl {
         [[nodiscard]]
        std::string_view get_name(const GladGLContext& ctx) const {
             const auto offset{reinterpret_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - reinterpret_cast<uintptr_t>(&ctx)};
-            auto found{std::ranges::lower_bound(glad_ctx_member_info, offset, std::ranges::less{}, [](const member_info& info) { return info.offset; })};
+            const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(int*)};
+            if(index >= glad_ctx_member_info.size())
+                throw std::runtime_error{std::format("offset index {} too big for the array of glad context member info", index)};
+
+            /*auto found{std::ranges::lower_bound(glad_ctx_member_info, offset, std::ranges::less{}, [](const member_info& info) { return info.offset; })};
             if(found == glad_ctx_member_info.end())
                 throw std::runtime_error{std::format("offset {} not found in GladGLContext", offset)};
 
-            return found->name;
+            return found->name;*/
+
+            return glad_ctx_member_info[index].name;
         }
     };
 
