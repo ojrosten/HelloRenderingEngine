@@ -77,12 +77,12 @@ namespace curlew {
                 throw std::runtime_error{"Failed to initialize GLAD"};
         }
 
-        void check_for_errors(const agl::extended_context& ctx, agl::debugging_mode mode, agl::num_messages maxReported, std::source_location loc) {
+        void check_for_errors(const agl::extended_context& ctx, agl::debugging_mode mode, agl::num_messages maxReported, std::string_view name, std::source_location loc) {
             if(mode != agl::debugging_mode::none) {
                 if(agl::debug_output_supported(ctx))
-                    agl::check_for_advanced_errors(ctx, maxReported, loc);
+                    agl::check_for_advanced_errors(ctx, maxReported, name, loc);
                 else
-                    agl::check_for_basic_errors(ctx, maxReported, loc);
+                    agl::check_for_basic_errors(ctx, maxReported, name, loc);
             }
         }
     }
@@ -134,7 +134,7 @@ namespace curlew {
         , m_Context{
               [&win=m_Window](GladGLContext& ctx) { load_gl_fuctions(win, ctx); },
               agl::null_prologue,
-              [](const agl::extended_context& ctx, agl::debugging_mode mode, std::string_view name, std::source_location loc) { check_for_errors(ctx, mode, agl::num_messages{10}, loc); }
+              [](const agl::extended_context& ctx, agl::debugging_mode mode, std::string_view name, std::source_location loc) { check_for_errors(ctx, mode, agl::num_messages{10}, name, loc); }
           }
     {
         init_debug(m_Context);

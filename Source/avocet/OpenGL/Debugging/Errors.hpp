@@ -19,9 +19,9 @@ namespace avocet::opengl {
 
     struct num_messages { std::size_t value{}; };
 
-    void check_for_basic_errors(const extended_context& ctx, num_messages maxNum, std::source_location loc);
+    void check_for_basic_errors(const extended_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc);
 
-    void check_for_advanced_errors(const extended_context& ctx, num_messages maxNum, std::source_location loc);
+    void check_for_advanced_errors(const extended_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc);
 
     [[nodiscard]]
     constexpr bool debug_output_supported(opengl_version version) noexcept {

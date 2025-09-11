@@ -179,8 +179,8 @@ namespace avocet::opengl {
             return std::nullopt;
         }
 
-        std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
-            return std::format("OpenGL error detected in {}:\n{}\n", avocet::opengl::to_string(loc), errorMessage);
+        std::string compose_error_message(std::string_view errorMessage, std::string_view fnName, std::source_location loc) {
+            return std::format("OpenGL error detected folowing call to {} originating from {}:\n{}\n", fnName, avocet::opengl::to_string(loc), errorMessage);
         }
 
         /// The code below exemplifies how to use std::generator. However, since
@@ -267,7 +267,7 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
 
-    void check_for_basic_errors(const extended_context& ctx, num_messages maxNum, std::source_location loc)
+    void check_for_basic_errors(const extended_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc)
     {
         const std::string errorMessage{
             std::ranges::fold_left(
@@ -281,10 +281,10 @@ namespace avocet::opengl {
         };
 
         if(!errorMessage.empty())
-            throw std::runtime_error{compose_error_message(errorMessage, loc)};
+            throw std::runtime_error{compose_error_message(errorMessage, fnName, loc)};
     }
 
-    void check_for_advanced_errors(const extended_context& ctx, num_messages maxNum, std::source_location loc) {
+    void check_for_advanced_errors(const extended_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc) {
         const std::string errorMessage{
             std::ranges::fold_left(
                 get_messages(ctx, maxNum),
@@ -301,6 +301,6 @@ namespace avocet::opengl {
         };
 
         if(!errorMessage.empty())
-            throw std::runtime_error{compose_error_message(errorMessage, loc)};
+            throw std::runtime_error{compose_error_message(errorMessage, fnName, loc)};
     }
 }
