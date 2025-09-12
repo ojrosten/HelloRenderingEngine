@@ -19,6 +19,9 @@
 #include <iostream>
 #include <source_location>
 
+
+namespace agl = avocet::opengl;
+
 namespace {
     namespace fs = std::filesystem;
 
@@ -45,6 +48,37 @@ namespace {
     std::string make_label(std::string_view name, std::source_location loc = std::source_location::current()) {
         return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
+
+    [[nodiscard]]
+    std::string to_message(const agl::debug_info& info) {
+        return
+            std::format(
+                "Id: {}; Source: {}; Type: {}; Severity: {}\n{}",
+                info.id,
+                to_string(agl::debug_source{info.source}),
+                to_string(agl::debug_type{info.type}),
+                to_string(agl::debug_severity{info.severity}),
+                info.message
+            );
+    }
+
+    struct nvidia_debug_info_processor {
+        [[nodiscard]]
+        std::string operator()(std::string message, const agl::debug_info& info) const {
+            const auto separator{message.empty() ? "" : "\n\n"};
+            if(info.severity != agl::debug_severity::notification) {
+                (message += separator) += to_message(info);
+            }
+
+            return message;
+        }
+    };
+
+    struct nvidia_gl_function_epilogue {
+        void operator()(const avocet::opengl::extended_context& ctx, avocet::opengl::debugging_mode mode, std::string_view name, std::source_location loc) const {
+            avocet::opengl::check_for_errors(ctx, mode, avocet::opengl::num_messages{10}, name, loc, nvidia_debug_info_processor{});
+        }
+    };
 }
 
 int main()
@@ -54,10 +88,9 @@ int main()
         curlew::glfw_manager manager{};
         std::cout << curlew::rendering_setup_summary(manager.get_rendering_setup());
 
-        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
+        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}, .gl_function_prologue{agl::null_prologue}, .gl_function_epilogue{nvidia_gl_function_epilogue{}}})};
         const auto& ctx{w.context()};
 
-        namespace agl = avocet::opengl;
         agl::shader_program
             shaderProgram      {ctx, get_shader_dir() / "Identity.vs",           get_shader_dir() / "Monochrome.fs"},
             discShaderProgram  {ctx, get_shader_dir() / "Disc2D.vs",             get_shader_dir() / "Disc.fs"},
