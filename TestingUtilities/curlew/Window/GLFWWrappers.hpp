@@ -11,6 +11,7 @@
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Utilities/Context.hpp"
+#include "avocet/OpenGL/Debugging/Errors.hpp"
 
 #include <string>
 
@@ -19,10 +20,18 @@ struct GLFWwindow;
 namespace curlew {
     enum class window_hiding_mode : bool { off, on };
 
+    struct default_gl_function_epilogue {
+        void operator()(const avocet::opengl::extended_context& ctx, avocet::opengl::debugging_mode mode, std::string_view name, std::source_location loc) const {
+            avocet::opengl::check_for_errors(ctx, mode, avocet::opengl::num_messages{10}, name, loc, avocet::opengl::default_debug_info_processor{});
+        }
+    };
+
     struct window_config {
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
+        avocet::opengl::prologue_function_type gl_function_prologue{avocet::opengl::null_prologue};
+        avocet::opengl::epilogue_function_type gl_function_epilogue{default_gl_function_epilogue{}};
     };
 
     class glfw_manager;

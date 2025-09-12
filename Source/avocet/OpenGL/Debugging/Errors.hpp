@@ -157,4 +157,15 @@ namespace avocet::opengl {
 
     [[nodiscard]]
     inline bool object_labels_activated(const extended_context& ctx) { return debug_output_supported(ctx); }
+
+    template<class Fn = default_debug_info_processor>
+        requires std::is_invocable_r_v<std::string, Fn, std::string, debug_info>
+    void check_for_errors(const extended_context& ctx, debugging_mode mode, num_messages maxReported, std::string_view name, std::source_location loc, Fn errorProcessor = {}) {
+        if(mode != debugging_mode::none) {
+            if(debug_output_supported(ctx))
+                check_for_advanced_errors(ctx, maxReported, name, loc, errorProcessor);
+            else
+                check_for_basic_errors(ctx, maxReported, name, loc);
+        }
+    }
 }
