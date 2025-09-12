@@ -64,7 +64,7 @@ namespace avocet::opengl {
         std::string_view name{};
     };
 
-#define MAKE_GLAD_CTX_MEMBER_INFO(name) member_info{offsetof(GladGLContext, ##name), #name}
+#define MAKE_GLAD_CTX_MEMBER_INFO(name) member_info{offsetof(GladGLContext, name), #name}
 
     inline constexpr std::array<member_info, 657> glad_ctx_member_info{
         MAKE_GLAD_CTX_MEMBER_INFO(ActiveShaderProgram),
