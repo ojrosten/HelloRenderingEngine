@@ -25,6 +25,44 @@ namespace avocet::opengl {
     template<class R, class... Args>
     using glad_ctx_ptr_to_mem_PtrToMem_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
+    template<class T>
+    class value_and_eptr {
+        T m_Value;
+        std::exception_ptr& m_eptr;
+    public:
+        template<class Fn>
+            requires std::is_invocable_r_v<T, Fn>
+        value_and_eptr(Fn f, std::exception_ptr& eptr)
+            : m_Value{f()}
+            , m_eptr{eptr}
+        {}
+
+        T get() const {
+            if(m_eptr)
+                std::rethrow_exception(m_eptr);
+
+            return m_Value;
+        }
+    };
+
+    template<>
+    class value_and_eptr<void> {
+        std::exception_ptr& m_eptr;
+    public:
+        template<class Fn>
+            requires std::is_invocable_r_v<void, Fn>
+        value_and_eptr(Fn f, std::exception_ptr& eptr)
+            : m_eptr{eptr}
+        {
+            f();
+        }
+
+        void get() const {
+            if(m_eptr)
+                std::rethrow_exception(m_eptr);
+        }
+    };
+
     template<class R, class... Args, debugging_mode Mode>
     class [[nodiscard]] gl_function<R(Args...), Mode> {
     public:
@@ -47,21 +85,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             std::exception_ptr eptr{};
-            const auto r{invoke(ctx, args..., eptr, loc)};
-            if(eptr)
-                std::rethrow_exception(eptr);
-
-            return r;
-        }
-
-        [[nodiscard]]
-        void operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const 
-            requires std::is_void_v<R>
-        {
-            std::exception_ptr eptr{};
-            invoke(ctx, args..., eptr, loc);
-            if(eptr)
-                std::rethrow_exception(eptr);
+            return value_and_eptr<R>{[&, this]() { return invoke(ctx, args..., eptr, loc); }, eptr}.get();
         }
     private:
         pointer_to_member_type m_PtrToMem;
