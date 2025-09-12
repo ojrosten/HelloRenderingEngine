@@ -26,41 +26,30 @@ namespace avocet::opengl {
     using glad_ctx_ptr_to_mem_PtrToMem_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
     template<class T>
-    class value_and_eptr {
+    class value_from_invocation {
         T m_Value;
-        std::exception_ptr& m_eptr;
     public:
         template<class Fn>
             requires std::is_invocable_r_v<T, Fn>
-        value_and_eptr(Fn f, std::exception_ptr& eptr)
+        value_from_invocation(Fn f)
             : m_Value{f()}
-            , m_eptr{eptr}
-        {}
-
-        T get() const {
-            if(m_eptr)
-                std::rethrow_exception(m_eptr);
-
-            return m_Value;
+        {
         }
+
+        T get() const noexcept { return m_Value; }
     };
 
     template<>
-    class value_and_eptr<void> {
-        std::exception_ptr& m_eptr;
+    class value_from_invocation<void> {
     public:
         template<class Fn>
             requires std::is_invocable_r_v<void, Fn>
-        value_and_eptr(Fn f, std::exception_ptr& eptr)
-            : m_eptr{eptr}
+        value_from_invocation(Fn f)
         {
             f();
         }
 
-        void get() const {
-            if(m_eptr)
-                std::rethrow_exception(m_eptr);
-        }
+        void get() const noexcept {}
     };
 
     template<class R, class... Args, debugging_mode Mode>
@@ -85,7 +74,11 @@ namespace avocet::opengl {
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             std::exception_ptr eptr{};
-            return value_and_eptr<R>{[&, this]() { return invoke(ctx, args..., eptr, loc); }, eptr}.get();
+            value_from_invocation<R> v{[&, this]() { return invoke(ctx, args..., eptr, loc); }};
+            if(eptr)
+                std::rethrow_exception(eptr);
+
+            return v.get();
         }
     private:
         pointer_to_member_type m_PtrToMem;
