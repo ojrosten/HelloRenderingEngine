@@ -42,18 +42,14 @@ namespace avocet::opengl {
             loader(m_Context);
         }
 
-        template<std::invocable NameMaker>
-            requires std::convertible_to<std::invoke_result_t<NameMaker>, std::string_view>
-        void invoke_prologue(debugging_mode mode, NameMaker name, std::source_location loc) const {
+        void invoke_prologue(debugging_mode mode, std::string_view name, std::source_location loc) const {
             if(m_gl_function_prologue)
-                m_gl_function_prologue(*this, mode, name(), loc);
+                m_gl_function_prologue(*this, mode, name, loc);
         }
 
-        template<std::invocable NameMaker>
-            requires std::convertible_to<std::invoke_result_t<NameMaker>, std::string_view>
-        void invoke_epilogue(debugging_mode mode, NameMaker name, std::source_location loc) const {
+        void invoke_epilogue(debugging_mode mode, std::string_view name, std::source_location loc) const {
             if(m_gl_function_epilogue)
-                m_gl_function_epilogue(*this, mode, name(), loc);
+                m_gl_function_epilogue(*this, mode, name, loc);
         }
 
         [[nodiscard]]

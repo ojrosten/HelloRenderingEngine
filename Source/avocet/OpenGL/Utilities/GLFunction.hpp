@@ -46,20 +46,22 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            auto nameMaker{[this, &ctx]() { return get_name(ctx.glad_context()); }};
-            ctx.invoke_prologue(Mode, nameMaker, loc);
-            const auto ret{get_validated_fn_ptr(ctx, loc)(args...)};
-            ctx.invoke_epilogue(Mode, nameMaker, loc);
-            return ret;
+            std::exception_ptr eptr{};
+            const auto r{invoke(ctx, args..., eptr, loc)};
+            if(eptr)
+                std::rethrow_exception(eptr);
+
+            return r;
         }
 
-        void operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const
+        [[nodiscard]]
+        void operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const 
             requires std::is_void_v<R>
         {
-            auto nameMaker{[this, &ctx]() { return get_name(ctx.glad_context()); }};
-            ctx.invoke_prologue(Mode, nameMaker, loc);
-            get_validated_fn_ptr(ctx, loc)(args...);
-            ctx.invoke_epilogue(Mode, nameMaker, loc);
+            std::exception_ptr eptr{};
+            invoke(ctx, args..., eptr, loc);
+            if(eptr)
+                std::rethrow_exception(eptr);
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -79,6 +81,37 @@ namespace avocet::opengl {
 
             return glad_ctx_member_info[index].name;
         }
+
+        [[nodiscard]]
+        R invoke(const extended_context& ctx, Args... args, std::exception_ptr& eptr, std::source_location loc = std::source_location::current()) const {
+            decoration_invoker invoker{ctx, get_name(ctx.glad_context()), loc, eptr};
+            return get_validated_fn_ptr(ctx, loc)(args...);
+        }
+
+        class [[nodiscard]] decoration_invoker {
+            const extended_context& m_Context;
+            std::string_view m_Name;
+            std::source_location m_Loc;
+            std::exception_ptr& m_ExceptionPtr{};
+        public:
+            explicit decoration_invoker(const extended_context& ctx, std::string_view name, std::source_location loc, std::exception_ptr& ptr)
+                : m_Context{ctx}
+                , m_Name{name}
+                , m_Loc{loc}
+                , m_ExceptionPtr{ptr}
+            {
+                m_Context.invoke_prologue(Mode, m_Name, m_Loc);
+            }
+
+            ~decoration_invoker() {
+                try {
+                    m_Context.invoke_epilogue(Mode, m_Name, m_Loc);
+                }
+                catch(...) {
+                    m_ExceptionPtr = std::current_exception();
+                }
+            }
+        };
     };
 
     template<class R, class... Args>
