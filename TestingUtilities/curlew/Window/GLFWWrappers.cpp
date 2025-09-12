@@ -107,6 +107,9 @@ namespace curlew {
             if(setup.version != trialVersion)
                 throw std::runtime_error{std::format("On {} expected OpenGL version {} but found {}", avocet::is_windows() ? "Windows" : "Apple", trialVersion, setup.version)};
         }
+        else if(setup.version == trialVersion) { 
+            return attempt_to_find_rendering_setup(agl::opengl_version{.major{4}, .minor{6}});
+        }
 
         return setup;
     }
