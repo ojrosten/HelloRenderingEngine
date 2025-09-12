@@ -15,12 +15,12 @@
 #include <string>
 
 #if defined(_MSC_VER)
-#include <experimental/generator>
-#define STD_GENERATOR std::experimental::generator
+    #include <experimental/generator>
+    #define STD_GENERATOR std::experimental::generator
 #elif defined (__clang__)
 #elif defined(__GNUG__)
-#include <generator>
-#define STD_GENERATOR std::generator
+    #include <generator>
+    #define STD_GENERATOR std::generator
 #endif
 
 namespace avocet::opengl {
@@ -33,13 +33,6 @@ namespace avocet::opengl {
         stack_overflow                = GL_STACK_OVERFLOW,
         stack_underflow               = GL_STACK_UNDERFLOW,
         out_of_memory                 = GL_OUT_OF_MEMORY,
-    };
-
-    enum class debug_severity : GLenum {
-        high         = GL_DEBUG_SEVERITY_HIGH,
-        medium       = GL_DEBUG_SEVERITY_MEDIUM,
-        low          = GL_DEBUG_SEVERITY_LOW,
-        notification = GL_DEBUG_SEVERITY_NOTIFICATION
     };
 
     enum class debug_source : GLenum {
@@ -63,6 +56,13 @@ namespace avocet::opengl {
         other                = GL_DEBUG_TYPE_OTHER
     };
 
+    enum class debug_severity : GLenum {
+        high         = GL_DEBUG_SEVERITY_HIGH,
+        medium       = GL_DEBUG_SEVERITY_MEDIUM,
+        low          = GL_DEBUG_SEVERITY_LOW,
+        notification = GL_DEBUG_SEVERITY_NOTIFICATION
+    };
+
     [[nodiscard]]
     std::string to_string(debug_source e);
 
@@ -73,9 +73,15 @@ namespace avocet::opengl {
     std::string to_string(debug_type e);
 
     struct debug_info {
+        GLuint         id{};
+        debug_source   source{};
+        debug_type     type{};
         debug_severity severity{};
-        std::string message{};
+        std::string    message{};
     };
+
+    [[nodiscard]]
+    std::string to_detailed_message(const debug_info& info);
 
     [[nodiscard]]
     std::string to_string(error_code e);
@@ -98,7 +104,7 @@ namespace avocet::opengl {
         std::string operator()(std::string message, const debug_info& info) const {
             const auto separator{message.empty() ? "" : "\n\n"};
             if(info.severity != debug_severity::notification) {
-                (message += separator) += info.message;
+                (message += separator) += to_detailed_message(info);
             }
 
             return message;

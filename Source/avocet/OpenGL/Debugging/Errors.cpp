@@ -41,12 +41,12 @@ namespace avocet::opengl {
             message.resize(trimLen);
 
             if(numFound)
-                return {{debug_severity{severity},
-                            std::format("Source: {}; Type: {}; Severity: {}\n{}",
+                return {{id, debug_source{source}, debug_type{type}, debug_severity{severity}, message}};
+                            /*std::format("Source: {}; Type: {}; Severity: {}\n{}",
                                         to_string(debug_source{source}),
                                         to_string(debug_type{type}),
                                         to_string(debug_severity{severity}),
-                                        message)}};
+                                        message)}};*/
             
             return std::nullopt;
         }
@@ -176,6 +176,18 @@ namespace avocet::opengl {
         }
 
         throw std::runtime_error{"debug_type: unrecognized option"};
+    }
+
+    [[nodiscard]]
+    std::string to_detailed_message(const debug_info& info) {
+        return 
+            std::format(
+                "Source: {}; Type: {}; Severity: {}\n{}",
+                to_string(debug_source{info.source}),
+                to_string(debug_type{info.type}),
+                to_string(debug_severity{info.severity}),
+                info.message
+            );
     }
 
     std::string compose_error_message(std::string_view errorMessage, std::string_view fnName, std::source_location loc) {
