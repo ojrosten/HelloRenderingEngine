@@ -31,10 +31,13 @@ namespace avocet::opengl {
         prologue_function_type m_gl_function_prologue{};
         epilogue_function_type m_gl_function_epilogue{};
     public:
+        template<class Fn>
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, extended_context, debugging_mode, std::string_view, std::source_location>};
+
         extended_context() = default;
 
         template<std::invocable<GladGLContext&> Loader, class Prologue = std::function<void()>, class Epilogue = std::function<void()>>
-            requires std::is_invocable_r_v<void, Prologue, extended_context, debugging_mode, std::string_view, std::source_location> && std::is_invocable_r_v<void, Epilogue, extended_context, debugging_mode, std::string_view, std::source_location>
+            requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
         explicit extended_context(Loader loader, Prologue prologue = {}, Epilogue epilogue = {})
             : m_gl_function_prologue{std::move(prologue)}
             , m_gl_function_epilogue{std::move(epilogue)}
