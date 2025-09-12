@@ -100,6 +100,14 @@ namespace curlew {
             if(setup.version != trialVersion)
                 throw std::runtime_error{std::format("On {} expected OpenGL version {} but found {}", avocet::is_windows() ? "Windows" : "Apple", trialVersion, setup.version)};
         }
+        else if(setup.version == trialVersion) {
+            // On some (but not all) linux systems, requesting a trial version of 4.1 will return
+            // a version of 4.1, even if higher OpenGL versions are available. However, all such
+            // systems I've encountered to date happen to support 4.6. If the latter turns out not
+            // to be the case somewhere, than the following will need to be amended, to divine the
+            // actual maximum supported version
+            return attempt_to_find_rendering_setup(agl::opengl_version{.major{4}, .minor{6}});
+        }
 
         return setup;
     }
