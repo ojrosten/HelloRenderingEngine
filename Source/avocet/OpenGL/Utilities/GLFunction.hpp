@@ -10,6 +10,7 @@
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 
 #include <algorithm>
+#include <bit>
 #include <cassert>
 #include <concepts>
 #include <format>
@@ -91,7 +92,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         std::string_view get_name(const GladGLContext& ctx) const {
-            const auto offset{reinterpret_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - reinterpret_cast<uintptr_t>(&ctx)};
+            const auto offset{std::bit_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - std::bit_cast<uintptr_t>(&ctx)};
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
             static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
             assert(index < glad_ctx_member_info.size());
