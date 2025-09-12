@@ -9,7 +9,6 @@
 #include "avocet/OpenGL/Utilities/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
-#include <algorithm>
 #include <filesystem>
 #include <format>
 #include <iostream>
@@ -17,55 +16,10 @@
 #include <stdexcept>
 #include <vector>
 
-#if defined(_MSC_VER)
-    #include <experimental/generator>
-    #define STD_GENERATOR std::experimental::generator
-#elif defined (__clang__)
-#elif defined(__GNUG__)
-    #include <generator>
-    #define STD_GENERATOR std::generator
-#endif
-
 namespace avocet::opengl {
     namespace fs = std::filesystem;
 
     namespace {
-        enum class error_code : GLenum {
-            none                          = GL_NO_ERROR,
-            invalid_enum                  = GL_INVALID_ENUM,
-            invalid_value                 = GL_INVALID_VALUE,
-            invalid_operation             = GL_INVALID_OPERATION,
-            invalid_framebuffer_operation = GL_INVALID_FRAMEBUFFER_OPERATION,
-            stack_overflow                = GL_STACK_OVERFLOW,
-            stack_underflow               = GL_STACK_UNDERFLOW,
-            out_of_memory                 = GL_OUT_OF_MEMORY,
-        };
-
-        [[nodiscard]]
-        std::string to_string(error_code e) {
-            using enum error_code;
-            switch(e) {
-            case none:
-                return "None";
-            case invalid_enum:
-                return "Invalid enum";
-            case invalid_value:
-                return "Invalid value";
-            case invalid_operation:
-                return "Invalid operation";
-            case invalid_framebuffer_operation:
-                return "Invalid framebuffer operation";
-            case stack_overflow:
-                return "Stack overflow";
-            case stack_underflow:
-                return "Stack underflow";
-            case out_of_memory:
-                return "Out of memory";
-            }
-
-            throw std::runtime_error{"error_code: unrecognized option"};
-        }
-
         enum class debug_source : GLenum {
             api             = GL_DEBUG_SOURCE_API,
             window_system   = GL_DEBUG_SOURCE_WINDOW_SYSTEM,
@@ -122,27 +76,6 @@ namespace avocet::opengl {
             throw std::runtime_error{"debug_type: unrecognized option"};
         }
 
-        enum class debug_severity : GLenum {
-            high         = GL_DEBUG_SEVERITY_HIGH,
-            medium       = GL_DEBUG_SEVERITY_MEDIUM,
-            low          = GL_DEBUG_SEVERITY_LOW,
-            notification = GL_DEBUG_SEVERITY_NOTIFICATION
-        };
-
-        [[nodiscard]]
-        std::string to_string(debug_severity e) {
-            using enum debug_severity;
-
-            switch(e) {
-            case high:         return "High";
-            case medium:       return "Medium";
-            case low:          return "Low";
-            case notification: return "Notification";
-            }
-
-            throw std::runtime_error{"debug_severity: unrecognized option"};
-        }
-
         [[nodiscard]]
         GLint get_max_message_length(const extended_context& ctx) {
             GLint maxLen{};
@@ -150,10 +83,7 @@ namespace avocet::opengl {
             return maxLen;
         }
 
-        struct debug_info {
-            debug_severity severity{};
-            std::string message{};
-        };
+
 
         [[nodiscard]]
         std::optional<debug_info> get_next_message(const extended_context& ctx) {
@@ -177,10 +107,6 @@ namespace avocet::opengl {
                                         message)}};
             
             return std::nullopt;
-        }
-
-        std::string compose_error_message(std::string_view errorMessage, std::string_view fnName, std::source_location loc) {
-            return std::format("OpenGL error detected folowing call to {} originating from {}:\n{}\n", fnName, avocet::opengl::to_string(loc), errorMessage);
         }
 
         /// The code below exemplifies how to use std::generator. However, since
@@ -230,77 +156,84 @@ namespace avocet::opengl {
     #pragma GCC diagnostic pop
 #endif
         }
-
-#ifdef __cpp_lib_generator
-        [[nodiscard]]
-        STD_GENERATOR<error_code> get_errors(const extended_context& ctx, num_messages maxNum) {
-            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const error_code e{get_error(ctx)};
-                if(e == error_code::none) co_return;
-
-                co_yield e;
-            }
-        }
-
-        [[nodiscard]]
-        STD_GENERATOR<debug_info> get_messages(const extended_context& ctx, num_messages maxNum) {
-            for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
-                const std::optional<debug_info> message{get_next_message(ctx)};
-                if(!message) co_return;
-
-                co_yield message.value();
-            }
-        }
-#else
-        [[nodiscard]]
-        std::vector<error_code> get_errors(const extended_context& ctx, num_messages maxNum) {
-            return libcpp_workaround::get_errors(ctx, maxNum);
-        }
-
-        [[nodiscard]]
-        std::vector<debug_info> get_messages(const extended_context& ctx, num_messages maxNum) {
-            return libcpp_workaround::get_messages(ctx, maxNum);
-        }
-#endif
     }
 
     [[nodiscard]]
     std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
 
-    void check_for_basic_errors(const extended_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc)
-    {
-        const std::string errorMessage{
-            std::ranges::fold_left(
-                get_errors(ctx, maxNum),
-                std::string{},
-                [](std::string message, error_code e){
-                    const auto separator{message.empty() ? "" : "\n"};
-                    return (message += separator) += to_string(e);
-                }
-            )
-        };
+    [[nodiscard]]
+    std::string to_string(error_code e) {
+        using enum error_code;
+        switch(e) {
+        case none:
+            return "None";
+        case invalid_enum:
+            return "Invalid enum";
+        case invalid_value:
+            return "Invalid value";
+        case invalid_operation:
+            return "Invalid operation";
+        case invalid_framebuffer_operation:
+            return "Invalid framebuffer operation";
+        case stack_overflow:
+            return "Stack overflow";
+        case stack_underflow:
+            return "Stack underflow";
+        case out_of_memory:
+            return "Out of memory";
+        }
 
-        if(!errorMessage.empty())
-            throw std::runtime_error{compose_error_message(errorMessage, fnName, loc)};
+        throw std::runtime_error{"error_code: unrecognized option"};
     }
 
-    void check_for_advanced_errors(const extended_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc) {
-        const std::string errorMessage{
-            std::ranges::fold_left(
-                get_messages(ctx, maxNum),
-                std::string{},
-                [](std::string message, const debug_info& info){
-                    const auto separator{message.empty() ? "" : "\n\n"};
-                    if(info.severity != debug_severity::notification) {
-                        (message += separator) += info.message;
-                    }
+    [[nodiscard]]
+    std::string to_string(debug_severity e) {
+        using enum debug_severity;
 
-                    return message;
-                }
-            )
-        };
+        switch(e) {
+        case high:         return "High";
+        case medium:       return "Medium";
+        case low:          return "Low";
+        case notification: return "Notification";
+        }
 
-        if(!errorMessage.empty())
-            throw std::runtime_error{compose_error_message(errorMessage, fnName, loc)};
+        throw std::runtime_error{"debug_severity: unrecognized option"};
     }
+
+    std::string compose_error_message(std::string_view errorMessage, std::string_view fnName, std::source_location loc) {
+        return std::format("OpenGL error detected folowing call to {} originating from {}:\n{}\n", fnName, avocet::opengl::to_string(loc), errorMessage);
+    }
+
+
+#ifdef __cpp_lib_generator
+    [[nodiscard]]
+        STD_GENERATOR<error_code> get_errors(const extended_context& ctx, num_messages maxNum) {
+        for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+            const error_code e{get_error(ctx)};
+            if(e == error_code::none) co_return;
+
+            co_yield e;
+        }
+    }
+
+    [[nodiscard]]
+    STD_GENERATOR<debug_info> get_messages(const extended_context& ctx, num_messages maxNum) {
+        for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
+            const std::optional<debug_info> message{get_next_message(ctx)};
+            if(!message) co_return;
+
+            co_yield message.value();
+        }
+    }
+#else
+    [[nodiscard]]
+    std::vector<error_code> get_errors(const extended_context& ctx, num_messages maxNum) {
+        return libcpp_workaround::get_errors(ctx, maxNum);
+    }
+
+    [[nodiscard]]
+    std::vector<debug_info> get_messages(const extended_context& ctx, num_messages maxNum) {
+        return libcpp_workaround::get_messages(ctx, maxNum);
+    }
+#endif
 }
