@@ -10,6 +10,7 @@
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 
 #include <algorithm>
+#include <cassert>
 #include <concepts>
 #include <format>
 #include <stdexcept>
@@ -73,14 +74,8 @@ namespace avocet::opengl {
         std::string_view get_name(const GladGLContext& ctx) const {
             const auto offset{reinterpret_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - reinterpret_cast<uintptr_t>(&ctx)};
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(int*)};
-            if(index >= glad_ctx_member_info.size())
-                throw std::runtime_error{std::format("offset index {} too big for the array of glad context member info", index)};
-
-            /*auto found{std::ranges::lower_bound(glad_ctx_member_info, offset, std::ranges::less{}, [](const member_info& info) { return info.offset; })};
-            if(found == glad_ctx_member_info.end())
-                throw std::runtime_error{std::format("offset {} not found in GladGLContext", offset)};
-
-            return found->name;*/
+            static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
+            assert(index < glad_ctx_member_info.size());
 
             return glad_ctx_member_info[index].name;
         }
