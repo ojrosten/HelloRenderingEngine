@@ -73,9 +73,10 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            ctx.invoke_prologue(Mode, get_name(ctx.glad_context()), loc);
+            const auto name{get_name(ctx.glad_context())};
+            ctx.invoke_prologue(Mode, name, loc);
             value_from_invocation<R> v{[&, this]() { return get_validated_fn_ptr(ctx, loc)(args...); }};
-            ctx.invoke_epilogue(Mode, get_name(ctx.glad_context()), loc);
+            ctx.invoke_epilogue(Mode, name, loc);
 
             return v.get();
         }
@@ -91,7 +92,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         std::string_view get_name(const GladGLContext& ctx) const {
             const auto offset{reinterpret_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - reinterpret_cast<uintptr_t>(&ctx)};
-            const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(int*)};
+            const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
             static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
             assert(index < glad_ctx_member_info.size());
 
