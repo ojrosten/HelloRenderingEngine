@@ -20,70 +20,12 @@ namespace avocet::opengl {
     namespace fs = std::filesystem;
 
     namespace {
-        enum class debug_source : GLenum {
-            api             = GL_DEBUG_SOURCE_API,
-            window_system   = GL_DEBUG_SOURCE_WINDOW_SYSTEM,
-            shader_compiler = GL_DEBUG_SOURCE_SHADER_COMPILER,
-            third_party     = GL_DEBUG_SOURCE_THIRD_PARTY,
-            application     = GL_DEBUG_SOURCE_APPLICATION,
-            other           = GL_DEBUG_SOURCE_OTHER
-        };
-
-        [[nodiscard]]
-        std::string to_string(debug_source e) {
-            using enum debug_source;
-
-            switch(e) {
-            case api:             return "API";
-            case window_system:   return "Window System";
-            case shader_compiler: return "Shader Compiler";
-            case third_party:     return "Third Party";
-            case application:     return "Application";
-            case other:           return "Other";
-            }
-
-            throw std::runtime_error{"debug_source: unrecognized option"};
-        }
-
-        enum class debug_type : GLenum {
-            error                = GL_DEBUG_TYPE_ERROR,
-            deprecated_behaviour = GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR,
-            undefined_behaviour  = GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR,
-            portability          = GL_DEBUG_TYPE_PORTABILITY,
-            performance          = GL_DEBUG_TYPE_PERFORMANCE,
-            marker               = GL_DEBUG_TYPE_MARKER,
-            push_group           = GL_DEBUG_TYPE_PUSH_GROUP,
-            pop_group            = GL_DEBUG_TYPE_POP_GROUP,
-            other                = GL_DEBUG_TYPE_OTHER
-        };
-
-        [[nodiscard]]
-        std::string to_string(debug_type e) {
-            using enum debug_type;
-
-            switch(e) {
-            case error:                return "Error";
-            case deprecated_behaviour: return "Deprecated Behaviour";
-            case undefined_behaviour:  return "Undefined Behaviour";
-            case portability:          return "Portability";
-            case performance:          return "Performance";
-            case marker:               return "Marker";
-            case push_group:           return "Push Group";
-            case pop_group:            return "Pop Group";
-            case other:                return "Other";
-            }
-
-            throw std::runtime_error{"debug_type: unrecognized option"};
-        }
-
         [[nodiscard]]
         GLint get_max_message_length(const extended_context& ctx) {
             GLint maxLen{};
             gl_function{debugging_mode_off, &GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
             return maxLen;
         }
-
-
 
         [[nodiscard]]
         std::optional<debug_info> get_next_message(const extended_context& ctx) {
@@ -198,6 +140,42 @@ namespace avocet::opengl {
         }
 
         throw std::runtime_error{"debug_severity: unrecognized option"};
+    }
+
+
+    [[nodiscard]]
+    std::string to_string(debug_source e) {
+        using enum debug_source;
+
+        switch(e) {
+        case api:             return "API";
+        case window_system:   return "Window System";
+        case shader_compiler: return "Shader Compiler";
+        case third_party:     return "Third Party";
+        case application:     return "Application";
+        case other:           return "Other";
+        }
+
+        throw std::runtime_error{"debug_source: unrecognized option"};
+    }
+
+    [[nodiscard]]
+    std::string to_string(debug_type e) {
+        using enum debug_type;
+
+        switch(e) {
+        case error:                return "Error";
+        case deprecated_behaviour: return "Deprecated Behaviour";
+        case undefined_behaviour:  return "Undefined Behaviour";
+        case portability:          return "Portability";
+        case performance:          return "Performance";
+        case marker:               return "Marker";
+        case push_group:           return "Push Group";
+        case pop_group:            return "Pop Group";
+        case other:                return "Other";
+        }
+
+        throw std::runtime_error{"debug_type: unrecognized option"};
     }
 
     std::string compose_error_message(std::string_view errorMessage, std::string_view fnName, std::source_location loc) {

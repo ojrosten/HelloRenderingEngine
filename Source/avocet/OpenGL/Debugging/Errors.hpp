@@ -36,14 +36,41 @@ namespace avocet::opengl {
     };
 
     enum class debug_severity : GLenum {
-        high = GL_DEBUG_SEVERITY_HIGH,
-        medium = GL_DEBUG_SEVERITY_MEDIUM,
-        low = GL_DEBUG_SEVERITY_LOW,
+        high         = GL_DEBUG_SEVERITY_HIGH,
+        medium       = GL_DEBUG_SEVERITY_MEDIUM,
+        low          = GL_DEBUG_SEVERITY_LOW,
         notification = GL_DEBUG_SEVERITY_NOTIFICATION
     };
 
+    enum class debug_source : GLenum {
+        api             = GL_DEBUG_SOURCE_API,
+        window_system   = GL_DEBUG_SOURCE_WINDOW_SYSTEM,
+        shader_compiler = GL_DEBUG_SOURCE_SHADER_COMPILER,
+        third_party     = GL_DEBUG_SOURCE_THIRD_PARTY,
+        application     = GL_DEBUG_SOURCE_APPLICATION,
+        other           = GL_DEBUG_SOURCE_OTHER
+    };
+
+    enum class debug_type : GLenum {
+        error                = GL_DEBUG_TYPE_ERROR,
+        deprecated_behaviour = GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR,
+        undefined_behaviour  = GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR,
+        portability          = GL_DEBUG_TYPE_PORTABILITY,
+        performance          = GL_DEBUG_TYPE_PERFORMANCE,
+        marker               = GL_DEBUG_TYPE_MARKER,
+        push_group           = GL_DEBUG_TYPE_PUSH_GROUP,
+        pop_group            = GL_DEBUG_TYPE_POP_GROUP,
+        other                = GL_DEBUG_TYPE_OTHER
+    };
+
+    [[nodiscard]]
+    std::string to_string(debug_source e);
+
     [[nodiscard]]
     std::string to_string(debug_severity e);
+
+    [[nodiscard]]
+    std::string to_string(debug_type e);
 
     struct debug_info {
         debug_severity severity{};
