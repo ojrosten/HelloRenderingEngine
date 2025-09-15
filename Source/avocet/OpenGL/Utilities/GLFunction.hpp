@@ -26,26 +26,27 @@ namespace avocet::opengl {
     template<class R, class... Args>
     using glad_ctx_ptr_to_mem_PtrToMem_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
-    template<class T>
-    class value_from_invocation {
-        T m_Value;
+    template<class R>
+    class cached_result {
+        R m_Value;
     public:
         template<class Fn>
-            requires std::is_invocable_r_v<T, Fn>
-        value_from_invocation(Fn f)
+            requires std::is_invocable_r_v<R, Fn>
+        cached_result(Fn f)
             : m_Value{f()}
         {
         }
 
-        T get() const noexcept { return m_Value; }
+        [[nodiscard]]
+        R get() const noexcept { return m_Value; }
     };
 
     template<>
-    class value_from_invocation<void> {
+    class cached_result<void> {
     public:
         template<class Fn>
             requires std::is_invocable_r_v<void, Fn>
-        value_from_invocation(Fn f)
+        cached_result(Fn f)
         {
             f();
         }
@@ -76,7 +77,7 @@ namespace avocet::opengl {
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto name{get_name(ctx.glad_context())};
             ctx.invoke_prologue(Mode, name, loc);
-            value_from_invocation<R> v{[&, this]() { return get_validated_fn_ptr(ctx, loc)(args...); }};
+            cached_result<R> v{[&, this]() { return get_validated_fn_ptr(ctx, loc)(args...); }};
             ctx.invoke_epilogue(Mode, name, loc);
 
             return v.get();
