@@ -22,7 +22,7 @@ namespace avocet::opengl {
     public:
         struct invocation_info {
             debugging_mode mode;
-            std::string fn_name;
+            std::string name;
             std::source_location loc;
         };
 
