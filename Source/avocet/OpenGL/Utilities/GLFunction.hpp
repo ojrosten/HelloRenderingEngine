@@ -47,7 +47,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            return ctx.invoke_decorated({Mode, std::string{get_name(ctx.glad_context())}, loc}, get_validated_fn_ptr(ctx, loc), args...);
+            return ctx.invoke_decorated({Mode, get_name(ctx.glad_context()), loc}, get_validated_fn_ptr(ctx, loc), args...);
         }
     private:
         pointer_to_member_type m_PtrToMem;
