@@ -49,7 +49,7 @@ namespace curlew {
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
         }
 
-        void init_debug(const agl::extended_context& ctx)
+        void init_debug(const agl::decorated_context& ctx)
         {
             GLint flags{};
             agl::gl_function{agl::debugging_mode_off, &GladGLContext::GetIntegerv}(ctx, GL_CONTEXT_FLAGS, &flags);

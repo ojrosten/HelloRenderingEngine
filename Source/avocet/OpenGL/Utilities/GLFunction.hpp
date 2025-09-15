@@ -46,7 +46,7 @@ namespace avocet::opengl {
         gl_function(debugging_mode_off_type, nullptr_t) = delete;
 
         [[nodiscard]]
-        R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
+        R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto name{get_name(ctx.glad_context())};
             ctx.invoke_prologue(Mode, name, loc);
             cached_result v{get_validated_fn_ptr(ctx, loc), args...};
@@ -58,7 +58,7 @@ namespace avocet::opengl {
         pointer_to_member_type m_PtrToMem;
 
         [[nodiscard]]
-        function_pointer_type<R, Args...> get_validated_fn_ptr(const extended_context& ctx, std::source_location loc) const {
+        function_pointer_type<R, Args...> get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
             auto f{ctx.glad_context().*m_PtrToMem};
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
         }

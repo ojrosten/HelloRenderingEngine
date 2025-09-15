@@ -21,13 +21,13 @@ namespace curlew {
     enum class window_hiding_mode : bool { off, on };
 
     struct default_gl_function_epilogue {
-        void operator()(const avocet::opengl::extended_context& ctx, avocet::opengl::debugging_mode mode, std::string_view name, std::source_location loc) const {
+        void operator()(const avocet::opengl::decorated_context& ctx, avocet::opengl::debugging_mode mode, std::string_view name, std::source_location loc) const {
             avocet::opengl::check_for_errors(ctx, mode, avocet::opengl::num_messages{10}, name, loc, avocet::opengl::default_debug_info_processor{});
         }
     };
 
     struct window_config {
-        using context_type = avocet::opengl::extended_context;
+        using context_type = avocet::opengl::decorated_context;
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
@@ -98,7 +98,7 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
-        avocet::opengl::extended_context m_Context;
+        avocet::opengl::decorated_context m_Context;
 
         window(const window_config& config, const avocet::opengl::opengl_version& version);
     public:
@@ -111,6 +111,6 @@ namespace curlew {
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
-        [[nodiscard]] const avocet::opengl::extended_context& context() const noexcept { return m_Context; }
+        [[nodiscard]] const avocet::opengl::decorated_context& context() const noexcept { return m_Context; }
     };
 }

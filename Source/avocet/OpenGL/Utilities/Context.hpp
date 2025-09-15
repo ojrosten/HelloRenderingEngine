@@ -18,25 +18,22 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-
-
-
-    class extended_context {
+    class decorated_context {
     public:
-        using prologue_function_type = std::function<void(extended_context, debugging_mode, std::string_view, std::source_location)>;
-        using epilogue_function_type = std::function<void(extended_context, debugging_mode, std::string_view, std::source_location)>;
+        using prologue_function_type = std::function<void(decorated_context, debugging_mode, std::string_view, std::source_location)>;
+        using epilogue_function_type = std::function<void(decorated_context, debugging_mode, std::string_view, std::source_location)>;
 
         inline static const prologue_function_type null_prologue{};
         inline static const epilogue_function_type null_epilogue{};
 
         template<class Fn>
-        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, extended_context, debugging_mode, std::string_view, std::source_location>};
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, decorated_context, debugging_mode, std::string_view, std::source_location>};
 
-        extended_context() = default;
+        decorated_context() = default;
 
         template<std::invocable<GladGLContext&> Loader, class Prologue = std::function<void()>, class Epilogue = std::function<void()>>
             requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
-        explicit extended_context(Loader loader, Prologue prologue = {}, Epilogue epilogue = {})
+        explicit decorated_context(Loader loader, Prologue prologue = {}, Epilogue epilogue = {})
             : m_gl_function_prologue{std::move(prologue)}
             , m_gl_function_epilogue{std::move(epilogue)}
         {

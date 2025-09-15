@@ -75,7 +75,7 @@ namespace {
     };
 
     struct nvidia_gl_function_epilogue {
-        void operator()(const avocet::opengl::extended_context& ctx, avocet::opengl::debugging_mode mode, std::string_view name, std::source_location loc) const {
+        void operator()(const avocet::opengl::decorated_context& ctx, avocet::opengl::debugging_mode mode, std::string_view name, std::source_location loc) const {
             avocet::opengl::check_for_errors(ctx, mode, avocet::opengl::num_messages{10}, name, loc, nvidia_debug_info_processor{});
         }
     };
@@ -88,7 +88,7 @@ int main()
         curlew::glfw_manager manager{};
         std::cout << curlew::rendering_setup_summary(manager.get_rendering_setup());
 
-        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}, .gl_function_prologue{agl::extended_context::null_prologue}, .gl_function_epilogue{nvidia_gl_function_epilogue{}}})};
+        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}, .gl_function_prologue{agl::decorated_context::null_prologue}, .gl_function_epilogue{nvidia_gl_function_epilogue{}}})};
         const auto& ctx{w.context()};
 
         agl::shader_program
