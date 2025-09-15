@@ -49,7 +49,7 @@ namespace avocet::opengl {
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto name{get_name(ctx.glad_context())};
             ctx.invoke_prologue(Mode, name, loc);
-            cached_result<R> v{get_validated_fn_ptr(ctx, loc), args...};
+            cached_result v{get_validated_fn_ptr(ctx, loc), args...};
             ctx.invoke_epilogue(Mode, name, loc);
 
             return v.get();
@@ -75,7 +75,6 @@ namespace avocet::opengl {
 
         struct void_result {};
 
-        template<class R>
         class cached_result {
             std::conditional_t<std::is_void_v<R>, void_result, R> m_Value;
         public:
