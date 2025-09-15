@@ -18,19 +18,17 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-    class extended_context;
 
-    using prologue_function_type = std::function<void(extended_context, debugging_mode, std::string_view, std::source_location)>;
-    using epilogue_function_type = std::function<void(extended_context, debugging_mode, std::string_view, std::source_location)>;
 
-    inline const prologue_function_type null_prologue{};
-    inline const epilogue_function_type null_epilogue{};
 
     class extended_context {
-        GladGLContext m_Context{};
-        prologue_function_type m_gl_function_prologue{};
-        epilogue_function_type m_gl_function_epilogue{};
     public:
+        using prologue_function_type = std::function<void(extended_context, debugging_mode, std::string_view, std::source_location)>;
+        using epilogue_function_type = std::function<void(extended_context, debugging_mode, std::string_view, std::source_location)>;
+
+        inline static const prologue_function_type null_prologue{};
+        inline static const epilogue_function_type null_epilogue{};
+
         template<class Fn>
         constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, extended_context, debugging_mode, std::string_view, std::source_location>};
 
@@ -57,6 +55,10 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         const GladGLContext& glad_context() const noexcept { return m_Context; }
+    private:
+        GladGLContext m_Context{};
+        prologue_function_type m_gl_function_prologue{};
+        epilogue_function_type m_gl_function_epilogue{};
     };
 
     struct member_info {

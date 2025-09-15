@@ -27,11 +27,12 @@ namespace curlew {
     };
 
     struct window_config {
+        using context_type = avocet::opengl::extended_context;
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
-        avocet::opengl::prologue_function_type gl_function_prologue{avocet::opengl::null_prologue};
-        avocet::opengl::epilogue_function_type gl_function_epilogue{default_gl_function_epilogue{}};
+        context_type::prologue_function_type gl_function_prologue{context_type::null_prologue};
+        context_type::epilogue_function_type gl_function_epilogue{default_gl_function_epilogue{}};
     };
 
     class glfw_manager;

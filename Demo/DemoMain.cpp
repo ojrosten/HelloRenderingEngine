@@ -88,7 +88,7 @@ int main()
         curlew::glfw_manager manager{};
         std::cout << curlew::rendering_setup_summary(manager.get_rendering_setup());
 
-        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}, .gl_function_prologue{agl::null_prologue}, .gl_function_epilogue{nvidia_gl_function_epilogue{}}})};
+        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}, .gl_function_prologue{agl::extended_context::null_prologue}, .gl_function_epilogue{nvidia_gl_function_epilogue{}}})};
         const auto& ctx{w.context()};
 
         agl::shader_program
