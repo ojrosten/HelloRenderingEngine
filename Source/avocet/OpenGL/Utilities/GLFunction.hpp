@@ -26,34 +26,6 @@ namespace avocet::opengl {
     template<class R, class... Args>
     using glad_ctx_ptr_to_mem_PtrToMem_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
-    template<class R>
-    class cached_result {
-        R m_Value;
-    public:
-        template<class Fn>
-            requires std::is_invocable_r_v<R, Fn>
-        cached_result(Fn f)
-            : m_Value{f()}
-        {
-        }
-
-        [[nodiscard]]
-        R get() const noexcept { return m_Value; }
-    };
-
-    template<>
-    class cached_result<void> {
-    public:
-        template<class Fn>
-            requires std::is_invocable_r_v<void, Fn>
-        cached_result(Fn f)
-        {
-            f();
-        }
-
-        void get() const noexcept {}
-    };
-
     template<class R, class... Args, debugging_mode Mode>
     class [[nodiscard]] gl_function<R(Args...), Mode> {
     public:
@@ -77,7 +49,7 @@ namespace avocet::opengl {
         R operator()(const extended_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto name{get_name(ctx.glad_context())};
             ctx.invoke_prologue(Mode, name, loc);
-            cached_result<R> v{[&, this]() { return get_validated_fn_ptr(ctx, loc)(args...); }};
+            cached_result<R> v{get_validated_fn_ptr(ctx, loc), args...};
             ctx.invoke_epilogue(Mode, name, loc);
 
             return v.get();
@@ -100,6 +72,32 @@ namespace avocet::opengl {
 
             return glad_ctx_member_info[index].name;
         }
+
+        struct void_result {};
+
+        template<class R>
+        class cached_result {
+            std::conditional_t<std::is_void_v<R>, void_result, R> m_Value;
+        public:
+            template<class Fn, class... Args>
+                requires std::is_invocable_r_v<R, Fn, Args...> && (!std::is_void_v<R>)
+            cached_result(Fn f, Args... args)
+                : m_Value{f(args...)}
+            {
+            }
+
+            template<class Fn, class... Args>
+                requires std::is_invocable_r_v<R, Fn, Args...> && std::is_void_v<R>
+            cached_result(Fn f, Args... args)
+            {
+                f(args...);
+            }
+
+            [[nodiscard]]
+            R get() const noexcept { return m_Value; }
+
+            void get() const noexcept requires std::is_void_v<R> {}
+        };
     };
 
     template<class R, class... Args>
