@@ -22,7 +22,7 @@ namespace curlew {
 
     struct default_gl_function_epilogue {
         void operator()(const avocet::opengl::decorated_context& ctx, const avocet::opengl::decorated_context::invocation_info& info) const {
-            avocet::opengl::check_for_errors(ctx, info.mode, avocet::opengl::num_messages{10}, info.name, info.loc, avocet::opengl::default_debug_info_processor{});
+            avocet::opengl::check_for_errors(ctx, avocet::opengl::num_messages{10}, info, avocet::opengl::default_debug_info_processor{});
         }
     };
 

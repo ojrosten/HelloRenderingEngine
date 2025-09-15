@@ -161,12 +161,12 @@ namespace avocet::opengl {
 
     template<class Fn = default_debug_info_processor>
         requires std::is_invocable_r_v<std::string, Fn, std::string, debug_info>
-    void check_for_errors(const decorated_context& ctx, debugging_mode mode, num_messages maxReported, std::string_view name, std::source_location loc, Fn errorProcessor = {}) {
-        if(mode != debugging_mode::none) {
+    void check_for_errors(const decorated_context& ctx, num_messages maxReported, const decorated_context::invocation_info& info, Fn errorProcessor = {}) {
+        if(info.mode != debugging_mode::none) {
             if(debug_output_supported(ctx))
-                check_for_advanced_errors(ctx, maxReported, name, loc, errorProcessor);
+                check_for_advanced_errors(ctx, maxReported, info.name, info.loc, errorProcessor);
             else
-                check_for_basic_errors(ctx, maxReported, name, loc);
+                check_for_basic_errors(ctx, maxReported, info.name, info.loc);
         }
     }
 }
