@@ -4,10 +4,10 @@ At least two errors
 Expected Exception Type:
 [std::runtime_error]
 OpenGL error detected in Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, line 45:
-Source: API; Type: Error; Severity: High
+Id: 1282; Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_OPERATION in BindBuffer: (ID: 1360204945) Generic error
 
-Source: API; Type: Error; Severity: High
+Id: 1280; Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_ENUM in CreateShader: (ID: 4172578152) Generic error
 
 =======================================

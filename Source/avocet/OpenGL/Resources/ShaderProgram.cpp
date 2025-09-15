@@ -87,7 +87,7 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            contextual_resource_handle create(const GladGLContext& ctx) {
+            contextual_resource_handle create(const decorated_context& ctx) {
                 return contextual_resource_handle{ctx, resource_handle{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}};
             }
 
@@ -139,7 +139,7 @@ namespace avocet::opengl {
         class shader_compiler {
             shader_resource m_Resource;
         public:
-            shader_compiler(const GladGLContext& ctx, shader_species species, const fs::path& sourceFile)
+            shader_compiler(const decorated_context& ctx, shader_species species, const fs::path& sourceFile)
                 : m_Resource{ctx, species}
             {
                 const auto index{get_index(m_Resource)};
@@ -158,7 +158,7 @@ namespace avocet::opengl {
         };
 
         class [[nodiscard]] shader_attacher {
-            const GladGLContext& m_Context;
+            const decorated_context& m_Context;
             GLuint m_ProgIndex{}, m_ShaderIndex{};
         public:
             shader_attacher(const shader_program_resource& progResource, const shader_compiler& shader)
@@ -176,7 +176,7 @@ namespace avocet::opengl {
         static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
-    shader_program::shader_program(const GladGLContext& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
+    shader_program::shader_program(const decorated_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
         : m_Resource{ctx}
     {
         shader_compiler

@@ -26,7 +26,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline GLint get_max_label_length(const GladGLContext& ctx) {
+    inline GLint get_max_label_length(const decorated_context& ctx) {
         const static GLint length{
             [&ctx](){
                 GLint param{};

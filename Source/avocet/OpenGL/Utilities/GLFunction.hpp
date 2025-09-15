@@ -48,13 +48,13 @@ namespace avocet::opengl {
         gl_function(unchecked_debug_output_t, nullptr_t) = delete;
 
         [[nodiscard]]
-        R operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
+        R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto ret{get_validated_fn_ptr(ctx, loc)(args...)};
             check_for_errors(ctx, loc);
             return ret;
         }
 
-        void operator()(const GladGLContext& ctx, Args... args, std::source_location loc = std::source_location::current()) const
+        void operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const
             requires std::is_void_v<R>
         {
             get_validated_fn_ptr(ctx, loc)(args...);
@@ -64,11 +64,12 @@ namespace avocet::opengl {
         pointer_to_member_type m_PtrToMem;
 
         [[nodiscard]]
-        function_pointer_type<R, Args...> get_validated_fn_ptr(const GladGLContext& ctx, std::source_location loc) const {
-            auto f{ctx.*m_PtrToMem};
+        function_pointer_type<R, Args...> get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
+            auto f{ctx.glad_context().*m_PtrToMem};
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
         }
-        static void check_for_errors(const GladGLContext& ctx, std::source_location loc) {
+
+        static void check_for_errors(const decorated_context& ctx, std::source_location loc) {
             if constexpr(Mode != debugging_mode::none) {
                 if(debug_output_supported(ctx))
                     check_for_advanced_errors(ctx, max_reported_messages, loc);

@@ -10,6 +10,7 @@
 #include "RenderingSetup.hpp"
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+#include "avocet/OpenGL/Utilities/Context.hpp"
 
 #include <string>
 
@@ -87,7 +88,7 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
-        GladGLContext m_Context{};
+        avocet::opengl::decorated_context m_Context{};
 
         window(const window_config& config, const avocet::opengl::opengl_version& version);
     public:
@@ -100,6 +101,6 @@ namespace curlew {
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
-        [[nodiscard]] const GladGLContext& context() const noexcept { return m_Context; }
+        [[nodiscard]] const avocet::opengl::decorated_context& context() const noexcept { return m_Context; }
     };
 }

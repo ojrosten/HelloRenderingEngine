@@ -40,8 +40,8 @@ namespace avocet::testing
             check_exception_thrown<std::runtime_error>(
                 "At least two errors",
                 [&ctx](){
-                    ctx.BindBuffer(GL_ARRAY_BUFFER, 42);
-                    ctx.CreateShader(0);
+                    ctx.glad_context().BindBuffer(GL_ARRAY_BUFFER, 42);
+                    ctx.glad_context().CreateShader(0);
                     agl::check_for_advanced_errors(ctx, agl::num_messages{10}, std::source_location::current());
                 }
             );

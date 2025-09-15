@@ -89,7 +89,7 @@ namespace avocet::opengl {
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
-        polygon_base(const GladGLContext& ctx, Fn transformer, const std::optional<std::string>& label)
+        polygon_base(const decorated_context& ctx, Fn transformer, const std::optional<std::string>& label)
             : m_VBO{ctx, transformer(st_Vertices), label}
             , m_VAO{ctx, label, m_VBO}
         {
@@ -97,7 +97,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
-        polygon_base(const GladGLContext& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+        polygon_base(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             :     m_VBO{ctx, transformer(st_Vertices), label}
             ,     m_VAO{ctx, label, m_VBO}
             , m_Texture{ctx, texConfig}
@@ -161,7 +161,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (!is_textured_v)
-        polygon(const GladGLContext& ctx, Fn transformer, const std::optional<std::string>& label)
+        polygon(const decorated_context& ctx, Fn transformer, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, label}
             ,             m_EBO{ctx, st_Indices, label}
         {
@@ -169,7 +169,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && is_textured_v
-        polygon(const GladGLContext& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+        polygon(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, texConfig, label}
             ,             m_EBO{ctx, st_Indices, label}
         {
@@ -196,7 +196,7 @@ namespace avocet::opengl {
             sequoia::utilities::make_array<element_index_type, num_elements>(to_element_index)
         };
 
-        static void do_draw(const GladGLContext& ctx) {
+        static void do_draw(const decorated_context& ctx) {
             gl_function{&GladGLContext::DrawElements}(ctx, GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
 
@@ -213,7 +213,7 @@ namespace avocet::opengl {
     private:
         friend polygon_base_type;
 
-        static void do_draw(const GladGLContext& ctx) {
+        static void do_draw(const decorated_context& ctx) {
             gl_function{&GladGLContext::DrawArrays}(ctx, GL_TRIANGLES, 0, 3);
         }
     };

@@ -67,10 +67,10 @@ namespace avocet::opengl {
         constexpr static auto identifier{object_identifier::texture};
 
         template<std::size_t N>
-        static void generate(const GladGLContext& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenTextures}(ctx, N, indices.data()); }
+        static void generate(const decorated_context& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenTextures}(ctx, N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const GladGLContext& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
+        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
 
         static void bind(const contextual_resource_handle& h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, get_index(h)); }
 
@@ -93,7 +93,7 @@ namespace avocet::opengl {
         using configurator_type = base_type::configurator_type;
         using value_type        = configurator_type::value_type;
 
-        explicit texture_2d(const GladGLContext& ctx, const configurator_type& textureConfig)
+        explicit texture_2d(const decorated_context& ctx, const configurator_type& textureConfig)
             : base_type{ctx, {textureConfig}}
         {}
 

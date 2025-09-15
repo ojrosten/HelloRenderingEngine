@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+#include "avocet/OpenGL/Utilities/Context.hpp"
 
 #include <format>
 
@@ -22,13 +23,13 @@ namespace avocet::opengl{
     };
 
     [[nodiscard]]
-    std::string get_vendor(const GladGLContext& ctx);
+    std::string get_vendor(const decorated_context& ctx);
 
     [[nodiscard]]
-    std::string get_renderer(const GladGLContext& ctx);
+    std::string get_renderer(const decorated_context& ctx);
 
     [[nodiscard]]
-    opengl_version get_opengl_version(const GladGLContext& ctx);
+    opengl_version get_opengl_version(const decorated_context& ctx);
 }
 
 
