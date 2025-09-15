@@ -47,12 +47,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            const auto name{get_name(ctx.glad_context())};
-            ctx.invoke_prologue(Mode, name, loc);
-            cached_result v{get_validated_fn_ptr(ctx, loc), args...};
-            ctx.invoke_epilogue(Mode, name, loc);
-
-            return v.get();
+            return ctx.invoke_decorated({Mode, std::string{get_name(ctx.glad_context())}, loc}, get_validated_fn_ptr(ctx, loc), args...);
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -72,31 +67,6 @@ namespace avocet::opengl {
 
             return glad_ctx_member_info[index].name;
         }
-
-
-        class cached_result {
-            struct void_result {};
-            std::conditional_t<std::is_void_v<R>, void_result, R> m_Value;
-        public:
-            template<class Fn>
-                requires std::is_invocable_r_v<R, Fn, Args...> && (!std::is_void_v<R>)
-            explicit(sizeof...(Args) == 0) cached_result(Fn f, Args... args)
-                : m_Value{f(args...)}
-            {
-            }
-
-            template<class Fn>
-                requires std::is_invocable_r_v<R, Fn, Args...> && std::is_void_v<R>
-            explicit(sizeof...(Args) == 0) cached_result(Fn f, Args... args)
-            {
-                f(args...);
-            }
-
-            [[nodiscard]]
-            R get() const noexcept { return m_Value; }
-
-            void get() const noexcept requires std::is_void_v<R> {}
-        };
     };
 
     template<class R, class... Args>

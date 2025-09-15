@@ -62,8 +62,8 @@ namespace {
     };
 
     struct nvidia_gl_function_epilogue {
-        void operator()(const avocet::opengl::decorated_context& ctx, avocet::opengl::debugging_mode mode, std::string_view name, std::source_location loc) const {
-            avocet::opengl::check_for_errors(ctx, mode, avocet::opengl::num_messages{10}, name, loc, nvidia_debug_info_processor{});
+        void operator()(const agl::decorated_context& ctx, const agl::decorated_context::invocation_info& info) const {
+            agl::check_for_errors(ctx, info.mode, avocet::opengl::num_messages{10}, info.fn_name, info.loc, nvidia_debug_info_processor{});
         }
     };
 }

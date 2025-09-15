@@ -20,14 +20,20 @@
 namespace avocet::opengl {
     class decorated_context {
     public:
-        using prologue_function_type = std::function<void(decorated_context, debugging_mode, std::string_view, std::source_location)>;
-        using epilogue_function_type = std::function<void(decorated_context, debugging_mode, std::string_view, std::source_location)>;
+        struct invocation_info {
+            debugging_mode mode;
+            std::string fn_name;
+            std::source_location loc;
+        };
+
+        using prologue_function_type = std::function<void(decorated_context, invocation_info)>;
+        using epilogue_function_type = std::function<void(decorated_context, invocation_info)>;
 
         inline static const prologue_function_type null_prologue{};
         inline static const epilogue_function_type null_epilogue{};
 
         template<class Fn>
-        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, decorated_context, debugging_mode, std::string_view, std::source_location>};
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, decorated_context, invocation_info>};
 
         decorated_context() = default;
 
@@ -40,14 +46,18 @@ namespace avocet::opengl {
             loader(m_Context);
         }
 
-        void invoke_prologue(debugging_mode mode, std::string_view name, std::source_location loc) const {
+        template<class Fn, class... Args>
+        std::invoke_result_t<Fn, Args...> invoke_decorated(const invocation_info& info, Fn f, Args... args) const {
+            using R = std::invoke_result_t<Fn, Args...>;
             if(m_gl_function_prologue)
-                m_gl_function_prologue(*this, mode, name, loc);
-        }
+                m_gl_function_prologue(*this, info);
 
-        void invoke_epilogue(debugging_mode mode, std::string_view name, std::source_location loc) const {
+            const cached_result<R> res{f, args...};
+
             if(m_gl_function_epilogue)
-                m_gl_function_epilogue(*this, mode, name, loc);
+                m_gl_function_epilogue(*this, info);
+
+            return res.get();
         }
 
         [[nodiscard]]
@@ -56,6 +66,31 @@ namespace avocet::opengl {
         GladGLContext m_Context{};
         prologue_function_type m_gl_function_prologue{};
         epilogue_function_type m_gl_function_epilogue{};
+
+        template<class R>
+        class cached_result {
+            struct void_result {};
+            std::conditional_t<std::is_void_v<R>, void_result, R> m_Value;
+        public:
+            template<class Fn, class... Args>
+                requires std::is_invocable_r_v<R, Fn, Args...> && (!std::is_void_v<R>)
+            explicit(sizeof...(Args) == 0) cached_result(Fn f, Args... args)
+                : m_Value{f(args...)}
+            {
+            }
+
+            template<class Fn, class... Args>
+                requires std::is_invocable_r_v<R, Fn, Args...>&& std::is_void_v<R>
+            explicit(sizeof...(Args) == 0) cached_result(Fn f, Args... args)
+            {
+                f(args...);
+            }
+
+            [[nodiscard]]
+            R get() const noexcept { return m_Value; }
+
+            void get() const noexcept requires std::is_void_v<R> {}
+        };
     };
 
     struct member_info {
