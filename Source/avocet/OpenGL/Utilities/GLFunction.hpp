@@ -73,21 +73,21 @@ namespace avocet::opengl {
             return glad_ctx_member_info[index].name;
         }
 
-        struct void_result {};
 
         class cached_result {
+            struct void_result {};
             std::conditional_t<std::is_void_v<R>, void_result, R> m_Value;
         public:
             template<class Fn>
                 requires std::is_invocable_r_v<R, Fn, Args...> && (!std::is_void_v<R>)
-            cached_result(Fn f, Args... args)
+            explicit(sizeof...(Args) == 0) cached_result(Fn f, Args... args)
                 : m_Value{f(args...)}
             {
             }
 
             template<class Fn>
                 requires std::is_invocable_r_v<R, Fn, Args...> && std::is_void_v<R>
-            cached_result(Fn f, Args... args)
+            explicit(sizeof...(Args) == 0) cached_result(Fn f, Args... args)
             {
                 f(args...);
             }
