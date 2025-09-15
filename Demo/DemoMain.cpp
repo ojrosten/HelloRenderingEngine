@@ -49,25 +49,12 @@ namespace {
         return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
 
-    [[nodiscard]]
-    std::string to_message(const agl::debug_info& info) {
-        return
-            std::format(
-                "Id: {}; Source: {}; Type: {}; Severity: {}\n{}",
-                info.id,
-                to_string(agl::debug_source{info.source}),
-                to_string(agl::debug_type{info.type}),
-                to_string(agl::debug_severity{info.severity}),
-                info.message
-            );
-    }
-
     struct nvidia_debug_info_processor {
         [[nodiscard]]
         std::string operator()(std::string message, const agl::debug_info& info) const {
             const auto separator{message.empty() ? "" : "\n\n"};
             if(info.severity != agl::debug_severity::notification) {
-                (message += separator) += to_message(info);
+                (message += separator) += agl::to_detailed_message(info);
             }
 
             return message;

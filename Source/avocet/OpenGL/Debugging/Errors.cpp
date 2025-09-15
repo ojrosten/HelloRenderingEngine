@@ -182,7 +182,8 @@ namespace avocet::opengl {
     std::string to_detailed_message(const debug_info& info) {
         return 
             std::format(
-                "Source: {}; Type: {}; Severity: {}\n{}",
+                "Id: {}; Source: {}; Type: {}; Severity: {}\n{}",
+                info.id,
                 to_string(debug_source{info.source}),
                 to_string(debug_type{info.type}),
                 to_string(debug_severity{info.severity}),
