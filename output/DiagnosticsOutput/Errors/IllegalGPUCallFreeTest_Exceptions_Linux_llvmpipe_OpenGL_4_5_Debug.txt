@@ -4,7 +4,7 @@ Illegal call to glBindBuffer
 Expected Exception Type:
 [std::runtime_error]
 OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 42:
-Source: API; Type: Error; Severity: High
+Id: 1; Source: API; Type: Error; Severity: High
 GL_INVALID_ENUM in glBindBufferARB(target 0x2a)
 
 =======================================
