@@ -61,14 +61,13 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         validated_fn_ptr get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
-            const auto& f{ctx.glad_context().*m_PtrToMem};
-            std::string_view name{get_name(ctx, f)};
-            return f ? validated_fn_ptr{f, name} : throw std::runtime_error{std::format("gl_function: attempting to invoke a null function pointer {} coming via {}", name, to_string(loc))};
+            validated_fn_ptr validated{ctx.glad_context().*m_PtrToMem, get_name(ctx)};
+            return validated.f ? validated : throw std::runtime_error{std::format("gl_function: attempting to invoke a null function pointer {} coming via {}", validated.name, to_string(loc))};
         }
 
         [[nodiscard]]
-        std::string_view get_name(const decorated_context& ctx, const function_pointer_type<R, Args...>& fptr) const {
-            const auto offset{std::bit_cast<uintptr_t>(&fptr) - std::bit_cast<uintptr_t>(&ctx.glad_context())};
+        std::string_view get_name(const decorated_context& ctx) const {
+            const auto offset{std::bit_cast<uintptr_t>(&(ctx.glad_context().*m_PtrToMem)) - std::bit_cast<uintptr_t>(&ctx.glad_context())};
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
             static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
             if(index >= glad_ctx_member_info.size())
