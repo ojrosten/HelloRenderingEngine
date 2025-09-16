@@ -36,11 +36,11 @@ namespace avocet::opengl {
     };
 
     struct member_info {
-        std::size_t offset{};
         std::string_view name{};
+        std::size_t offset{};
     };
 
-#define MAKE_GLAD_CTX_MEMBER_INFO(name) member_info{offsetof(GladGLContext, name), #name}
+#define MAKE_GLAD_CTX_MEMBER_INFO(name) member_info{#name, offsetof(GladGLContext, name)}
 
     inline constexpr std::array<member_info, 657> glad_ctx_member_info{
         MAKE_GLAD_CTX_MEMBER_INFO(ActiveShaderProgram),
