@@ -40,8 +40,8 @@ namespace avocet::opengl {
         template<std::invocable<GladGLContext&> Loader, class Prologue = std::function<void()>, class Epilogue = std::function<void()>>
             requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
         explicit decorated_context(Loader loader, Prologue prologue = {}, Epilogue epilogue = {})
-            : m_gl_function_prologue{std::move(prologue)}
-            , m_gl_function_epilogue{std::move(epilogue)}
+            : m_Prologue{std::move(prologue)}
+            , m_Epilogue{std::move(epilogue)}
         {
             loader(m_Context);
         }
@@ -49,13 +49,11 @@ namespace avocet::opengl {
         template<class Fn, class... Args>
         std::invoke_result_t<Fn, Args...> invoke_decorated(const invocation_info& info, Fn f, Args... args) const {
             using R = std::invoke_result_t<Fn, Args...>;
-            if(m_gl_function_prologue)
-                m_gl_function_prologue(*this, info);
+            if(m_Prologue) m_Prologue(*this, info);
 
             const cached_result<R> res{f, args...};
 
-            if(m_gl_function_epilogue)
-                m_gl_function_epilogue(*this, info);
+            if(m_Epilogue) m_Epilogue(*this, info);
 
             return res.get();
         }
@@ -64,8 +62,8 @@ namespace avocet::opengl {
         const GladGLContext& glad_context() const noexcept { return m_Context; }
     private:
         GladGLContext m_Context{};
-        prologue_function_type m_gl_function_prologue{};
-        epilogue_function_type m_gl_function_epilogue{};
+        prologue_function_type m_Prologue{};
+        epilogue_function_type m_Epilogue{};
 
         template<class R>
         class cached_result {
@@ -94,11 +92,11 @@ namespace avocet::opengl {
     };
 
     struct member_info {
-        std::size_t offset{};
         std::string_view name{};
+        std::size_t offset{};
     };
 
-#define MAKE_GLAD_CTX_MEMBER_INFO(name) member_info{offsetof(GladGLContext, name), #name}
+#define MAKE_GLAD_CTX_MEMBER_INFO(name) member_info{#name, offsetof(GladGLContext, name)}
 
     inline constexpr std::array<member_info, 657> glad_ctx_member_info{
         MAKE_GLAD_CTX_MEMBER_INFO(ActiveShaderProgram),
