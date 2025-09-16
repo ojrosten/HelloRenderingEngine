@@ -47,20 +47,21 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            return ctx.invoke_decorated({Mode, get_name(ctx.glad_context()), loc}, get_validated_fn_ptr(ctx, loc), args...);
+            const auto& fptr{get_validated_fn_ptr(ctx, loc)};
+            return ctx.invoke_decorated({Mode, get_name(ctx.glad_context(), fptr), loc}, fptr, args...);
         }
     private:
         pointer_to_member_type m_PtrToMem;
 
         [[nodiscard]]
-        function_pointer_type<R, Args...> get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
-            auto f{ctx.glad_context().*m_PtrToMem};
+        const function_pointer_type<R, Args...>& get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
+            const auto& f{ctx.glad_context().*m_PtrToMem};
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
         }
 
         [[nodiscard]]
-        std::string_view get_name(const GladGLContext& ctx) const {
-            const auto offset{std::bit_cast<uintptr_t>(&(ctx.*m_PtrToMem)) - std::bit_cast<uintptr_t>(&ctx)};
+        std::string_view get_name(const GladGLContext& ctx, const function_pointer_type<R, Args...>& fptr) const {
+            const auto offset{std::bit_cast<uintptr_t>(&fptr) - std::bit_cast<uintptr_t>(&ctx)};
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
             static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
             assert(index < glad_ctx_member_info.size());
