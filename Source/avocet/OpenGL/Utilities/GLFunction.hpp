@@ -50,6 +50,7 @@ namespace avocet::opengl {
             const auto& fptr{get_validated_fn_ptr(ctx, loc)};
             return ctx.invoke_decorated({Mode, get_name(ctx.glad_context(), fptr), loc}, fptr, args...);
         }
+
     private:
         pointer_to_member_type m_PtrToMem;
 
@@ -64,7 +65,8 @@ namespace avocet::opengl {
             const auto offset{std::bit_cast<uintptr_t>(&fptr) - std::bit_cast<uintptr_t>(&ctx)};
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
             static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
-            assert(index < glad_ctx_member_info.size());
+            if(index >= glad_ctx_member_info.size())
+                throw std::runtime_error{std::format("gl_function::get_name - index {} out of bounds", index)};
 
             return glad_ctx_member_info[index].name;
         }
