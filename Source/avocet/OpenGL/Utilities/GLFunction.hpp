@@ -66,7 +66,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         function_pointer_type<R, Args...> get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
             auto f{ctx.glad_context().*m_PtrToMem};
-            return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a nullptr coming via {}", to_string(loc))};
+            return f ? f : throw std::runtime_error{std::format("gl_function: attempting to construct with a null function pointer coming via {}", to_string(loc))};
         }
 
         static void check_for_errors(const decorated_context& ctx, std::source_location loc) {
