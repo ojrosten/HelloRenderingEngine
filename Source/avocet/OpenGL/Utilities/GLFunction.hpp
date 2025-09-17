@@ -86,7 +86,7 @@ namespace avocet::opengl {
                   glad_ctx_member_info.back().offset
                 - glad_ctx_member_info.front().offset
             };
-            static_assert(total / sizeof(void*) == (glad_ctx_member_info.size() - 1));
+            static_assert(totalStride / sizeof(void*) == (glad_ctx_member_info.size() - 1));
 
             if(index >= glad_ctx_member_info.size())
                 throw std::runtime_error{std::format("Index {} out of bounds", index)};
