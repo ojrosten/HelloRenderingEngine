@@ -76,18 +76,20 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         std::string_view get_name(const decorated_context& ctx) const {
-
-            const auto& gladContext{ctx.glad_context()};
-
             const auto offset{
-                  std::bit_cast<uintptr_t>(&(gladContext.*m_PtrToMem))
-                - std::bit_cast<uintptr_t>(&gladContext)
+                  std::bit_cast<uintptr_t>(&(ctx.glad_context().*m_PtrToMem))
+                - std::bit_cast<uintptr_t>(&ctx.glad_context())
             };
-
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
-            static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(void*) == (glad_ctx_member_info.size() - 1));
+
+            constexpr auto totalStride{
+                  glad_ctx_member_info.back().offset
+                - glad_ctx_member_info.front().offset
+            };
+            static_assert(total / sizeof(void*) == (glad_ctx_member_info.size() - 1));
+
             if(index >= glad_ctx_member_info.size())
-                throw std::runtime_error{std::format("gl_function::get_name - index {} out of bounds", index)};
+                throw std::runtime_error{std::format("Index {} out of bounds", index)};
 
             return glad_ctx_member_info[index].name;
         }

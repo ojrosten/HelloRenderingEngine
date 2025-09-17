@@ -145,7 +145,17 @@ namespace avocet::opengl {
                 gl_function{&GladGLContext::VertexAttribLPointer}(ctx, info.index, components, typeSpecifier, stride, std::bit_cast<GLvoid*>(info.offset));
             }
             else {
-                gl_function{&GladGLContext::VertexAttribPointer}(ctx, info.index, components, typeSpecifier, GL_FALSE, stride, std::bit_cast<GLvoid*>(info.offset));
+
+                gl_function{&GladGLContext::VertexAttribPointer}(
+                    ctx,
+                    info.index,
+                    components,
+                    typeSpecifier,
+                    GL_FALSE,
+                    stride,
+                    (GLvoid*) info.offset
+                );
+
             }
             gl_function{&GladGLContext::EnableVertexAttribArray}(ctx, info.index);
 
