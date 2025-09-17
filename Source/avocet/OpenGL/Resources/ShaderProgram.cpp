@@ -88,7 +88,7 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             contextual_resource_handle create(const decorated_context& ctx) {
-                return contextual_resource_handle{ctx, resource_handle{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}};
+                return contextual_resource_handle{ctx, resource_handle{gl_function{GLAD_PTR_TO_MEM(CreateShader)}(ctx, to_gl_enum(m_Species))}};
             }
 
             static void destroy(const contextual_resource_handle& handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }

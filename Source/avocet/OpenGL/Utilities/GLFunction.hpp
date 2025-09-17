@@ -18,6 +18,8 @@
 
 namespace avocet::opengl {
 
+    #define GLAD_PTR_TO_MEM(name) &GladGLContext::name, #name
+
     template<class, debugging_mode Mode=inferred_debugging_mode()> class gl_function;
 
     template<class R, class... Args>
@@ -33,6 +35,12 @@ namespace avocet::opengl {
 
         gl_function(pointer_to_member_type ptrToMem)
             : m_PtrToMem{ptrToMem}
+        {
+        }
+
+        gl_function(pointer_to_member_type ptrToMem, std::string_view name)
+            : m_PtrToMem{ptrToMem}
+            , m_Name{name}
         {}
 
         gl_function(debugging_mode_off_type, pointer_to_member_type ptrToMem)
@@ -53,6 +61,7 @@ namespace avocet::opengl {
 
     private:
         pointer_to_member_type m_PtrToMem;
+        std::string_view m_Name;
 
         struct validated_fn_ptr {
             function_pointer_type<R, Args...> f;
@@ -67,7 +76,14 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         std::string_view get_name(const decorated_context& ctx) const {
-            const auto offset{std::bit_cast<uintptr_t>(&(ctx.glad_context().*m_PtrToMem)) - std::bit_cast<uintptr_t>(&ctx.glad_context())};
+
+            const auto& gladContext{ctx.glad_context()};
+
+            const auto offset{
+                  std::bit_cast<uintptr_t>(&(gladContext.*m_PtrToMem))
+                - std::bit_cast<uintptr_t>(&gladContext)
+            };
+
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
             static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
             if(index >= glad_ctx_member_info.size())
@@ -79,6 +95,9 @@ namespace avocet::opengl {
 
     template<class R, class... Args>
     gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
+
+    template<class R, class... Args>
+    gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>, std::string_view) -> gl_function<R(Args...)>;
 
     template<class R, class...Args>
     gl_function(debugging_mode_off_type, glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
