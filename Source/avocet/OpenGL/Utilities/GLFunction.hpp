@@ -46,7 +46,7 @@ namespace avocet::opengl {
         gl_function(debugging_mode_off_type, pointer_to_member_type ptrToMem)
             : gl_function{ptrToMem}
         {
-            static_assert(Mode == debugging_mode::none);
+            static_assert(Mode == debugging_mode::off);
         }
 
         gl_function(nullptr_t) = delete;
@@ -102,5 +102,5 @@ namespace avocet::opengl {
     gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>, std::string_view) -> gl_function<R(Args...)>;
 
     template<class R, class...Args>
-    gl_function(debugging_mode_off_type, glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(debugging_mode_off_type, glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::off>;
 }

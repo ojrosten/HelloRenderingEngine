@@ -26,7 +26,7 @@ namespace curlew {
 
         void set_debug_context(const avocet::opengl::opengl_version& version) {
             const auto mode{agl::inferred_debugging_mode()};
-	          if constexpr(mode != agl::debugging_mode::none) {
+	          if constexpr(mode != agl::debugging_mode::off) {
                 if(agl::debug_output_supported(version))
                     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 	          }
