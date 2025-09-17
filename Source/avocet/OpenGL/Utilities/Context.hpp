@@ -40,6 +40,7 @@ namespace avocet::opengl {
         template<std::invocable<GladGLContext&> Loader, class Prologue, class Epilogue>
             requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
         decorated_context(Loader loader, Prologue prologue, Epilogue epilogue)
+
             : m_Prologue{std::move(prologue)}
             , m_Epilogue{std::move(epilogue)}
         {
@@ -47,19 +48,31 @@ namespace avocet::opengl {
         }
 
         template<class Fn, class... Args>
+            requires (!std::is_void_v<std::invoke_result_t<Fn, Args...>>)
         std::invoke_result_t<Fn, Args...> invoke_decorated(const invocation_info& info, Fn f, Args... args) const {
-            using R = std::invoke_result_t<Fn, Args...>;
             if(m_Prologue) m_Prologue(*this, info);
 
-            const cached_result<R> res{f, args...};
+           const auto res{f(args...)};
 
             if(m_Epilogue) m_Epilogue(*this, info);
 
-            return res.get();
+            return res;
+        }
+
+        template<class Fn, class... Args>
+            requires std::is_void_v<std::invoke_result_t<Fn, Args...>>
+        void invoke_decorated(const invocation_info& info, Fn f, Args... args) const {
+            if(m_Prologue) m_Prologue(*this, info);
+
+            f(args...);
+
+            if(m_Epilogue) m_Epilogue(*this, info);
         }
 
         [[nodiscard]]
         const GladGLContext& glad_context() const noexcept { return m_Context; }
+
+
     private:
         GladGLContext m_Context{};
         prologue_function_type m_Prologue{};
