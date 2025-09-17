@@ -85,7 +85,7 @@ namespace avocet::opengl {
             };
 
             const auto index{(offset - glad_ctx_member_info[0].offset) / sizeof(void*)};
-            static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(int*) == (glad_ctx_member_info.size() - 1));
+            static_assert((glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset) / sizeof(void*) == (glad_ctx_member_info.size() - 1));
             if(index >= glad_ctx_member_info.size())
                 throw std::runtime_error{std::format("gl_function::get_name - index {} out of bounds", index)};
 
