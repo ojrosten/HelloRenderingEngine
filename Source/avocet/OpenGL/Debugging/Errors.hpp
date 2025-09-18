@@ -128,18 +128,18 @@ namespace avocet::opengl {
 
     std::string compose_error_message(std::string_view errorMessage, std::string_view fnName, std::source_location loc);
 
-    template<class Fn = default_error_code_processor>
+    template<class Fn>
         requires std::is_invocable_r_v<std::string, Fn, std::string, error_code>
-    void check_for_basic_errors(const decorated_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc, Fn errorProcessor = {}) {
+    void check_for_basic_errors(const decorated_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc, Fn errorProcessor) {
         const std::string errorMessage{std::ranges::fold_left(get_errors(ctx, maxNum), std::string{}, errorProcessor)};
 
         if(!errorMessage.empty())
             throw std::runtime_error{compose_error_message(errorMessage, fnName, loc)};
     }
 
-    template<class Fn = default_debug_info_processor>
+    template<class Fn>
         requires std::is_invocable_r_v<std::string, Fn, std::string, debug_info>
-    void check_for_advanced_errors(const decorated_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc, Fn errorProcessor = {}) {
+    void check_for_advanced_errors(const decorated_context& ctx, num_messages maxNum, std::string_view fnName, std::source_location loc, Fn errorProcessor) {
         const std::string errorMessage{std::ranges::fold_left(get_messages(ctx, maxNum), std::string{}, errorProcessor)};
 
         if(!errorMessage.empty())
@@ -159,20 +159,20 @@ namespace avocet::opengl {
     [[nodiscard]]
     inline bool object_labels_activated(const decorated_context& ctx) { return debug_output_supported(ctx); }
 
-    template<class Fn = default_debug_info_processor>
-        requires std::is_invocable_r_v<std::string, Fn, std::string, debug_info>
-    void check_for_errors(const decorated_context& ctx, num_messages maxReported, const decorated_context::invocation_info& info, Fn errorProcessor = {}) {
+    template<class BasicErrorProcessor, class AdvancedErrorProcessor>
+        requires std::is_invocable_r_v<std::string, BasicErrorProcessor, std::string, error_code> && std::is_invocable_r_v<std::string, AdvancedErrorProcessor, std::string, debug_info>
+    void check_for_errors(const decorated_context& ctx, num_messages maxReported, const decorated_context::invocation_info& info, BasicErrorProcessor basicErrorProcessor, AdvancedErrorProcessor advancedErrorProcessor) {
         if(info.mode != debugging_mode::off) {
             if(debug_output_supported(ctx))
-                check_for_advanced_errors(ctx, maxReported, info.name, info.loc, errorProcessor);
+                check_for_advanced_errors(ctx, maxReported, info.name, info.loc, advancedErrorProcessor);
             else
-                check_for_basic_errors(ctx, maxReported, info.name, info.loc);
+                check_for_basic_errors(ctx, maxReported, info.name, info.loc, basicErrorProcessor);
         }
     }
 
     struct error_checking_epilogue {
         void operator()(const decorated_context& ctx, const decorated_context::invocation_info& info) const {
-            check_for_errors(ctx, num_messages{10}, info, default_debug_info_processor{});
+            check_for_errors(ctx, num_messages{10}, info, default_error_code_processor{}, default_debug_info_processor{});
         }
     };
 

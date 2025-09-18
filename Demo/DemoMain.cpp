@@ -63,7 +63,7 @@ namespace {
 
     struct nvidia_gl_function_epilogue {
         void operator()(const agl::decorated_context& ctx, const agl::decorated_context::invocation_info& info) const {
-            agl::check_for_errors(ctx, avocet::opengl::num_messages{10}, info, nvidia_debug_info_processor{});
+            agl::check_for_errors(ctx, avocet::opengl::num_messages{10}, info, agl::default_error_code_processor{}, nvidia_debug_info_processor{});
         }
     };
 }
