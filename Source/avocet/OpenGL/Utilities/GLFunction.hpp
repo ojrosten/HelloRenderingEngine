@@ -40,7 +40,7 @@ namespace avocet::opengl {
         gl_function(unchecked_debug_output_t, pointer_to_member_type ptrToMem)
             : gl_function{ptrToMem}
         {
-            static_assert(Mode == debugging_mode::none);
+            static_assert(Mode == debugging_mode::off);
         }
 
         gl_function(nullptr_t) = delete;
@@ -70,7 +70,7 @@ namespace avocet::opengl {
         }
 
         static void check_for_errors(const decorated_context& ctx, std::source_location loc) {
-            if constexpr(Mode != debugging_mode::none) {
+            if constexpr(Mode != debugging_mode::off) {
                 if(debug_output_supported(ctx))
                     check_for_advanced_errors(ctx, max_reported_messages, loc);
                 else
@@ -83,5 +83,5 @@ namespace avocet::opengl {
     gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
 
     template<class R, class...Args>
-    gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::none>;
+    gl_function(unchecked_debug_output_t, glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::off>;
 }
