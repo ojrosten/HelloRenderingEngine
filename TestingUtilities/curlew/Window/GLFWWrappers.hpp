@@ -25,8 +25,9 @@ namespace curlew {
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
+        avocet::opengl::debugging_mode debug_mode{avocet::opengl::debugging_mode::dynamic};
         context_type::prologue_function_type gl_function_prologue{context_type::null_prologue};
-        context_type::epilogue_function_type gl_function_epilogue{avocet::opengl::error_checking_epilogue{}};
+        context_type::epilogue_function_type gl_function_epilogue{avocet::opengl::default_error_checking_epilogue{}};
     };
 
     class glfw_manager;

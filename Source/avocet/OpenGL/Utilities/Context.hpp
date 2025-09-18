@@ -39,9 +39,9 @@ namespace avocet::opengl {
 
         template<std::invocable<GladGLContext&> Loader, class Prologue, class Epilogue>
             requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
-        decorated_context(Loader loader, Prologue prologue, Epilogue epilogue)
-
-            : m_Prologue{std::move(prologue)}
+        decorated_context(Loader loader, debugging_mode mode, Prologue prologue, Epilogue epilogue)
+            : m_Mode{mode}
+            , m_Prologue{std::move(prologue)}
             , m_Epilogue{std::move(epilogue)}
         {
             loader(m_Context);
@@ -70,11 +70,15 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
+        debugging_mode debug_mode() const noexcept { return m_Mode; }
+
+        [[nodiscard]]
         const GladGLContext& glad_context() const noexcept { return m_Context; }
 
 
     private:
         GladGLContext m_Context{};
+        debugging_mode m_Mode{};
         prologue_function_type m_Prologue{};
         epilogue_function_type m_Epilogue{};
 

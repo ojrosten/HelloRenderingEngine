@@ -170,7 +170,7 @@ namespace avocet::opengl {
         }
     }
 
-    struct error_checking_epilogue {
+    struct default_error_checking_epilogue {
         void operator()(const decorated_context& ctx, const decorated_context::invocation_info& info) const {
             check_for_errors(ctx, num_messages{10}, info, default_error_code_processor{}, default_debug_info_processor{});
         }

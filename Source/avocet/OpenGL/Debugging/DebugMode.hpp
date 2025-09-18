@@ -14,14 +14,6 @@
 namespace avocet::opengl {
     enum class debugging_mode { off = 0, dynamic };
 
-    [[nodiscard]]
-    constexpr debugging_mode inferred_debugging_mode() noexcept {
-        if constexpr(has_ndebug())
-            return debugging_mode::off;
-        else
-            return debugging_mode::dynamic;
-    }
-
     template<debugging_mode Mode>
     struct debugging_mode_constant : std::integral_constant<debugging_mode, Mode> {};
 

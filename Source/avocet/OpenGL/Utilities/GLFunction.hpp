@@ -20,7 +20,7 @@ namespace avocet::opengl {
 
     #define GLAD_PTR_TO_MEM(name) &GladGLContext::name, #name
 
-    template<class, debugging_mode Mode=inferred_debugging_mode()> class gl_function;
+    template<class> class gl_function;
 
     template<class R, class... Args>
     using function_pointer_type = R(*)(Args...);
@@ -28,8 +28,8 @@ namespace avocet::opengl {
     template<class R, class... Args>
     using glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
-    template<class R, class... Args, debugging_mode Mode>
-    class [[nodiscard]] gl_function<R(Args...), Mode> {
+    template<class R, class... Args>
+    class [[nodiscard]] gl_function<R(Args...)> {
     public:
         using pointer_to_member_type = glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>;
 
@@ -38,30 +38,29 @@ namespace avocet::opengl {
         {
         }
 
+        // For slideware only
         gl_function(pointer_to_member_type ptrToMem, std::string_view name)
             : m_PtrToMem{ptrToMem}
             , m_Name{name}
         {}
 
-        gl_function(debugging_mode_off_type, pointer_to_member_type ptrToMem)
-            : gl_function{ptrToMem}
-        {
-            static_assert(Mode == debugging_mode::off);
-        }
-
         gl_function(nullptr_t) = delete;
-
-        gl_function(debugging_mode_off_type, nullptr_t) = delete;
 
         [[nodiscard]]
         R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto [fptr, name]{get_validated_fn_ptr(ctx, loc)};
-            return ctx.invoke_decorated({Mode, name, loc}, fptr, args...);
+            return ctx.invoke_decorated({ctx.debug_mode(), name, loc}, fptr, args...);
+        }
+
+        [[nodiscard]]
+        R operator()(const decorated_context& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) const {
+            const auto [fptr, name] {get_validated_fn_ptr(ctx, loc)};
+            return ctx.invoke_decorated({debugging_mode::off, name, loc}, fptr, args...);
         }
 
     private:
         pointer_to_member_type m_PtrToMem;
-        std::string_view m_Name;
+        std::string_view m_Name; // For slideware only
 
         struct validated_fn_ptr {
             function_pointer_type<R, Args...> f;
@@ -99,8 +98,5 @@ namespace avocet::opengl {
     gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
 
     template<class R, class... Args>
-    gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>, std::string_view) -> gl_function<R(Args...)>;
-
-    template<class R, class...Args>
-    gl_function(debugging_mode_off_type, glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...), debugging_mode::off>;
+    gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>, std::string_view) -> gl_function<R(Args...)>; // For slideware only
 }
