@@ -20,19 +20,13 @@ struct GLFWwindow;
 namespace curlew {
     enum class window_hiding_mode : bool { off, on };
 
-    struct default_gl_function_epilogue {
-        void operator()(const avocet::opengl::decorated_context& ctx, const avocet::opengl::decorated_context::invocation_info& info) const {
-            avocet::opengl::check_for_errors(ctx, avocet::opengl::num_messages{10}, info, avocet::opengl::default_debug_info_processor{});
-        }
-    };
-
     struct window_config {
         using context_type = avocet::opengl::decorated_context;
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
         context_type::prologue_function_type gl_function_prologue{context_type::null_prologue};
-        context_type::epilogue_function_type gl_function_epilogue{default_gl_function_epilogue{}};
+        context_type::epilogue_function_type gl_function_epilogue{avocet::opengl::error_checking_epilogue{}};
     };
 
     class glfw_manager;

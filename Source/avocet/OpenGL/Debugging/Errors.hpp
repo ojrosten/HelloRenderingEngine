@@ -169,4 +169,11 @@ namespace avocet::opengl {
                 check_for_basic_errors(ctx, maxReported, info.name, info.loc);
         }
     }
+
+    struct error_checking_epilogue {
+        void operator()(const decorated_context& ctx, const decorated_context::invocation_info& info) const {
+            check_for_errors(ctx, num_messages{10}, info, default_debug_info_processor{});
+        }
+    };
+
 }
