@@ -189,7 +189,7 @@ namespace avocet::opengl {
     }
 
     struct default_error_checker {
-        void operator()(const decorated_context& ctx, const decorator_data& data) {
+        void operator()(const decorated_context& ctx, const decorator_data& data) const {
             check_for_errors(ctx, data, num_messages{10}, default_error_code_processor{}, default_debug_info_processor{});
         }
     };
