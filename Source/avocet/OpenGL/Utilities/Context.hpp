@@ -18,21 +18,64 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    struct decorator_data {
+        debugging_mode debug_mode;
+        std::string_view name;
+        std::source_location loc;
+    };
+
     class decorated_context {
     public:
 
+        using decorator_type = std::function<void(const decorated_context&, const decorator_data&)>;
+
+        template<class Fn>
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const decorated_context&, const decorator_data&>};
+
         decorated_context() = default;
 
-        template<std::invocable<GladGLContext&> Loader>
-        explicit decorated_context(Loader loader)
+        template<std::invocable<GladGLContext&> Loader, class Prologue, class Epilogue>
+            requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
+        decorated_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
+            : m_DebugMode{mode}
+            , m_Prologue{std::move(prologue)}
+            , m_Epilogue{std::move(epilogue)}
         {
             loader(m_Context);
         }
 
+        template<class Fn, class... Args>
+            requires (!std::is_void_v<std::invoke_result_t<Fn, Args...>>)
+        std::invoke_result_t<Fn, Args...> invoke_decorated(const decorator_data& info, Fn f, Args... args) const {
+            if(m_Prologue) m_Prologue(*this, info);
+
+            const auto res{f(args...)};
+
+            if(m_Epilogue) m_Epilogue(*this, info);
+
+            return res;
+        }
+
+        template<class Fn, class... Args>
+            requires (std::is_void_v<std::invoke_result_t<Fn, Args...>>)
+        void invoke_decorated(const decorator_data& info, Fn f, Args... args) const {
+            if(m_Prologue) m_Prologue(*this, info);
+
+            f(args...);
+
+            if(m_Epilogue) m_Epilogue(*this, info);
+        }
+
+        [[nodiscard]]
+        debugging_mode debug_mode() const noexcept { return m_DebugMode; }
+
         [[nodiscard]]
         const GladGLContext& glad_context() const noexcept { return m_Context; }
     private:
+        debugging_mode m_DebugMode{};
         GladGLContext m_Context{};
+        decorator_type m_Prologue{},
+                       m_Epilogue{};
     };
 
     struct member_info {
