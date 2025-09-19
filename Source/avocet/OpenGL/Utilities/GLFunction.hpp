@@ -35,15 +35,20 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            return ctx.invoke_decorated({.debug_mode{ctx.debug_mode()}, .name{get_name(ctx)}, .loc{loc}}, get_validated_fn_ptr(ctx, loc), args...);
+            return invoke(ctx, ctx.debug_mode(), args..., loc);
         }
 
         [[nodiscard]]
         R operator()(const decorated_context& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) const {
-            return ctx.invoke_decorated({.debug_mode{debugging_mode::off}, .name{get_name(ctx)}, .loc{loc}}, get_validated_fn_ptr(ctx, loc), args...);
+            return invoke(ctx, debugging_mode::off, args..., loc);
         }
     private:
         pointer_to_member_type m_PtrToMem;
+
+        [[nodiscard]]
+        R invoke(const decorated_context& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) const {
+            return ctx.invoke_decorated({.debug_mode{mode}, .name{get_name(ctx)}, .loc{loc}}, get_validated_fn_ptr(ctx, loc), args...);
+        }
 
         [[nodiscard]]
         function_pointer_type<R, Args...> get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
