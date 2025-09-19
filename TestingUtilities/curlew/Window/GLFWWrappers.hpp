@@ -29,7 +29,7 @@ namespace curlew {
         window_hiding_mode hiding{window_hiding_mode::off};
         debugging_mode debug_mode{debugging_mode::dynamic};
         decorator_type prologue{};
-        decorator_type epilogue{avocet::opengl::default_error_checker{}};
+        decorator_type epilogue{avocet::opengl::default_error_checker{avocet::opengl::num_messages{10}}};
     };
 
     class glfw_manager;

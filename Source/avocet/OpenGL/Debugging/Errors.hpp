@@ -188,9 +188,15 @@ namespace avocet::opengl {
         }
     }
 
-    struct default_error_checker {
+    class default_error_checker {
+        num_messages m_MaxReportedErrors;
+    public:
+        explicit default_error_checker(num_messages maxNumMessages)
+            : m_MaxReportedErrors{maxNumMessages}
+        {}
+
         void operator()(const decorated_context& ctx, const decorator_data& data) const {
-            check_for_errors(ctx, data, num_messages{10}, default_error_code_processor{}, default_debug_info_processor{});
+            check_for_errors(ctx, data, m_MaxReportedErrors, default_error_code_processor{}, default_debug_info_processor{});
         }
     };
 }
