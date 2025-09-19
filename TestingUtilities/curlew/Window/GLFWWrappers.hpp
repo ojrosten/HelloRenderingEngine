@@ -22,11 +22,12 @@ namespace curlew {
 
     struct window_config {
         using decorator_type = avocet::opengl::decorated_context::decorator_type;
+        using debugging_mode = avocet::opengl::debugging_mode;
 
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
-        avocet::opengl::debugging_mode debug_mode{avocet::opengl::debugging_mode::dynamic};
+        debugging_mode debug_mode{debugging_mode::dynamic};
         decorator_type prologue{};
         decorator_type epilogue{avocet::opengl::default_error_checker{}};
     };
