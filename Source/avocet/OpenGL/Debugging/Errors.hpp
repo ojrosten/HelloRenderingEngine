@@ -126,26 +126,31 @@ namespace avocet::opengl {
     std::vector<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum);
 #endif
 
-    [[nodiscard]]
-    std::string compose_error_message(std::string_view errorMessage, std::source_location loc);
+    struct error_message_info {
+        std::string_view fn_name;
+        std::source_location loc;
+    };
 
-    inline void check_for_basic_errors(const decorated_context& ctx, num_messages maxNum, std::source_location loc)
+    [[nodiscard]]
+    std::string compose_error_message(std::string_view errorMessage, const error_message_info& info);
+
+    inline void check_for_basic_errors(const decorated_context& ctx, const error_message_info& info, num_messages maxNum)
     {
         const std::string errorMessage{
-            std::ranges::fold_left(get_errors(ctx, maxNum), std::string{},  default_error_code_processor{})
+            std::ranges::fold_left(get_errors(ctx, maxNum), std::string{}, default_error_code_processor{})
         };
 
         if(!errorMessage.empty())
-            throw std::runtime_error{compose_error_message(errorMessage, loc)};
+            throw std::runtime_error{compose_error_message(errorMessage, info)};
     }
 
-    inline void check_for_advanced_errors(const decorated_context& ctx, num_messages maxNum, std::source_location loc) {
+    inline void check_for_advanced_errors(const decorated_context& ctx, const error_message_info& info, num_messages maxNum) {
         const std::string errorMessage{
             std::ranges::fold_left(get_messages(ctx, maxNum),  std::string{}, default_debug_info_processor{})
         };
 
         if(!errorMessage.empty())
-            throw std::runtime_error{compose_error_message(errorMessage, loc)};
+            throw std::runtime_error{compose_error_message(errorMessage, info)};
     }
 
     [[nodiscard]]

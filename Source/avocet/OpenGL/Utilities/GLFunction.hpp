@@ -51,7 +51,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto ret{get_validated_fn_ptr(ctx, loc)(args...)};
-            check_for_errors(ctx, loc);
+            check_for_errors(ctx, {.fn_name{}, .loc{loc}});
             return ret;
         }
 
@@ -59,7 +59,7 @@ namespace avocet::opengl {
             requires std::is_void_v<R>
         {
             get_validated_fn_ptr(ctx, loc)(args...);
-            check_for_errors(ctx, loc);
+            check_for_errors(ctx, {.fn_name{}, .loc{loc}});
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -70,12 +70,12 @@ namespace avocet::opengl {
             return f ? f : throw std::runtime_error{std::format("gl_function: attempting to invoke a null function pointer coming via {}", to_string(loc))};
         }
 
-        static void check_for_errors(const decorated_context& ctx, std::source_location loc) {
+        static void check_for_errors(const decorated_context& ctx, const error_message_info& info) {
             if constexpr(Mode != debugging_mode::off) {
                 if(debug_output_supported(ctx))
-                    check_for_advanced_errors(ctx, max_reported_messages, loc);
+                    check_for_advanced_errors(ctx, info, max_reported_messages);
                 else
-                    check_for_basic_errors(ctx, max_reported_messages, loc);
+                    check_for_basic_errors(ctx, info, max_reported_messages);
             }
         }
     };

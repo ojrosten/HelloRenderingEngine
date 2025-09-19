@@ -187,8 +187,8 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    std::string compose_error_message(std::string_view errorMessage, std::source_location loc) {
-        return std::format("OpenGL error detected in {}:\n{}\n", avocet::opengl::to_string(loc), errorMessage);
+    std::string compose_error_message(std::string_view errorMessage, const error_message_info& info) {
+        return std::format("OpenGL error detected in {}:\n{}\n", avocet::opengl::to_string(info.loc), errorMessage);
     }
 
 

@@ -35,7 +35,7 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Check for basic errors with no context",
             [](){
-                agl::check_for_basic_errors(agl::decorated_context{}, agl::num_messages{10}, std::source_location::current());
+                agl::check_for_basic_errors(agl::decorated_context{}, {.fn_name{}, .loc{std::source_location::current()}}, agl::num_messages{10});
             }
         );
     }
