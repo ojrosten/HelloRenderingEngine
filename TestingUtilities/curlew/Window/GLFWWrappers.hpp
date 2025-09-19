@@ -10,7 +10,7 @@
 #include "RenderingSetup.hpp"
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
-#include "avocet/OpenGL/Utilities/Context.hpp"
+#include "avocet/OpenGL/Debugging/Errors.hpp"
 
 #include <string>
 

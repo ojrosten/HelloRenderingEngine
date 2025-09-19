@@ -9,6 +9,8 @@
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 
+#include <type_traits>
+
 namespace avocet::opengl {
     enum class debugging_mode { off = 0, dynamic };
 

@@ -9,6 +9,7 @@
 
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 
+#include <bit>
 #include <concepts>
 #include <format>
 #include <stdexcept>
