@@ -47,13 +47,19 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         R invoke(const decorated_context& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) const {
-            return ctx.invoke_decorated({.debug_mode{mode}, .name{get_name(ctx)}, .loc{loc}}, get_validated_fn_ptr(ctx, loc), args...);
+            const auto [fptr, name] {get_validated_fn_ptr(ctx, loc)};
+            return ctx.invoke_decorated({.debug_mode{mode}, .name{name}, .loc{loc}}, fptr, args...);
         }
 
+        struct named_fn_ptr {
+            function_pointer_type<R, Args...> fn;
+            std::string_view name;
+        };
+
         [[nodiscard]]
-        function_pointer_type<R, Args...> get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
-            auto f{ctx.glad_context().*m_PtrToMem};
-            return f ? f : throw std::runtime_error{std::format("gl_function: attempting to invoke a null function pointer coming via {}", to_string(loc))};
+        named_fn_ptr get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
+            named_fn_ptr namedFnPtr{ctx.glad_context().*m_PtrToMem, get_name(ctx)};
+            return namedFnPtr.fn ? namedFnPtr : throw std::runtime_error{std::format("gl_function: attempting to invoke a null function pointer {} coming via {}", namedFnPtr.name, to_string(loc))};
         }
 
         [[nodiscard]]
