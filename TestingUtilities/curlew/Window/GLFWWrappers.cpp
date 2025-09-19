@@ -24,7 +24,7 @@ namespace curlew {
             std::cerr << std::format("Error - {}: {}\n", error, description);
         }
 
-        void set_debug_context(const avocet::opengl::opengl_version& version) {
+        void set_debug_context(const agl::opengl_version& version) {
             const auto mode{agl::inferred_debugging_mode()};
 	          if constexpr(mode != agl::debugging_mode::off) {
                 if(agl::debug_output_supported(version))
@@ -36,7 +36,7 @@ namespace curlew {
         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
         [[nodiscard]]
-        GLFWwindow& make_window(const window_config& config, const avocet::opengl::opengl_version& version) {
+        GLFWwindow& make_window(const window_config& config, const agl::opengl_version& version) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
