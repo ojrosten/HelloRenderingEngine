@@ -21,15 +21,16 @@ namespace curlew {
     enum class window_hiding_mode : bool { off, on };
 
     struct window_config {
-        using decorator_type = avocet::opengl::decorated_context::decorator_type;
-        using debugging_mode = avocet::opengl::debugging_mode;
+        using decorator_type        = avocet::opengl::decorated_context::decorator_type;
+        using debugging_mode        = avocet::opengl::debugging_mode;
+        using default_error_checker = avocet::opengl::default_error_checker;
 
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
         debugging_mode debug_mode{debugging_mode::dynamic};
         decorator_type prologue{};
-        decorator_type epilogue{avocet::opengl::default_error_checker{avocet::opengl::num_messages{10}}};
+        decorator_type epilogue{default_error_checker{avocet::opengl::num_messages{10}}};
     };
 
     class glfw_manager;
