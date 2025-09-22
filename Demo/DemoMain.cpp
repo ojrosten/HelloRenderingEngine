@@ -39,6 +39,12 @@ namespace {
     fs::path get_shader_dir() { return get_dir("Shaders"); }
 
     [[nodiscard]]
+    fs::path get_vertex_shader_dir() { return get_shader_dir() / "Vertex"; }
+
+    [[nodiscard]]
+    fs::path get_fragment_shader_dir() { return get_shader_dir() / "Fragment"; }
+
+    [[nodiscard]]
     fs::path get_image_dir() { return get_dir("Images"); }
 
     [[nodiscard]]
@@ -60,10 +66,10 @@ int main()
         namespace agl = avocet::opengl;
         agl::shader_program
             //shaderProgram                {ctx, get_shader_dir() / "Identity.vs",                get_shader_dir() / "Monochrome.fs"},
-            discShaderProgram            {ctx, get_shader_dir() / "Vertex" / "2D" / "Disc.vs",                  get_shader_dir() / "Fragment" / "2D" / "Disc.fs"},
-            shaderProgram2DTextured      {ctx, get_shader_dir() / "Vertex" / "2D" / "IdentityTextured.vs",      get_shader_dir() / "Fragment" / "General"/ "Textured.fs"},
-            shaderProgram2DTwiceTextured {ctx, get_shader_dir() / "Vertex" / "2D" / "IdentityTwiceTextured.vs", get_shader_dir() / "Fragment" / "General" / "MixedTextures.fs"},
-            shaderProgramDouble          {ctx, get_shader_dir() / "Vertex" / "3D" / "IdentityDouble.vs",        get_shader_dir() / "Fragment" / "General" / "Monochrome.fs"};
+            discShaderProgram            {ctx, get_vertex_shader_dir() / "2D" / "DiscTextured.vs",          get_fragment_shader_dir() / "2D"      / "DiscTextured.fs"},
+            shaderProgram2DTextured      {ctx, get_vertex_shader_dir() / "2D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
+            shaderProgram2DTwiceTextured {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
+            shaderProgramDouble          {ctx, get_vertex_shader_dir() / "3D" / "IdentityDouble.vs",        get_fragment_shader_dir() / "General" / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             ctx,
@@ -80,7 +86,10 @@ int main()
         constexpr GLfloat radius{0.4f};
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
 
-        agl::triangle<GLfloat, agl::dimensionality{2}> disc{
+        avocet::unique_image twilight{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
+        avocet::unique_image fluttershy{get_image_dir() / "Fluttershy.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
+
+        agl::triangle<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> disc{
             ctx,
             [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
@@ -90,15 +99,19 @@ int main()
 
                 return verts;
             },
+            agl::texture_2d_configurator{
+                .data_view{fluttershy},
+                .decoding{agl::sampling_decoding::srgb},
+                .parameter_setter{ [&ctx]() { agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                .label{"Fluttershy"}
+            },
             make_label("Disc")
         };
 
         discShaderProgram.set_uniform("radius", radius);
         discShaderProgram.set_uniform("centre", centre.values());
+        discShaderProgram.set_uniform("image", 5);
 
-
-        avocet::unique_image twilight{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
-        avocet::unique_image fluttershy{get_image_dir() / "Fluttershy.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
         agl::polygon<GLfloat, 7, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>, agl::texture_coordinates<GLfloat >> sept{
             ctx,
@@ -156,7 +169,7 @@ int main()
             shaderProgramDouble.use();
             q.draw();
             discShaderProgram.use();
-            disc.draw();
+            disc.draw(agl::texture_unit{5});
             //shaderProgram.use();
             shaderProgram2DTwiceTextured.use();
             sept.draw({agl::texture_unit{2}, agl::texture_unit{3}});
