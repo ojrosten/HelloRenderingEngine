@@ -164,8 +164,11 @@ namespace avocet::opengl {
         }
     };
 
+    template<std::integral T>
+    inline constexpr std::size_t max_verts_for_ebo_type{std::numeric_limits<T>::max() / 3 + 2};
+
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-        requires (N <= 87) && (is_legal_gl_buffer_value_type_v<Attributes> && ...)
+        requires (N <= max_verts_for_ebo_type<GLubyte>) && (is_legal_gl_buffer_value_type_v<Attributes> && ...)
     class polygon : public polygon_base<T, N, ArenaDimension, Attributes...> {
     public:
         using polygon_base_type = polygon_base<T, N, ArenaDimension, Attributes...>;
