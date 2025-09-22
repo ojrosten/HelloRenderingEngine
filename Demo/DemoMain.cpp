@@ -60,10 +60,10 @@ int main()
         namespace agl = avocet::opengl;
         agl::shader_program
             //shaderProgram                {ctx, get_shader_dir() / "Identity.vs",                get_shader_dir() / "Monochrome.fs"},
-            discShaderProgram            {ctx, get_shader_dir() / "Disc2D.vs",                  get_shader_dir() / "Disc.fs"},
-            shaderProgram2DTextured      {ctx, get_shader_dir() / "IdentityTextured2D.vs",      get_shader_dir() / "Textured.fs"},
-            shaderProgram2DTwiceTextured {ctx, get_shader_dir() / "IdentityTwiceTextured2D.vs", get_shader_dir() / "MixedTextures.fs"},
-            shaderProgramDouble          {ctx, get_shader_dir() / "IdentityDouble.vs",          get_shader_dir() / "Monochrome.fs"};
+            discShaderProgram            {ctx, get_shader_dir() / "Vertex" / "2D" / "Disc.vs",                  get_shader_dir() / "Fragment" / "2D" / "Disc.fs"},
+            shaderProgram2DTextured      {ctx, get_shader_dir() / "Vertex" / "2D" / "IdentityTextured.vs",      get_shader_dir() / "Fragment" / "General"/ "Textured.fs"},
+            shaderProgram2DTwiceTextured {ctx, get_shader_dir() / "Vertex" / "2D" / "IdentityTwiceTextured.vs", get_shader_dir() / "Fragment" / "General" / "MixedTextures.fs"},
+            shaderProgramDouble          {ctx, get_shader_dir() / "Vertex" / "3D" / "IdentityDouble.vs",        get_shader_dir() / "Fragment" / "General" / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             ctx,
