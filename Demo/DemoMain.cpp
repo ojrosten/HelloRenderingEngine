@@ -115,7 +115,7 @@ int main()
         discShaderProgram.set_uniform("image", 5);
 
 
-        agl::polygon<GLfloat, 7, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>, agl::texture_coordinates<GLfloat >> sept{
+        agl::polygon<GLfloat, 7, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>, agl::texture_coordinates<GLfloat>> sept{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
@@ -124,7 +124,7 @@ int main()
 
                 return verts;
             },
-            std::array{
+            {
                 agl::texture_2d_configurator{
                     .data_view{twilight},
                     .decoding{agl::sampling_decoding::srgb},
