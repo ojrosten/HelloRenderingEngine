@@ -10,6 +10,6 @@ uniform float gamma = 2.2;
 
 void main()
 {
-    FragColour     = mix(texture(image0, TexCoords0), texture(image1, TexCoords1), 0.4);
+    FragColour     = mix(texture(image0, TexCoords0), texture(image1, TexCoords1), 0.5);
     FragColour.rgb = pow(FragColour.rgb, vec3(1.0/gamma));
 }
