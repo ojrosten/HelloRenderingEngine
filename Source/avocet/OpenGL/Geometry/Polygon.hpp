@@ -104,6 +104,15 @@ namespace avocet::opengl {
         {
         }
 
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+        polygon_base(const decorated_context& ctx, Fn transformer, const std::array<texture_2d_configurator, num_textures>& texConfigs, const std::optional<std::string>& label)
+            : m_VBO{ctx, transformer(st_Vertices), label}
+            , m_VAO{ctx, label, m_VBO}
+            , m_Textures{to_array(texConfigs, [&ctx](const texture_2d_configurator& config) { return texture_2d{ctx, config}; })}
+        {
+        }
+
         template<class Self>
             requires (num_textures == 0)
         void draw(this const Self& self) {
@@ -114,6 +123,14 @@ namespace avocet::opengl {
             requires (num_textures == 1)
         void draw(this const Self& self, texture_unit unit) {
             bind(self.m_Textures.front(), unit);
+            self.bind_vao_and_draw();
+        }
+
+        template<class Self>
+        void draw(this const Self& self, const std::array<texture_unit, num_textures>& units) {
+            for(auto i : std::views::iota(0uz, num_textures))
+                bind(self.m_Textures[i], units[i]);
+
             self.bind_vao_and_draw();
         }
 
@@ -153,7 +170,7 @@ namespace avocet::opengl {
     public:
         using polygon_base_type = polygon_base<T, N, ArenaDimension, Attributes...>;
         using vertices_type     = polygon_base_type::vertices_type;
-        constexpr static bool num_textures{polygon_base_type::num_textures};
+        constexpr static std::size_t num_textures{polygon_base_type::num_textures};
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 0)
@@ -168,6 +185,14 @@ namespace avocet::opengl {
         polygon(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, texConfig, label}
             ,             m_EBO{ctx, st_Indices, label}
+        {
+        }
+
+        template<class Fn>
+            requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
+        polygon(const decorated_context& ctx, Fn transformer, const std::array<texture_2d_configurator, num_textures>& texConfigs, const std::optional<std::string>& label)
+            : polygon_base_type{ctx, transformer, texConfigs, label}
+            , m_EBO{ctx, st_Indices, label}
         {
         }
     private:
