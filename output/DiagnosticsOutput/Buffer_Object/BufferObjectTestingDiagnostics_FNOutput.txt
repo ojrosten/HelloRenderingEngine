@@ -1,4 +1,4 @@
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 41
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 39
 Buffer which should be null
 
 Comparison performed using:
@@ -12,7 +12,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 42
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 40
 Too much buffer data
 
 Comparison performed using:
@@ -30,7 +30,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 43
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 41
 Incorrect buffer data
 
 Comparison performed using:
@@ -48,7 +48,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 44
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 42
 Not enough buffer data
 
 Comparison performed using:
@@ -66,7 +66,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 41
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 39
 Buffer which should be null
 
 Comparison performed using:
@@ -80,7 +80,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 42
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 40
 Too much buffer data
 
 Comparison performed using:
@@ -98,7 +98,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 43
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 41
 Incorrect buffer data
 
 Comparison performed using:
@@ -116,7 +116,7 @@ Checking for equivalence with:
 
 =======================================
 
-Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 44
+Tests/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp, Line 42
 Not enough buffer data
 
 Comparison performed using:

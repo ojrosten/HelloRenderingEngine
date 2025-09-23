@@ -30,7 +30,6 @@ namespace avocet::testing
 
     void illegal_gpu_call_free_test::debug_build_tests()
     {
-        namespace agl = avocet::opengl;
         using namespace curlew;
 
         glfw_manager manager{};

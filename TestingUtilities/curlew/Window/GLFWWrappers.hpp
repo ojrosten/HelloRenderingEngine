@@ -17,6 +17,8 @@
 struct GLFWwindow;
 
 namespace curlew {
+    namespace agl = avocet::opengl;
+
     enum class window_hiding_mode : bool { off, on };
 
     struct window_config {
@@ -46,7 +48,7 @@ namespace curlew {
         rendering_setup m_RenderingSetup{};
 
         [[nodiscard]]
-        rendering_setup attempt_to_find_rendering_setup(const avocet::opengl::opengl_version referenceVersion) const;
+        rendering_setup attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const;
       
         [[nodiscard]]
         rendering_setup do_find_rendering_setup() const;
@@ -72,7 +74,7 @@ namespace curlew {
 
         GLFWwindow& m_Window;
 
-        window_resource(const window_config& config, const avocet::opengl::opengl_version& version);
+        window_resource(const window_config& config, const agl::opengl_version& version);
     public:
 
         window_resource(const window_resource&) = delete;
@@ -88,9 +90,9 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
-        avocet::opengl::decorated_context m_Context{};
+        agl::decorated_context m_Context{};
 
-        window(const window_config& config, const avocet::opengl::opengl_version& version);
+        window(const window_config& config, const agl::opengl_version& version);
     public:
 
         window(const window&) = delete;
@@ -101,6 +103,6 @@ namespace curlew {
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
-        [[nodiscard]] const avocet::opengl::decorated_context& context() const noexcept { return m_Context; }
+        [[nodiscard]] const agl::decorated_context& context() const noexcept { return m_Context; }
     };
 }

@@ -18,8 +18,6 @@
 
 namespace curlew {
     namespace {
-        namespace agl = avocet::opengl;
-
         void errorCallback(int error, const char* description) {
             std::cerr << std::format("Error - {}: {}\n", error, description);
         }

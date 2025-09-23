@@ -24,7 +24,6 @@ namespace avocet::testing
 
     void null_function_pointer_free_test::run_tests()
     {
-        namespace agl = avocet::opengl;
         using namespace curlew;
 
         check_exception_thrown<std::runtime_error>(

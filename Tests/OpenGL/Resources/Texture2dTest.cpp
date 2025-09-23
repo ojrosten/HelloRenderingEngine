@@ -13,8 +13,6 @@
 
 namespace avocet::testing
 {
-    namespace agl = avocet::opengl;
-
     [[nodiscard]]
     std::filesystem::path texture_2d_test::source_file() const
     {

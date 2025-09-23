@@ -13,8 +13,6 @@
 
 namespace avocet::testing
 {
-    namespace agl = avocet::opengl;
-
     [[nodiscard]]
     std::filesystem::path buffer_object_false_negative_test::source_file() const
     {

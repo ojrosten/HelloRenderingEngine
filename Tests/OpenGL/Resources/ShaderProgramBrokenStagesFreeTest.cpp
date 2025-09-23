@@ -25,7 +25,6 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
-        namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};
 
         check_exception_thrown<std::runtime_error>(
