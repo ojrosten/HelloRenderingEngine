@@ -1,11 +1,22 @@
 Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 40
-Illegal call to glBindBuffer
+Illegal call to glBindBuffer (void return)
 
 Expected Exception Type:
 [std::runtime_error]
 OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 41:
 Id: 1; Source: API; Type: Error; Severity: High
 GL_INVALID_ENUM in glBindBufferARB(target 0x2a)
+
+=======================================
+
+Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 45
+Illegal call to glCreateShader (non-void return)
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 46:
+Id: 1; Source: API; Type: Error; Severity: High
+GL_INVALID_ENUM in glCreateShader(GL_ARRAY_BUFFER)
 
 =======================================
 
