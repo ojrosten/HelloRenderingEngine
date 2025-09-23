@@ -127,12 +127,20 @@ namespace avocet::opengl {
         }
 
         template<class Self>
-        void draw(this const Self& self, const std::array<texture_unit, num_textures>& units) {
+        void draw(this const Self& self, std::span<const texture_unit, num_textures> units) {
             for(auto i : std::views::iota(0uz, num_textures))
                 bind(self.m_Textures[i], units[i]);
 
             self.bind_vao_and_draw();
         }
+
+        /*template<class Self>
+        void draw(this const Self& self, std::span<const texture_unit, num_textures> units) {
+            for(auto[texture, unit] : std::views::zip(self.m_Textures, units))
+                bind(texture, unit);
+
+            self.bind_vao_and_draw();
+        }*/
 
         [[nodiscard]]
         friend bool operator==(const polygon_base&, const polygon_base&) noexcept = default;

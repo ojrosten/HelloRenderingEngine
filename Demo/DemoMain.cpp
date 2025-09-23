@@ -174,7 +174,7 @@ int main()
             //shaderProgram.use();
 
             shaderProgram2DMixedTextures.use();
-            sept.draw({agl::texture_unit{2}, agl::texture_unit{3}});
+            sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
 
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
