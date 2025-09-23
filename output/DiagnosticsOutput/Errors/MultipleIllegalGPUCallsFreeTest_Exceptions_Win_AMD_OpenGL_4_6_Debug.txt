@@ -1,16 +1,16 @@
-Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, Line 41
+Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, Line 40
 At least two errors
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, line 45:
-Source: API; Type: Error; Severity: Medium
+OpenGL error detected in Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, line 44:
+Id: 1; Source: API; Type: Error; Severity: Medium
 GL_INVALID_OPERATION
 
-Source: API; Type: Error; Severity: Medium
+Id: 1; Source: API; Type: Error; Severity: Medium
 GL_INVALID_OPERATION
 
-Source: API; Type: Error; Severity: Medium
+Id: 1; Source: API; Type: Error; Severity: Medium
 GL_INVALID_ENUM
 
 =======================================
