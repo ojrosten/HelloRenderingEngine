@@ -135,19 +135,27 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string compose_error_message(std::string_view errorMessage, const error_message_info& info);
 
-    inline void check_for_basic_errors(const decorated_context& ctx, const error_message_info& info)
+    template<class Processor>
+    inline constexpr bool is_error_code_processor_v{std::is_invocable_r_v<std::string, Processor, std::string, error_code>};
+
+    template<class Processor>
+    inline constexpr bool is_debug_info_processor_v{std::is_invocable_r_v<std::string, Processor, std::string, debug_info>};
+
+    template<class ErrorProcessor>
+        requires is_error_code_processor_v<ErrorProcessor>
+    void check_for_basic_errors(const decorated_context& ctx, const error_message_info& info, ErrorProcessor processor)
     {
-        const std::string errorMessage{
-            std::ranges::fold_left(get_errors(ctx, info.max_reported), std::string{}, default_error_code_processor{})
-        };
+        const std::string errorMessage{std::ranges::fold_left(get_errors(ctx, info.max_reported), std::string{}, processor)};
 
         if(!errorMessage.empty())
             throw std::runtime_error{compose_error_message(errorMessage, info)};
     }
 
-    inline void check_for_advanced_errors(const decorated_context& ctx, const error_message_info& info) {
+    template<class ErrorProcessor>
+        requires is_debug_info_processor_v<ErrorProcessor>
+    void check_for_advanced_errors(const decorated_context& ctx, const error_message_info& info, ErrorProcessor processor) {
         const std::string errorMessage{
-            std::ranges::fold_left(get_messages(ctx, info.max_reported),  std::string{}, default_debug_info_processor{})
+            std::ranges::fold_left(get_messages(ctx, info.max_reported),  std::string{}, processor)
         };
 
         if(!errorMessage.empty())

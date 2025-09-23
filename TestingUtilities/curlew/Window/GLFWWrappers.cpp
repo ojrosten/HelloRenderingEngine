@@ -128,7 +128,9 @@ namespace curlew {
 
     window::window(const window_config& config, const agl::opengl_version& version)
         : m_Window{config, version}
-        , m_Context{[&win = m_Window](GladGLContext& ctx) { load_gl_fuctions(win, ctx); }}
+        , m_Context{
+            [&win = m_Window](GladGLContext& ctx) { load_gl_fuctions(win, ctx); }
+          }
     {
         init_debug(m_Context);
     }
