@@ -1,4 +1,4 @@
-Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 32
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 31
 Broken Vertex Shader
 
 Expected Exception Type:
@@ -8,7 +8,7 @@ ERROR: 0:8: '}' : syntax error: syntax error
 
 =======================================
 
-Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 43
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
 Broken Fragment Shader
 
 Expected Exception Type:
@@ -18,7 +18,7 @@ ERROR: 0:6: '{' : syntax error: syntax error
 
 =======================================
 
-Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 54
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 53
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
