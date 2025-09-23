@@ -68,7 +68,7 @@ int main()
             //shaderProgram                {ctx, get_shader_dir() / "Identity.vs",                get_shader_dir() / "Monochrome.fs"},
             discShaderProgram            {ctx, get_vertex_shader_dir() / "2D" / "DiscTextured.vs",          get_fragment_shader_dir() / "2D"      / "DiscTextured.fs"},
             shaderProgram2DTextured      {ctx, get_vertex_shader_dir() / "2D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
-            shaderProgram2DTwiceTextured {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
+            shaderProgram2DMixedTextures {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
             shaderProgramDouble          {ctx, get_vertex_shader_dir() / "3D" / "IdentityDouble.vs",        get_fragment_shader_dir() / "General" / "Monochrome.fs"};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
@@ -141,8 +141,8 @@ int main()
             make_label("Septagon")
         };
 
-        shaderProgram2DTwiceTextured.set_uniform("image0", 2);
-        shaderProgram2DTwiceTextured.set_uniform("image1", 3);
+        shaderProgram2DMixedTextures.set_uniform("image0", 2);
+        shaderProgram2DMixedTextures.set_uniform("image1", 3);
 
         agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             ctx,
@@ -171,8 +171,10 @@ int main()
             discShaderProgram.use();
             disc.draw(agl::texture_unit{5});
             //shaderProgram.use();
-            shaderProgram2DTwiceTextured.use();
+
+            shaderProgram2DMixedTextures.use();
             sept.draw({agl::texture_unit{2}, agl::texture_unit{3}});
+
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
