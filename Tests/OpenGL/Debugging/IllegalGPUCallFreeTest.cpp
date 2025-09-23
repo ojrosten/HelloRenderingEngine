@@ -37,8 +37,13 @@ namespace avocet::testing
         const auto& ctx{w.context()};
 
         check_exception_thrown<std::runtime_error>(
-            "Illegal call to glBindBuffer",
+            "Illegal call to glBindBuffer (void return)",
             [&ctx](){ agl::gl_function{&GladGLContext::BindBuffer}(ctx, 42, 42); }
+        );
+
+        check_exception_thrown<std::runtime_error>(
+            "Illegal call to glCreateShader (non-void return)",
+            [&ctx]() { return agl::gl_function{&GladGLContext::CreateShader}(ctx, GL_ARRAY_BUFFER); }
         );
     }
 }

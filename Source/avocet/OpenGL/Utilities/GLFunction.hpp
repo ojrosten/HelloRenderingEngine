@@ -51,7 +51,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto ret{get_validated_fn_ptr(ctx, loc)(args...)};
-            check_for_errors(ctx, {.fn_name{}, .loc{loc}});
+            check_for_errors(ctx, {.fn_name{}, .loc{loc}, .max_reported{max_reported_messages}});
             return ret;
         }
 
