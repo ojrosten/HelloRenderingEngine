@@ -10,6 +10,6 @@ out vec2 TexCoords1;
 void main()
 {
     gl_Position = vec4(aLocalPos, 0.0, 1.0);
-    TexCoords0 = aTexCoords0;
-    TexCoords1 = aTexCoords1;
+    TexCoords0  = aTexCoords0;
+    TexCoords1  = aTexCoords1;
 }
