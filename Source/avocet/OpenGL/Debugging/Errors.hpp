@@ -129,24 +129,25 @@ namespace avocet::opengl {
     struct error_message_info {
         std::string_view fn_name;
         std::source_location loc;
+        num_messages max_reported;
     };
 
     [[nodiscard]]
     std::string compose_error_message(std::string_view errorMessage, const error_message_info& info);
 
-    inline void check_for_basic_errors(const decorated_context& ctx, const error_message_info& info, num_messages maxNum)
+    inline void check_for_basic_errors(const decorated_context& ctx, const error_message_info& info)
     {
         const std::string errorMessage{
-            std::ranges::fold_left(get_errors(ctx, maxNum), std::string{}, default_error_code_processor{})
+            std::ranges::fold_left(get_errors(ctx, info.max_reported), std::string{}, default_error_code_processor{})
         };
 
         if(!errorMessage.empty())
             throw std::runtime_error{compose_error_message(errorMessage, info)};
     }
 
-    inline void check_for_advanced_errors(const decorated_context& ctx, const error_message_info& info, num_messages maxNum) {
+    inline void check_for_advanced_errors(const decorated_context& ctx, const error_message_info& info) {
         const std::string errorMessage{
-            std::ranges::fold_left(get_messages(ctx, maxNum),  std::string{}, default_debug_info_processor{})
+            std::ranges::fold_left(get_messages(ctx, info.max_reported),  std::string{}, default_debug_info_processor{})
         };
 
         if(!errorMessage.empty())

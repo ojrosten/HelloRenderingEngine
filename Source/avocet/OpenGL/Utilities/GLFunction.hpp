@@ -59,7 +59,7 @@ namespace avocet::opengl {
             requires std::is_void_v<R>
         {
             get_validated_fn_ptr(ctx, loc)(args...);
-            check_for_errors(ctx, {.fn_name{}, .loc{loc}});
+            check_for_errors(ctx, {.fn_name{}, .loc{loc}, .max_reported{max_reported_messages}});
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -73,9 +73,9 @@ namespace avocet::opengl {
         static void check_for_errors(const decorated_context& ctx, const error_message_info& info) {
             if constexpr(Mode != debugging_mode::off) {
                 if(debug_output_supported(ctx))
-                    check_for_advanced_errors(ctx, info, max_reported_messages);
+                    check_for_advanced_errors(ctx, info);
                 else
-                    check_for_basic_errors(ctx, info, max_reported_messages);
+                    check_for_basic_errors(ctx, info);
             }
         }
     };
