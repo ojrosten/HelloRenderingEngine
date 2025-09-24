@@ -97,7 +97,7 @@ int main()
                 for(auto& vert : verts) {
                     constexpr auto scale{2 * radius / 0.5};
                     (sequoia::get<0>(vert) *= scale) += centre;
-                    (sequoia::get<1>(vert) *= 1.5f) += agl::texture_coordinates<GLfloat>{-0.25f, -0.25f};
+                    (sequoia::get<1>(vert) *= 1.6f) += agl::texture_coordinates<GLfloat>{-0.3f, -0.3f};
                 }
 
                 return verts;
