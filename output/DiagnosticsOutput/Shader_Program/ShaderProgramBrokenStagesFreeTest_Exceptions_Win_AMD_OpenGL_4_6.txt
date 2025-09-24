@@ -1,0 +1,33 @@
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 31
+Broken Vertex Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: vertex shader compilation failed
+ERROR: 0:8: '' :  syntax error, unexpected RIGHT_BRACE, expecting COMMA or SEMICOLON
+ERROR: 1 compilation errors.  No code generated.
+
+=======================================
+
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
+Broken Fragment Shader
+
+Expected Exception Type:
+[std::runtime_error]
+Error: fragment shader compilation failed
+ERROR: 0:6: '' :  syntax error, unexpected LEFT_BRACE, expecting RIGHT_PAREN
+ERROR: 1 compilation errors.  No code generated.
+
+=======================================
+
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 53
+Unlinkable Vertex Shader / Fragment Shader Combo
+
+Expected Exception Type:
+[std::runtime_error]
+Error: program linking failed
+ERROR: Linking vertex stage: Types must match:
+    colour: " smooth out 3-component vector of float" versus " smooth in float"
+
+=======================================
+
