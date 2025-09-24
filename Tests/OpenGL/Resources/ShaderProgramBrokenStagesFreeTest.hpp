@@ -15,10 +15,10 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class shader_program_broken_stages_free_test final : public curlew::graphics_test<curlew::selectivity_flavour::none, curlew::target_specific>
+    class shader_program_broken_stages_free_test final : public curlew::graphics_test<curlew::selectivity_flavour::none, curlew::platform_specific>
     {
     public:
-        using curlew::graphics_test<curlew::selectivity_flavour::none, curlew::target_specific>::graphics_test;
+        using curlew::graphics_test<curlew::selectivity_flavour::none, curlew::platform_specific>::graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
