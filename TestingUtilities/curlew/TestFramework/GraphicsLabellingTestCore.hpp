@@ -21,7 +21,7 @@ namespace curlew {
 
     template<test_mode Mode>
     using labelling_test_base
-        = basic_graphics_test<Mode, curlew::ogl_version_and_build_selective, (Mode == test_mode::false_positive) ? curlew::platform_specific : curlew::ogl_version_and_build_specific>;
+        = basic_graphics_test<Mode, curlew::selectivity_flavour::opengl_version, (Mode == test_mode::false_positive) ? curlew::platform_specific : curlew::specificity_flavour::opengl_version>;
 
     template<test_mode Mode>
     class basic_graphics_labelling_test : public labelling_test_base<Mode>
