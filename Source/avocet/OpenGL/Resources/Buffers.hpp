@@ -142,10 +142,10 @@ namespace avocet::opengl {
             const auto components{to_gl_int(sizeofAtt / sizeof(ValueType))};
             const auto& ctx{this->context()};
             if constexpr(std::is_same_v<ValueType, GLdouble>) {
-                gl_function{&GladGLContext::VertexAttribLPointer}(ctx, info.index, components, typeSpecifier, stride, (GLvoid*)info.offset);
+                gl_function{&GladGLContext::VertexAttribLPointer}(ctx, info.index, components, typeSpecifier, stride, std::bit_cast<GLvoid*>(info.offset));
             }
             else {
-                gl_function{&GladGLContext::VertexAttribPointer}(ctx, info.index, components, typeSpecifier, GL_FALSE, stride, (GLvoid*)info.offset);
+                gl_function{&GladGLContext::VertexAttribPointer}(ctx, info.index, components, typeSpecifier, GL_FALSE, stride, std::bit_cast<GLvoid*>(info.offset));
             }
             gl_function{&GladGLContext::EnableVertexAttribArray}(ctx, info.index);
 
