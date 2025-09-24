@@ -3,7 +3,7 @@ Invoking gl_function such that it delegates to a null function pointer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to invoke a null function pointer coming via Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, line 31
+gl_function: attempting to invoke a null function pointer GetError coming via Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, line 31
 
 =======================================
 
@@ -12,7 +12,7 @@ Check for basic errors with no context
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to invoke a null function pointer coming via Source/avocet/OpenGL/Debugging/Errors.cpp, line 57
+gl_function: attempting to invoke a null function pointer GetError coming via Source/avocet/OpenGL/Debugging/Errors.cpp, line 57
 
 =======================================
 

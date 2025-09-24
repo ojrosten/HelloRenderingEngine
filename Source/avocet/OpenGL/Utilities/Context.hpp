@@ -18,20 +18,61 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    struct decorator_data {
+        debugging_mode debug_mode;
+        std::string_view fn_name;
+        std::source_location loc;
+    };
+
     class decorated_context {
     public:
+        template<class Fn>
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const decorated_context&, const decorator_data&>};
 
         decorated_context() = default;
 
-        template<std::invocable<GladGLContext&> Loader>
-        explicit decorated_context(Loader loader)
+        template<class Prologue, class Epilogue, std::invocable<GladGLContext&> Loader>
+            requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
+        decorated_context(debugging_mode mode, Prologue prologue, Epilogue epilogue, Loader loader)
+            : m_Mode{mode}
+            , m_Prologue{std::move(prologue)}
+            , m_Epilogue{std::move(epilogue)}
         {
             loader(m_Context);
         }
 
+        template<class Fn, class... Args>
+            requires (!std::is_void_v<std::invoke_result_t<Fn, Args...>>)
+        std::invoke_result_t<Fn, Args...> invoke_decorated(const decorator_data& data, Fn fn, Args... args) const {
+            if(m_Prologue) m_Prologue(*this, data);
+
+            const auto res{fn(args...)};
+
+            if(m_Epilogue) m_Epilogue(*this, data);
+
+            return res;
+        }
+
+        template<class Fn, class... Args>
+            requires std::is_void_v<std::invoke_result_t<Fn, Args...>>
+        void invoke_decorated(const decorator_data& data, Fn fn, Args... args) const {
+            if(m_Prologue) m_Prologue(*this, data);
+
+            fn(args...);
+
+            if(m_Epilogue) m_Epilogue(*this, data);
+        }
+
+        [[nodiscard]]
+        debugging_mode debug_mode() const noexcept { return m_Mode; }
+
         [[nodiscard]]
         const GladGLContext& glad_context() const noexcept { return m_Context; }
     private:
+        using decorator_type = std::function<void(const decorated_context&, const decorator_data&)>;
+
+        debugging_mode m_Mode{};
+        decorator_type m_Prologue{}, m_Epilogue{};
         GladGLContext m_Context{};
     };
 

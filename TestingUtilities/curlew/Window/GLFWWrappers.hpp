@@ -22,9 +22,14 @@ namespace curlew {
     enum class window_hiding_mode : bool { off, on };
 
     struct window_config {
+        using decorator_type = std::function<void(const agl::decorated_context&, const agl::decorator_data)>;
+
         std::size_t width{800}, height{600};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
+        agl::debugging_mode debug_mode{agl::debugging_mode::dynamic};
+        decorator_type prologue{},
+                       epilogue{agl::default_error_checker{agl::num_messages{10}}};
     };
 
     class glfw_manager;

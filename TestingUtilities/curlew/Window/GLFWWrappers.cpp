@@ -22,9 +22,8 @@ namespace curlew {
             std::cerr << std::format("Error - {}: {}\n", error, description);
         }
 
-        void set_debug_context(const agl::opengl_version& version) {
-            const auto mode{agl::inferred_debugging_mode()};
-	          if constexpr(mode != agl::debugging_mode::off) {
+        void set_debug_context(const agl::debugging_mode mode, const agl::opengl_version& version) {
+	          if (mode != agl::debugging_mode::off) {
                 if(agl::debug_output_supported(version))
                     glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
 	          }
@@ -41,7 +40,7 @@ namespace curlew {
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));
 
-            set_debug_context(version);
+            set_debug_context(config.debug_mode, version);
 
             auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
@@ -57,15 +56,16 @@ namespace curlew {
         void init_debug(const agl::decorated_context& ctx)
         {
             GLint flags{};
-            agl::gl_function{agl::unchecked_debug_output, &GladGLContext::GetIntegerv}(ctx, GL_CONTEXT_FLAGS, &flags);
+            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, agl::debugging_mode_off, GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
                 if(const auto version{agl::get_opengl_version(ctx)}; !agl::debug_output_supported(version))
                     throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
 
-                agl::gl_function{agl::unchecked_debug_output, &GladGLContext::Enable}(ctx, GL_DEBUG_OUTPUT);
-                agl::gl_function{agl::unchecked_debug_output, &GladGLContext::Enable}(ctx, GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                agl::gl_function{agl::unchecked_debug_output, &GladGLContext::DebugMessageControl}(
+                agl::gl_function{&GladGLContext::Enable}(ctx, agl::debugging_mode_off, GL_DEBUG_OUTPUT);
+                agl::gl_function{&GladGLContext::Enable}(ctx, agl::debugging_mode_off, GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                agl::gl_function{&GladGLContext::DebugMessageControl}(
                     ctx,
+                    agl::debugging_mode_off,
                     GL_DONT_CARE,
                     GL_DONT_CARE,
                     GL_DONT_CARE,
@@ -129,6 +129,9 @@ namespace curlew {
     window::window(const window_config& config, const agl::opengl_version& version)
         : m_Window{config, version}
         , m_Context{
+            config.debug_mode,
+            config.prologue,
+            config.epilogue,
             [&win = m_Window](GladGLContext& ctx) { load_gl_fuctions(win, ctx); }
           }
     {

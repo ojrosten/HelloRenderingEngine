@@ -174,4 +174,27 @@ namespace avocet::opengl {
 
     [[nodiscard]]
     inline bool object_labels_activated(const decorated_context& ctx) { return debug_output_supported(ctx); }
+
+    template<class ErrorCodeProcessor, class DebugInfoProcessor>
+        requires is_error_code_processor_v<ErrorCodeProcessor>&& is_debug_info_processor_v<DebugInfoProcessor>
+    void check_for_errors(const decorated_context& ctx, debugging_mode mode, const error_message_info& info, ErrorCodeProcessor errorCodeProcessor, DebugInfoProcessor&& debugInfoProcessor) {
+        if(mode != debugging_mode::off) {
+            if(debug_output_supported(ctx))
+                check_for_advanced_errors(ctx, info, std::move(debugInfoProcessor));
+            else
+                check_for_basic_errors(ctx, info, std::move(errorCodeProcessor));
+        }
+    }
+
+    class default_error_checker {
+        num_messages m_MaxReported;
+    public:
+        explicit default_error_checker(num_messages maxReported)
+            : m_MaxReported{maxReported}
+        {}
+
+        void operator()(const decorated_context& ctx, const decorator_data& data) const {
+            check_for_errors(ctx, data.debug_mode, {data.fn_name, data.loc, m_MaxReported}, default_error_code_processor{}, default_debug_info_processor{});
+        }
+    };
 }

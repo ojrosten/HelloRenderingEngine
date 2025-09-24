@@ -3,7 +3,7 @@ At least two errors
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, line 44:
+OpenGL error detected following invocation of Multiple fns originating from Tests/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp, line 44:
 Id: 1282; Source: API; Type: Error; Severity: High
 Error has been generated. GL error GL_INVALID_OPERATION in BindBuffer: (ID: 1360204945) Generic error
 
