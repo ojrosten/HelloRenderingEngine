@@ -19,6 +19,8 @@
 #include <iostream>
 #include <source_location>
 
+namespace agl = avocet::opengl;
+
 namespace {
     namespace fs = std::filesystem;
 
@@ -45,6 +47,18 @@ namespace {
     std::string make_label(std::string_view name, std::source_location loc = std::source_location::current()) {
         return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
+
+    struct nvidia_debug_info_processor {
+        [[nodiscard]]
+        std::string operator()(std::string message, const agl::debug_info& info) const {
+            const auto separator{message.empty() ? "" : "\n\n"};
+            if((info.severity != agl::debug_severity::notification) && (info.id != 131204)) {
+                (message += separator) += agl::to_detailed_message(info);
+            }
+
+            return message;
+        }
+    };
 }
 
 int main()
@@ -54,10 +68,21 @@ int main()
         curlew::glfw_manager manager{};
         std::cout << curlew::rendering_setup_summary(manager.get_rendering_setup());
 
-        auto w{manager.create_window({.width{800}, .height{800}, .name{"Hello Rendering Engine"}})};
+        using error_checker = agl::standard_error_checker<agl::default_error_code_processor, agl::default_debug_info_processor>;
+        auto w{
+            manager.create_window(
+                {.width{800},
+                 .height{800},
+                 .name{"Hello Rendering Engine"},
+                 .hiding{curlew::window_hiding_mode::off},
+                 .debug_mode{agl::debugging_mode::dynamic},
+                 .prologue{},
+                 .epilogue{error_checker{agl::num_messages{10}}}
+                }
+            )
+        };
         const auto& ctx{w.context()};
 
-        namespace agl = avocet::opengl;
         agl::shader_program
             shaderProgram      {ctx, get_shader_dir() / "Identity.vs",           get_shader_dir() / "Monochrome.fs"},
             discShaderProgram  {ctx, get_shader_dir() / "Disc2D.vs",             get_shader_dir() / "Disc.fs"},

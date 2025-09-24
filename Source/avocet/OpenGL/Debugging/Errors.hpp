@@ -136,10 +136,10 @@ namespace avocet::opengl {
     std::string compose_error_message(std::string_view errorMessage, const error_message_info& info);
 
     template<class Processor>
-    inline constexpr bool is_error_code_processor_v{std::is_invocable_r_v<std::string, Processor, std::string, error_code>};
+    inline constexpr bool is_error_code_processor_v{std::move_constructible<Processor> && std::is_invocable_r_v<std::string, Processor, std::string, error_code>};
 
     template<class Processor>
-    inline constexpr bool is_debug_info_processor_v{std::is_invocable_r_v<std::string, Processor, std::string, debug_info>};
+    inline constexpr bool is_debug_info_processor_v{std::move_constructible<Processor> && std::is_invocable_r_v<std::string, Processor, std::string, debug_info>};
 
     template<class ErrorProcessor>
         requires is_error_code_processor_v<ErrorProcessor>
@@ -186,15 +186,18 @@ namespace avocet::opengl {
         }
     }
 
-    class default_error_checker {
+    template<class ErrorCodeProcessor=default_error_code_processor, class DebugInfoProcessor=default_debug_info_processor>
+        requires    is_error_code_processor_v<ErrorCodeProcessor>       && is_debug_info_processor_v<DebugInfoProcessor>
+                 && std::is_default_constructible_v<ErrorCodeProcessor> && std::is_default_constructible_v<DebugInfoProcessor>
+    class standard_error_checker {
         num_messages m_MaxReported;
     public:
-        explicit default_error_checker(num_messages maxReported)
+        explicit standard_error_checker(num_messages maxReported)
             : m_MaxReported{maxReported}
         {}
 
         void operator()(const decorated_context& ctx, const decorator_data& data) const {
-            check_for_errors(ctx, data.debug_mode, {data.fn_name, data.loc, m_MaxReported}, default_error_code_processor{}, default_debug_info_processor{});
+            check_for_errors(ctx, data.debug_mode, {data.fn_name, data.loc, m_MaxReported}, ErrorCodeProcessor{}, DebugInfoProcessor{});
         }
     };
 }
