@@ -1,2 +1,2 @@
-Illegal GPU Call Free Test
+Labelling Test
 Standard Top Level Checks:                 2;  Failures:  0  [Deep checks: 2]

@@ -24,12 +24,6 @@ namespace avocet::testing
 
     void illegal_gpu_call_free_test::run_tests()
     {
-        if constexpr(!avocet::has_ndebug())
-            debug_build_tests();
-    }
-
-    void illegal_gpu_call_free_test::debug_build_tests()
-    {
         using namespace curlew;
 
         glfw_manager manager{};

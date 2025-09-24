@@ -1,30 +1,35 @@
-Tests/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp, Line 32
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 31
 Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: vertex shader compilation failed
-ERROR: 0:8: '}' : syntax error syntax error
+OpenGL error detected following invocation of CompileShader originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 149:
+Id: 0; Source: Shader Compiler; Type: Error; Severity: High
+SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, "": ERROR: 0:8: '}' : syntax error syntax error
+
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 42
 Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-Error: fragment shader compilation failed
-ERROR: 0:7: '{' : syntax error syntax error
+OpenGL error detected following invocation of CompileShader originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 149:
+Id: 0; Source: Shader Compiler; Type: Error; Severity: High
+SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, "": ERROR: 0:7: '{' : syntax error syntax error
+
 
 =======================================
 
-Tests/Graphics/OpenGL/ShaderProgramBrokenStagesFreeTest.cpp, Line 52
+Tests/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp, Line 53
 Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
 [std::runtime_error]
-Error: program linking failed
-Varying "colour" has different type width across different shaders.
+OpenGL error detected following invocation of LinkProgram originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 190:
+Id: 1; Source: Shader Compiler; Type: Error; Severity: High
+SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": Varying "colour" has different type width across different shaders.
 
 =======================================
 

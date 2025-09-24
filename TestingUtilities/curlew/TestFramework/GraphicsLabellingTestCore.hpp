@@ -32,13 +32,11 @@ namespace curlew {
         template<class Self>
             requires has_labelling_tests_v<Self>
         void run_tests(this Self& self) {
-            if constexpr(!avocet::has_ndebug()) {
-                using namespace curlew;
-                glfw_manager manager{};
-                auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
-                if(avocet::opengl::object_labels_activated(w.context())) {
-                    self.labelling_tests(w);
-                }
+            using namespace curlew;
+            glfw_manager manager{};
+            auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+            if(avocet::opengl::object_labels_activated(w.context())) {
+                self.labelling_tests(w);
             }
         }
     protected:
