@@ -1,19 +1,19 @@
-Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 40
+Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 34
 Illegal call to glBindBuffer (void return)
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 41:
+OpenGL error detected following invocation of BindBuffer originating from Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 35:
 Invalid enum
 
 =======================================
 
-Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 45
+Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 39
 Illegal call to glCreateShader (non-void return)
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 46:
+OpenGL error detected following invocation of CreateShader originating from Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 40:
 Invalid enum
 
 =======================================
