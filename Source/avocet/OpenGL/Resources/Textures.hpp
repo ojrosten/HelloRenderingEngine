@@ -15,6 +15,7 @@
 
 #include <array>
 #include <filesystem>
+#include <format>
 #include <functional>
 #include <ranges>
 #include <span>
@@ -86,7 +87,20 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
     };
+}
 
+namespace std {
+    template<>
+    struct formatter<avocet::opengl::texture_unit> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::texture_unit unit, auto& ctx) const {
+            return format_to(ctx.out(), "{}", unit.index);
+        }
+    };
+}
+
+namespace avocet::opengl {
     class texture_2d : public generic_resource<num_resources{1}, texture_2d_lifecycle_events> {
     public:
         using base_type         = generic_resource<num_resources{1}, texture_2d_lifecycle_events> ;
@@ -95,6 +109,7 @@ namespace avocet::opengl {
 
         explicit texture_2d(const decorated_context& ctx, const configurator_type& textureConfig)
             : base_type{ctx, {textureConfig}}
+            , m_MaxUnit{get_max_combined_texture_unit(ctx)}
         {}
 
         [[nodiscard]]
@@ -102,11 +117,22 @@ namespace avocet::opengl {
             return do_extract_data(tex2d, format, rowAlignment);
         }
 
-        friend void bind(const texture_2d& tex, texture_unit unit) {
-            gl_function{&GladGLContext::ActiveTexture}(tex.context(), unit.gl_texture_unit());
-            base_type::do_bind(tex);
+        friend void bind(const texture_2d& tex2d, texture_unit unit) {
+            if(unit >= tex2d.m_MaxUnit)
+                throw std::runtime_error{std::format("Requested texture unit {} exceeds the maximum indexable {}", unit, tex2d.m_MaxUnit)};
+
+            gl_function{&GladGLContext::ActiveTexture}(tex2d.context(), unit.gl_texture_unit());
+            base_type::do_bind(tex2d);
         }
     private:
+        texture_unit m_MaxUnit;
         static unique_image do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
+ 
+        [[nodiscard]]
+        static texture_unit get_max_combined_texture_unit(const decorated_context& ctx) {
+            GLint param{};
+            gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &param);
+            return texture_unit{static_cast<std::size_t>(param)};
+        }
     };
 }
