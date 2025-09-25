@@ -48,7 +48,7 @@ namespace avocet::opengl {
 
         template<std::invocable<GladGLContext&> Loader, class Prologue, class Epilogue>
             requires is_decorator_v<Prologue>&& is_decorator_v<Epilogue>
-        decorated_context_base(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
+        decorated_context_base(debugging_mode mode, Prologue prologue, Epilogue epilogue, Loader loader)
             : m_DebugMode{mode}
             , m_Prologue{std::move(prologue)}
             , m_Epilogue{std::move(epilogue)}
@@ -95,9 +95,9 @@ namespace avocet::opengl {
         using decorator_type = std::function<void(const decorated_context_base&, const decorator_data&)>;
 
         debugging_mode m_DebugMode{};
-        GladGLContext m_Context{};
         decorator_type m_Prologue{},
                        m_Epilogue{};
+        GladGLContext m_Context{};
     };
 
     class decorated_context : public decorated_context_base {
@@ -109,8 +109,8 @@ namespace avocet::opengl {
 
         template<std::invocable<GladGLContext&> Loader, class Prologue, class Epilogue>
             requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
-        decorated_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
-            : decorated_context_base{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
+        decorated_context(debugging_mode mode, Prologue prologue, Epilogue epilogue, Loader loader)
+            : decorated_context_base{mode, std::move(prologue), std::move(epilogue), std::move(loader)}
             , m_Properties{get_max_combined_texture_unit(*this)}
         {
         }
