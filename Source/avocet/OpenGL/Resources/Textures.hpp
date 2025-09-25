@@ -77,16 +77,6 @@ namespace avocet::opengl {
 
         static void configure(const contextual_resource_handle& h, const configurator& config);
     };
-
-    struct texture_unit {
-        std::size_t index{};
-
-        [[nodiscard]]
-        GLenum gl_texture_unit() const { return GL_TEXTURE0 + to_gl_int(index); }
-
-        [[nodiscard]]
-        friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
-    };
 }
 
 namespace std {
@@ -109,7 +99,6 @@ namespace avocet::opengl {
 
         explicit texture_2d(const decorated_context& ctx, const configurator_type& textureConfig)
             : base_type{ctx, {textureConfig}}
-            , m_MaxUnit{get_max_combined_texture_unit(ctx)}
         {}
 
         [[nodiscard]]
@@ -118,14 +107,13 @@ namespace avocet::opengl {
         }
 
         friend void bind(const texture_2d& tex2d, texture_unit unit) {
-            if(unit >= tex2d.m_MaxUnit)
-                throw std::runtime_error{std::format("Requested texture unit {} exceeds the maximum indexable {}", unit, tex2d.m_MaxUnit)};
+            if(const auto maxUnit{tex2d.context().properties().max_combined}; unit >= maxUnit)
+                throw std::runtime_error{std::format("Requested texture unit {} exceeds the maximum indexable {}", unit, maxUnit)};
 
             gl_function{&GladGLContext::ActiveTexture}(tex2d.context(), unit.gl_texture_unit());
             base_type::do_bind(tex2d);
         }
     private:
-        texture_unit m_MaxUnit;
         static unique_image do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
  
         [[nodiscard]]

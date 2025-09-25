@@ -23,13 +23,13 @@ namespace avocet::opengl{
     };
 
     [[nodiscard]]
-    std::string get_vendor(const decorated_context& ctx);
+    std::string get_vendor(const decorated_context_base& ctx);
 
     [[nodiscard]]
-    std::string get_renderer(const decorated_context& ctx);
+    std::string get_renderer(const decorated_context_base& ctx);
 
     [[nodiscard]]
-    opengl_version get_opengl_version(const decorated_context& ctx);
+    opengl_version get_opengl_version(const decorated_context_base& ctx);
 }
 
 

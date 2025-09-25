@@ -11,6 +11,7 @@ set(SourceList
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp
     OpenGL/Resources/Textures.cpp
+    OpenGL/Utilities/Context.cpp
     OpenGL/Utilities/Version.cpp)
 
 add_library(avocet STATIC ${SourceList})

@@ -34,19 +34,19 @@ namespace avocet::opengl {
         gl_function(nullptr_t) = delete;
 
         [[nodiscard]]
-        R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
+        R operator()(const decorated_context_base& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
             return invoke(ctx, ctx.debug_mode(), args..., loc);
         }
 
         [[nodiscard]]
-        R operator()(const decorated_context& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) const {
+        R operator()(const decorated_context_base& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) const {
             return invoke(ctx, debugging_mode::off, args..., loc);
         }
     private:
         pointer_to_member_type m_PtrToMem;
 
         [[nodiscard]]
-        R invoke(const decorated_context& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) const {
+        R invoke(const decorated_context_base& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) const {
             const auto [fptr, name] {get_validated_fn_ptr(ctx, loc)};
             return ctx.invoke_decorated({.debug_mode{mode}, .name{name}, .loc{loc}}, fptr, args...);
         }
@@ -57,13 +57,13 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        named_fn_ptr get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
+        named_fn_ptr get_validated_fn_ptr(const decorated_context_base& ctx, std::source_location loc) const {
             named_fn_ptr namedFnPtr{ctx.glad_context().*m_PtrToMem, get_name(ctx)};
             return namedFnPtr.fn ? namedFnPtr : throw std::runtime_error{std::format("gl_function: attempting to invoke a null function pointer {} coming via {}", namedFnPtr.name, to_string(loc))};
         }
 
         [[nodiscard]]
-        std::string_view get_name(const decorated_context& ctx) const {
+        std::string_view get_name(const decorated_context_base& ctx) const {
             constexpr auto totalStride{
                 glad_ctx_member_info.back().offset - glad_ctx_member_info.front().offset
             };

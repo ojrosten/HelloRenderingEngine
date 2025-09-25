@@ -135,7 +135,7 @@ namespace curlew {
         : m_Window{config, version}
         , m_Context{
             config.debug_mode,
-            [&win = m_Window](GladGLContext& ctx) { load_gl_fuctions(win, ctx); },
+            [&win = m_Window](GladGLContext ctx) { load_gl_fuctions(win, ctx); return ctx; },
             config.prologue,
             config.epilogue
         }

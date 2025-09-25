@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/OpenGL/Debugging/DebugMode.hpp"
+#include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include <array>
 #include <concepts>
@@ -18,52 +19,63 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
+    struct texture_unit {
+        std::size_t index{};
+
+        [[nodiscard]]
+        GLenum gl_texture_unit() const { return GL_TEXTURE0 + to_gl_int(index); }
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
+    };
+
+    struct context_properties {
+        texture_unit max_combined{};
+    };
+
     struct decorator_data {
         debugging_mode debug_mode;
         std::string_view name;
         std::source_location loc;
     };
 
-    class decorated_context {
+    class decorated_context_base {
     public:
-
-        using decorator_type = std::function<void(const decorated_context&, const decorator_data&)>;
-
         template<class Fn>
-        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const decorated_context&, const decorator_data&>};
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const decorated_context_base&, const decorator_data&>};
 
-        decorated_context() = default;
+        decorated_context_base() = default;
 
         template<std::invocable<GladGLContext&> Loader, class Prologue, class Epilogue>
-            requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
-        decorated_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
+            requires is_decorator_v<Prologue>&& is_decorator_v<Epilogue>
+        decorated_context_base(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
             : m_DebugMode{mode}
             , m_Prologue{std::move(prologue)}
             , m_Epilogue{std::move(epilogue)}
+            , m_Context{loader(GladGLContext{})}
         {
-            loader(m_Context);
         }
 
-        template<class Fn, class... Args>
+        template<class Self, class Fn, class... Args>
             requires (!std::is_void_v<std::invoke_result_t<Fn, Args...>>)
-        std::invoke_result_t<Fn, Args...> invoke_decorated(const decorator_data& data, Fn f, Args... args) const {
-            if(m_Prologue) m_Prologue(*this, data);
+        std::invoke_result_t<Fn, Args...> invoke_decorated(this const Self& self, const decorator_data& data, Fn f, Args... args) {
+            if(self.m_Prologue) self.m_Prologue(self, data);
 
             const auto res{f(args...)};
 
-            if(m_Epilogue) m_Epilogue(*this, data);
+            if(self.m_Epilogue) self.m_Epilogue(self, data);
 
             return res;
         }
 
-        template<class Fn, class... Args>
+        template<class Self, class Fn, class... Args>
             requires (std::is_void_v<std::invoke_result_t<Fn, Args...>>)
-        void invoke_decorated(const decorator_data& data, Fn f, Args... args) const {
-            if(m_Prologue) m_Prologue(*this, data);
+        void invoke_decorated(this const Self& self, const decorator_data& data, Fn f, Args... args) {
+            if(self.m_Prologue) self.m_Prologue(self, data);
 
             f(args...);
 
-            if(m_Epilogue) m_Epilogue(*this, data);
+            if(self.m_Epilogue) self.m_Epilogue(self, data);
         }
 
         [[nodiscard]]
@@ -71,12 +83,47 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         const GladGLContext& glad_context() const noexcept { return m_Context; }
+    protected:
+        decorated_context_base(const decorated_context_base&) = default;
+        decorated_context_base(decorated_context_base&&)      = default;
+
+        decorated_context_base& operator=(const decorated_context_base&) = default;
+        decorated_context_base& operator=(decorated_context_base&&)      = default;
+
+        ~decorated_context_base() = default;
     private:
+        using decorator_type = std::function<void(const decorated_context_base&, const decorator_data&)>;
+
         debugging_mode m_DebugMode{};
         GladGLContext m_Context{};
         decorator_type m_Prologue{},
                        m_Epilogue{};
     };
+
+    class decorated_context : public decorated_context_base {
+    public:
+        template<class Fn>
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const decorated_context_base&, const decorator_data&>};
+
+        decorated_context() = default;
+
+        template<std::invocable<GladGLContext&> Loader, class Prologue, class Epilogue>
+            requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
+        decorated_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
+            : decorated_context_base{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
+            , m_Properties{}
+        {
+        }
+
+        [[nodiscard]]
+        const context_properties& properties() const noexcept { return m_Properties; }
+    private:
+        context_properties m_Properties{};
+
+        [[nodiscard]]
+        static texture_unit get_max_combined_texture_unit(const decorated_context_base& ctx);
+    };
+
 
     struct member_info {
         std::string_view name{};

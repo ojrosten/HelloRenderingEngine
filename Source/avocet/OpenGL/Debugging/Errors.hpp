@@ -120,16 +120,16 @@ namespace avocet::opengl {
 
 #ifdef __cpp_lib_generator
     [[nodiscard]]
-    STD_GENERATOR<error_code> get_errors(const decorated_context& ctx, num_messages maxNum);
+    STD_GENERATOR<error_code> get_errors(const decorated_context_base& ctx, num_messages maxNum);
 
     [[nodiscard]]
-    STD_GENERATOR<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum);
+    STD_GENERATOR<debug_info> get_messages(const decorated_context_base& ctx, num_messages maxNum);
 #else
     [[nodiscard]]
-    std::vector<error_code> get_errors(const decorated_context& ctx, num_messages maxNum);
+    std::vector<error_code> get_errors(const decorated_context_base& ctx, num_messages maxNum);
 
     [[nodiscard]]
-    std::vector<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum);
+    std::vector<debug_info> get_messages(const decorated_context_base& ctx, num_messages maxNum);
 #endif
 
 
@@ -143,7 +143,7 @@ namespace avocet::opengl {
 
     template<class ErrorProcessor>
         requires is_basic_error_processor_v<ErrorProcessor>
-    void check_for_basic_errors(const decorated_context& ctx, const error_message_info& info, num_messages maxNum, ErrorProcessor processor)
+    void check_for_basic_errors(const decorated_context_base& ctx, const error_message_info& info, num_messages maxNum, ErrorProcessor processor)
     {
         const std::string errorMessage{
             std::ranges::fold_left(get_errors(ctx, maxNum), std::string{}, processor)
@@ -155,7 +155,7 @@ namespace avocet::opengl {
 
     template<class ErrorProcessor>
         requires is_advanced_error_processor_v<ErrorProcessor>
-    void check_for_advanced_errors(const decorated_context& ctx, const error_message_info& info, num_messages maxNum, ErrorProcessor processor) {
+    void check_for_advanced_errors(const decorated_context_base& ctx, const error_message_info& info, num_messages maxNum, ErrorProcessor processor) {
         const std::string errorMessage{
             std::ranges::fold_left(get_messages(ctx, maxNum),  std::string{}, processor)
         };
@@ -170,16 +170,16 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline bool debug_output_supported(const decorated_context& ctx) {
+    inline bool debug_output_supported(const decorated_context_base& ctx) {
         return debug_output_supported(get_opengl_version(ctx));
     }
 
     [[nodiscard]]
-    inline bool object_labels_activated(const decorated_context& ctx) { return debug_output_supported(ctx); }
+    inline bool object_labels_activated(const decorated_context_base& ctx) { return debug_output_supported(ctx); }
 
     template<class BasicErrorProcessor, class AdvancedErrorProcessor>
         requires is_basic_error_processor_v<BasicErrorProcessor> && is_advanced_error_processor_v<AdvancedErrorProcessor>
-    void check_for_errors(const decorated_context& ctx, const decorator_data& data, num_messages numMessages, BasicErrorProcessor basicProcessor, AdvancedErrorProcessor advancedProcessor) {
+    void check_for_errors(const decorated_context_base& ctx, const decorator_data& data, num_messages numMessages, BasicErrorProcessor basicProcessor, AdvancedErrorProcessor advancedProcessor) {
         if(data.debug_mode != debugging_mode::off) {
             if(debug_output_supported(ctx))
                 check_for_advanced_errors(ctx, {data.name, data.loc}, numMessages, advancedProcessor);
@@ -195,7 +195,7 @@ namespace avocet::opengl {
             : m_MaxReportedErrors{maxNumMessages}
         {}
 
-        void operator()(const decorated_context& ctx, const decorator_data& data) const {
+        void operator()(const decorated_context_base& ctx, const decorator_data& data) const {
             check_for_errors(ctx, data, m_MaxReportedErrors, default_error_code_processor{}, default_debug_info_processor{});
         }
     };

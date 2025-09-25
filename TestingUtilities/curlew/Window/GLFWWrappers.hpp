@@ -18,10 +18,12 @@
 struct GLFWwindow;
 
 namespace curlew {
+    namespace agl = avocet::opengl;
+
     enum class window_hiding_mode : bool { off, on };
 
     struct window_config {
-        using decorator_type        = avocet::opengl::decorated_context::decorator_type;
+        using decorator_type        = std::function<void(const agl::decorated_context_base&, const agl::decorator_data)>;
         using debugging_mode        = avocet::opengl::debugging_mode;
         using default_error_checker = avocet::opengl::default_error_checker;
 
