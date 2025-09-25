@@ -1,0 +1,8 @@
+Tests/OpenGL/Resources/Texture2dTest.cpp, Line 31
+
+Expected Exception Type:
+[std::runtime_error]
+Requested texture unit 18446744073709551615 exceeds the maximum indexable 192
+
+=======================================
+

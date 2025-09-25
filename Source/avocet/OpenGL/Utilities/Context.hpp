@@ -111,7 +111,7 @@ namespace avocet::opengl {
             requires is_decorator_v<Prologue> && is_decorator_v<Epilogue>
         decorated_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
             : decorated_context_base{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
-            , m_Properties{}
+            , m_Properties{get_max_combined_texture_unit(*this)}
         {
         }
 

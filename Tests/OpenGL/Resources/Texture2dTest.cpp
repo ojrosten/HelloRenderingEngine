@@ -27,6 +27,15 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
 
+        check_exception_thrown<std::runtime_error>(
+            "",
+            [&w]() {
+                unique_image image{std::vector<unsigned char>{255, 255, 255, 255}, 1, 1, colour_channels{4}, alignment{1}};
+                agl::texture_2d tex2d{w.context(), agl::texture_2d_configurator{.data_view{image}, .decoding{}, .parameter_setter{}, .label{}}};
+                bind(tex2d, agl::texture_unit{std::numeric_limits<std::size_t>::max()});
+            }
+        );
+
         check_semantics_via_texture_data(
             "Faithful roundtrip rgba and rgb: data sent and received naturally aligned",
             w,
