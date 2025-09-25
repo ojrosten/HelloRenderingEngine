@@ -218,9 +218,9 @@ namespace avocet::opengl {
         }
     };
 
-    template<gl_floating_point T, dimensionality ArenaDimension>
-    using triangle = polygon<T, 3, ArenaDimension>;
+    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
+    using triangle = polygon<T, 3, ArenaDimension, Attributes...>;
 
-    template<gl_floating_point T, dimensionality ArenaDimension>
-    using quad = polygon<T, 4, ArenaDimension>;
+    template<gl_floating_point T, dimensionality ArenaDimension, class... Attributes>
+    using quad = polygon<T, 4, ArenaDimension, Attributes...>;
 }

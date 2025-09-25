@@ -41,6 +41,12 @@ namespace {
     fs::path get_shader_dir() { return get_dir("Shaders"); }
 
     [[nodiscard]]
+    fs::path get_vertex_shader_dir() { return get_shader_dir() / "Vertex"; }
+
+    [[nodiscard]]
+    fs::path get_fragment_shader_dir() { return get_shader_dir() / "Fragment"; }
+
+    [[nodiscard]]
     fs::path get_image_dir() { return get_dir("Images"); }
 
     [[nodiscard]]
@@ -84,10 +90,14 @@ int main()
         const auto& ctx{w.context()};
 
         agl::shader_program
-            shaderProgram      {ctx, get_shader_dir() / "Identity.vs",           get_shader_dir() / "Monochrome.fs"},
-            discShaderProgram  {ctx, get_shader_dir() / "Disc2D.vs",             get_shader_dir() / "Disc.fs"},
-            shaderProgram2D    {ctx, get_shader_dir() / "IdentityTextured2D.vs", get_shader_dir() / "Textured.fs"},
-            shaderProgramDouble{ctx, get_shader_dir() / "IdentityDouble.vs",     get_shader_dir() / "Monochrome.fs"};
+            shaderProgram2DMonochrome       {ctx, get_vertex_shader_dir() / "2D" / "Identity.vs",              get_fragment_shader_dir() / "General" / "Monochrome.fs"},
+            discShaderProgram2DTextured     {ctx, get_vertex_shader_dir() / "2D" / "DiscTextured.vs",          get_fragment_shader_dir() / "2D"      / "DiscTextured.fs"},
+            shaderProgram2DTextured         {ctx, get_vertex_shader_dir() / "2D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
+            //shaderProgram2DMixedTextures    {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
+            shaderProgram3DDoubleMonochrome {ctx, get_vertex_shader_dir() / "3D" / "IdentityDouble.vs",        get_fragment_shader_dir() / "General" / "Monochrome.fs"};
+
+        avocet::unique_image twilight  {get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
+        avocet::unique_image fluttershy{get_image_dir() / "Fluttershy.png",              avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
         agl::quad<GLdouble, agl::dimensionality{3}> q{
             ctx,
@@ -104,35 +114,41 @@ int main()
         constexpr GLfloat radius{0.4f};
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
 
-        agl::triangle<GLfloat, agl::dimensionality{2}> disc{
+        agl::triangle<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> disc{
             ctx,
             [radius, centre](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
                     constexpr auto scale{2 * radius / 0.5};
                     (sequoia::get<0>(vert) *= scale) += centre;
+                    (sequoia::get<1>(vert) *= 1.6f)  += agl::texture_coordinates<GLfloat>{-0.3f, -0.3f};
                 }
 
                 return verts;
             },
+            agl::texture_2d_configurator{
+                .data_view{fluttershy},
+                .decoding{agl::sampling_decoding::srgb},
+                .parameter_setter{ [&ctx]() { agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                .label{"Fluttershy"}
+            },
             make_label("Disc")
         };
 
-        discShaderProgram.set_uniform("radius", radius);
-        discShaderProgram.set_uniform("centre", centre.values());
+        discShaderProgram2DTextured.set_uniform("radius", radius);
+        discShaderProgram2DTextured.set_uniform("centre", centre.values());
+        discShaderProgram2DTextured.set_uniform("image", 5);
 
-        agl::polygon<GLfloat, 7, agl::dimensionality{3}> sept{
+        agl::polygon<GLfloat, 7, agl::dimensionality{2}> sept{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    sequoia::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{3}>{0.5f, 0.5f};
+                    sequoia::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{0.5f, 0.5f};
                 }
 
                 return verts;
             },
             make_label("Septagon")
         };
-
-        avocet::unique_image pony{get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
         agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             ctx,
@@ -144,7 +160,7 @@ int main()
                 return verts;
             },
             agl::texture_2d_configurator{
-                .data_view{pony},
+                .data_view{twilight},
                 .decoding{agl::sampling_decoding::srgb},
                 .parameter_setter{ [&ctx](){ agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
                 .label{"Princess TS"}
@@ -152,19 +168,19 @@ int main()
             make_label("Hexagon")
         };
 
-        shaderProgram2D.set_uniform("image", 8);
+        shaderProgram2DTextured.set_uniform("image", 8);
 
         while(!glfwWindowShouldClose(&w.get())) {
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT);
 
-            shaderProgramDouble.use();
+            shaderProgram3DDoubleMonochrome.use();
             q.draw();
-            discShaderProgram.use();
-            disc.draw();
-            shaderProgram.use();
+            discShaderProgram2DTextured.use();
+            disc.draw(agl::texture_unit{5});
+            shaderProgram2DMonochrome.use();
             sept.draw();
-            shaderProgram2D.use();
+            shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
 
             glfwSwapBuffers(&w.get());
