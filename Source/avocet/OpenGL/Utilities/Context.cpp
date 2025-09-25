@@ -10,7 +10,7 @@
 
 namespace avocet::opengl {
     [[nodiscard]]
-    texture_unit decorated_context::get_max_combined_texture_unit(const decorated_context_base& ctx) {
+    texture_unit decorated_context::get_max_combined_texture_units(const decorated_context_base& ctx) {
         GLint param{};
         gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &param);
         return texture_unit{static_cast<std::size_t>(param)};
