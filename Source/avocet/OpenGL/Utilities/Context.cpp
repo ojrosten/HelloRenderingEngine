@@ -15,4 +15,20 @@ namespace avocet::opengl {
         gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &param);
         return texture_unit{static_cast<std::size_t>(param)};
     }
+
+    /* Slideware
+    namespace impl {
+        [[nodiscard]]
+        texture_unit get_max_combined_texture_units(const decorated_context& ctx) {
+            GLint param{};
+            gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &param);
+            return texture_unit{static_cast<std::size_t>(param)};
+        }
+    }
+
+    [[nodiscard]]
+    texture_unit get_max_combined_texture_units(const decorated_context& ctx) {
+        const static texture_unit maxUnit{impl::get_max_combined_texture_units(ctx)};
+        return maxUnit;
+    }*/
 }
