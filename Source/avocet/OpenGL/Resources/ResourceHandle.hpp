@@ -11,6 +11,7 @@
 
 #include <array>
 #include <concepts>
+#include <span>
 #include <utility>
 
 namespace avocet::opengl {
@@ -86,11 +87,17 @@ namespace avocet::opengl {
 
     template<class From, std::size_t N, std::invocable<From> Fn, class To = std::invoke_result_t<Fn, From>>
     [[nodiscard]]
-    std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
+    std::array<To, N> to_array(std::span<const From, N> from, Fn fn) {
         return
             [&] <std::size_t... Is> (std::index_sequence<Is...>) {
             return std::array<To, N>{fn(from[Is])...};
         }(std::make_index_sequence<N>{});
+    }
+
+    template<class From, std::size_t N, std::invocable<From> Fn, class To = std::invoke_result_t<Fn, From>>
+    [[nodiscard]]
+    std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
+        return to_array(std::span(from), std::move(fn));
     }
 
     template<std::size_t N>
