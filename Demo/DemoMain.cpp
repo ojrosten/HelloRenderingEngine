@@ -75,7 +75,8 @@ int main()
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    sequoia::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.0, -0.5};
+                    using coords_t = agl::local_coordinates<GLdouble, agl::dimensionality{3}>;
+                    sequoia::get<0>(vert) += coords_t{0.0, -0.5, -0.1};
                 }
 
                 return verts;
@@ -83,7 +84,7 @@ int main()
             make_label("Quad")
         };
 
-        shaderProgramDouble.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.5f});
+        shaderProgramDouble.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.4f});
 
         constexpr GLfloat radius{0.4f};
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
@@ -167,7 +168,17 @@ int main()
 
         while(!glfwWindowShouldClose(&w.get())) {
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
-            agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT);
+
+            agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            //agl::gl_function{&GladGLContext::Enable}(ctx, GL_DEPTH_TEST);
+            //agl::gl_function{&GladGLContext::DepthFunc}(ctx, GL_LESS);
+
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
+            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+
+            shaderProgramDouble.use();
+            q.draw();
 
             discShaderProgram.use();
             disc.draw(agl::texture_unit{5});
@@ -178,10 +189,7 @@ int main()
 
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
-            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            shaderProgramDouble.use();
-            q.draw();
+
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
