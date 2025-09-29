@@ -91,7 +91,7 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        explicit generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
+        generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
             for(const auto& [ctxHandle, config] : std::views::zip(contextual_handles(), configs)) {
