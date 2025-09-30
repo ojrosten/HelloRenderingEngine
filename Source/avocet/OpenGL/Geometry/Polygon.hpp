@@ -107,9 +107,9 @@ namespace avocet::opengl {
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
         polygon_base(const decorated_context& ctx,
-                    Fn transformer,
-                    std::span<const texture_2d_configurator, num_textures> texConfigs,
-                    const std::optional<std::string>& label)
+                     Fn transformer,
+                     std::span<const texture_2d_configurator, num_textures> texConfigs,
+                     const std::optional<std::string>& label)
             : m_VBO{ctx, transformer(st_Vertices), label}
             , m_VAO{ctx, label, m_VBO}
             , m_Texture{to_array(texConfigs, [&ctx](const texture_2d_configurator& config) { return texture_2d{ctx, config}; })}
