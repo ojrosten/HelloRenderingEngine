@@ -9,6 +9,14 @@
 
 namespace avocet::opengl {
     namespace {
+
+        [[nodiscard]]
+        texture_unit get_max_texture_units(const decorated_context& ctx) {
+            GLint param{};
+            gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_TEXTURE_IMAGE_UNITS, &param);
+            return texture_unit{static_cast<std::size_t>(param)};
+        }
+
         [[nodiscard]]
         constexpr texture_internal_format to_internal_format(texture_format format, sampling_decoding colourSpace) {
             const bool noDecoding{colourSpace == sampling_decoding::none};
