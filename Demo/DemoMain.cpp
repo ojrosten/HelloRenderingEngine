@@ -91,6 +91,7 @@ int main()
 
         agl::shader_program
             //shaderProgram2DMonochrome       {ctx, get_vertex_shader_dir() / "2D" / "Identity.vs",              get_fragment_shader_dir() / "General" / "Monochrome.fs"},
+            discShaderProgram2D             {ctx, get_vertex_shader_dir() / "2D" / "Disc.vs",                  get_fragment_shader_dir() / "2D"      / "Disc.fs"},
             discShaderProgram2DTextured     {ctx, get_vertex_shader_dir() / "2D" / "DiscTextured.vs",          get_fragment_shader_dir() / "2D"      / "DiscTextured.fs"},
             shaderProgram2DTextured         {ctx, get_vertex_shader_dir() / "2D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
             shaderProgram2DMixedTextures    {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
@@ -190,19 +191,74 @@ int main()
 
         shaderProgram2DTextured.set_uniform("image", 8);
 
+        avocet::unique_image hearty{get_image_dir() / "Hearts.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
+
+        agl::quad<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat >> heartyDecal{
+            ctx,
+            [](std::ranges::random_access_range auto verts) {
+                for(auto& vert : verts) {
+                    sequoia::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.6f};
+                }
+
+                return verts;
+            },
+            agl::texture_2d_configurator{
+                .data_view{hearty},
+                .decoding{agl::sampling_decoding::srgb},
+                .parameter_setter{ [&ctx]() { agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                .label{"Hearts"}
+            },
+            make_label("Decal")
+        };
+
+        constexpr GLfloat cutoutRadius{0.04f};
+        constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> cutoutCentre{-0.53f, -0.85f};
+
+        agl::triangle<GLfloat, agl::dimensionality{2}> cutout{
+            ctx,
+            [cutoutRadius, cutoutCentre](std::ranges::random_access_range auto verts) {
+                for(auto& vert : verts) {
+                    constexpr auto scale{2.0 * cutoutRadius / 0.5};
+                    (sequoia::get<0>(vert) *= scale) += cutoutCentre;
+                }
+
+                return verts;
+            },
+            make_label("Cutout")
+        };
+
+        discShaderProgram2D.set_uniform("radius", cutoutRadius);
+        discShaderProgram2D.set_uniform("centre", cutoutCentre.values());
+
         while(!glfwWindowShouldClose(&w.get())) {
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
-            agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT);
+            agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
             agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             discShaderProgram2DTextured.use();
             disc.draw(agl::texture_unit{5});
+
             shaderProgram2DMixedTextures.use();
             sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_STENCIL_TEST);
+
+            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_REPLACE);
+            agl::gl_function{&GladGLContext::StencilMask}(ctx, 255);
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_ALWAYS, 1, 255);
+            discShaderProgram2D.use();
+            cutout.draw();
+
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_EQUAL, 1, 255);
+            shaderProgram2DTextured.use();
+            heartyDecal.draw(agl::texture_unit{8});
+
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
+
             shaderProgram3DDoubleMonochrome.use();
             q.draw();
 
