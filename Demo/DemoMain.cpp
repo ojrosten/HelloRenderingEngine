@@ -90,10 +90,10 @@ int main()
         const auto& ctx{w.context()};
 
         agl::shader_program
-            shaderProgram2DMonochrome       {ctx, get_vertex_shader_dir() / "2D" / "Identity.vs",              get_fragment_shader_dir() / "General" / "Monochrome.fs"},
+            //shaderProgram2DMonochrome       {ctx, get_vertex_shader_dir() / "2D" / "Identity.vs",              get_fragment_shader_dir() / "General" / "Monochrome.fs"},
             discShaderProgram2DTextured     {ctx, get_vertex_shader_dir() / "2D" / "DiscTextured.vs",          get_fragment_shader_dir() / "2D"      / "DiscTextured.fs"},
             shaderProgram2DTextured         {ctx, get_vertex_shader_dir() / "2D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
-            //shaderProgram2DMixedTextures    {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
+            shaderProgram2DMixedTextures    {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
             shaderProgram3DDoubleMonochrome {ctx, get_vertex_shader_dir() / "3D" / "IdentityDouble.vs",        get_fragment_shader_dir() / "General" / "Monochrome.fs"};
 
         avocet::unique_image twilight  {get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
@@ -103,13 +103,15 @@ int main()
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    sequoia::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.5, -0.5};
+                    sequoia::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.0, -0.5};
                 }
 
                 return verts;
             },
             make_label("Quad")
         };
+
+        shaderProgram3DDoubleMonochrome.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.4f});
 
         constexpr GLfloat radius{0.4f};
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
@@ -138,7 +140,7 @@ int main()
         discShaderProgram2DTextured.set_uniform("centre", centre.values());
         discShaderProgram2DTextured.set_uniform("image", 5);
 
-        agl::polygon<GLfloat, 7, agl::dimensionality{2}> sept{
+        agl::polygon<GLfloat, 7, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>, agl::texture_coordinates<GLfloat>> sept{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
@@ -147,8 +149,25 @@ int main()
 
                 return verts;
             },
+            std::array{
+                agl::texture_2d_configurator{
+                    .data_view{twilight},
+                    .decoding{agl::sampling_decoding::srgb},
+                    .parameter_setter{ [&ctx]() { agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                    .label{"Princess TS"}
+                },
+                agl::texture_2d_configurator{
+                    .data_view{fluttershy},
+                    .decoding{agl::sampling_decoding::srgb},
+                    .parameter_setter{ [&ctx]() { agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                    .label{"Fluttershy"}
+                },
+            },
             make_label("Septagon")
         };
+
+        shaderProgram2DMixedTextures.set_uniform("image0", 2);
+        shaderProgram2DMixedTextures.set_uniform("image1", 3);
 
         agl::polygon<GLfloat, 6, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hex{
             ctx,
@@ -174,12 +193,16 @@ int main()
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT);
 
-            shaderProgram3DDoubleMonochrome.use();
-            q.draw();
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
+            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+
             discShaderProgram2DTextured.use();
             disc.draw(agl::texture_unit{5});
-            shaderProgram2DMonochrome.use();
-            sept.draw();
+            shaderProgram2DMixedTextures.use();
+            sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+
+            shaderProgram3DDoubleMonochrome.use();
+            q.draw();
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
 

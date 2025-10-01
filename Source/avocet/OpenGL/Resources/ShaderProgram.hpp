@@ -103,6 +103,10 @@ namespace avocet::opengl {
             do_set_uniform(name, gl_function{&GladGLContext::Uniform2f}, vals[0], vals[1]);
         }
 
+        void set_uniform(std::string_view name, std::span<const GLfloat, 4> vals) {
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform4f}, vals[0], vals[1], vals[2], vals[3]);
+        }
+
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
