@@ -231,6 +231,8 @@ int main()
         discShaderProgram2D.set_uniform("centre", cutoutCentre.values());
 
         while(!glfwWindowShouldClose(&w.get())) {
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_MULTISAMPLE);
+
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 

@@ -39,6 +39,7 @@ namespace curlew {
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));
+            glfwWindowHint(GLFW_SAMPLES, 4);
 
             set_debug_context(config.debug_mode, version);
 
