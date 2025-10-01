@@ -197,7 +197,7 @@ int main()
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    sequoia::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.5f};
+                    (sequoia::get<0>(vert) *= 1.4f) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.5f};
                 }
 
                 return verts;
@@ -231,13 +231,11 @@ int main()
         discShaderProgram2D.set_uniform("centre", cutoutCentre.values());
 
         while(!glfwWindowShouldClose(&w.get())) {
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_MULTISAMPLE);
-
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
+
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
-            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            //agl::gl_function{&GladGLContext::Disable}(ctx, GL_MULTISAMPLE);
 
             discShaderProgram2DTextured.use();
             disc.draw(agl::texture_unit{5});
@@ -248,24 +246,29 @@ int main()
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_STENCIL_TEST);
 
             agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_REPLACE);
-            agl::gl_function{&GladGLContext::StencilMask}(ctx, 255);
-            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_ALWAYS, 1, 255);
+            //agl::gl_function{&GladGLContext::StencilMask}(ctx, 255);
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_GREATER, 1, 255);
             discShaderProgram2D.use();
             cutout.draw();
+
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_EQUAL, 1, 255);
+            shaderProgram2DTextured.use();
+            hex.draw(agl::texture_unit{8});
 
             agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_KEEP);
             agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_GREATER, 1, 255);
             shaderProgram2DTextured.use();
             wall.draw(agl::texture_unit{8});
 
-            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_EQUAL, 1, 255);
-            shaderProgram2DTextured.use();
-            hex.draw(agl::texture_unit{8});
-
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
+
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
+            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             shaderProgram3DDoubleMonochrome.use();
             q.draw();
+
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_BLEND);
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
