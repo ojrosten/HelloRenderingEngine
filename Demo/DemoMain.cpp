@@ -193,11 +193,11 @@ int main()
 
         avocet::unique_image hearty{get_image_dir() / "Hearts.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
-        agl::quad<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat >> heartyDecal{
+        agl::quad<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat >> wall{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    sequoia::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.6f};
+                    sequoia::get<0>(vert) += agl::local_coordinates<GLfloat, agl::dimensionality{2}>{-0.5f, -0.5f};
                 }
 
                 return verts;
@@ -208,11 +208,11 @@ int main()
                 .parameter_setter{ [&ctx]() { agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
                 .label{"Hearts"}
             },
-            make_label("Decal")
+            make_label("Wall")
         };
 
-        constexpr GLfloat cutoutRadius{0.04f};
-        constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> cutoutCentre{-0.53f, -0.85f};
+        constexpr GLfloat cutoutRadius{0.25f};
+        constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> cutoutCentre{-0.5f, -0.5f};
 
         agl::triangle<GLfloat, agl::dimensionality{2}> cutout{
             ctx,
@@ -243,8 +243,6 @@ int main()
             shaderProgram2DMixedTextures.use();
             sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
 
-            shaderProgram2DTextured.use();
-            hex.draw(agl::texture_unit{8});
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_STENCIL_TEST);
 
             agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -253,9 +251,14 @@ int main()
             discShaderProgram2D.use();
             cutout.draw();
 
+            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_KEEP);
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_GREATER, 1, 255);
+            shaderProgram2DTextured.use();
+            wall.draw(agl::texture_unit{8});
+
             agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_EQUAL, 1, 255);
             shaderProgram2DTextured.use();
-            heartyDecal.draw(agl::texture_unit{8});
+            hex.draw(agl::texture_unit{8});
 
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
 
