@@ -194,17 +194,17 @@ int main()
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT);
 
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
-            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA);
+            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             discShaderProgram2DTextured.use();
             disc.draw(agl::texture_unit{5});
             shaderProgram2DMixedTextures.use();
             sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
 
-            shaderProgram3DDoubleMonochrome.use();
-            q.draw();
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
+            shaderProgram3DDoubleMonochrome.use();
+            q.draw();
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
