@@ -98,9 +98,9 @@ namespace avocet::opengl {
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 1)
         polygon_base(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
-            :     m_VBO{ctx, transformer(st_Vertices), label}
-            ,     m_VAO{ctx, label, m_VBO}
-            , m_Texture{texture_2d{ctx, texConfig}}
+            :      m_VBO{ctx, transformer(st_Vertices), label}
+            ,      m_VAO{ctx, label, m_VBO}
+            , m_Textures{texture_2d{ctx, texConfig}}
         {
         }
 
@@ -109,7 +109,7 @@ namespace avocet::opengl {
         polygon_base(const decorated_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
             : m_VBO{ctx, transformer(st_Vertices), label}
             , m_VAO{ctx, label, m_VBO}
-            , m_Texture{to_array(texConfigs, [&ctx](const texture_2d_configurator& config) { return texture_2d{ctx, config}; })}
+            , m_Textures{to_array(texConfigs, [&ctx](const texture_2d_configurator& config) { return texture_2d{ctx, config}; })}
         {
         }
 
@@ -122,14 +122,14 @@ namespace avocet::opengl {
         template<class Self>
             requires (num_textures == 1)
         void draw(this const Self& self, texture_unit unit) {
-            bind(self.m_Texture.front(), unit);
+            bind(self.m_Textures.front(), unit);
             self.bind_vao_and_draw();
         }
 
         template<class Self>
         void draw(this const Self& self, std::span<const texture_unit, num_textures> unit) {
             for(auto i : std::views::iota(0uz, num_textures))
-                bind(self.m_Texture[i], unit[i]);
+                bind(self.m_Textures[i], unit[i]);
 
             self.bind_vao_and_draw();
         }
@@ -155,7 +155,7 @@ namespace avocet::opengl {
 
         vertex_buffer_object<vertex_attribute_type> m_VBO;
         vertex_attribute_object m_VAO;
-        SEQUOIA_NO_UNIQUE_ADDRESS std::array<texture_2d, num_textures> m_Texture;
+        SEQUOIA_NO_UNIQUE_ADDRESS std::array<texture_2d, num_textures> m_Textures;
 
         template<class Self>
         void bind_vao_and_draw(this const Self& self) {
