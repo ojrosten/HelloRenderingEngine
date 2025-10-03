@@ -12,6 +12,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/OpenGL/Capabilities/CapabilityManager.hpp"
+#include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 
@@ -120,6 +121,17 @@ namespace avocet::opengl {
 
 namespace avocet::testing
 {
+    namespace agl = avocet::opengl;
+
+    namespace {
+        [[nodiscard]]
+        GLint get_int_param(const agl::decorated_context& ctx, GLenum name) {
+            GLint pname{};
+            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &pname);
+            return pname;
+        }
+    }
+
     [[nodiscard]]
     std::filesystem::path capability_manager_free_test::source_file() const
     {
@@ -133,9 +145,10 @@ namespace avocet::testing
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
         const auto& ctx{w.context()};
 
-        namespace agl = avocet::opengl;
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_ONE));
+        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ZERO));
 
         agl::capability_manager capManager{ctx};
 
@@ -153,5 +166,10 @@ namespace avocet::testing
         capManager.new_payload(agl::capabilities::gl_blend{});
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
+        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
+
+        capManager.new_payload(agl::capabilities::gl_blend{.source{GL_DST_ALPHA}, .destination{GL_ONE_MINUS_DST_ALPHA}});
     }
 }
