@@ -7,5 +7,7 @@
 
 /*! \file */
 
+#include "avocet/OpenGL/Utilities/GLFunction.hpp"
+
 namespace avocet::opengl {
 }
