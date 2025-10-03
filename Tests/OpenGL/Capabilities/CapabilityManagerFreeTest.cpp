@@ -20,12 +20,31 @@
 #include <tuple>
 
 namespace avocet::opengl {
+
     enum class gl_capability : GLenum {
         gl_blend       = GL_BLEND,
         gl_multisample = GL_MULTISAMPLE
     };
 
+    enum class blend_mode : GLenum {
+        zero                   = GL_ZERO,
+        one                    = GL_ONE,
+        src_colour             = GL_SRC_COLOR,
+        one_minus_src_colout   = GL_ONE_MINUS_SRC_COLOR,
+        dst_colour             = GL_DST_COLOR,
+        one_minus_dst_colour   = GL_ONE_MINUS_DST_COLOR,
+        src_alpha              = GL_SRC_ALPHA,
+        one_minus_src_alpha    = GL_ONE_MINUS_SRC_ALPHA,
+        dst_alpha              = GL_DST_ALPHA,
+        one_minus_dst_alpha    = GL_ONE_MINUS_DST_ALPHA,
+        const_colour           = GL_CONSTANT_COLOR,
+        one_minus_const_colour = GL_ONE_MINUS_CONSTANT_COLOR,
+        const_alpha            = GL_CONSTANT_ALPHA,
+        one_minus_const_alpha  = GL_ONE_MINUS_CONSTANT_ALPHA
+    };
+
     namespace capabilities {
+
         template<gl_capability Cap>
         struct capability_common_lifecycle {
             constexpr static gl_capability capability{Cap};
@@ -51,10 +70,11 @@ namespace avocet::opengl {
         };
 
         struct gl_blend : capability_common_lifecycle<gl_capability::gl_blend> {
-            GLenum source{GL_SRC_ALPHA}, destination{GL_ONE_MINUS_SRC_ALPHA};
+            blend_mode source{blend_mode::src_alpha},
+                       destination{blend_mode::one_minus_src_alpha};
 
             void configure(this const gl_blend& self, const decorated_context& ctx) {
-                gl_function{&GladGLContext::BlendFunc}(ctx, self.source, self.destination);
+                gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(self.source), to_gl_enum(self.destination));
             }
 
             [[nodiscard]]
