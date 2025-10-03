@@ -21,6 +21,23 @@ namespace curlew {
 
     enum class window_hiding_mode : bool { off, on };
 
+    class num_samples {
+        std::size_t m_Num{1};
+    public:
+        constexpr explicit num_samples(std::size_t num)
+            : m_Num{num}
+        {
+            if(!num)
+                throw std::runtime_error{"Number of samples must be > 0"};
+        }
+
+        [[nodiscard]]
+        constexpr std::size_t value() const noexcept { return m_Num; }
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const num_samples&, const num_samples&) noexcept = default;
+    };
+
     struct window_config {
         using decorator_type = std::function<void(const agl::decorated_context&, const agl::decorator_data)>;
 
@@ -30,6 +47,7 @@ namespace curlew {
         agl::debugging_mode debug_mode{agl::debugging_mode::dynamic};
         decorator_type prologue{},
                        epilogue{agl::standard_error_checker{agl::num_messages{10}}};
+        num_samples samples{1};
     };
 
     class glfw_manager;

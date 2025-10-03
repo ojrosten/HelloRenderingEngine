@@ -33,13 +33,16 @@ namespace curlew {
         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
         [[nodiscard]]
+        constexpr int to_int(num_samples samples) { return static_cast<int>(samples.value()); }
+
+        [[nodiscard]]
         GLFWwindow& make_window(const window_config& config, const agl::opengl_version& version) {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));
-            glfwWindowHint(GLFW_SAMPLES, 4);
+            glfwWindowHint(GLFW_SAMPLES, to_int(config.samples));
 
             set_debug_context(config.debug_mode, version);
 

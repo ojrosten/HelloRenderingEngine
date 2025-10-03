@@ -77,13 +77,14 @@ int main()
         using error_checker = agl::standard_error_checker<agl::default_error_code_processor, agl::default_debug_info_processor>;
         auto w{
             manager.create_window(
-                {.width{800},
-                 .height{800},
+                {.width {1600},
+                 .height{1600},
                  .name{"Hello Rendering Engine"},
                  .hiding{curlew::window_hiding_mode::off},
                  .debug_mode{agl::debugging_mode::dynamic},
                  .prologue{},
-                 .epilogue{error_checker{agl::num_messages{10}}}
+                 .epilogue{error_checker{agl::num_messages{10}}},
+                 .samples{16}
                 }
             )
         };
@@ -235,6 +236,7 @@ int main()
 
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+            //agl::gl_function{&GladGLContext::Enable}(ctx, GL_MULTISAMPLE);
             //agl::gl_function{&GladGLContext::Disable}(ctx, GL_MULTISAMPLE);
 
             discShaderProgram2DTextured.use();
@@ -260,7 +262,7 @@ int main()
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
 
-            //agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
 
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
             agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
