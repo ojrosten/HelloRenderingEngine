@@ -17,6 +17,7 @@
 #include "Core/AssetManagement/UniqueImageTest.hpp"
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
+#include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
@@ -103,6 +104,11 @@ int main(int argc, char** argv)
             texture_2d_false_negative_test{"False Negative Test"},
             texture_2d_test{"Semantics Test"},
             texture_2d_labelling_free_test{"Labelling Test"}
+        );
+
+        runner.add_test_suite(
+            "Capability Manager",
+            capability_manager_free_test{"Capability Manager Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

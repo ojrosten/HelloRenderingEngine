@@ -25,6 +25,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/UniqueImageTest.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageThreadingFreeTest.cpp
+               ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
