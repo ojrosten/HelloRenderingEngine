@@ -30,6 +30,9 @@ namespace avocet::opengl {
         static void disable(const decorated_context& ctx) {
             gl_function{&GladGLContext::Disable}(ctx, raw_capability);
         }
+
+        [[nodiscard]]
+        friend constexpr bool operator==(const gl_capability&, const gl_capability&) noexcept = default;
     };
 
     namespace capabilities {
@@ -38,7 +41,7 @@ namespace avocet::opengl {
             void configure(const decorated_context&) const {}
 
             [[nodiscard]]
-            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept { return true; }
+            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
         };
 
         struct gl_blend : gl_capability<GL_BLEND> {
@@ -142,5 +145,13 @@ namespace avocet::testing
         capManager.new_payload(agl::capabilities::gl_multi_sample{});
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        capManager.new_payload();
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        capManager.new_payload(agl::capabilities::gl_blend{});
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
     }
 }
