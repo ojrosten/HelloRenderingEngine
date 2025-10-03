@@ -55,7 +55,7 @@ namespace avocet::opengl {
     public:
         template<class... Capabilities>
         explicit(sizeof...(Capabilities) == 0) capability_manager(const decorated_context& ctx, const Capabilities&... caps)
-            : m_Context{ctx}
+            : m_Context{&ctx}
         {
             ((std::get<Capabilities>(m_Payload) = caps), ...);
  
