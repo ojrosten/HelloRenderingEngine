@@ -20,24 +20,29 @@
 #include <tuple>
 
 namespace avocet::opengl {
-    template<GLenum Cap>
-    struct gl_capability {
-        constexpr static GLenum raw_capability{Cap};
-
-        static void enable(const decorated_context& ctx) {
-            gl_function{&GladGLContext::Enable}(ctx, raw_capability);
-        }
-
-        static void disable(const decorated_context& ctx) {
-            gl_function{&GladGLContext::Disable}(ctx, raw_capability);
-        }
-
-        [[nodiscard]]
-        friend constexpr bool operator==(const gl_capability&, const gl_capability&) noexcept = default;
+    enum class gl_capability : GLenum {
+        gl_blend       = GL_BLEND,
+        gl_multisample = GL_MULTISAMPLE
     };
 
     namespace capabilities {
-        struct gl_multi_sample : gl_capability<GL_MULTISAMPLE> {
+        template<gl_capability Cap>
+        struct capability_common_lifecycle {
+            constexpr static gl_capability capability{Cap};
+
+            static void enable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
+            }
+
+            static void disable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
+            }
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
+        };
+
+        struct gl_multi_sample : capability_common_lifecycle<gl_capability::gl_multisample> {
 
             void configure(const decorated_context&) const {}
 
@@ -45,7 +50,7 @@ namespace avocet::opengl {
             friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
         };
 
-        struct gl_blend : gl_capability<GL_BLEND> {
+        struct gl_blend : capability_common_lifecycle<gl_capability::gl_blend> {
             GLenum source{GL_SRC_ALPHA}, destination{GL_ONE_MINUS_SRC_ALPHA};
 
             void configure(this const gl_blend& self, const decorated_context& ctx) {
