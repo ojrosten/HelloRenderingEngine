@@ -43,7 +43,31 @@ namespace avocet::opengl {
         one_minus_const_alpha  = GL_ONE_MINUS_CONSTANT_ALPHA
     };
 
-    namespace capabilities {
+    class sample_coverage_value {
+        GLfloat m_Value{1.0};
+    public:
+        constexpr sample_coverage_value() = default;
+
+        constexpr explicit sample_coverage_value(GLfloat val)
+            : m_Value{val}
+        {
+            if((m_Value > 1.0) || (m_Value < 0.0))
+                throw std::domain_error{std::format("Coverage value of {} requested, but must be in the range [0,1]", m_Value)};
+        }
+
+        [[nodiscard]]
+        constexpr GLfloat raw_value() const noexcept { return m_Value; }
+
+        [[nodiscard]]
+        constexpr friend auto operator<=>(const sample_coverage_value&, const sample_coverage_value&) noexcept = default;
+    };
+
+    enum class invert_sample_mask : GLboolean {
+        no  = GL_FALSE,
+        yes = GL_TRUE
+    };
+
+    inline namespace capabilities {
 
         template<gl_capability Cap>
         struct capability_common_lifecycle {
@@ -62,15 +86,22 @@ namespace avocet::opengl {
         };
 
         struct gl_multi_sample : capability_common_lifecycle<gl_capability::gl_multisample> {
+            sample_coverage_value coverage_val{1.0};
+            invert_sample_mask mask{invert_sample_mask::no};
 
-            void configure(const decorated_context&) const {}
+            void configure(this const gl_multi_sample& self, const decorated_context& ctx) {
+                gl_function{&GladGLContext::SampleCoverage}(
+                    ctx,
+                    self.coverage_val.raw_value(),
+                    static_cast<GLboolean>(self.mask));
+            }
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
         };
 
         struct gl_blend : capability_common_lifecycle<gl_capability::gl_blend> {
-            blend_mode source{blend_mode::src_alpha},
+            blend_mode source     {blend_mode::src_alpha},
                        destination{blend_mode::one_minus_src_alpha};
 
             void configure(this const gl_blend& self, const decorated_context& ctx) {
@@ -82,16 +113,23 @@ namespace avocet::opengl {
         };
     }
 
+    template<class T, class U>
+    struct in_tuple_exactly_once;
+
+    template<class T, class U>
+    inline constexpr bool in_tuple_exactly_once_v{in_tuple_exactly_once<T, U>::value};
+
+    template<class T, class... Ts>
+    struct in_tuple_exactly_once<T, std::tuple<Ts...>> : std::bool_constant<(std::same_as<T, std::remove_cvref_t<Ts>> + ... + 0) == 1>
+    {
+    };
+
     class capability_manager {
-        using tuple_t = std::tuple<std::optional<capabilities::gl_blend>, std::optional<capabilities::gl_multi_sample>>;
-        tuple_t m_Payload{};
-
-        const decorated_context* m_Context{};
-
-        [[nodiscard]]
-        const decorated_context& context() const { return *m_Context; }
     public:
+        using payload_type = std::tuple<std::optional<gl_blend>, std::optional<gl_multi_sample>>;
+
         template<class... Capabilities>
+            requires (in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
         explicit(sizeof...(Capabilities) == 0) capability_manager(const decorated_context& ctx, const Capabilities&... caps)
             : m_Context{&ctx}
         {
@@ -110,10 +148,11 @@ namespace avocet::opengl {
 
             [init, this] <std::size_t... Is>(std::index_sequence<Is...>) {
                 (init(std::get<Is>(m_Payload)), ...);
-            }(std::make_index_sequence<std::tuple_size_v<tuple_t>>{});
+            }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
         }
 
         template<class... Capabilities>
+            requires (in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
         void new_payload(const Capabilities&... caps) {
             using incoming_tuple_t = std::tuple<const Capabilities&...>;
             auto update{
@@ -123,8 +162,7 @@ namespace avocet::opengl {
                         ExistingCap::disable(context());
                     }
                     else {
-                        const auto& requested{std::get<index>(tup)};
-                        if(!optCap) {
+                        if(const auto& requested{std::get<index>(tup)}; !optCap) {
                             optCap = requested;
                             optCap->enable(context());
                             optCap->configure(context());
@@ -139,8 +177,18 @@ namespace avocet::opengl {
 
             [update, this] <std::size_t... Is>(std::index_sequence<Is...>) {
                 (update(std::get<Is>(m_Payload)), ...);
-            }(std::make_index_sequence<std::tuple_size_v<tuple_t>>{});
+            }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
         }
+
+        [[nodiscard]]
+        friend constexpr bool operator==(const capability_manager&, const capability_manager&) noexcept = default;
+    private:
+        payload_type m_Payload{};
+
+        const decorated_context* m_Context{};
+
+        [[nodiscard]]
+        const decorated_context& context() const { return *m_Context; }
     };
 }
 
