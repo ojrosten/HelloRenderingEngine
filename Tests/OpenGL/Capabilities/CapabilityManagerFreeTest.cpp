@@ -37,7 +37,8 @@ namespace avocet::opengl {
 
             void configure(const decorated_context&) const {}
 
-            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept { return true; }
         };
 
         struct gl_blend : gl_capability<GL_BLEND> {
@@ -47,6 +48,7 @@ namespace avocet::opengl {
                 gl_function{&GladGLContext::BlendFunc}(ctx, self.source, self.destination);
             }
 
+            [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
         };
     }
@@ -83,15 +85,15 @@ namespace avocet::opengl {
         }
 
         template<class... Capabilities>
-        void reset_payload(const Capabilities&... caps) {
+        void new_payload(const Capabilities&... caps) {
+            using incoming_tuple_t = std::tuple<const Capabilities&...>;
             auto update{
-                [this] <class ExistingCap> (std::optional<ExistingCap>& optCap) {
+                [this, tup{incoming_tuple_t{caps...}}] <class ExistingCap> (std::optional<ExistingCap>&optCap) {
                     constexpr auto index{sequoia::meta::find_v<std::tuple<Capabilities...>, ExistingCap>};
-                    if(index >= sizeof(Capabilities...)) {
-                        ExistingCap::disable(m_Context);
+                    if constexpr(index >= sizeof...(Capabilities)) {
+                        ExistingCap::disable(context());
                     }
                     else {
-                        std::tuple<const Capabilities&...> tup{caps...};
                         const auto& requested{std::get<index>(tup)};
                         if(!optCap) {
                             optCap = requested;
@@ -106,7 +108,9 @@ namespace avocet::opengl {
                 }
             };
 
-            std::apply(update, m_Payload);
+            [update, this] <std::size_t... Is>(std::index_sequence<Is...>) {
+                (update(std::get<Is>(m_Payload)), ...);
+            }(std::make_index_sequence<std::tuple_size_v<tuple_t>>{});
         }
     };
 }
@@ -133,6 +137,10 @@ namespace avocet::testing
         agl::capability_manager capManager{ctx};
 
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        capManager.new_payload(agl::capabilities::gl_multi_sample{});
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
     }
 }
