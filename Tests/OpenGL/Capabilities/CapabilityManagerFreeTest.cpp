@@ -8,6 +8,9 @@
 /*! \file */
 
 #include "CapabilityManagerFreeTest.hpp"
+
+#include "curlew/Window/GLFWWrappers.hpp"
+
 #include "avocet/OpenGL/Capabilities/CapabilityManager.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
@@ -49,9 +52,13 @@ namespace avocet::opengl {
     }
 
     class capability_manager {
-        std::tuple<std::optional<capabilities::gl_blend>, std::optional<capabilities::gl_multi_sample>> m_Payload{};
+        using tuple_t = std::tuple<std::optional<capabilities::gl_blend>, std::optional<capabilities::gl_multi_sample>>;
+        tuple_t m_Payload{};
 
         const decorated_context* m_Context{};
+
+        [[nodiscard]]
+        const decorated_context& context() const { return *m_Context; }
     public:
         template<class... Capabilities>
         explicit(sizeof...(Capabilities) == 0) capability_manager(const decorated_context& ctx, const Capabilities&... caps)
@@ -64,19 +71,21 @@ namespace avocet::opengl {
                     if(!optCap)
                         Cap::disable(ctx);
                     else {
-                        optCap->enable();
-                        optCap->configure();
+                        optCap->enable(ctx);
+                        optCap->configure(ctx);
                     }
                 }
             };
 
-            std::apply(init, m_Payload);
+            [init, this] <std::size_t... Is>(std::index_sequence<Is...>) {
+                (init(std::get<Is>(m_Payload)), ...);
+            }(std::make_index_sequence<std::tuple_size_v<tuple_t>>{});
         }
 
         template<class... Capabilities>
         void reset_payload(const Capabilities&... caps) {
             auto update{
-                [] <class ExistingCap> (std::optional<ExistingCap>& optCap) {
+                [this] <class ExistingCap> (std::optional<ExistingCap>& optCap) {
                     constexpr auto index{sequoia::meta::find_v<std::tuple<Capabilities...>, ExistingCap>};
                     if(index >= sizeof(Capabilities...)) {
                         ExistingCap::disable(m_Context);
@@ -86,12 +95,12 @@ namespace avocet::opengl {
                         const auto& requested{std::get<index>(tup)};
                         if(!optCap) {
                             optCap = requested;
-                            optCap->enable();
-                            optCap->configure();
+                            optCap->enable(context());
+                            optCap->configure(context());
                         }
                         else if(requested != optCap.value()) {
                             optCap = requested;
-                            optCap->configure();
+                            optCap->configure(context());
                         }
                     }
                 }
@@ -112,5 +121,18 @@ namespace avocet::testing
 
     void capability_manager_free_test::run_tests()
     {
+        using namespace curlew;
+        glfw_manager manager{};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+        const auto& ctx{w.context()};
+
+        namespace agl = avocet::opengl;
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        agl::capability_manager capManager{ctx};
+
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
     }
 }
