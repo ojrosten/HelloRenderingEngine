@@ -114,13 +114,13 @@ namespace avocet::opengl {
     }
 
     template<class T, class U>
-    struct in_tuple_exactly_once;
+    struct is_in_tuple_exactly_once;
 
     template<class T, class U>
-    inline constexpr bool in_tuple_exactly_once_v{in_tuple_exactly_once<T, U>::value};
+    inline constexpr bool is_in_tuple_exactly_once_v{is_in_tuple_exactly_once<T, U>::value};
 
     template<class T, class... Ts>
-    struct in_tuple_exactly_once<T, std::tuple<Ts...>> : std::bool_constant<(std::same_as<T, std::remove_cvref_t<Ts>> + ... + 0) == 1>
+    struct is_in_tuple_exactly_once<T, std::tuple<Ts...>> : std::bool_constant<(std::same_as<T, std::remove_cvref_t<Ts>> + ... + 0) == 1>
     {
     };
 
@@ -129,7 +129,7 @@ namespace avocet::opengl {
         using payload_type = std::tuple<std::optional<gl_blend>, std::optional<gl_multi_sample>>;
 
         template<class... Capabilities>
-            requires (in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
+            requires (is_in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
         explicit(sizeof...(Capabilities) == 0) capability_manager(const decorated_context& ctx, const Capabilities&... caps)
             : m_Context{&ctx}
         {
@@ -152,7 +152,7 @@ namespace avocet::opengl {
         }
 
         template<class... Capabilities>
-            requires (in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
+            requires (is_in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
         void new_payload(const Capabilities&... caps) {
             using incoming_tuple_t = std::tuple<const Capabilities&...>;
             auto update{
