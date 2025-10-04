@@ -151,6 +151,12 @@ namespace avocet::opengl {
             }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
         }
 
+        capability_manager(const capability_manager&) noexcept = delete;
+        capability_manager(capability_manager&&)      noexcept = default;
+
+        capability_manager& operator=(const capability_manager&) noexcept = delete;
+        capability_manager& operator=(capability_manager&&)      noexcept = default;
+
         template<class... Capabilities>
             requires (is_in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
         void new_payload(const Capabilities&... caps) {
