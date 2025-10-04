@@ -15,6 +15,7 @@
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
+#include "sequoia/Core/Meta/Utilities.hpp"
 
 #include <optional>
 #include <tuple>
@@ -146,9 +147,7 @@ namespace avocet::opengl {
                 }
             };
 
-            [init, this] <std::size_t... Is>(std::index_sequence<Is...>) {
-                (init(std::get<Is>(m_Payload)), ...);
-            }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
+            sequoia::meta::for_each(m_Payload, init);
         }
 
         capability_manager(const capability_manager&) noexcept = delete;
@@ -181,9 +180,7 @@ namespace avocet::opengl {
                 }
             };
 
-            [update, this] <std::size_t... Is>(std::index_sequence<Is...>) {
-                (update(std::get<Is>(m_Payload)), ...);
-            }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
+            sequoia::meta::for_each(m_Payload, update);
         }
 
         [[nodiscard]]
