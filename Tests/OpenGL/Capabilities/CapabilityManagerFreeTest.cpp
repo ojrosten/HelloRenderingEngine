@@ -137,22 +137,22 @@ namespace avocet::opengl {
             sequoia::meta::for_each(m_Payload, init);
         }
 
-        template<class... Capabilities>
-        void new_payload(const std::tuple<Capabilities...>& caps) {
+        template<class... RequestedCaps>
+        void new_payload(const std::tuple<RequestedCaps...>& caps) {
             auto update{
-                [&, this] <class ExistingCap> (std::optional<ExistingCap>& optCap) {
-                    constexpr auto index{sequoia::meta::find_v<std::tuple<Capabilities...>, ExistingCap>};
+                [&, this] <class Cap> (std::optional<Cap>& optCap) {
+                    constexpr auto index{sequoia::meta::find_v<std::tuple<RequestedCaps...>, Cap>};
 
-                    if constexpr(index >= sizeof...(Capabilities)) {
-                        ExistingCap::disable(m_Context);
+                    if constexpr(index >= sizeof...(RequestedCaps)) {
+                        Cap::disable(m_Context);
                     }
                     else if(const auto& requested{std::get<index>(caps)}; optCap != requested) {
-                        const bool startsDisabled{!optCap};
+                        const bool initiallyDisabled{!optCap};
 
                         optCap = requested;
                         optCap->configure(m_Context);
 
-                        if(startsDisabled)
+                        if(initiallyDisabled)
                             optCap->enable(m_Context);
                     }
                 }
