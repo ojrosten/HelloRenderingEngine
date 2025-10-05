@@ -114,29 +114,22 @@ namespace avocet::opengl {
     }
 
     class capability_manager {
-        using payload_type = std::tuple<std::optional<capabilities::gl_blend>, std::optional<capabilities::gl_multi_sample>>;
+        using payload_type
+            = std::tuple<
+                  std::optional<capabilities::gl_blend>,
+                  std::optional<capabilities::gl_multi_sample>
+              >;
 
         payload_type m_Payload{};
 
-        const decorated_context* m_Context{};
-
-        [[nodiscard]]
-        const decorated_context& context() const { return *m_Context; }
+        const decorated_context& m_Context{};
     public:
-        template<class... Capabilities>
-        explicit(sizeof...(Capabilities) == 0) capability_manager(const decorated_context& ctx, const Capabilities&... caps)
-            : m_Context{&ctx}
-        {
-            ((std::get<Capabilities>(m_Payload) = caps), ...);
- 
+        explicit capability_manager(const decorated_context& ctx)
+            : m_Context{ctx}
+        { 
             auto init{
-                [&ctx] <class Cap> (std::optional<Cap>& optCap) {
-                    if(!optCap)
-                        Cap::disable(ctx);
-                    else {
-                        optCap->enable(ctx);
-                        optCap->configure(ctx);
-                    }
+                [&ctx] <class Cap> (std::optional<Cap>&) {
+                    Cap::disable(ctx);
                 }
             };
 
@@ -150,17 +143,17 @@ namespace avocet::opengl {
                 [this, tup{incoming_tuple_t{caps...}}] <class ExistingCap> (std::optional<ExistingCap>&optCap) {
                     constexpr auto index{sequoia::meta::find_v<std::tuple<Capabilities...>, ExistingCap>};
                     if constexpr(index >= sizeof...(Capabilities)) {
-                        ExistingCap::disable(context());
+                        ExistingCap::disable(m_Context);
                     }
                     else {
                         if(const auto& requested{std::get<index>(tup)}; !optCap) {
                             optCap = requested;
-                            optCap->enable(context());
-                            optCap->configure(context());
+                            optCap->enable(m_Context);
+                            optCap->configure(m_Context);
                         }
                         else if(requested != optCap.value()) {
                             optCap = requested;
-                            optCap->configure(context());
+                            optCap->configure(m_Context);
                         }
                     }
                 }
