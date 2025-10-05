@@ -68,24 +68,23 @@ namespace avocet::opengl {
         yes = GL_TRUE
     };
 
-    inline namespace capabilities {
+    template<gl_capability Cap>
+    struct capability_common_lifecycle {
+        constexpr static gl_capability capability{Cap};
 
-        template<gl_capability Cap>
-        struct capability_common_lifecycle {
-            constexpr static gl_capability capability{Cap};
+        static void enable(const decorated_context& ctx) {
+            gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
+        }
 
-            static void enable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
-            }
+        static void disable(const decorated_context& ctx) {
+            gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
+        }
 
-            static void disable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
-            }
+        [[nodiscard]]
+        friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
+    };
 
-            [[nodiscard]]
-            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
-        };
-
+    namespace capabilities {
         struct gl_multi_sample : capability_common_lifecycle<gl_capability::gl_multisample> {
             sample_coverage_value coverage_val{1.0};
             invert_sample_mask mask{invert_sample_mask::no};
@@ -114,19 +113,8 @@ namespace avocet::opengl {
         };
     }
 
-    template<class T, class U>
-    struct is_in_tuple_exactly_once;
-
-    template<class T, class U>
-    inline constexpr bool is_in_tuple_exactly_once_v{is_in_tuple_exactly_once<T, U>::value};
-
-    template<class T, class... Ts>
-    struct is_in_tuple_exactly_once<T, std::tuple<Ts...>> : std::bool_constant<(std::same_as<T, std::remove_cvref_t<Ts>> + ... + 0) == 1>
-    {
-    };
-
     class capability_manager {
-        using payload_type = std::tuple<std::optional<gl_blend>, std::optional<gl_multi_sample>>;
+        using payload_type = std::tuple<std::optional<capabilities::gl_blend>, std::optional<capabilities::gl_multi_sample>>;
 
         payload_type m_Payload{};
 
@@ -180,9 +168,6 @@ namespace avocet::opengl {
 
             sequoia::meta::for_each(m_Payload, update);
         }
-
-        [[nodiscard]]
-        friend constexpr bool operator==(const capability_manager&, const capability_manager&) noexcept = default;
     };
 }
 
