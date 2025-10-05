@@ -124,6 +124,7 @@ namespace avocet::opengl {
 
         const decorated_context& m_Context{};
     public:
+
         explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
         { 
@@ -137,24 +138,22 @@ namespace avocet::opengl {
         }
 
         template<class... Capabilities>
-        void new_payload(const Capabilities&... caps) {
-            using incoming_tuple_t = std::tuple<const Capabilities&...>;
+        void new_payload(const std::tuple<Capabilities...>& caps) {
             auto update{
-                [this, tup{incoming_tuple_t{caps...}}] <class ExistingCap> (std::optional<ExistingCap>&optCap) {
+                [&, this] <class ExistingCap> (std::optional<ExistingCap>& optCap) {
                     constexpr auto index{sequoia::meta::find_v<std::tuple<Capabilities...>, ExistingCap>};
+
                     if constexpr(index >= sizeof...(Capabilities)) {
                         ExistingCap::disable(m_Context);
                     }
-                    else {
-                        if(const auto& requested{std::get<index>(tup)}; !optCap) {
-                            optCap = requested;
+                    else if(const auto& requested{std::get<index>(caps)}; optCap != requested) {
+                        const bool startsDisabled{!optCap};
+
+                        optCap = requested;
+                        optCap->configure(m_Context);
+
+                        if(startsDisabled)
                             optCap->enable(m_Context);
-                            optCap->configure(m_Context);
-                        }
-                        else if(requested != optCap.value()) {
-                            optCap = requested;
-                            optCap->configure(m_Context);
-                        }
                     }
                 }
             };
@@ -171,9 +170,9 @@ namespace avocet::testing
     namespace {
         [[nodiscard]]
         GLint get_int_param(const agl::decorated_context& ctx, GLenum name) {
-            GLint pname{};
-            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &pname);
-            return pname;
+            GLint param{};
+            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
+            return param;
         }
     }
 
@@ -200,21 +199,21 @@ namespace avocet::testing
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
 
-        capManager.new_payload(agl::capabilities::gl_multi_sample{});
+        capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
 
-        capManager.new_payload();
+        capManager.new_payload(std::tuple{});
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
 
-        capManager.new_payload(agl::capabilities::gl_blend{});
+        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{}});
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
 
         check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
         check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
 
-        capManager.new_payload(agl::capabilities::gl_blend{.source{GL_DST_ALPHA}, .destination{GL_ONE_MINUS_DST_ALPHA}});
+        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{.source{GL_DST_ALPHA}, .destination{GL_ONE_MINUS_DST_ALPHA}}});
     }
 }
