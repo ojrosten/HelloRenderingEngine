@@ -126,11 +126,16 @@ namespace avocet::opengl {
     };
 
     class capability_manager {
-    public:
         using payload_type = std::tuple<std::optional<gl_blend>, std::optional<gl_multi_sample>>;
 
+        payload_type m_Payload{};
+
+        const decorated_context* m_Context{};
+
+        [[nodiscard]]
+        const decorated_context& context() const { return *m_Context; }
+    public:
         template<class... Capabilities>
-            requires (is_in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
         explicit(sizeof...(Capabilities) == 0) capability_manager(const decorated_context& ctx, const Capabilities&... caps)
             : m_Context{&ctx}
         {
@@ -150,14 +155,7 @@ namespace avocet::opengl {
             sequoia::meta::for_each(m_Payload, init);
         }
 
-        capability_manager(const capability_manager&) noexcept = delete;
-        capability_manager(capability_manager&&)      noexcept = default;
-
-        capability_manager& operator=(const capability_manager&) noexcept = delete;
-        capability_manager& operator=(capability_manager&&)      noexcept = default;
-
         template<class... Capabilities>
-            requires (is_in_tuple_exactly_once_v<std::optional<Capabilities>, payload_type> && ...)
         void new_payload(const Capabilities&... caps) {
             using incoming_tuple_t = std::tuple<const Capabilities&...>;
             auto update{
@@ -185,13 +183,6 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         friend constexpr bool operator==(const capability_manager&, const capability_manager&) noexcept = default;
-    private:
-        payload_type m_Payload{};
-
-        const decorated_context* m_Context{};
-
-        [[nodiscard]]
-        const decorated_context& context() const { return *m_Context; }
     };
 }
 
