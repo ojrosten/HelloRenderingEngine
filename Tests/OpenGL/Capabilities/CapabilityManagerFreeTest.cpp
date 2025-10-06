@@ -115,10 +115,16 @@ namespace avocet::opengl {
     }
 
     class capability_manager {
+        template<class T>
+        struct toggled_capability {
+            T state{};
+            bool enabled{};
+        };
+
         using payload_type
             = std::tuple<
-                  std::optional<capabilities::gl_blend>,
-                  std::optional<capabilities::gl_multi_sample>
+                  toggled_capability<capabilities::gl_blend>,
+                  toggled_capability<capabilities::gl_multi_sample>
               >;
 
         payload_type m_Payload{};
@@ -135,23 +141,20 @@ namespace avocet::opengl {
         template<class... RequestedCaps>
         void new_payload(const std::tuple<RequestedCaps...>& caps) {
             auto update{
-                [&, this] <class Cap> (std::optional<Cap>& optCap) {
+                [&, this] <class Cap> (toggled_capability<Cap>& capability) {
                     constexpr auto index{sequoia::meta::find_v<std::tuple<RequestedCaps...>, Cap>};
 
                     if constexpr(index >= sizeof...(RequestedCaps)) {
                         Cap::disable(m_Context);
-                        optCap = std::nullopt;
                     }
-                    else if(const auto& requested{std::get<index>(caps)}; optCap != requested) {
-                        const bool initiallyDisabled{!optCap};
-
-                        if(initiallyDisabled)
+                    else {
+                        if(!capability.enabled)
                             Cap::enable(m_Context);
 
-                        optCap = requested;
-
-                        if(!initiallyDisabled || (requested != Cap{}))
-                            optCap->configure(m_Context);
+                        if(const auto& requested{std::get<index>(caps)}; capability.state != requested) {
+                            capability.state = requested;
+                            capability.state.configure(m_Context);
+                        }
                     }
                 }
             };
