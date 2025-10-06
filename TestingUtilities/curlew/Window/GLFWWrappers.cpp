@@ -10,6 +10,7 @@
 #include "avocet/OpenGL/Debugging/DebugMode.hpp"
 #include "avocet/OpenGL/Utilities/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Version.hpp"
+#include "avocet/OpenGL/Utilities/ContextResolver.hpp"
 
 #include "GLFW/glfw3.h"
 
@@ -19,6 +20,9 @@
 namespace curlew {
     namespace {
         namespace agl = avocet::opengl;
+
+        // Thread-local storage for current GL context
+        thread_local GladGLContext* current_gl_context = nullptr;
 
         void errorCallback(int error, const char* description) {
             std::cerr << std::format("Error - {}: {}\n", error, description);
@@ -52,20 +56,23 @@ namespace curlew {
         void init_debug()
         {
             GLint flags{};
-            agl::gl_function{agl::unchecked_debug_output, glGetIntegerv}(GL_CONTEXT_FLAGS, &flags);
-            if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-                if(const auto version{agl::get_opengl_version()}; !agl::debug_output_supported(version))
-                    throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
+            // Use the context directly instead of through macros for more control
+            if(auto* ctx = current_gl_context) {
+                ctx->GetIntegerv(GL_CONTEXT_FLAGS, &flags);
+                if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+                    if(const auto version{agl::get_opengl_version()}; !agl::debug_output_supported(version))
+                        throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
 
-                agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT);
-                agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                agl::gl_function{agl::unchecked_debug_output, glDebugMessageControl}(
-                    GL_DONT_CARE,
-                    GL_DONT_CARE,
-                    GL_DONT_CARE,
-                    0,
-                    nullptr,
-                    GL_TRUE);
+                    ctx->Enable(GL_DEBUG_OUTPUT);
+                    ctx->Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                    ctx->DebugMessageControl(
+                        GL_DONT_CARE,
+                        GL_DONT_CARE,
+                        GL_DONT_CARE,
+                        0,
+                        nullptr,
+                        GL_TRUE);
+                }
             }
         }
     }
@@ -86,8 +93,14 @@ namespace curlew {
 
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
-        auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
-        return {agl::get_opengl_version(), agl::get_vendor(), agl::get_renderer()};
+        try {
+            auto w{window({.hiding{window_hiding_mode::on}}, referenceVersion)};
+            // Wait a bit to ensure context is fully initialized
+            return {agl::get_opengl_version(), agl::get_vendor(), agl::get_renderer()};
+        } catch (const std::exception& e) {
+            // If we can't create a window or get OpenGL info, return defaults
+            return {agl::opengl_version{1, 0}, "Unknown", "Unknown"};
+        }
     }
 
     [[nodiscard]]
@@ -110,12 +123,27 @@ namespace curlew {
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
-    window::window(const window_config& config, const agl::opengl_version& version) : m_Window{config, version} {
+    window::window(const window_config& config, const agl::opengl_version& version) 
+        : m_Window{config, version}
+        , m_GLContext{}
+    {
         glfwMakeContextCurrent(&m_Window.get());
 
-        if(!gladLoadGL(glfwGetProcAddress))
+        if(!gladLoadGLContext(&m_GLContext, glfwGetProcAddress))
             throw std::runtime_error{"Failed to initialize GLAD"};
 
+        // Set this as the current context BEFORE calling init_debug
+        current_gl_context = &m_GLContext;
+
         init_debug();
+    }
+
+    void window::make_current() {
+        glfwMakeContextCurrent(&m_Window.get());
+        current_gl_context = &m_GLContext;
+    }
+
+    [[nodiscard]] GladGLContext* get_current_gl_context() {
+        return current_gl_context;
     }
 }

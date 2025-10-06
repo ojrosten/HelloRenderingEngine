@@ -8,6 +8,7 @@
 #pragma once
 
 #include "glad/gl.h"
+#include "ContextResolver.hpp"
 
 #include <type_traits>
 
