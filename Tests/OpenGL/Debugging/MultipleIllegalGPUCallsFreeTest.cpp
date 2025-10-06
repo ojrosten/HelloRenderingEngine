@@ -11,6 +11,7 @@
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
+#include "avocet/OpenGL/Utilities/ContextResolver.hpp"
 
 #include "glad/gl.h"
 

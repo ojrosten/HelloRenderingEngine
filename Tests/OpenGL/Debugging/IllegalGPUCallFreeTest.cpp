@@ -11,6 +11,7 @@
 
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Utilities/GLFunction.hpp"
+#include "avocet/OpenGL/Utilities/ContextResolver.hpp"
 
 #include "glad/gl.h"
 
@@ -45,7 +46,8 @@ namespace avocet::testing
             "Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function",
             [](){
                 agl::gl_function f{glBindBuffer};
-                gl_breaker breaker{glBindBuffer};
+                auto glBindBufferPtr = glBindBuffer;
+                gl_breaker breaker{glBindBufferPtr};
                 f(42, 42);
             }
         );

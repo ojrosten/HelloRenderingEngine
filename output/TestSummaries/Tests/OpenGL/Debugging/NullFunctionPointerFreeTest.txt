@@ -1,2 +1,21 @@
 Null Function Pointer Free Test
-Standard Top Level Checks:                 3;  Failures:  0  [Deep checks: 3]
+Standard Top Level Checks:                 3;  Failures:  2  [Deep checks: 3]
+
+Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, Line 32
+Constructing gl_function with a null pointer
+
+Expected Exception Type:
+[std::runtime_error]
+No exception thrown
+
+=======================================
+
+Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, Line 41
+Null glGetError when checking for basic errors
+
+Expected Exception Type:
+[std::runtime_error]
+No exception thrown
+
+=======================================
+
