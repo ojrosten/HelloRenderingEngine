@@ -85,9 +85,10 @@ namespace avocet::opengl {
     };
 
     namespace capabilities {
+
         struct gl_multi_sample : capability_common_lifecycle<gl_capability::gl_multisample> {
             sample_coverage_value coverage_val{1.0};
-            invert_sample_mask mask{invert_sample_mask::no};
+            invert_sample_mask    mask{invert_sample_mask::no};
 
             void configure(this const gl_multi_sample& self, const decorated_context& ctx) {
                 gl_function{&GladGLContext::SampleCoverage}(
@@ -101,8 +102,8 @@ namespace avocet::opengl {
         };
 
         struct gl_blend : capability_common_lifecycle<gl_capability::gl_blend> {
-            blend_mode source     {blend_mode::src_alpha},
-                       destination{blend_mode::one_minus_src_alpha};
+            blend_mode source     {blend_mode::one},
+                       destination{blend_mode::zero};
 
             void configure(this const gl_blend& self, const decorated_context& ctx) {
                 gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(self.source), to_gl_enum(self.destination));
@@ -127,14 +128,8 @@ namespace avocet::opengl {
 
         explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
-        { 
-            auto init{
-                [&ctx] <class Cap> (std::optional<Cap>&) {
-                    Cap::disable(ctx);
-                }
-            };
-
-            sequoia::meta::for_each(m_Payload, init);
+        {
+            gl_function{&GladGLContext::Disable}(m_Context, GL_MULTISAMPLE);
         }
 
         template<class... RequestedCaps>
@@ -145,15 +140,18 @@ namespace avocet::opengl {
 
                     if constexpr(index >= sizeof...(RequestedCaps)) {
                         Cap::disable(m_Context);
+                        optCap = std::nullopt;
                     }
                     else if(const auto& requested{std::get<index>(caps)}; optCap != requested) {
                         const bool initiallyDisabled{!optCap};
 
-                        optCap = requested;
-                        optCap->configure(m_Context);
-
                         if(initiallyDisabled)
-                            optCap->enable(m_Context);
+                            Cap::enable(m_Context);
+
+                        optCap = requested;
+
+                        if(!initiallyDisabled || (requested != Cap{}))
+                            optCap->configure(m_Context);
                     }
                 }
             };
@@ -207,7 +205,7 @@ namespace avocet::testing
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
 
-        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{}});
+        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}}});
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
 

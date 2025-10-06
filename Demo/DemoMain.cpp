@@ -194,7 +194,7 @@ int main()
 
         avocet::unique_image hearty{get_image_dir() / "Hearts.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
-        agl::quad<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat >> quad{
+        agl::quad<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat >> hearts{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
@@ -252,15 +252,15 @@ int main()
             discShaderProgram2D.use();
             cutout.draw();
 
-            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_GREATER, 1, 255);
-            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_KEEP);
-            shaderProgram2DTextured.use();
-            quad.draw(agl::texture_unit{8});
-
             agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_EQUAL, 1, 255);
             agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_KEEP);
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
+
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_GREATER, 1, 255);
+            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_KEEP);
+            shaderProgram2DTextured.use();
+            hearts.draw(agl::texture_unit{8});
 
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
 
