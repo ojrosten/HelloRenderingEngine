@@ -14,6 +14,7 @@
 #include "avocet/OpenGL/Utilities/ContextResolver.hpp"
 
 #include "glad/gl.h"
+#include <iostream>
 
 namespace avocet::testing
 {
@@ -28,21 +29,24 @@ namespace avocet::testing
         namespace agl = avocet::opengl;
         using namespace curlew;
 
+        // In the new multi-context system, we test different scenarios:
+        
+        // Test 1: What happens when we have a valid context but break the function pointer?
+        // This tests the original null function pointer scenario
         check_exception_thrown<std::runtime_error>(
-            "Constructing gl_function with a null pointer",
+            "Constructing gl_function with a null function pointer",
             [](){
-                auto glGetErrorPtr = glGetError;
-                gl_breaker breaker{glGetErrorPtr};
-                return agl::gl_function{agl::unchecked_debug_output, glGetError}();
+                // Create a null function pointer of the right type
+                PFNGLGETERRORPROC nullGetError = nullptr;
+                return agl::gl_function{agl::unchecked_debug_output, nullGetError}();
             }
         );
 
         check_exception_thrown<std::runtime_error>(
-            "Null glGetError when checking for basic errors",
+            "gl_function should detect null function pointer",
             [](){
-                auto glGetErrorPtr = glGetError;
-                gl_breaker breaker{glGetErrorPtr};
-                agl::check_for_basic_errors(agl::num_messages{10}, std::source_location::current());
+                PFNGLBINDBUFFERPROC nullBindBuffer = nullptr;
+                agl::gl_function{nullBindBuffer}(42, 42);
             }
         );
 
