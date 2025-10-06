@@ -97,14 +97,36 @@ namespace curlew {
 
         window& operator=(const window&) = delete;
 
-        ~window() = default;
+        ~window();
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
         [[nodiscard]] GladGLContext& gl_context() noexcept { return m_GLContext; }
         
+        // Context management
         void make_current();
+        [[nodiscard]] bool is_current() const noexcept;
+        
+        // Window operations with automatic context management
+        void swap_buffers();
+        [[nodiscard]] bool should_close() const noexcept;
+        void set_should_close(bool value) noexcept;
     };
 
-    // Global context accessor for convenience
+    // RAII Context Guard for temporary context switching
+    class [[nodiscard]] context_guard {
+        GLFWwindow* m_previous_glfw_window;
+        GladGLContext* m_previous_glad_context;
+        
+    public:
+        explicit context_guard(window& new_window);
+        ~context_guard();
+        
+        context_guard(const context_guard&) = delete;
+        context_guard& operator=(const context_guard&) = delete;
+    };
+
+    // Global context management functions
     [[nodiscard]] GladGLContext* get_current_gl_context();
+    [[nodiscard]] window* get_current_window();
+    [[nodiscard]] bool has_current_context() noexcept;
 }

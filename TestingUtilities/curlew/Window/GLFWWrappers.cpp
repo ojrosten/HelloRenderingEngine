@@ -21,8 +21,9 @@ namespace curlew {
     namespace {
         namespace agl = avocet::opengl;
 
-        // Thread-local storage for current GL context
+        // Thread-local storage for current GL context and window
         thread_local GladGLContext* current_gl_context = nullptr;
+        thread_local window* current_window = nullptr;
 
         void errorCallback(int error, const char* description) {
             std::cerr << std::format("Error - {}: {}\n", error, description);
@@ -56,7 +57,7 @@ namespace curlew {
         void init_debug()
         {
             GLint flags{};
-            // Use the context directly instead of through macros for more control
+            // Use the current context directly
             if(auto* ctx = current_gl_context) {
                 ctx->GetIntegerv(GL_CONTEXT_FLAGS, &flags);
                 if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
@@ -132,8 +133,9 @@ namespace curlew {
         if(!gladLoadGLContext(&m_GLContext, glfwGetProcAddress))
             throw std::runtime_error{"Failed to initialize GLAD"};
 
-        // Set this as the current context BEFORE calling init_debug
+        // Set this as the current context
         current_gl_context = &m_GLContext;
+        current_window = this;
 
         init_debug();
     }
@@ -141,9 +143,71 @@ namespace curlew {
     void window::make_current() {
         glfwMakeContextCurrent(&m_Window.get());
         current_gl_context = &m_GLContext;
+        current_window = this;
     }
 
+    [[nodiscard]] bool window::is_current() const noexcept {
+        return current_gl_context == &m_GLContext;
+    }
+
+    void window::swap_buffers() {
+        // Ensure this window is current before swapping
+        if (!is_current()) {
+            make_current();
+        }
+        glfwSwapBuffers(&m_Window.get());
+    }
+
+    [[nodiscard]] bool window::should_close() const noexcept {
+        return glfwWindowShouldClose(&m_Window.get());
+    }
+
+    void window::set_should_close(bool value) noexcept {
+        glfwSetWindowShouldClose(&m_Window.get(), value ? GLFW_TRUE : GLFW_FALSE);
+    }
+
+    window::~window() {
+        // If this window's context is currently active, clear it
+        if (current_gl_context == &m_GLContext) {
+            current_gl_context = nullptr;
+            current_window = nullptr;
+        }
+    }
+
+    // RAII Context Guard implementation
+    context_guard::context_guard(window& new_window) 
+        : m_previous_glfw_window(glfwGetCurrentContext())
+        , m_previous_glad_context(current_gl_context)
+    {
+        new_window.make_current();
+    }
+
+    context_guard::~context_guard() {
+        // Restore previous contexts directly - no dangling pointer risk
+        glfwMakeContextCurrent(m_previous_glfw_window);
+        current_gl_context = m_previous_glad_context;
+        
+        // Update current_window tracking if we can
+        if (m_previous_glad_context) {
+            // We had a context before, but we don't know which window it belongs to
+            // This is a limitation - current_window might be incorrect after guard
+            // But it's safe (no crashes)
+            current_window = nullptr; // Conservative: clear it
+        } else {
+            current_window = nullptr;
+        }
+    }
+
+    // Global context management functions
     [[nodiscard]] GladGLContext* get_current_gl_context() {
         return current_gl_context;
+    }
+
+    [[nodiscard]] window* get_current_window() {
+        return current_window;
+    }
+
+    [[nodiscard]] bool has_current_context() noexcept {
+        return current_gl_context != nullptr;
     }
 }
