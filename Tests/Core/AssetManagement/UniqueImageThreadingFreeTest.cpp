@@ -46,9 +46,9 @@ namespace avocet::testing
             const auto imagePath{working_materials() / "bgr_striped_2w_3h_3c.png"};
 
             auto workers{
-                sequoia::utilities::make_array<std::jthread, numThreads>(
+                sequoia::utilities::make_array<std::thread, numThreads>(
                     [&imagePromises, &holdYourHorses, &imagePath](std::size_t i) {
-                        return std::jthread{
+                        return std::thread{
                             [&holdYourHorses, &imagePath](promise_t p, std::size_t i) {
                                 const auto flip{i % 2 ? flip_vertically::yes : flip_vertically::no};
                                 holdYourHorses.arrive_and_wait();
@@ -60,6 +60,13 @@ namespace avocet::testing
                     }
                 )
             };
+
+            // Join all threads before exiting scope
+            for(auto& worker : workers) {
+                if(worker.joinable()) {
+                    worker.join();
+                }
+            }
         }
 
         const bool passed{

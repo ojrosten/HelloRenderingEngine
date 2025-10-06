@@ -11,6 +11,7 @@
 
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Utilities/GLFunction.hpp"
+#include "avocet/OpenGL/Utilities/ContextResolver.hpp"
 
 #include "glad/gl.h"
 
@@ -30,7 +31,8 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Constructing gl_function with a null pointer",
             [](){
-                gl_breaker breaker{glGetError};
+                auto glGetErrorPtr = glGetError;
+                gl_breaker breaker{glGetErrorPtr};
                 return agl::gl_function{agl::unchecked_debug_output, glGetError}();
             }
         );
@@ -38,7 +40,8 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Null glGetError when checking for basic errors",
             [](){
-                gl_breaker breaker{glGetError};
+                auto glGetErrorPtr = glGetError;
+                gl_breaker breaker{glGetErrorPtr};
                 agl::check_for_basic_errors(agl::num_messages{10}, std::source_location::current());
             }
         );
@@ -49,7 +52,8 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Null glBindBuffer",
             [](){
-                gl_breaker breaker{glBindBuffer};
+                auto glBindBufferPtr = glBindBuffer;
+                gl_breaker breaker{glBindBufferPtr};
                 agl::gl_function{glBindBuffer}(42, 42);
             }
         );

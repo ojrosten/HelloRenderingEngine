@@ -1,27 +1,10 @@
-Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, Line 31
-Constructing gl_function with a null pointer
-
-Expected Exception Type:
-[std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, line 34
-
-=======================================
-
-Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, Line 39
-Null glGetError when checking for basic errors
-
-Expected Exception Type:
-[std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Source/avocet/OpenGL/Debugging/Errors.cpp, line 193
-
-=======================================
-
-Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, Line 50
+Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, Line 53
 Null glBindBuffer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to construct with a nullptr coming via Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, line 53
+OpenGL error detected in Tests/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp, line 57:
+Invalid enum
 
 =======================================
 
