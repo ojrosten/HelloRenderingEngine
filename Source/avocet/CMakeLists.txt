@@ -17,9 +17,9 @@ add_library(avocet STATIC ${SourceList})
 
 target_include_directories(avocet PUBLIC ${CMAKE_CURRENT_LIST_DIR}/../)
 
-add_subdirectory(${Dependencies}/glad/OpenGL glad)
+add_subdirectory(${Dependencies}/gladmx/OpenGL glad)
 target_link_libraries(avocet PUBLIC glad)
-target_include_directories(avocet PUBLIC ${Dependencies}/glad/OpenGL/include)
+target_include_directories(avocet PUBLIC ${Dependencies}/gladmx/OpenGL/include)
 
 add_subdirectory(${Dependencies}/sequoia/Source/sequoia sequoia)
 target_link_libraries(avocet PUBLIC sequoia)

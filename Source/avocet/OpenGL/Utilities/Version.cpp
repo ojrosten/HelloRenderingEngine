@@ -7,6 +7,7 @@
 
 #include "avocet/OpenGL/Utilities/Version.hpp"
 #include "avocet/OpenGL/Utilities/GLFunction.hpp"
+#include "avocet/OpenGL/Utilities/ContextResolver.hpp"
 
 #include <format>
 #include <string>
@@ -15,35 +16,45 @@
 namespace avocet::opengl{
     [[nodiscard]]
     std::string get_vendor() {
-        return {std::bit_cast<const char*>(gl_function{glGetString}(GL_VENDOR))};
+        if(auto* context = get_current_context()) {
+            if(context->GetString) {
+                auto result = context->GetString(GL_VENDOR);
+                if(result) {
+                    return {std::bit_cast<const char*>(result)};
+                }
+            }
+        }
+        return "Unknown";
     }
 
     [[nodiscard]]
     std::string get_renderer() {
-        return {std::bit_cast<const char*>(gl_function{glGetString}(GL_RENDERER))};
+        if(auto* context = get_current_context()) {
+            if(context->GetString) {
+                auto result = context->GetString(GL_RENDERER);
+                if(result) {
+                    return {std::bit_cast<const char*>(result)};
+                }
+            }
+        }
+        return "Unknown";
     }
 
     [[nodiscard]]
     opengl_version get_opengl_version() {
-        if(GLAD_GL_VERSION_4_6) return {4, 6};
-        if(GLAD_GL_VERSION_4_5) return {4, 5};
-        if(GLAD_GL_VERSION_4_4) return {4, 4};
-        if(GLAD_GL_VERSION_4_3) return {4, 3};
-        if(GLAD_GL_VERSION_4_2) return {4, 2};
-        if(GLAD_GL_VERSION_4_1) return {4, 1};
-        if(GLAD_GL_VERSION_4_0) return {4, 0};
-        if(GLAD_GL_VERSION_3_3) return {3, 3};
-        if(GLAD_GL_VERSION_3_2) return {3, 2};
-        if(GLAD_GL_VERSION_3_1) return {3, 1};
-        if(GLAD_GL_VERSION_3_0) return {3, 0};
-        if(GLAD_GL_VERSION_2_1) return {2, 1};
-        if(GLAD_GL_VERSION_2_0) return {2, 0};
-        if(GLAD_GL_VERSION_1_5) return {1, 5};
-        if(GLAD_GL_VERSION_1_4) return {1, 4};
-        if(GLAD_GL_VERSION_1_3) return {1, 3};
-        if(GLAD_GL_VERSION_1_2) return {1, 2};
-        if(GLAD_GL_VERSION_1_1) return {1, 1};
-
+        if(auto* context = get_current_context()) {
+            if(context->GetString) {
+                auto result = context->GetString(GL_VERSION);
+                if(result) {
+                    const char* version_str = std::bit_cast<const char*>(result);
+                    int major = 1, minor = 0;
+                    if(std::sscanf(version_str, "%d.%d", &major, &minor) >= 1) {
+                        return {static_cast<std::size_t>(major), static_cast<std::size_t>(minor)};
+                    }
+                }
+            }
+        }
+        
         return {1, 0};
     }
 }
