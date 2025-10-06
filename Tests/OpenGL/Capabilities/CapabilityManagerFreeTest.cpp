@@ -17,9 +17,6 @@
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 #include "sequoia/Core/Meta/Utilities.hpp"
 
-#include <optional>
-#include <tuple>
-
 namespace{
     using namespace avocet::opengl;
 
