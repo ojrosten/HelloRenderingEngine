@@ -214,7 +214,5 @@ namespace avocet::testing
 
         check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
         check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
-
-        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{.source{GL_DST_ALPHA}, .destination{GL_ONE_MINUS_DST_ALPHA}}});
-    }
+   }
 }
