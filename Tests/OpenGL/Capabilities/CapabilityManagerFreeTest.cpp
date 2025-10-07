@@ -132,10 +132,9 @@ namespace{
 
         template<class... RequestedCaps>
         void new_payload(const std::tuple<RequestedCaps...>& requestedCaps) {
-
             auto update{
-                [&] <class Cap> (toggled_capability<Cap>&cap) {
-                    constexpr auto index{sequoia::meta::find_v< std::tuple<RequestedCaps...>, Cap>};
+                [&] <class Cap> (toggled_capability<Cap>& cap) {
+                    constexpr auto index{sequoia::meta::find_v<std::tuple<RequestedCaps...>, Cap>};
                     if constexpr(index >= sizeof...(RequestedCaps)) {
                         if(cap.is_enabled) {
                             Cap::disable(m_Context);
