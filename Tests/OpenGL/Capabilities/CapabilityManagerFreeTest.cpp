@@ -65,7 +65,97 @@ namespace{
         no  = GL_FALSE,
         yes = GL_TRUE
     };
+
+    template<gl_capability Cap>
+    struct capability_common_lifecycle {
+        constexpr static auto capability{Cap};
+
+        static void enable(const decorated_context& ctx) {
+            gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
+        }
+
+        static void disable(const decorated_context& ctx) {
+            gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
+        }
+
+        [[nodiscard]]
+        constexpr friend bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
+    };
+
+    namespace capabilities {
+        struct gl_blend : capability_common_lifecycle<gl_capability::gl_blend> {
+            blend_mode source{blend_mode::one}, destination{blend_mode::zero};
+
+            void configure(this const gl_blend& self, const decorated_context& ctx) {
+                gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(self.source), to_gl_enum(self.destination));
+            }
+
+            [[nodiscard]]
+            constexpr friend bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
+        };
+
+        struct gl_multi_sample : capability_common_lifecycle<gl_capability::gl_multisample> {
+            sample_coverage_value coverage_val{1.0};
+            invert_sample_mask mask{invert_sample_mask::no};
+
+            void configure(this const gl_multi_sample& self, const decorated_context& ctx) {
+                gl_function{&GladGLContext::SampleCoverage}(ctx, self.coverage_val.raw_value(), static_cast<GLboolean>(self.mask));
+            }
+
+            [[nodiscard]]
+            constexpr friend bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
+        };
+    }
+
+    class capability_manager {
+        template<class T>
+        struct toggled_capability {
+            T state{};
+            bool is_enabled{};
+        };
+
+        using payload_type = std::tuple<toggled_capability<capabilities::gl_blend>, toggled_capability<capabilities::gl_multi_sample>>;
+
+        payload_type m_Payload;
+
+        const decorated_context& m_Context;
+    public:
+        explicit capability_manager(const decorated_context& ctx)
+            : m_Context{ctx}
+        {
+            capabilities::gl_multi_sample::disable(m_Context);
+        }
+
+        template<class... RequestedCapabilities>
+        void new_payload(const std::tuple<RequestedCapabilities...>& requestedCap) {
+            auto update{
+                [&, this]<class Cap>(toggled_capability<Cap>& cap) {
+                    constexpr auto index{sequoia::meta::find_v<std::tuple<RequestedCapabilities...>, Cap>};
+                    if constexpr (index >= sizeof...(RequestedCapabilities)) {
+                        if(cap.is_enabled) {
+                            Cap::disable(m_Context);
+                            cap.is_enabled = false;
+                        }
+                    }
+                    else {
+                        if(!cap.is_enabled) {
+                            Cap::enable(m_Context);
+                            cap.is_enabled = true;
+                        }
+
+                        if(const auto requested{std::get<index>(requestedCap)}; requested != cap.state) {
+                            cap.state = requested;
+                            cap.state.configure(m_Context);
+                        }
+                    }
+                }
+            };
+
+            sequoia::meta::for_each(m_Payload, update);
+        }
+    };
 }
+
 
 namespace avocet::testing
 {
@@ -92,5 +182,37 @@ namespace avocet::testing
         glfw_manager manager{};
         auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
         const auto& ctx{w.context()};
+
+        check("Blending disabled by default",     !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check("Multisampling enabled by default",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+
+        capability_manager capManager{ctx};
+
+        check("",                                          !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check("Capability manager disables multisampling", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+
+        capManager.new_payload(std::tuple{capabilities::gl_blend{}});
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), GL_ONE);
+        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), GL_ZERO);
+
+        capManager.new_payload(std::tuple{capabilities::gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}}});
+        check("", agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), GL_SRC_ALPHA);
+        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), GL_ONE_MINUS_SRC_ALPHA);
+
+        capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}});
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+
+        capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}, capabilities::gl_blend{}});
+        check("", agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check("", agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+
+        capManager.new_payload(std::tuple{});
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
     }
 }
