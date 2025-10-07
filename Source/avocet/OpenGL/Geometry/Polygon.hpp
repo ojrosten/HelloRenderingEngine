@@ -127,9 +127,9 @@ namespace avocet::opengl {
         }
 
         template<class Self>
-        void draw(this const Self& self, std::span<const texture_unit, num_textures> unit) {
-            for(auto i : std::views::iota(0uz, num_textures))
-                bind(self.m_Textures[i], unit[i]);
+        void draw(this const Self& self, std::span<const texture_unit, num_textures> units) {
+          for(const auto[texture, unit] : std::views::zip(self.m_Textures, units))
+                bind(texture, unit);
 
             self.bind_vao_and_draw();
         }
