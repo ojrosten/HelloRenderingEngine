@@ -49,17 +49,17 @@ namespace curlew {
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
         }
 
-        void init_debug()
+        void init_debug(GladGLContext& ctx)
         {
             GLint flags{};
-            agl::gl_function{agl::unchecked_debug_output, glGetIntegerv}(GL_CONTEXT_FLAGS, &flags);
+            agl::gl_function{agl::unchecked_debug_output, ctx.GetIntegerv}(GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-                if(const auto version{agl::get_opengl_version()}; !agl::debug_output_supported(version))
+                if(const auto version{agl::get_opengl_version(ctx)}; !agl::debug_output_supported(version))
                     throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
 
-                agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT);
-                agl::gl_function{agl::unchecked_debug_output, glEnable}(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                agl::gl_function{agl::unchecked_debug_output, glDebugMessageControl}(
+                agl::gl_function{agl::unchecked_debug_output, ctx.Enable}(GL_DEBUG_OUTPUT);
+                agl::gl_function{agl::unchecked_debug_output, ctx.Enable}(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+                agl::gl_function{agl::unchecked_debug_output, ctx.DebugMessageControl}(
                     GL_DONT_CARE,
                     GL_DONT_CARE,
                     GL_DONT_CARE,
@@ -113,9 +113,12 @@ namespace curlew {
     window::window(const window_config& config, const agl::opengl_version& version) : m_Window{config, version} {
         glfwMakeContextCurrent(&m_Window.get());
 
-        if(!gladLoadGL(glfwGetProcAddress))
+        if(!gladLoadGLContext(&m_GLContext, glfwGetProcAddress))
             throw std::runtime_error{"Failed to initialize GLAD"};
 
-        init_debug();
+        // Set the thread-local current context pointer
+        agl::current_gl_context = &m_GLContext;
+
+        init_debug(m_GLContext);
     }
 }
