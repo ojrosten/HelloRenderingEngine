@@ -241,14 +241,22 @@ int main()
             shaderProgram2DMixedTextures.use();
             sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
 
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_STENCIL_TEST);
+
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_GREATER, 1, 255);
+            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_REPLACE);
             discShaderProgram2D.use();
             cutout.draw();
 
+            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_KEEP);
+            shaderProgram2DTextured.use();
+            hearts.draw(agl::texture_unit{8});
+
+            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_EQUAL, 1, 255);
             shaderProgram2DTextured.use();
             hex.draw(agl::texture_unit{8});
 
-            shaderProgram2DTextured.use();
-            hearts.draw(agl::texture_unit{8});
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
 
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
             agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
