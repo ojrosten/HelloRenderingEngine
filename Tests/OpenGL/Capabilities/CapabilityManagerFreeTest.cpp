@@ -21,15 +21,15 @@ namespace{
     using namespace avocet::opengl;
 
     enum class gl_capability : GLenum {
-        gl_blend       = GL_BLEND,
-        gl_multisample = GL_MULTISAMPLE
+        blend        = GL_BLEND,
+        multi_sample = GL_MULTISAMPLE
     };
 
     enum class blend_mode : GLenum {
         zero                   = GL_ZERO,
         one                    = GL_ONE,
         src_colour             = GL_SRC_COLOR,
-        one_minus_src_colout   = GL_ONE_MINUS_SRC_COLOR,
+        one_minus_src_colour   = GL_ONE_MINUS_SRC_COLOR,
         dst_colour             = GL_DST_COLOR,
         one_minus_dst_colour   = GL_ONE_MINUS_DST_COLOR,
         src_alpha              = GL_SRC_ALPHA,
@@ -83,7 +83,7 @@ namespace{
     };
 
     namespace capabilities {
-        struct gl_multi_sample : capability_common_lifecycle<gl_capability::gl_multisample> {
+        struct gl_multi_sample : capability_common_lifecycle<gl_capability::multi_sample> {
             sample_coverage_value coverage_val{1.0};
             invert_sample_mask    mask{invert_sample_mask::no};
 
@@ -95,7 +95,7 @@ namespace{
             friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
         };
 
-        struct gl_blend : capability_common_lifecycle<gl_capability::gl_blend> {
+        struct gl_blend : capability_common_lifecycle<gl_capability::blend> {
             blend_mode source{blend_mode::one}, destination{blend_mode::zero};
 
             void configure(this const gl_blend& self, const decorated_context& ctx) {
