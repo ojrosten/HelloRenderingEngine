@@ -13,15 +13,21 @@
 #include <source_location>
 #include <string>
 
+struct GladGLContext;
+
 namespace avocet::opengl {
+    // Thread-local current context pointer - mirrors OpenGL's threading model
+    // Set this when making a context current
+    inline thread_local GladGLContext* current_gl_context{nullptr};
+
     [[nodiscard]]
     std::string to_string(std::source_location loc);
 
     struct num_messages { std::size_t value{}; };
 
-    void check_for_basic_errors(num_messages maxNum, std::source_location loc);
+    void check_for_basic_errors(GladGLContext& ctx, num_messages maxNum, std::source_location loc);
 
-    void check_for_advanced_errors(num_messages maxNum, std::source_location loc);
+    void check_for_advanced_errors(GladGLContext& ctx, num_messages maxNum, std::source_location loc);
 
     [[nodiscard]]
     inline bool debug_output_supported(opengl_version version) {

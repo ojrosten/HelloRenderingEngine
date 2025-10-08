@@ -14,6 +14,7 @@
 #include <string>
 
 struct GLFWwindow;
+struct GladGLContext;
 
 namespace curlew {
     enum class window_hiding_mode : bool { off, on };
@@ -87,6 +88,7 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
+        GladGLContext m_GLContext{};
 
         window(const window_config& config, const avocet::opengl::opengl_version& version);
     public:
@@ -98,5 +100,9 @@ namespace curlew {
         ~window() = default;
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
+
+        [[nodiscard]] GladGLContext& get_context() noexcept { return m_GLContext; }
+
+        [[nodiscard]] const GladGLContext& get_context() const noexcept { return m_GLContext; }
     };
 }

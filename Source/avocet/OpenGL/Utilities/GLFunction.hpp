@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/OpenGL/Debugging/Errors.hpp"
+#include "avocet/OpenGL/Utilities/GLCompatibility.hpp"
 
 #include <concepts>
 #include <format>
@@ -59,10 +60,13 @@ namespace avocet::opengl {
         }
         static void check_for_errors(std::source_location loc) {
             if constexpr(Mode != debugging_mode::none) {
+                if(!current_gl_context)
+                    throw std::runtime_error{"gl_function: no current GL context set"};
+
                 if(debug_output_supported())
-                    check_for_advanced_errors(max_reported_messages, loc);
+                    check_for_advanced_errors(*current_gl_context, max_reported_messages, loc);
                 else
-                    check_for_basic_errors(max_reported_messages, loc);
+                    check_for_basic_errors(*current_gl_context, max_reported_messages, loc);
             }
         }
     };
