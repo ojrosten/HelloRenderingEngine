@@ -122,14 +122,14 @@ namespace avocet::opengl {
         template<class Self>
             requires (num_textures == 1)
         void draw(this const Self& self, texture_unit unit) {
-            bind(self.m_Textures.front(), unit);
+            self.m_Textures.front().bind(unit);
             self.bind_vao_and_draw();
         }
 
         template<class Self>
         void draw(this const Self& self, std::span<const texture_unit, num_textures> units) {
           for(const auto[texture, unit] : std::views::zip(self.m_Textures, units))
-                bind(texture, unit);
+                texture.bind(unit);
 
             self.bind_vao_and_draw();
         }
@@ -159,7 +159,7 @@ namespace avocet::opengl {
 
         template<class Self>
         void bind_vao_and_draw(this const Self& self) {
-            bind(self.m_VAO);
+            self.m_VAO.bind();
             self.do_draw(self.m_VAO.context());
         }
     };

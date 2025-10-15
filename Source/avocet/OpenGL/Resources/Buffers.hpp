@@ -124,7 +124,7 @@ namespace avocet::opengl {
             (set_attribute_ptr<fundamental_t>(info, sizeof(Attributes), stride), ...);
         }
 
-        friend void bind(const vertex_attribute_object& vao) { do_bind(vao); }
+        void bind(this const vertex_attribute_object& self) { do_bind(self); }
     private:
         struct attrib_ptr_info {
             GLint index{};
@@ -167,11 +167,11 @@ namespace avocet::opengl {
         {}
 
         [[nodiscard]]
-        friend std::vector<T> extract_data(const generic_buffer_object& gbo) {
-            base_type::do_bind(gbo);
-            const auto size{get_buffer_size(gbo.context())};
+        std::vector<T> extract_data(this const generic_buffer_object& self) {
+            base_type::do_bind(self);
+            const auto size{get_buffer_size(self.context())};
             std::vector<T> buffer(size / sizeof(T));
-            gl_function{&GladGLContext::GetBufferSubData}(gbo.context(), to_gl_enum(Species), 0, size, buffer.data());
+            gl_function{&GladGLContext::GetBufferSubData}(self.context(), to_gl_enum(Species), 0, size, buffer.data());
             return buffer;
         }
     private:

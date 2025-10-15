@@ -35,13 +35,13 @@ namespace avocet::opengl {
         gl_function(nullptr_t) = delete;
 
         [[nodiscard]]
-        R operator()(const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) const {
-            return invoke(ctx, ctx.debug_mode(), args..., loc);
+        R operator()(this const gl_function& self, const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) {
+            return self.invoke(ctx, ctx.debug_mode(), args..., loc);
         }
 
         [[nodiscard]]
-        R operator()(const decorated_context& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) const {
-            return invoke(ctx, debugging_mode::off, args..., loc);
+        R operator()(this const gl_function& self, const decorated_context& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) {
+            return self.invoke(ctx, debugging_mode::off, args..., loc);
         }
     private:
         pointer_to_member_type m_PtrToMem;
@@ -52,8 +52,8 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        R invoke(const decorated_context& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) const {
-            const auto[fn, name]{get_validated_fn_ptr(ctx, loc)};
+        R invoke(this const gl_function& self, const decorated_context& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) {
+            const auto[fn, name]{self.get_validated_fn_ptr(ctx, loc)};
             return ctx.invoke_decorated({mode, name, loc}, fn, args...);
         }
 

@@ -28,7 +28,7 @@ namespace sequoia::testing
                 check(equality,
                     "Buffer Data",
                     logger,
-                    std::span<const T>{extract_data(buffer)},
+                    std::span<const T>{buffer.extract_data()},
                     prediction.value());
             }
             else {
