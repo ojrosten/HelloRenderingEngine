@@ -16,9 +16,18 @@
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 #include "sequoia/Core/Meta/Utilities.hpp"
+#include "sequoia/TestFramework/StateTransitionUtilities.hpp"
 
 namespace{
     using namespace avocet::opengl;
+
+    enum node_name {
+        none        = 0,
+        depth       = 1,
+        stencil     = 2,
+        multisample = 4,
+        blend       = 8
+    };
 
     enum class gl_capability : GLenum {
         blend        = GL_BLEND,
@@ -83,33 +92,38 @@ namespace{
     };
 
     namespace capabilities {
-        struct gl_multi_sample : capability_common_lifecycle<gl_capability::multi_sample> {
+        struct gl_multi_sample {
+            constexpr static auto capability{gl_capability::multi_sample};
             sample_coverage_value coverage_val{1.0};
             invert_sample_mask    mask{invert_sample_mask::no};
-
-            void configure(this const gl_multi_sample& self, const decorated_context& ctx) {
-                gl_function{&GladGLContext::SampleCoverage}(ctx, self.coverage_val.raw_value(), static_cast<GLboolean>(self.mask));
-            }
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
         };
 
-        struct gl_blend : capability_common_lifecycle<gl_capability::blend> {
+        struct gl_blend {
+            constexpr static auto capability{gl_capability::blend};
             blend_mode source{blend_mode::one}, destination{blend_mode::zero};
-
-            void configure(this const gl_blend& self, const decorated_context& ctx) {
-                gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(self.source), to_gl_enum(self.destination));
-            }
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
         };
     }
 
+    namespace impl {
+        void configure(const capabilities::gl_multi_sample& cap, const decorated_context& ctx) {
+            gl_function{&GladGLContext::SampleCoverage}(ctx, cap.coverage_val.raw_value(), static_cast<GLboolean>(cap.mask));
+        }
+
+
+        void configure(const capabilities::gl_blend& cap, const decorated_context& ctx) {
+            gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(cap.source), to_gl_enum(cap.destination));
+        }
+    }
+
     class capability_manager {
         template<class T>
-        struct toggled_capability {
+        struct toggled_capability : capability_common_lifecycle<T::capability> {
             T state{};
             bool is_enabled{};
         };
@@ -123,7 +137,7 @@ namespace{
         explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
         {
-            capabilities::gl_multi_sample::disable(m_Context);
+            toggled_capability<capabilities::gl_multi_sample>::disable(m_Context);
         }
 
         template<class... RequestedCaps>
@@ -133,19 +147,19 @@ namespace{
                     constexpr auto index{sequoia::meta::find_v<std::tuple<RequestedCaps...>, Cap>};
                     if constexpr(index >= sizeof...(RequestedCaps)) {
                         if(cap.is_enabled) {
-                            Cap::disable(m_Context);
+                            toggled_capability<Cap>::disable(m_Context);
                             cap.is_enabled = false;
                         }
                     }
                     else {
                         if(!cap.is_enabled) {
-                            Cap::enable(m_Context);
+                            toggled_capability<Cap>::enable(m_Context);
                             cap.is_enabled = true;
                         }
 
                         if(const auto& requested{std::get<index>(requestedCaps)}; requested != cap.state) {
                             cap.state = requested;
-                            cap.state.configure(m_Context);
+                            impl::configure(cap.state, m_Context);
                         }
                     }
                 }
