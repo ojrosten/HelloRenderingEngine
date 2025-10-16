@@ -77,7 +77,7 @@ namespace sequoia::physics {
 }
 
 namespace {
-    using sample_coverage_value = sequoia::physics::quantity<sample_coverage_t, float>;
+    using sample_coverage_value = sequoia::physics::quantity<sample_coverage_t, GLfloat>;
 
     enum class invert_sample_mask : GLboolean {
         no  = GL_FALSE,
@@ -187,6 +187,29 @@ namespace {
 
         const decorated_context& m_Context;
     };
+
+    namespace {
+        [[nodiscard]]
+        GLint get_int_param(const decorated_context& ctx, GLenum name) {
+            GLint param{};
+            gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
+            return param;
+        }
+
+        [[nodiscard]]
+        GLboolean get_bool_param(const decorated_context& ctx, GLenum name) {
+            GLboolean param{};
+            gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
+            return param;
+        }
+
+        [[nodiscard]]
+        GLfloat get_float_param(const decorated_context& ctx, GLenum name) {
+            GLfloat param{};
+            gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
+            return param;
+        }
+    }
 }
 
 namespace sequoia::testing {
@@ -211,6 +234,14 @@ namespace sequoia::testing {
             check(equality, "Source",      logger, agl::to_gl_enum(obtained.source),      agl::to_gl_enum(prediction.source));
             check(equality, "Destination", logger, agl::to_gl_enum(obtained.destination), agl::to_gl_enum(prediction.destination));
         }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx)
+        {
+            namespace agl = avocet::opengl;
+            check(equality, "", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)), agl::to_gl_enum(obtained.source));
+            check(equality, "", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)), agl::to_gl_enum(obtained.destination));
+        }
     };
 
     template<>
@@ -222,21 +253,20 @@ namespace sequoia::testing {
             check(equality, "Source",      logger, obtained.coverage_val,          prediction.coverage_val);
             check(equality, "Destination", logger, agl::to_gl_bool(obtained.mask), agl::to_gl_bool(prediction.mask));
         }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_multi_sample& obtained, const decorated_context& ctx)
+        {
+            namespace agl = avocet::opengl;
+            check(equality, "Sample coverage", logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), obtained.coverage_val.value());
+            check(equality, "Sample mask",     logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(obtained.mask));
+        }
     };
 }
 
 namespace avocet::testing
 {
     namespace agl = avocet::opengl;
-
-    namespace {
-        [[nodiscard]]
-        GLint get_int_param(const agl::decorated_context& ctx, GLenum name) {
-            GLint param{};
-            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
-            return param;
-        }
-    }
 
     [[nodiscard]]
     std::filesystem::path capability_manager_free_test::source_file() const
@@ -354,9 +384,9 @@ namespace avocet::testing
             },
             {
                 payload_type{},
-                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{},  false}},
+                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{}, false}},
                 payload_type{toggled_capability{gl_blend{}, false}, toggled_capability{gl_multi_sample{}, true}},
-                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{},  true}},
+                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{}, true}},
             }
         };
 
@@ -366,7 +396,8 @@ namespace avocet::testing
 
                 auto checkGPU{
                     [&] <class Cap>(const toggled_capability<Cap>& cap) {
-                        check(equality, "GPU State", cap.is_enabled, static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, agl::to_gl_enum(Cap::capability))));
+                        check(equality, "GPU Enabling", cap.is_enabled, static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, agl::to_gl_enum(Cap::capability))));
+                        check(weak_equivalence, "GPU State", cap.state, ctx);
                     }
                 };
 
