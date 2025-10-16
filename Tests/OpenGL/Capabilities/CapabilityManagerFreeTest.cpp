@@ -23,8 +23,36 @@ namespace{
     using namespace avocet::opengl;
 
     enum class gl_capability : GLenum {
-        blend        = GL_BLEND,
-        multi_sample = GL_MULTISAMPLE
+        blend                         = GL_BLEND,
+        clip_distance_0               = GL_CLIP_DISTANCE0,
+        clip_distance_1               = GL_CLIP_DISTANCE1,
+        clip_distance_2               = GL_CLIP_DISTANCE2,
+        colour_logic_op               = GL_COLOR_LOGIC_OP,
+        cull_face                     = GL_CULL_FACE,
+        debug_ouptut                  = GL_DEBUG_OUTPUT,
+        debug_ouptut_synchronous      = GL_DEBUG_OUTPUT_SYNCHRONOUS,
+        depth_clamp                   = GL_DEPTH_CLAMP,
+        depth_test                    = GL_DEPTH_TEST,
+        dither                        = GL_DITHER,
+        framebuffer_srgb              = GL_FRAMEBUFFER_SRGB,
+        line_smooth                   = GL_LINE_SMOOTH,
+        multi_sample                  = GL_MULTISAMPLE,
+        polygon_offset_fill           = GL_POLYGON_OFFSET_FILL,
+        polygon_offset_line           = GL_POLYGON_OFFSET_LINE,
+        polygon_offset_point          = GL_POLYGON_OFFSET_POINT,
+        polygon_smooth                = GL_POLYGON_SMOOTH,
+        primitive_restart             = GL_PRIMITIVE_RESTART,
+        primitive_restart_fixed_index = GL_PRIMITIVE_RESTART_FIXED_INDEX,
+        rasterizer_discard            = GL_RASTERIZER_DISCARD,
+        sample_alpha_to_coverage      = GL_SAMPLE_ALPHA_TO_COVERAGE,
+        sample_alpha_to_one           = GL_SAMPLE_ALPHA_TO_ONE,
+        sample_coverage               = GL_SAMPLE_COVERAGE,
+        sample_shading                = GL_SAMPLE_SHADING,
+        sample_mask                   = GL_SAMPLE_MASK,
+        scissor_test                  = GL_SCISSOR_TEST,
+        stencil_test                  = GL_STENCIL_TEST,
+        texture_cube_map_seamless     = GL_TEXTURE_CUBE_MAP_SEAMLESS,
+        program_point_size            = GL_PROGRAM_POINT_SIZE
     };
 
     enum class blend_mode : GLenum {
@@ -60,24 +88,24 @@ namespace{
       using distinguished_origin = std::true_type;
     };
 
-    struct sample_coverage_t {
+    struct sample_coverage_unit_t {
         using is_unit        = std::true_type;
         using validator_type = sequoia::maths::interval_validator<float, 0.0f, 1.0f>;
     };
 
-    inline constexpr sample_coverage_t sample_coverage{};
+    inline constexpr sample_coverage_unit_t sample_coverage_unit{};
 }
 
 namespace sequoia::physics {
     template<std::floating_point T>
-    struct default_space<sample_coverage_t, T>
+    struct default_space<sample_coverage_unit_t, T>
     {
         using type = sample_coverage_space<T, implicit_common_arena>;
     };
 }
 
 namespace {
-    using sample_coverage_value = sequoia::physics::quantity<sample_coverage_t, GLfloat>;
+    using sample_coverage_value = sequoia::physics::quantity<sample_coverage_unit_t, GLfloat>;
 
     enum class invert_sample_mask : GLboolean {
         no  = GL_FALSE,
@@ -101,15 +129,6 @@ namespace {
     };
 
     namespace capabilities {
-        struct gl_multi_sample {
-            constexpr static auto capability{gl_capability::multi_sample};
-            sample_coverage_value coverage_val{1.0, sample_coverage};
-            invert_sample_mask    invert{invert_sample_mask::no};
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
-        };
-
         struct gl_blend {
             constexpr static auto capability{gl_capability::blend};
             blend_mode source{blend_mode::one}, destination{blend_mode::zero};
@@ -117,20 +136,336 @@ namespace {
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
         };
+
+        struct gl_clip_distance_0 {
+            constexpr static auto capability{gl_capability::clip_distance_0};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_clip_distance_0&, const gl_clip_distance_0&) noexcept = default;
+        };
+
+        struct gl_clip_distance_1 {
+            constexpr static auto capability{gl_capability::clip_distance_1};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_clip_distance_1&, const gl_clip_distance_1&) noexcept = default;
+        };
+
+        struct gl_clip_distance_2 {
+            constexpr static auto capability{gl_capability::clip_distance_2};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_clip_distance_2&, const gl_clip_distance_2&) noexcept = default;
+        };
+
+        struct gl_colour_logic_op {
+            constexpr static auto capability{gl_capability::colour_logic_op};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_colour_logic_op&, const gl_colour_logic_op&) noexcept = default;
+        };
+
+        struct gl_cull_face {
+            constexpr static auto capability{gl_capability::cull_face};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_cull_face&, const gl_cull_face&) noexcept = default;
+        };
+
+        struct gl_debug_ouptut {
+            constexpr static auto capability{gl_capability::debug_ouptut};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_debug_ouptut&, const gl_debug_ouptut&) noexcept = default;
+        };
+
+        struct gl_debug_ouptut_synchronous {
+            constexpr static auto capability{gl_capability::debug_ouptut_synchronous};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_debug_ouptut_synchronous&, const gl_debug_ouptut_synchronous&) noexcept = default;
+        };
+
+        struct gl_depth_clamp {
+            constexpr static auto capability{gl_capability::depth_clamp};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_depth_clamp&, const gl_depth_clamp&) noexcept = default;
+        };
+
+        struct gl_depth_test {
+            constexpr static auto capability{gl_capability::depth_test};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_depth_test&, const gl_depth_test&) noexcept = default;
+        };
+
+        struct gl_dither {
+            constexpr static auto capability{gl_capability::dither};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_dither&, const gl_dither&) noexcept = default;
+        };
+
+        struct gl_framebuffer_srgb {
+            constexpr static auto capability{gl_capability::framebuffer_srgb};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_framebuffer_srgb&, const gl_framebuffer_srgb&) noexcept = default;
+        };
+
+        struct gl_line_smooth {
+            constexpr static auto capability{gl_capability::line_smooth};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_line_smooth&, const gl_line_smooth&) noexcept = default;
+        };
+
+        struct gl_multi_sample {
+            constexpr static auto capability{gl_capability::multi_sample};
+            sample_coverage_value coverage_val{1.0, sample_coverage_unit};
+            invert_sample_mask    invert{invert_sample_mask::no};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
+        };
+
+        struct gl_polygon_offset_fill {
+            constexpr static auto capability{gl_capability::polygon_offset_fill};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset_fill&, const gl_polygon_offset_fill&) noexcept = default;
+        };
+
+        struct gl_polygon_offset_line {
+            constexpr static auto capability{gl_capability::polygon_offset_line};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset_line&, const gl_polygon_offset_line&) noexcept = default;
+        };
+
+        struct gl_polygon_offset_point {
+            constexpr static auto capability{gl_capability::polygon_offset_point};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset_point&, const gl_polygon_offset_point&) noexcept = default;
+        };
+
+        struct gl_polygon_smooth {
+            constexpr static auto capability{gl_capability::polygon_smooth};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_smooth&, const gl_polygon_smooth&) noexcept = default;
+        };
+
+        struct gl_primitive_restart {
+            constexpr static auto capability{gl_capability::primitive_restart};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_primitive_restart&, const gl_primitive_restart&) noexcept = default;
+        };
+
+        struct gl_primitive_restart_fixed_index {
+            constexpr static auto capability{gl_capability::primitive_restart_fixed_index};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_primitive_restart_fixed_index&, const gl_primitive_restart_fixed_index&) noexcept = default;
+        };
+
+        struct gl_program_point_size {
+            constexpr static auto capability{gl_capability::program_point_size};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_program_point_size&, const gl_program_point_size&) noexcept = default;
+        };
+
+        struct gl_rasterizer_discard {
+            constexpr static auto capability{gl_capability::rasterizer_discard};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_rasterizer_discard&, const gl_rasterizer_discard&) noexcept = default;
+        };
+
+        struct gl_sample_alpha_to_coverage {
+            constexpr static auto capability{gl_capability::sample_alpha_to_coverage};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_sample_alpha_to_coverage&, const gl_sample_alpha_to_coverage&) noexcept = default;
+        };
+
+        struct gl_sample_alpha_to_one {
+            constexpr static auto capability{gl_capability::sample_alpha_to_one};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_sample_alpha_to_one&, const gl_sample_alpha_to_one&) noexcept = default;
+        };
+
+        struct gl_sample_coverage {
+            constexpr static auto capability{gl_capability::sample_coverage};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_sample_coverage&, const gl_sample_coverage&) noexcept = default;
+        };
+
+        struct gl_sample_mask {
+            constexpr static auto capability{gl_capability::sample_mask};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_sample_mask&, const gl_sample_mask&) noexcept = default;
+        };
+
+        struct gl_sample_shading {
+            constexpr static auto capability{gl_capability::sample_shading};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_sample_shading&, const gl_sample_shading&) noexcept = default;
+        };
+
+        struct gl_scissor_test {
+            constexpr static auto capability{gl_capability::scissor_test};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_scissor_test&, const gl_scissor_test&) noexcept = default;
+        };
+
+        struct gl_stencil_test {
+            constexpr static auto capability{gl_capability::stencil_test};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_stencil_test&, const gl_stencil_test&) noexcept = default;
+        };
+
+        struct gl_texture_cube_map_seamless {
+            constexpr static auto capability{gl_capability::texture_cube_map_seamless};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_texture_cube_map_seamless&, const gl_texture_cube_map_seamless&) noexcept = default;
+        };
     }
 
     namespace impl {
         using namespace capabilities;
+
+        void configure(const gl_blend& previous, const gl_blend& requested, const decorated_context& ctx) {
+            if(requested != previous)
+                gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(requested.source), to_gl_enum(requested.destination));
+        }
+
+        void configure(const gl_clip_distance_0& previous, const gl_clip_distance_0& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_clip_distance_1& previous, const gl_clip_distance_1& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_clip_distance_2& previous, const gl_clip_distance_2& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_colour_logic_op& previous, const gl_colour_logic_op& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_cull_face& previous, const gl_cull_face& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_debug_ouptut& previous, const gl_debug_ouptut& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_debug_ouptut_synchronous& previous, const gl_debug_ouptut_synchronous& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_depth_clamp& previous, const gl_depth_clamp& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_depth_test& previous, const gl_depth_test& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_dither& previous, const gl_dither& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_framebuffer_srgb& previous, const gl_framebuffer_srgb& requested, const decorated_context& ctx)
+        {
+        }
 
         void configure(const gl_multi_sample& previous, const gl_multi_sample& requested, const decorated_context& ctx) {
             if(requested != previous)
                 gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.value(), static_cast<GLboolean>(requested.invert));
         }
 
+        void configure(const gl_line_smooth& previous, const gl_line_smooth& requested, const decorated_context& ctx)
+        {
+        }
 
-        void configure(const gl_blend& previous, const gl_blend& requested, const decorated_context& ctx) {
-            if(requested != previous)
-                gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(requested.source), to_gl_enum(requested.destination));
+        void configure(const gl_polygon_offset_fill& previous, const gl_polygon_offset_fill& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_polygon_offset_line& previous, const gl_polygon_offset_line& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_polygon_offset_point& previous, const gl_polygon_offset_point& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_polygon_smooth& previous, const gl_polygon_smooth& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_primitive_restart& previous, const gl_primitive_restart& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_primitive_restart_fixed_index& previous, const gl_primitive_restart_fixed_index& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_rasterizer_discard& previous, const gl_rasterizer_discard& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_sample_alpha_to_coverage& previous, const gl_sample_alpha_to_coverage& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_sample_alpha_to_one& previous, const gl_sample_alpha_to_one& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_sample_coverage& previous, const gl_sample_coverage& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_sample_shading& previous, const gl_sample_shading& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_sample_mask& previous, const gl_sample_mask& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_scissor_test& previous, const gl_scissor_test& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_stencil_test& previous, const gl_stencil_test& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_texture_cube_map_seamless& previous, const gl_texture_cube_map_seamless& requested, const decorated_context& ctx)
+        {
+        }
+
+        void configure(const gl_program_point_size& previous, const gl_program_point_size& requested, const decorated_context& ctx)
+        {
         }
     }
 
@@ -145,11 +480,44 @@ namespace {
 
     class capability_manager {
     public:
-        using payload_type = std::tuple<toggled_capability<capabilities::gl_blend>, toggled_capability<capabilities::gl_multi_sample>>;
+        using payload_type 
+            = std::tuple<
+                  toggled_capability<capabilities::gl_blend>,
+                  toggled_capability<capabilities::gl_clip_distance_0>,
+                  toggled_capability<capabilities::gl_clip_distance_1>,
+                  toggled_capability<capabilities::gl_clip_distance_2>,
+                  toggled_capability<capabilities::gl_colour_logic_op>,
+                  toggled_capability<capabilities::gl_cull_face>,
+                  toggled_capability<capabilities::gl_debug_ouptut>,
+                  toggled_capability<capabilities::gl_debug_ouptut_synchronous>,
+                  toggled_capability<capabilities::gl_depth_clamp>,
+                  toggled_capability<capabilities::gl_depth_test>,
+                  toggled_capability<capabilities::gl_dither>,
+                  toggled_capability<capabilities::gl_framebuffer_srgb>,
+                  toggled_capability<capabilities::gl_line_smooth>,
+                  toggled_capability<capabilities::gl_multi_sample>,
+                  toggled_capability<capabilities::gl_polygon_offset_fill>,
+                  toggled_capability<capabilities::gl_polygon_offset_line>,
+                  toggled_capability<capabilities::gl_polygon_offset_point>,
+                  toggled_capability<capabilities::gl_polygon_smooth>,
+                  toggled_capability<capabilities::gl_primitive_restart>,
+                  toggled_capability<capabilities::gl_primitive_restart_fixed_index>,
+                  toggled_capability<capabilities::gl_rasterizer_discard>,
+                  toggled_capability<capabilities::gl_sample_alpha_to_coverage>,
+                  toggled_capability<capabilities::gl_sample_alpha_to_one>,
+                  toggled_capability<capabilities::gl_sample_coverage>,
+                  toggled_capability<capabilities::gl_sample_shading>,
+                  toggled_capability<capabilities::gl_sample_mask>,
+                  toggled_capability<capabilities::gl_scissor_test>,
+                  toggled_capability<capabilities::gl_stencil_test>,
+                  toggled_capability<capabilities::gl_texture_cube_map_seamless>,
+                  toggled_capability<capabilities::gl_program_point_size>
+              >;
 
         explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
         {
+            capability_common_lifecycle<gl_capability::dither>::disable(m_Context);
             capability_common_lifecycle<gl_capability::multi_sample>::disable(m_Context);
         }
 
@@ -169,7 +537,6 @@ namespace {
                             capability_common_lifecycle<Cap::capability>::enable(m_Context);
                             cap.is_enabled = true;
                         }
-
 
                         impl::configure(cap.state, std::get<index>(requestedCaps), m_Context);
                     }
@@ -215,12 +582,10 @@ namespace {
 }
 
 namespace sequoia::testing {
-
     template<class T>
     struct value_tester<toggled_capability<T>> {
         template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>& logger, const toggled_capability<T>& obtained, const toggled_capability<T>& prediction)
-        {
+        static void test(equality_check_t, test_logger<Mode>& logger, const toggled_capability<T>& obtained, const toggled_capability<T>& prediction) {
             namespace agl = avocet::opengl;
             check(equality, "State",      logger, obtained.state,      prediction.state);
             check(equality, "Is Enabled", logger, obtained.is_enabled, prediction.is_enabled);
@@ -230,16 +595,14 @@ namespace sequoia::testing {
     template<>
     struct value_tester<capabilities::gl_blend> {
         template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const capabilities::gl_blend& prediction)
-        {
+        static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const capabilities::gl_blend& prediction) {
             namespace agl = avocet::opengl;
-            check(equality, "Source",      logger, agl::to_gl_enum(obtained.source),      agl::to_gl_enum(prediction.source));
+            check(equality, "Source", logger, agl::to_gl_enum(obtained.source), agl::to_gl_enum(prediction.source));
             check(equality, "Destination", logger, agl::to_gl_enum(obtained.destination), agl::to_gl_enum(prediction.destination));
         }
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx)
-        {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
             check(equality, "", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)), agl::to_gl_enum(obtained.source));
             check(equality, "", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)), agl::to_gl_enum(obtained.destination));
@@ -247,21 +610,327 @@ namespace sequoia::testing {
     };
 
     template<>
+    struct value_tester<capabilities::gl_clip_distance_0> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_clip_distance_0&, const capabilities::gl_clip_distance_0&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_clip_distance_0&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_clip_distance_1> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_clip_distance_1&, const capabilities::gl_clip_distance_1&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_clip_distance_1&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_clip_distance_2> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_clip_distance_2&, const capabilities::gl_clip_distance_2&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_clip_distance_2&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_colour_logic_op> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_colour_logic_op&, const capabilities::gl_colour_logic_op&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_colour_logic_op&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_cull_face> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_cull_face&, const capabilities::gl_cull_face&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_cull_face&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_debug_ouptut> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_debug_ouptut&, const capabilities::gl_debug_ouptut&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_debug_ouptut&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_debug_ouptut_synchronous> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_debug_ouptut_synchronous&, const capabilities::gl_debug_ouptut_synchronous&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_debug_ouptut_synchronous&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_depth_clamp> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_depth_clamp&, const capabilities::gl_depth_clamp&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_depth_clamp&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_depth_test> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_depth_test&, const capabilities::gl_depth_test&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_depth_test&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_dither> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_dither&, const capabilities::gl_dither&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_dither&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_framebuffer_srgb> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_framebuffer_srgb&, const capabilities::gl_framebuffer_srgb&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_framebuffer_srgb&, const decorated_context&) {
+        }
+    };
+
+    template<>
     struct value_tester<capabilities::gl_multi_sample> {
         template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_multi_sample& obtained, const capabilities::gl_multi_sample& prediction)
-        {
+        static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_multi_sample& obtained, const capabilities::gl_multi_sample& prediction) {
             namespace agl = avocet::opengl;
             check(equality, "Source",      logger, obtained.coverage_val,            prediction.coverage_val);
             check(equality, "Destination", logger, agl::to_gl_bool(obtained.invert), agl::to_gl_bool(prediction.invert));
         }
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_multi_sample& obtained, const decorated_context& ctx)
-        {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_multi_sample& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
             check(equality, "Sample coverage", logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), obtained.coverage_val.value());
             check(equality, "Sample invert",   logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(obtained.invert));
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_line_smooth> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_line_smooth&, const capabilities::gl_line_smooth&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_line_smooth&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_polygon_offset_fill> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_polygon_offset_fill&, const capabilities::gl_polygon_offset_fill&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_polygon_offset_fill&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_polygon_offset_line> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_polygon_offset_line&, const capabilities::gl_polygon_offset_line&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_polygon_offset_line&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_polygon_offset_point> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_polygon_offset_point&, const capabilities::gl_polygon_offset_point&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_polygon_offset_point&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_polygon_smooth> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_polygon_smooth&, const capabilities::gl_polygon_smooth&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_polygon_smooth&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_primitive_restart> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_primitive_restart&, const capabilities::gl_primitive_restart&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_primitive_restart&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_primitive_restart_fixed_index> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_primitive_restart_fixed_index&, const capabilities::gl_primitive_restart_fixed_index&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_primitive_restart_fixed_index&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_program_point_size> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_program_point_size&, const capabilities::gl_program_point_size&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_program_point_size&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_rasterizer_discard> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_rasterizer_discard&, const capabilities::gl_rasterizer_discard&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_rasterizer_discard&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_sample_alpha_to_coverage> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_sample_alpha_to_coverage&, const capabilities::gl_sample_alpha_to_coverage&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_sample_alpha_to_coverage&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_sample_alpha_to_one> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_sample_alpha_to_one&, const capabilities::gl_sample_alpha_to_one&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_sample_alpha_to_one&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_sample_coverage> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_sample_coverage&, const capabilities::gl_sample_coverage&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_sample_coverage&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_sample_mask> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_sample_mask&, const capabilities::gl_sample_mask&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_sample_mask&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_sample_shading> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_sample_shading&, const capabilities::gl_sample_shading&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_sample_shading&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_scissor_test> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_scissor_test&, const capabilities::gl_scissor_test&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_scissor_test&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_stencil_test> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_stencil_test&, const capabilities::gl_stencil_test&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_stencil_test&, const decorated_context&) {
+        }
+    };
+
+    template<>
+    struct value_tester<capabilities::gl_texture_cube_map_seamless> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const capabilities::gl_texture_cube_map_seamless&, const capabilities::gl_texture_cube_map_seamless&) {
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const capabilities::gl_texture_cube_map_seamless&, const decorated_context&) {
         }
     };
 }
@@ -278,16 +947,47 @@ namespace avocet::testing
 
     namespace {
         enum node_name {
-            none         = 0,
-            blend        = 1,
-            multi_sample = 2,
+            none = 0,
+            blend,
+            clip_distance_0,
+            clip_distance_1,
+            clip_distance_2,
+            colour_logic_op,
+            cull_face,
+            debug_ouptut,
+            debug_ouptut_synchronous,
+            depth_clamp,
+            depth_test,
+            dither,
+            framebuffer_srgb,
+            line_smooth,
+            multi_sample,
+            polygon_offset_fill,
+            polygon_offset_line,
+            polygon_offset_point,
+            polygon_smooth,
+            primitive_restart,
+            primitive_restart_fixed_index,
+            rasterizer_discard,
+            sample_alpha_to_coverage,
+            sample_alpha_to_one,
+            sample_coverage,
+            sample_shading,
+            sample_mask,
+            scissor_test,
+            stencil_test,
+            texture_cube_map_seamless,
+            program_point_size,
+            blend_and_multi_sample
         };
 
-        /*template<gl_capability Cap>
+        template<class... Caps>
         [[nodiscard]]
-        capabilities_type to_capabilities() {
-
-        }*/
+        typename capability_manager::payload_type make_payload(const Caps&... caps) {
+            typename capability_manager::payload_type payload{};
+            ((std::get<toggled_capability<Caps>>(payload) = toggled_capability<Caps>{.state{caps}, .is_enabled{true}}), ...);
+            return payload;
+        }
     }
 
     void capability_manager_free_test::run_tests()
@@ -322,21 +1022,157 @@ namespace avocet::testing
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
                    },
                    {
+                       node_name::clip_distance_0,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_clip_distance_0{}}); }
+                   },
+                   {
+                       node_name::clip_distance_1,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_clip_distance_1{}}); }
+                   },
+                   {
+                       node_name::clip_distance_2,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_clip_distance_2{}}); }
+                   },
+                   {
+                       node_name::colour_logic_op,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_colour_logic_op{}}); }
+                   },
+                   {
+                       node_name::cull_face,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_cull_face{}}); }
+                   },
+                   {
+                       node_name::debug_ouptut,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_debug_ouptut{}}); }
+                   },
+                   {
+                       node_name::debug_ouptut_synchronous,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_debug_ouptut_synchronous{}}); }
+                   },
+                   {
+                       node_name::depth_clamp,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_depth_clamp{}}); }
+                   },
+                   {
+                       node_name::depth_test,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_depth_test{}}); }
+                   },
+                   {
+                       node_name::dither,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_dither{}}); }
+                   },
+                   {
+                       node_name::framebuffer_srgb,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_framebuffer_srgb{}}); }
+                   },
+                   {
+                       node_name::line_smooth,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_line_smooth{}}); }
+                   },
+                   {
                        node_name::multi_sample,
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}}); }
                    },
                    {
-                       node_name::blend | node_name::multi_sample,
+                       node_name::polygon_offset_fill,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_polygon_offset_fill{}}); }
+                   },
+                   {
+                       node_name::polygon_offset_line,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_polygon_offset_line{}}); }
+                   },
+                   {
+                       node_name::polygon_offset_point,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_polygon_offset_point{}}); }
+                   },
+                   {
+                       node_name::polygon_smooth,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_polygon_smooth{}}); }
+                   },
+                   {
+                       node_name::primitive_restart,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_primitive_restart{}}); }
+                   },
+                   {
+                       node_name::primitive_restart_fixed_index,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_primitive_restart_fixed_index{}}); }
+                   },
+                   {
+                       node_name::rasterizer_discard,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_rasterizer_discard{}}); }
+                   },
+                   {
+                       node_name::sample_alpha_to_coverage,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_sample_alpha_to_coverage{}}); }
+                   },
+                   {
+                       node_name::sample_alpha_to_one,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_sample_alpha_to_one{}}); }
+                   },
+                   {
+                       node_name::sample_coverage,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_sample_coverage{}}); }
+                   },
+                   {
+                       node_name::sample_shading,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_sample_shading{}}); }
+                   },
+                   {
+                       node_name::sample_mask,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_sample_mask{}}); }
+                   },
+                   {
+                       node_name::scissor_test,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_scissor_test{}}); }
+                   },
+                   {
+                       node_name::stencil_test,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_stencil_test{}}); }
+                   },
+                   {
+                       node_name::texture_cube_map_seamless,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_texture_cube_map_seamless{}}); }
+                   },
+                   {
+                       node_name::blend_and_multi_sample,
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}, gl_multi_sample{}}); }
                    },
                    {
-                       node_name::blend | node_name::multi_sample,
+                       node_name::program_point_size,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}, gl_blend{}}); }
-                   }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_program_point_size{}}); }
+                   },
                 }, // End Null Payload
+
                 {  // Begin blend
                     {
                         node_name::none,
@@ -348,7 +1184,44 @@ namespace avocet::testing
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
                     },
-                }, //   End blend
+                }, // End blend
+
+                {  // Begin clip_distance_0
+                }, // End clip_distance_0
+
+                {  // Begin clip_distance_1
+                }, // End clip_distance_1
+
+                {  // Begin clip_distance_2
+                }, // End clip_distance_2
+
+                {  // Begin colour_logic_op
+                }, // End colour_logic_op
+
+                {  // Begin cull_face
+                }, // End cull_face
+
+                {  // Begin debug_ouptut
+                }, // End debug_ouptut
+
+                {  // Begin debug_ouptut_synchronous
+                }, // End debug_ouptut_synchronous
+
+                {  // Begin depth_clamp
+                }, // End depth_clamp
+
+                {  // Begin depth_test
+                }, // End depth_test
+
+                {  // Begin dither
+                }, // End dither
+
+                {  // Begin framebuffer_srgb
+                }, // End framebuffer_srgb
+
+                {  // Begin line_smooth
+                }, // End line_smooth
+
                 {  // Begin multi_sample
                     {
                         node_name::none,
@@ -360,8 +1233,57 @@ namespace avocet::testing
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}}); }
                     },
-                }, //   End multi_sample
-                {  // Begin blend | multi_sample
+                }, // End multi_sample
+
+                {  // Begin polygon_offset_fill
+                }, // End polygon_offset_fill
+
+                {  // Begin polygon_offset_line
+                }, // End polygon_offset_line
+
+                {  // Begin polygon_offset_point
+                }, // End polygon_offset_point
+
+                {  // Begin polygon_smooth
+                }, // End polygon_smooth
+
+                {  // Begin primitive_restart
+                }, // End primitive_restart
+
+                {  // Begin primitive_restart_fixed_index
+                }, // End primitive_restart_fixed_index
+
+                {  // Begin rasterizer_discard
+                }, // End rasterizer_discard
+
+                {  // Begin sample_alpha_to_coverage
+                }, // End sample_alpha_to_coverage
+
+                {  // Begin sample_alpha_to_one
+                }, // End sample_alpha_to_one
+
+                {  // Begin sample_coverage
+                }, // End sample_coverage
+
+                {  // Begin sample_shading
+                }, // End sample_shading
+
+                {  // Begin sample_mask
+                }, // End sample_mask
+
+                {  // Begin scissor_test
+                }, // End scissor_test
+
+                {  // Begin stencil_test
+                }, // End stencil_test
+
+                {  // Begin texture_cube_map_seamless
+                }, // End texture_cube_map_seamless
+
+                {  // Begin program_point_size
+                }, // End program_point_size
+
+                {  // Begin blend_and_multi_sample
                     {
                         node_name::none,
                         "",
@@ -378,17 +1300,45 @@ namespace avocet::testing
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}}); }
                     },
                     {
-                       node_name::blend | node_name::multi_sample,
+                       node_name::blend_and_multi_sample,
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}, gl_multi_sample{}}); }
                     }
-                }, //   End blend | multi_sample
+                }, // End blend_and_multi_sample
             },
             {
                 payload_type{},
-                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{}, false}},
-                payload_type{toggled_capability{gl_blend{}, false}, toggled_capability{gl_multi_sample{}, true}},
-                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{}, true}},
+                payload_type{make_payload(gl_blend{})},
+                payload_type{make_payload(gl_clip_distance_0{})},
+                payload_type{make_payload(gl_clip_distance_1{})},
+                payload_type{make_payload(gl_clip_distance_2{})},
+                payload_type{make_payload(gl_colour_logic_op{})},
+                payload_type{make_payload(gl_cull_face{})},
+                payload_type{make_payload(gl_debug_ouptut{})},
+                payload_type{make_payload(gl_debug_ouptut_synchronous{})},
+                payload_type{make_payload(gl_depth_clamp{})},
+                payload_type{make_payload(gl_depth_test{})},
+                payload_type{make_payload(gl_dither{})},
+                payload_type{make_payload(gl_framebuffer_srgb{})},
+                payload_type{make_payload(gl_line_smooth{})},
+                payload_type{make_payload(gl_multi_sample{})},
+                payload_type{make_payload(gl_polygon_offset_fill{})},
+                payload_type{make_payload(gl_polygon_offset_line{})},
+                payload_type{make_payload(gl_polygon_offset_point{})},
+                payload_type{make_payload(gl_polygon_smooth{})},
+                payload_type{make_payload(gl_primitive_restart{})},
+                payload_type{make_payload(gl_primitive_restart_fixed_index{})},
+                payload_type{make_payload(gl_rasterizer_discard{})},
+                payload_type{make_payload(gl_sample_alpha_to_coverage{})},
+                payload_type{make_payload(gl_sample_alpha_to_one{})},
+                payload_type{make_payload(gl_sample_coverage{})},
+                payload_type{make_payload(gl_sample_shading{})},
+                payload_type{make_payload(gl_sample_mask{})},
+                payload_type{make_payload(gl_scissor_test{})},
+                payload_type{make_payload(gl_stencil_test{})},
+                payload_type{make_payload(gl_texture_cube_map_seamless{})},
+                payload_type{make_payload(gl_program_point_size{})},
+                payload_type{make_payload(gl_blend{}, gl_multi_sample{})}
             }
         };
 
