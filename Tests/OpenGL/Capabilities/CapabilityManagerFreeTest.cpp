@@ -104,7 +104,7 @@ namespace {
         struct gl_multi_sample {
             constexpr static auto capability{gl_capability::multi_sample};
             sample_coverage_value coverage_val{1.0, sample_coverage};
-            invert_sample_mask    mask{invert_sample_mask::no};
+            invert_sample_mask    invert{invert_sample_mask::no};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
@@ -120,13 +120,17 @@ namespace {
     }
 
     namespace impl {
-        void configure(const capabilities::gl_multi_sample& cap, const decorated_context& ctx) {
-            gl_function{&GladGLContext::SampleCoverage}(ctx, cap.coverage_val.value(), static_cast<GLboolean>(cap.mask));
+        using namespace capabilities;
+
+        void configure(const gl_multi_sample& previous, const gl_multi_sample& requested, const decorated_context& ctx) {
+            if(requested != previous)
+                gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.value(), static_cast<GLboolean>(requested.invert));
         }
 
 
-        void configure(const capabilities::gl_blend& cap, const decorated_context& ctx) {
-            gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(cap.source), to_gl_enum(cap.destination));
+        void configure(const gl_blend& previous, const gl_blend& requested, const decorated_context& ctx) {
+            if(requested != previous)
+                gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(requested.source), to_gl_enum(requested.destination));
         }
     }
 
@@ -166,10 +170,8 @@ namespace {
                             cap.is_enabled = true;
                         }
 
-                        if(const auto& requested{std::get<index>(requestedCaps)}; requested != cap.state) {
-                            cap.state = requested;
-                            impl::configure(cap.state, m_Context);
-                        }
+
+                        impl::configure(cap.state, std::get<index>(requestedCaps), m_Context);
                     }
                 }
             };
@@ -250,8 +252,8 @@ namespace sequoia::testing {
         static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_multi_sample& obtained, const capabilities::gl_multi_sample& prediction)
         {
             namespace agl = avocet::opengl;
-            check(equality, "Source",      logger, obtained.coverage_val,          prediction.coverage_val);
-            check(equality, "Destination", logger, agl::to_gl_bool(obtained.mask), agl::to_gl_bool(prediction.mask));
+            check(equality, "Source",      logger, obtained.coverage_val,            prediction.coverage_val);
+            check(equality, "Destination", logger, agl::to_gl_bool(obtained.invert), agl::to_gl_bool(prediction.invert));
         }
 
         template<test_mode Mode>
@@ -259,7 +261,7 @@ namespace sequoia::testing {
         {
             namespace agl = avocet::opengl;
             check(equality, "Sample coverage", logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), obtained.coverage_val.value());
-            check(equality, "Sample mask",     logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(obtained.mask));
+            check(equality, "Sample invert",   logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(obtained.invert));
         }
     };
 }
