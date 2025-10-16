@@ -196,6 +196,7 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const toggled_capability<T>& obtained, const toggled_capability<T>& prediction)
         {
+            namespace agl = avocet::opengl;
             check(equality, "State",      logger, obtained.state,      prediction.state);
             check(equality, "Is Enabled", logger, obtained.is_enabled, prediction.is_enabled);
         }
@@ -286,24 +287,24 @@ namespace avocet::testing
                    {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_blend{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
                    },
                    {
                        node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}}); }
                    },
                    {
                        node_name::blend | node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_blend{}, capabilities::gl_multi_sample{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}, gl_multi_sample{}}); }
                    },
                    {
                        node_name::blend | node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}, capabilities::gl_blend{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}, gl_blend{}}); }
                    }
-                }, //   End Null Payload
+                }, // End Null Payload
                 {  // Begin blend
                     {
                         node_name::none,
@@ -313,7 +314,7 @@ namespace avocet::testing
                     {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_blend{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
                     },
                 }, //   End blend
                 {  // Begin multi_sample
@@ -325,7 +326,7 @@ namespace avocet::testing
                     {
                        node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}}); }
                     },
                 }, //   End multi_sample
                 {  // Begin blend | multi_sample
@@ -337,31 +338,39 @@ namespace avocet::testing
                     {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_blend{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
                     },
                     {
                        node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_multi_sample{}}); }
                     },
                     {
                        node_name::blend | node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{capabilities::gl_blend{}, capabilities::gl_multi_sample{}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}, gl_multi_sample{}}); }
                     }
                 }, //   End blend | multi_sample
             },
             {
                 payload_type{},
-                payload_type{toggled_capability{gl_blend{}, true}, toggled_capability{gl_multi_sample{},  false}},
+                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{},  false}},
                 payload_type{toggled_capability{gl_blend{}, false}, toggled_capability{gl_multi_sample{}, true}},
-                payload_type{toggled_capability{gl_blend{}, true}, toggled_capability{gl_multi_sample{},  true}},
+                payload_type{toggled_capability{gl_blend{}, true},  toggled_capability{gl_multi_sample{},  true}},
             }
         };
 
         auto checker{
-            [this](std::string_view description, const payload_type& obtained, const payload_type& prediction) {
+            [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& prediction) {
                 check(equality, {description, no_source_location}, obtained, prediction);
+
+                auto checkGPU{
+                    [&] <class Cap>(const toggled_capability<Cap>& cap) {
+                        check(equality, "GPU State", cap.is_enabled, static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, agl::to_gl_enum(Cap::capability))));
+                    }
+                };
+
+                sequoia::meta::for_each(obtained, checkGPU);
             }
         };
 
