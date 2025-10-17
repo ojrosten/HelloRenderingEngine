@@ -689,9 +689,12 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
-            check(equality, "Source GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)),            agl::to_gl_enum(obtained.source));
-            check(equality, "Destination GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)),            agl::to_gl_enum(obtained.destination));
-            check(equality, "Colour GPU/CPU",      logger, rgba_value{get_float_params<4>(ctx, GL_BLEND_COLOR), agl::units::rgba}, obtained.colour);
+            check(equality, "Source alpha GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)), agl::to_gl_enum(obtained.source));
+            check(equality, "Source rgb   GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_RGB)),   agl::to_gl_enum(obtained.source));
+            check(equality, "Destination alpha GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)), agl::to_gl_enum(obtained.destination));
+            check(equality, "Destination rgb   GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_RGB)),   agl::to_gl_enum(obtained.destination));
+
+            check(equality, "Colour GPU/CPU",            logger, rgba_value{get_float_params<4>(ctx, GL_BLEND_COLOR), agl::units::rgba}, obtained.colour);
         }
     };
 
@@ -1032,6 +1035,32 @@ namespace avocet::testing
     }
 
     namespace {
+        template<class... Caps>
+        [[nodiscard]]
+        typename capability_manager::payload_type make_payload(const Caps&... caps) {
+            typename capability_manager::payload_type payload{};
+            ((std::get<toggled_capability<Caps>>(payload) = toggled_capability<Caps>{.state{caps}, .is_enabled{true}}), ...);
+            return payload;
+        }
+
+        template<class... Caps>
+        [[nodiscard]]
+        typename capability_manager::payload_type make_disabled_payload(const Caps&... caps) {
+            typename capability_manager::payload_type payload{};
+            ((std::get<toggled_capability<Caps>>(payload) = toggled_capability<Caps>{.state{caps}, .is_enabled{false}}), ...);
+            return payload;
+        }
+    }
+
+    void capability_manager_free_test::run_tests()
+    {
+        test_default_capabilites();
+        test_blend_state();
+    }
+
+    void capability_manager_free_test::test_default_capabilites()
+    {
+
         enum node_name {
             none = 0,
             blend,
@@ -1072,25 +1101,6 @@ namespace avocet::testing
             blend_set_all
         };
 
-        template<class... Caps>
-        [[nodiscard]]
-        typename capability_manager::payload_type make_payload(const Caps&... caps) {
-            typename capability_manager::payload_type payload{};
-            ((std::get<toggled_capability<Caps>>(payload) = toggled_capability<Caps>{.state{caps}, .is_enabled{true}}), ...);
-            return payload;
-        }
-
-        template<class... Caps>
-        [[nodiscard]]
-        typename capability_manager::payload_type make_disabled_payload(const Caps&... caps) {
-            typename capability_manager::payload_type payload{};
-            ((std::get<toggled_capability<Caps>>(payload) = toggled_capability<Caps>{.state{caps}, .is_enabled{false}}), ...);
-            return payload;
-        }
-    }
-
-    void capability_manager_free_test::run_tests()
-    {
         using namespace curlew;
         glfw_manager manager{};
         auto w{
@@ -1524,5 +1534,10 @@ namespace avocet::testing
         capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}});
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));*/
+    }
+
+    void capability_manager_free_test::test_blend_state()
+    {
+
     }
 }
