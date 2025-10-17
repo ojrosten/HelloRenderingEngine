@@ -55,6 +55,44 @@ namespace{
         program_point_size            = GL_PROGRAM_POINT_SIZE
     };
 
+    std::string to_string(gl_capability cap) {
+        using enum gl_capability;
+        switch(cap) {
+        case blend:                         return "blend";
+        case clip_distance_0:               return "clip_distance_0";
+        case clip_distance_1:               return "clip_distance_1";
+        case clip_distance_2:               return "clip_distance_2";
+        case colour_logic_op:               return "colour_logic_op";
+        case cull_face:                     return "cull_face";
+        case debug_ouptut:                  return "debug_ouptut";
+        case debug_ouptut_synchronous:      return "debug_ouptut_synchronous";
+        case depth_clamp:                   return "depth_clamp";
+        case depth_test:                    return "depth_test";
+        case dither:                        return "dither";
+        case framebuffer_srgb:              return "framebuffer_srgb";
+        case line_smooth:                   return "line_smooth";
+        case multi_sample:                  return "multi_sample";
+        case polygon_offset_fill:           return "polygon_offset_fill";
+        case polygon_offset_line:           return "polygon_offset_line";
+        case polygon_offset_point:          return "polygon_offset_point";
+        case polygon_smooth:                return "polygon_smooth";
+        case primitive_restart:             return "primitive_restart";
+        case primitive_restart_fixed_index: return "primitive_restart_fixed_index";
+        case rasterizer_discard:            return "rasterizer_discard";
+        case sample_alpha_to_coverage:      return "sample_alpha_to_coverage";
+        case sample_alpha_to_one:           return "sample_alpha_to_one";
+        case sample_coverage:               return "sample_coverage";
+        case sample_shading:                return "sample_shading";
+        case sample_mask:                   return "sample_mask";
+        case scissor_test:                  return "scissor_test";
+        case stencil_test:                  return "stencil_test";
+        case texture_cube_map_seamless:     return "texture_cube_map_seamless";
+        case program_point_size:            return "program_point_size";
+        }
+
+        throw std::runtime_error{std::format("Unable to convert gl_capability::{} to a string", to_gl_enum(cap))};
+    }
+
     enum class blend_mode : GLenum {
         zero                   = GL_ZERO,
         one                    = GL_ONE,
@@ -994,7 +1032,19 @@ namespace avocet::testing
     {
         using namespace curlew;
         glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+        auto w{
+            manager.create_window(
+                {.width {800},
+                 .height{800},
+                 .name{""},
+                 .hiding{curlew::window_hiding_mode::on},
+                 .debug_mode{agl::debugging_mode::off},
+                 .prologue{},
+                 .epilogue{agl::standard_error_checker{agl::num_messages{10}}},
+                 .samples{1}
+                }
+            )
+        };
         const auto& ctx{w.context()};
 
         check("Multisampling enabled by default",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
@@ -1348,7 +1398,7 @@ namespace avocet::testing
 
                 auto checkGPU{
                     [&] <class Cap>(const toggled_capability<Cap>& cap) {
-                        check(equality, "GPU Enabling", cap.is_enabled, static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, agl::to_gl_enum(Cap::capability))));
+                        check(equality, std::format("GPU Capability {} Enabling", to_string(Cap::capability)), cap.is_enabled, static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, agl::to_gl_enum(Cap::capability))));
                         check(weak_equivalence, "GPU State", cap.state, ctx);
                     }
                 };
