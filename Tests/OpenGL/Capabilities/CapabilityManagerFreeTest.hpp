@@ -26,7 +26,5 @@ namespace avocet::testing
         void run_tests();
 
         void test_default_capabilites();
-
-        void test_blend_state();
     };
 }

@@ -1055,12 +1055,10 @@ namespace avocet::testing
     void capability_manager_free_test::run_tests()
     {
         test_default_capabilites();
-        test_blend_state();
     }
 
     void capability_manager_free_test::test_default_capabilites()
     {
-
         enum node_name {
             none = 0,
             blend,
@@ -1310,42 +1308,107 @@ namespace avocet::testing
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
                     },
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End blend
 
                 {  // Begin clip_distance_0
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End clip_distance_0
 
                 {  // Begin clip_distance_1
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End clip_distance_1
 
                 {  // Begin clip_distance_2
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End clip_distance_2
 
                 {  // Begin colour_logic_op
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End colour_logic_op
 
                 {  // Begin cull_face
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End cull_face
 
                 {  // Begin debug_ouptut
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End debug_ouptut
 
                 {  // Begin debug_ouptut_synchronous
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End debug_ouptut_synchronous
 
                 {  // Begin depth_clamp
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End depth_clamp
 
                 {  // Begin depth_test
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End depth_test
 
                 {  // Begin dither
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End dither
 
                 {  // Begin framebuffer_srgb
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End framebuffer_srgb
 
                 {  // Begin line_smooth
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End line_smooth
 
                 {  // Begin multi_sample
@@ -1362,51 +1425,131 @@ namespace avocet::testing
                 }, // End multi_sample
 
                 {  // Begin polygon_offset_fill
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End polygon_offset_fill
 
                 {  // Begin polygon_offset_line
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End polygon_offset_line
 
                 {  // Begin polygon_offset_point
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End polygon_offset_point
 
                 {  // Begin polygon_smooth
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End polygon_smooth
 
                 {  // Begin primitive_restart
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End primitive_restart
 
                 {  // Begin primitive_restart_fixed_index
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End primitive_restart_fixed_index
 
                 {  // Begin rasterizer_discard
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End rasterizer_discard
 
                 {  // Begin sample_alpha_to_coverage
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End sample_alpha_to_coverage
 
                 {  // Begin sample_alpha_to_one
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End sample_alpha_to_one
 
                 {  // Begin sample_coverage
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End sample_coverage
 
                 {  // Begin sample_shading
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End sample_shading
 
                 {  // Begin sample_mask
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End sample_mask
 
                 {  // Begin scissor_test
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End scissor_test
 
                 {  // Begin stencil_test
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End stencil_test
 
                 {  // Begin texture_cube_map_seamless
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End texture_cube_map_seamless
 
                 {  // Begin program_point_size
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End program_point_size
 
                 {  // Begin blend_and_multi_sample
@@ -1506,38 +1649,5 @@ namespace avocet::testing
         };
 
         transition_checker<payload_type>::check("", graph, checker);
-
-
-        /*check("Multisampling disabled by manager", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("",                                  !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{capabilities::gl_blend{}});
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_ONE));
-        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ZERO));
-
-        capManager.new_payload(std::tuple{capabilities::gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}}});
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
-        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
-
-        capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}});
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{});
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{capabilities::gl_multi_sample{}});
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));*/
-    }
-
-    void capability_manager_free_test::test_blend_state()
-    {
-
     }
 }
