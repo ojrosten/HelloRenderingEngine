@@ -109,6 +109,14 @@ namespace avocet::opengl {
         one_minus_const_alpha  = GL_ONE_MINUS_CONSTANT_ALPHA
     };
 
+    enum class blend_eqn_mode : GLenum {
+        add               = GL_FUNC_ADD,
+        subtract          = GL_FUNC_SUBTRACT,
+        reverse_substract = GL_FUNC_REVERSE_SUBTRACT,
+        min               = GL_MIN,
+        max               = GL_MAX
+    };
+
     namespace sets {
         template<class Arena>
         struct sample_coverage_values {
@@ -199,6 +207,7 @@ namespace avocet::opengl {
             constexpr static auto capability{gl_capability::blend};
             blend_mode source{blend_mode::one}, destination{blend_mode::zero};
             rgba_value colour{};
+            blend_eqn_mode algebraic_op{GL_FUNC_ADD};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
@@ -420,6 +429,10 @@ namespace avocet::opengl {
             if(requested.colour != previous.colour) {
                 const auto& col{requested.colour.values()};
                 gl_function{&GladGLContext::BlendColor}(ctx, col[0], col[1], col[2], col[3]);
+            }
+
+            if(requested.algebraic_op != previous.algebraic_op) {
+                gl_function{&GladGLContext::BlendEquation}(ctx, to_gl_enum(requested.algebraic_op));
             }
         }
 
@@ -681,18 +694,21 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const capabilities::gl_blend& prediction) {
             namespace agl = avocet::opengl;
-            check(equality, "Source",      logger, agl::to_gl_enum(obtained.source),      agl::to_gl_enum(prediction.source));
-            check(equality, "Destination", logger, agl::to_gl_enum(obtained.destination), agl::to_gl_enum(prediction.destination));
-            check(equality, "Colour",      logger, obtained.colour,                       prediction.colour);
+            check(equality, "Source",       logger, agl::to_gl_enum(obtained.source),       agl::to_gl_enum(prediction.source));
+            check(equality, "Destination",  logger, agl::to_gl_enum(obtained.destination),  agl::to_gl_enum(prediction.destination));
+            check(equality, "Algebraic Op", logger, agl::to_gl_enum(obtained.algebraic_op), agl::to_gl_enum(prediction.algebraic_op));
+            check(equality, "Colour",       logger, obtained.colour,                        prediction.colour);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
-            check(equality, "Source alpha GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)), agl::to_gl_enum(obtained.source));
-            check(equality, "Source rgb   GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_RGB)),   agl::to_gl_enum(obtained.source));
-            check(equality, "Destination alpha GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)), agl::to_gl_enum(obtained.destination));
-            check(equality, "Destination rgb   GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_RGB)),   agl::to_gl_enum(obtained.destination));
+            check(equality, "Source alpha GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)),      agl::to_gl_enum(obtained.source));
+            check(equality, "Source rgb   GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_RGB)),        agl::to_gl_enum(obtained.source));
+            check(equality, "Destination alpha GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)),      agl::to_gl_enum(obtained.destination));
+            check(equality, "Destination rgb   GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_RGB)),        agl::to_gl_enum(obtained.destination));
+            check(equality, "Blend equation GPU/CPU"   , logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_EQUATION_ALPHA)), agl::to_gl_enum(obtained.algebraic_op));
+            check(equality, "Blend equation GPU/CPU"   , logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_EQUATION_RGB)),   agl::to_gl_enum(obtained.algebraic_op));
 
             check(equality, "Colour GPU/CPU",            logger, rgba_value{get_float_params<4>(ctx, GL_BLEND_COLOR), agl::units::rgba}, obtained.colour);
         }
@@ -1293,22 +1309,22 @@ namespace avocet::testing
                    {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{}, .colour{}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .colour{}, .algebraic_op{blend_eqn_mode::add}}}); }
                    },
                    {
                        node_name::blend_set_dst,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .colour{}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .colour{}, .algebraic_op{blend_eqn_mode::add}}}); }
                    },
                    {
                        node_name::blend_set_colour,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::zero}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::zero}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}, .algebraic_op{blend_eqn_mode::add}}}); }
                    },
                    {
                        node_name::blend_set_all,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}, .algebraic_op{blend_eqn_mode::subtract}}}); }
                    }
                 }, // End Null Payload
 
@@ -1602,17 +1618,17 @@ namespace avocet::testing
                     {
                        node_name::blend_set_dst,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .colour{}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .colour{}, .algebraic_op{blend_eqn_mode::add}}}); }
                    },
                    {
                        node_name::blend_set_colour,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::zero}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::zero}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}, .algebraic_op{blend_eqn_mode::add}}}); }
                    },
                    {
                        node_name::blend_set_all,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}, .algebraic_op{blend_eqn_mode::subtract}}}); }
                    },
                    {
                        node_name::blend,
@@ -1656,7 +1672,7 @@ namespace avocet::testing
                     {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{}, .colour{}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .colour{}, .algebraic_op{blend_eqn_mode::add}}}); }
                     },
                     {
                        node_name::blend,
@@ -1704,13 +1720,13 @@ namespace avocet::testing
                 payload_type{make_payload(gl_program_point_size{})},
                 payload_type{make_payload(gl_blend{}, gl_multi_sample{})},
                 payload_type{make_disabled_payload(
-                                          gl_blend{.source{blend_mode::src_alpha},   .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}}
+                                          gl_blend{.source{blend_mode::src_alpha},   .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}, .algebraic_op{blend_eqn_mode::subtract}}
                              )
                 },
-                payload_type{make_payload(gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},                .colour{}})},
-                payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::dst_alpha},           .colour{}})},
-                payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::zero},                .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}})},
-                payload_type{make_payload(gl_blend{.source{blend_mode::src_alpha},   .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},                .colour{},                                                .algebraic_op{blend_eqn_mode::add}})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::dst_alpha},           .colour{},                                                .algebraic_op{blend_eqn_mode::add}})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::zero},                .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}, .algebraic_op{blend_eqn_mode::add}})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::src_alpha},   .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}, .algebraic_op{blend_eqn_mode::subtract}})},
             }
         };
 
