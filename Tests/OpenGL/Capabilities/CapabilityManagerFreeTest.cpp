@@ -19,8 +19,7 @@
 #include "sequoia/TestFramework/StateTransitionUtilities.hpp"
 #include "sequoia/Physics/PhysicalValues.hpp"
 
-namespace{
-    using namespace avocet::opengl;
+namespace avocet::opengl {
 
     enum class gl_capability : GLenum {
         blend                         = GL_BLEND,
@@ -112,38 +111,67 @@ namespace{
 
     namespace sets {
         template<class Arena>
-        struct coverage_values {
+        struct sample_coverage_values {
+            using arena_type = Arena;
+        };
+
+        template<class Arena, std::size_t N>
+        struct colour_values {
+            constexpr static std::size_t num_colours{N};
             using arena_type = Arena;
         };
     }
 
     template<std::floating_point Rep, class Arena>
     struct sample_coverage_space
-      : sequoia::physics::physical_value_convex_space<sets::coverage_values<Arena>, Rep, 1, sample_coverage_space<Rep, Arena>>
+      : sequoia::physics::physical_value_convex_space<sets::sample_coverage_values<Arena>, Rep, 1, sample_coverage_space<Rep, Arena>>
     {
       using arena_type           = Arena;
       using base_space           = sample_coverage_space;
       using distinguished_origin = std::true_type;
     };
 
-    struct sample_coverage_unit_t {
-        using is_unit        = std::true_type;
-        using validator_type = sequoia::maths::interval_validator<float, 0.0f, 1.0f>;
+    template<std::floating_point Rep, std::size_t N, class Arena>
+    struct colour_space
+        : sequoia::physics::physical_value_vector_space<sets::colour_values<Arena, N>, Rep, N, colour_space<Rep, N, Arena>>
+    {
+        using arena_type           = Arena;
+        using base_space           = colour_space;
+        //using distinguished_origin = std::true_type;
     };
 
-    inline constexpr sample_coverage_unit_t sample_coverage_unit{};
+    namespace units {
+        struct rgba_t {
+            using is_unit = std::true_type;
+            using validator_type = std::identity;
+        };
+
+        inline constexpr rgba_t rgba{};
+
+        struct sample_coverage_t {
+            using is_unit = std::true_type;
+            using validator_type = sequoia::maths::interval_validator<float, 0.0f, 1.0f>;
+        };
+
+        inline constexpr sample_coverage_t sample_coverage{};
+    }
 }
 
 namespace sequoia::physics {
     template<std::floating_point T>
-    struct default_space<sample_coverage_unit_t, T>
-    {
-        using type = sample_coverage_space<T, implicit_common_arena>;
+    struct default_space<avocet::opengl::units::sample_coverage_t, T> {
+        using type = avocet::opengl::sample_coverage_space<T, implicit_common_arena>;
+    };
+
+    template<std::floating_point T>
+    struct default_space<avocet::opengl::units::rgba_t, T> {
+        using type = avocet::opengl::colour_space<T, 4, implicit_common_arena>;
     };
 }
 
-namespace {
-    using sample_coverage_value = sequoia::physics::quantity<sample_coverage_unit_t, GLfloat>;
+namespace avocet::opengl {
+    using sample_coverage_value = sequoia::physics::quantity<units::sample_coverage_t, GLfloat>;
+    using rgba_value            = sequoia::physics::quantity<units::rgba_t, GLfloat>;
 
     enum class invert_sample_mask : GLboolean {
         no  = GL_FALSE,
@@ -170,6 +198,7 @@ namespace {
         struct gl_blend {
             constexpr static auto capability{gl_capability::blend};
             blend_mode source{blend_mode::one}, destination{blend_mode::zero};
+            rgba_value colour{};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
@@ -261,7 +290,7 @@ namespace {
 
         struct gl_multi_sample {
             constexpr static auto capability{gl_capability::multi_sample};
-            sample_coverage_value coverage_val{1.0, sample_coverage_unit};
+            sample_coverage_value coverage_val{1.0, units::sample_coverage};
             invert_sample_mask    invert{invert_sample_mask::no};
 
             [[nodiscard]]
@@ -385,8 +414,13 @@ namespace {
         using namespace capabilities;
 
         void configure(const gl_blend& previous, const gl_blend& requested, const decorated_context& ctx) {
-            if(requested != previous)
+            if((requested.source != previous.source) || (requested.destination != previous.destination))
                 gl_function{&GladGLContext::BlendFunc}(ctx, to_gl_enum(requested.source), to_gl_enum(requested.destination));
+
+            if(requested.colour != previous.colour) {
+                const auto& col{requested.colour.values()};
+                gl_function{&GladGLContext::BlendColor}(ctx, col[0], col[1], col[2], col[3]);
+            }
         }
 
         void configure(const gl_clip_distance_0& previous, const gl_clip_distance_0& requested, const decorated_context& ctx)
@@ -620,6 +654,8 @@ namespace {
 }
 
 namespace sequoia::testing {
+    using namespace avocet::opengl;
+
     template<class T>
     struct value_tester<toggled_capability<T>> {
         template<test_mode Mode>
