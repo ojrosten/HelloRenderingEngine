@@ -1654,6 +1654,11 @@ namespace avocet::testing
 
                 {  // Begin blend_set_all
                     {
+                       node_name::blend_set_src,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{}, .colour{}}}); }
+                    },
+                    {
                        node_name::blend,
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
