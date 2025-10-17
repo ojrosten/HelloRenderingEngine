@@ -610,7 +610,9 @@ namespace avocet::opengl {
                             cap.is_enabled = true;
                         }
 
-                        impl::configure(cap.state, std::get<index>(requestedCaps), m_Context);
+                        auto& requestedState{std::get<index>(requestedCaps)};
+                        impl::configure(cap.state, requestedState, m_Context);
+                        cap.state = requestedState;
                     }
                 }
             };
@@ -661,8 +663,8 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const toggled_capability<T>& obtained, const toggled_capability<T>& prediction) {
             namespace agl = avocet::opengl;
-            check(equality, "State",      logger, obtained.state,      prediction.state);
             check(equality, "Is Enabled", logger, obtained.is_enabled, prediction.is_enabled);
+            check(equality, "State",      logger, obtained.state,      prediction.state);
         }
     };
 
@@ -671,15 +673,15 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const capabilities::gl_blend& prediction) {
             namespace agl = avocet::opengl;
-            check(equality, "Source", logger, agl::to_gl_enum(obtained.source), agl::to_gl_enum(prediction.source));
+            check(equality, "Source",      logger, agl::to_gl_enum(obtained.source),      agl::to_gl_enum(prediction.source));
             check(equality, "Destination", logger, agl::to_gl_enum(obtained.destination), agl::to_gl_enum(prediction.destination));
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
-            check(equality, "", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)), agl::to_gl_enum(obtained.source));
-            check(equality, "", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)), agl::to_gl_enum(obtained.destination));
+            check(equality, "Source GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)), agl::to_gl_enum(obtained.source));
+            check(equality, "Destination GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)), agl::to_gl_enum(obtained.destination));
         }
     };
 
@@ -1053,6 +1055,7 @@ namespace avocet::testing
             texture_cube_map_seamless,
             program_point_size,
             blend_and_multi_sample,
+            disabled_blend_set_src,
             blend_set_src,
             blend_set_dest,
             blend_set_colour,
@@ -1064,6 +1067,14 @@ namespace avocet::testing
         typename capability_manager::payload_type make_payload(const Caps&... caps) {
             typename capability_manager::payload_type payload{};
             ((std::get<toggled_capability<Caps>>(payload) = toggled_capability<Caps>{.state{caps}, .is_enabled{true}}), ...);
+            return payload;
+        }
+
+        template<class... Caps>
+        [[nodiscard]]
+        typename capability_manager::payload_type make_disabled_payload(const Caps&... caps) {
+            typename capability_manager::payload_type payload{};
+            ((std::get<toggled_capability<Caps>>(payload) = toggled_capability<Caps>{.state{caps}, .is_enabled{false}}), ...);
             return payload;
         }
     }
@@ -1261,12 +1272,17 @@ namespace avocet::testing
                        "",
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_program_point_size{}}); }
                    },
+                   {
+                       node_name::blend_set_src,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .colour{}}}); }
+                   }
                 }, // End Null Payload
 
                 {  // Begin blend
                     {
-                        node_name::none,
-                        "",
+                        node_name::disabled_blend_set_src,
+                        "The guaranteed BFS traversal means that blend_set_src has just been visited. This state persists, even when the capability is disabled",
                         [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
                     },
                     {
@@ -1396,6 +1412,9 @@ namespace avocet::testing
                     }
                 }, // End blend_and_multi_sample
                 {  // Begin blend_set_src
+
+                }, // End disabled_blend_set_src
+                {  // Begin disabled_blend_set_src
                     
                 }, // End blend_set_src
                 {  // Begin blend_set_dst
@@ -1441,6 +1460,9 @@ namespace avocet::testing
                 payload_type{make_payload(gl_texture_cube_map_seamless{})},
                 payload_type{make_payload(gl_program_point_size{})},
                 payload_type{make_payload(gl_blend{}, gl_multi_sample{})},
+                payload_type{make_disabled_payload(
+                                          gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},                .colour{}})
+                },
                 payload_type{make_payload(gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},                .colour{}})},
                 payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::dst_alpha},           .colour{}})},
                 payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::zero},                .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}})},
