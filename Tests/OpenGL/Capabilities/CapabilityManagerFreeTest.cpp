@@ -1591,18 +1591,47 @@ namespace avocet::testing
                 }, // End blend_and_multi_sample
 
                 {  // Begin disabled_blend_set_all
-
-                }, // End disabled_blend_set_all
-
-                {  // Begin blend_set_src
                     {
                         node_name::none,
                         "",
                         [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
                     },
+                }, // End disabled_blend_set_all
+
+                {  // Begin blend_set_src                    
+                    {
+                       node_name::blend_set_dst,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .colour{}}}); }
+                   },
+                   {
+                       node_name::blend_set_colour,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::zero}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}}}); }
+                   },
+                   {
+                       node_name::blend_set_all,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}}}); }
+                   },
+                   {
+                       node_name::blend,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
+                   },
+                   {
+                       node_name::none,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                   },
                 }, // End blend_set_src
 
                 {  // Begin blend_set_dst
+                    {
+                       node_name::blend,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
+                    },
                     {
                         node_name::none,
                         "",
@@ -1612,6 +1641,11 @@ namespace avocet::testing
 
                 {  // Begin blend_set_colour
                     {
+                       node_name::blend,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
+                    },
+                    {
                         node_name::none,
                         "",
                         [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
@@ -1619,6 +1653,11 @@ namespace avocet::testing
                 }, // End blend_set_colour
 
                 {  // Begin blend_set_all
+                    {
+                       node_name::blend,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}}); }
+                    },
                     {
                         node_name::none,
                         "",
