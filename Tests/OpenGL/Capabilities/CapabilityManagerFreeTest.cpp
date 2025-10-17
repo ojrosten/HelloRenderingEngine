@@ -1060,43 +1060,43 @@ namespace avocet::testing
     void capability_manager_free_test::test_default_capabilites()
     {
         enum node_name {
-            none = 0,
-            blend,
-            clip_distance_0,
-            clip_distance_1,
-            clip_distance_2,
-            colour_logic_op,
-            cull_face,
-            debug_ouptut,
-            debug_ouptut_synchronous,
-            depth_clamp,
-            depth_test,
-            dither,
-            framebuffer_srgb,
-            line_smooth,
-            multi_sample,
-            polygon_offset_fill,
-            polygon_offset_line,
-            polygon_offset_point,
-            polygon_smooth,
-            primitive_restart,
-            primitive_restart_fixed_index,
-            rasterizer_discard,
-            sample_alpha_to_coverage,
-            sample_alpha_to_one,
-            sample_coverage,
-            sample_shading,
-            sample_mask,
-            scissor_test,
-            stencil_test,
-            texture_cube_map_seamless,
-            program_point_size,
-            blend_and_multi_sample,
-            disabled_blend_set_src,
-            blend_set_src,
-            blend_set_dest,
-            blend_set_colour,
-            blend_set_all
+            none                          = 0,
+            blend                         = 1,
+            clip_distance_0               = 2,
+            clip_distance_1               = 3,
+            clip_distance_2               = 4,
+            colour_logic_op               = 5,
+            cull_face                     = 6,
+            debug_ouptut                  = 7,
+            debug_ouptut_synchronous      = 8,
+            depth_clamp                   = 9,
+            depth_test                    = 10,
+            dither                        = 11,
+            framebuffer_srgb              = 12,
+            line_smooth                   = 13,
+            multi_sample                  = 14,
+            polygon_offset_fill           = 15,
+            polygon_offset_line           = 16,
+            polygon_offset_point          = 17,
+            polygon_smooth                = 18,
+            primitive_restart             = 19,
+            primitive_restart_fixed_index = 20,
+            rasterizer_discard            = 21,
+            sample_alpha_to_coverage      = 22,
+            sample_alpha_to_one           = 23,
+            sample_coverage               = 24,
+            sample_shading                = 25,
+            sample_mask                   = 26,
+            scissor_test                  = 27,
+            stencil_test                  = 28,
+            texture_cube_map_seamless     = 29,
+            program_point_size            = 30,
+            blend_and_multi_sample        = 31,
+            disabled_blend_set_all        = 32,
+            blend_set_src                 = 33,
+            blend_set_dst                 = 34,
+            blend_set_colour              = 35,
+            blend_set_all                 = 36
         };
 
         using namespace curlew;
@@ -1293,14 +1293,29 @@ namespace avocet::testing
                    {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .colour{}}}); }
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::const_alpha}, .destination{}, .colour{}}}); }
+                   },
+                   {
+                       node_name::blend_set_dst,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .colour{}}}); }
+                   },
+                   {
+                       node_name::blend_set_colour,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::one}, .destination{blend_mode::zero}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}}}); }
+                   },
+                   {
+                       node_name::blend_set_all,
+                       "",
+                       [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}}}); }
                    }
                 }, // End Null Payload
 
                 {  // Begin blend
                     {
-                        node_name::disabled_blend_set_src,
-                        "The guaranteed BFS traversal means that blend_set_src has just been visited. This state persists, even when the capability is disabled",
+                        node_name::disabled_blend_set_all,
+                        "The guaranteed BFS traversal means that blend_set_all has just been visited. This state persists, even when the capability is disabled",
                         [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
                     },
                     {
@@ -1574,20 +1589,41 @@ namespace avocet::testing
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}, gl_multi_sample{}}); }
                     }
                 }, // End blend_and_multi_sample
+
+                {  // Begin disabled_blend_set_all
+
+                }, // End disabled_blend_set_all
+
                 {  // Begin blend_set_src
-
-                }, // End disabled_blend_set_src
-                {  // Begin disabled_blend_set_src
-                    
+                    {
+                        node_name::none,
+                        "",
+                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End blend_set_src
+
                 {  // Begin blend_set_dst
-
+                    {
+                        node_name::none,
+                        "",
+                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End blend_set_dst
+
                 {  // Begin blend_set_colour
-
+                    {
+                        node_name::none,
+                        "",
+                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End blend_set_colour
-                {  // Begin blend_set_all
 
+                {  // Begin blend_set_all
+                    {
+                        node_name::none,
+                        "",
+                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{}); }
+                    },
                 }, // End blend_set_all
             },
             {
@@ -1624,7 +1660,8 @@ namespace avocet::testing
                 payload_type{make_payload(gl_program_point_size{})},
                 payload_type{make_payload(gl_blend{}, gl_multi_sample{})},
                 payload_type{make_disabled_payload(
-                                          gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},                .colour{}})
+                                          gl_blend{.source{blend_mode::src_alpha},   .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}}
+                             )
                 },
                 payload_type{make_payload(gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},                .colour{}})},
                 payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::dst_alpha},           .colour{}})},
