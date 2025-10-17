@@ -1052,7 +1052,11 @@ namespace avocet::testing
             stencil_test,
             texture_cube_map_seamless,
             program_point_size,
-            blend_and_multi_sample
+            blend_and_multi_sample,
+            blend_set_src,
+            blend_set_dest,
+            blend_set_colour,
+            blend_set_all
         };
 
         template<class... Caps>
@@ -1391,6 +1395,18 @@ namespace avocet::testing
                        [&capManager](payload_type) -> payload_type { return capManager.new_payload(std::tuple{gl_blend{}, gl_multi_sample{}}); }
                     }
                 }, // End blend_and_multi_sample
+                {  // Begin blend_set_src
+                    
+                }, // End blend_set_src
+                {  // Begin blend_set_dst
+
+                }, // End blend_set_dst
+                {  // Begin blend_set_colour
+
+                }, // End blend_set_colour
+                {  // Begin blend_set_all
+
+                }, // End blend_set_all
             },
             {
                 payload_type{},
@@ -1424,7 +1440,11 @@ namespace avocet::testing
                 payload_type{make_payload(gl_stencil_test{})},
                 payload_type{make_payload(gl_texture_cube_map_seamless{})},
                 payload_type{make_payload(gl_program_point_size{})},
-                payload_type{make_payload(gl_blend{}, gl_multi_sample{})}
+                payload_type{make_payload(gl_blend{}, gl_multi_sample{})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},                .colour{}})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::dst_alpha},           .colour{}})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::one},         .destination{blend_mode::zero},                .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}})},
+                payload_type{make_payload(gl_blend{.source{blend_mode::src_alpha},   .destination{blend_mode::one_minus_src_alpha}, .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}})},
             }
         };
 
