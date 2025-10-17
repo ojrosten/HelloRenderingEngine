@@ -652,6 +652,14 @@ namespace avocet::opengl {
             gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
             return param;
         }
+
+        template<std::size_t N>
+        [[nodiscard]]
+        std::array<GLfloat, N> get_float_params(const decorated_context& ctx, GLenum name) {
+            std::array<GLfloat, N> params{};
+            gl_function{&GladGLContext::GetFloatv}(ctx, name, params.data());
+            return params;
+        }
     }
 }
 
@@ -675,13 +683,15 @@ namespace sequoia::testing {
             namespace agl = avocet::opengl;
             check(equality, "Source",      logger, agl::to_gl_enum(obtained.source),      agl::to_gl_enum(prediction.source));
             check(equality, "Destination", logger, agl::to_gl_enum(obtained.destination), agl::to_gl_enum(prediction.destination));
+            check(equality, "Colour",      logger, obtained.colour,                       prediction.colour);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
-            check(equality, "Source GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)), agl::to_gl_enum(obtained.source));
-            check(equality, "Destination GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)), agl::to_gl_enum(obtained.destination));
+            check(equality, "Source GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)),            agl::to_gl_enum(obtained.source));
+            check(equality, "Destination GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)),            agl::to_gl_enum(obtained.destination));
+            check(equality, "Colour GPU/CPU",      logger, rgba_value{get_float_params<4>(ctx, GL_BLEND_COLOR), agl::units::rgba}, obtained.colour);
         }
     };
 
