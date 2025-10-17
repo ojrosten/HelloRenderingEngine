@@ -1360,8 +1360,8 @@ namespace avocet::testing
                            return capManager.new_payload(
                                std::tuple{
                                    gl_blend{
-                                       .rgb  {.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
-                                       .alpha{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
+                                       .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour}, .algebraic_op{blend_eqn_mode::max}},
+                                       .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha},  .algebraic_op{blend_eqn_mode::subtract}},
                                        .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
                                    }
                                }
@@ -1668,15 +1668,7 @@ namespace avocet::testing
                        node_name::blend_set_colour,
                        "",
                        [&capManager](payload_type) -> payload_type {
-                           return capManager.new_payload(
-                               std::tuple{
-                                   gl_blend{
-                                       .rgb{.source{blend_mode::one}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}},
-                                       .alpha{.source{blend_mode::one}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}},
-                                       .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}
-                                   }
-                               }
-                           );
+                           return capManager.new_payload(std::tuple{ gl_blend{.rgb{}, .alpha{}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}}});
                        }
                    },
                    {
@@ -1686,8 +1678,8 @@ namespace avocet::testing
                            return capManager.new_payload(
                                std::tuple{
                                    gl_blend{
-                                       .rgb  {.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
-                                       .alpha{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
+                                       .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour},   .algebraic_op{blend_eqn_mode::max}},
+                                       .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
                                        .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
                                    }
                                }
@@ -1788,8 +1780,8 @@ namespace avocet::testing
                 payload_type{
                     make_disabled_payload(
                         gl_blend{
-                            .rgb  {.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
-                            .alpha{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
+                            .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour}, .algebraic_op{blend_eqn_mode::max}},
+                            .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha},  .algebraic_op{blend_eqn_mode::subtract}},
                             .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
                         }
                     )
@@ -1800,8 +1792,8 @@ namespace avocet::testing
                 payload_type{
                     make_payload(
                         gl_blend{
-                            .rgb  {.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
-                            .alpha{.source{blend_mode::src_alpha}, .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
+                            .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour}, .algebraic_op{blend_eqn_mode::max}},
+                            .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha},  .algebraic_op{blend_eqn_mode::subtract}},
                             .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
                         }
                     )
