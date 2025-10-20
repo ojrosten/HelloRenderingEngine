@@ -77,14 +77,14 @@ int main()
         using error_checker = agl::standard_error_checker<agl::default_error_code_processor, agl::default_debug_info_processor>;
         auto w{
             manager.create_window(
-                {.width {800},
-                 .height{800},
+                {.width {1600},
+                 .height{1600},
                  .name{"Hello Rendering Engine"},
                  .hiding{curlew::window_hiding_mode::off},
                  .debug_mode{agl::debugging_mode::dynamic},
                  .prologue{},
                  .epilogue{error_checker{agl::num_messages{10}}},
-                 .samples{1}
+                 .samples{16}
                 }
             )
         };
@@ -234,6 +234,10 @@ int main()
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
 
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            //agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_LINE);
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_COVERAGE);
+            agl::gl_function{&GladGLContext::SampleCoverage}(ctx, 0.75, GL_FALSE);
 
             discShaderProgram2DTextured.use();
             disc.draw(agl::texture_unit{5});
