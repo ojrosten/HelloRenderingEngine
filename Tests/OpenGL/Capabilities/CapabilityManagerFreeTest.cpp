@@ -1160,13 +1160,6 @@ namespace avocet::testing
 
         template<class... Caps>
         [[nodiscard]]
-        payload_type set_payload(capability_manager& manager, const Caps&... caps) {
-            manager.new_payload(std::tuple{caps...});
-            return make_payload(caps...);
-        }
-
-        template<class... Caps>
-        [[nodiscard]]
         payload_type set_payload(capability_manager& manager, const capability_manager::payload_type& payload, const Caps&... caps) {
             manager.new_payload(payload);
             manager.new_payload(std::tuple{caps...});
@@ -1413,23 +1406,25 @@ namespace avocet::testing
                    {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
-                           return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
+                       [&capManager](const payload_type& payload) -> payload_type {
+                           return set_payload(capManager, payload, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
                    {
                        node_name::blend_set_dst,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
-                           return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .algebraic_op{blend_eqn_mode::add}}});
+                       [&capManager](const payload_type& payload) -> payload_type {
+                           return set_payload(capManager, payload, gl_blend{.rgb{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
                    {
                        node_name::blend_set_colour,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
+                       [&capManager](const payload_type& payload) -> payload_type {
                            return 
-                               set_payload(capManager, 
+                               set_payload(
+                                   capManager,
+                                   payload,
                                    gl_blend{
                                        .rgb{  .source{blend_mode::one}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}},
                                        .alpha{.source{blend_mode::one}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}},
@@ -1441,9 +1436,11 @@ namespace avocet::testing
                    {
                        node_name::blend_set_all,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
+                       [&capManager](const payload_type& payload) -> payload_type {
                            return 
-                               set_payload(capManager,
+                               set_payload(
+                                   capManager,
+                                   payload,
                                    gl_blend{
                                        .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour}, .algebraic_op{blend_eqn_mode::max}},
                                        .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha},  .algebraic_op{blend_eqn_mode::subtract}},
@@ -1468,8 +1465,8 @@ namespace avocet::testing
                     {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
-                           return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
+                       [&capManager](const payload_type& payload) -> payload_type {
+                           return set_payload(capManager, payload, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
                 }, // End blend
@@ -1738,23 +1735,25 @@ namespace avocet::testing
                     {
                        node_name::blend_set_dst,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
-                           return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .algebraic_op{blend_eqn_mode::add}}});
+                       [&capManager](const payload_type& payload) -> payload_type {
+                           return set_payload(capManager, payload, gl_blend{.rgb{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
                    {
                        node_name::blend_set_colour,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
-                           return set_payload(capManager,  gl_blend{.rgb{}, .alpha{}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}});
+                       [&capManager](const payload_type& payload) -> payload_type {
+                           return set_payload(capManager,  payload, gl_blend{.rgb{}, .alpha{}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}});
                        }
                    },
                    {
                        node_name::blend_set_all,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
+                       [&capManager](const payload_type& payload) -> payload_type {
                            return 
-                               set_payload(capManager,
+                               set_payload(
+                                   capManager,
+                                   payload,
                                    gl_blend{
                                        .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour},   .algebraic_op{blend_eqn_mode::max}},
                                        .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
@@ -1805,8 +1804,8 @@ namespace avocet::testing
                     {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](const payload_type&) -> payload_type {
-                           return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
+                       [&capManager](const payload_type& payload) -> payload_type {
+                           return set_payload(capManager, payload, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                     },
                     {
