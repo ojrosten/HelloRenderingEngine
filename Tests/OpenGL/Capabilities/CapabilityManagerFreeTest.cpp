@@ -1181,181 +1181,181 @@ namespace avocet::testing
                    {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                    },
                    {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}); }
                    },
                    {
                        node_name::clip_distance_0,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_clip_distance_0{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_clip_distance_0{}); }
                    },
                    {
                        node_name::clip_distance_1,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_clip_distance_1{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_clip_distance_1{}); }
                    },
                    {
                        node_name::clip_distance_2,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_clip_distance_2{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_clip_distance_2{}); }
                    },
                    {
                        node_name::colour_logic_op,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_colour_logic_op{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_colour_logic_op{}); }
                    },
                    {
                        node_name::cull_face,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_cull_face{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_cull_face{}); }
                    },
                    {
                        node_name::debug_ouptut,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_debug_ouptut{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_debug_ouptut{}); }
                    },
                    {
                        node_name::debug_ouptut_synchronous,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_debug_ouptut_synchronous{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_debug_ouptut_synchronous{}); }
                    },
                    {
                        node_name::depth_clamp,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_depth_clamp{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_depth_clamp{}); }
                    },
                    {
                        node_name::depth_test,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_depth_test{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_depth_test{}); }
                    },
                    {
                        node_name::dither,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_dither{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_dither{}); }
                    },
                    {
                        node_name::framebuffer_srgb,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_framebuffer_srgb{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_framebuffer_srgb{}); }
                    },
                    {
                        node_name::line_smooth,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_line_smooth{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_line_smooth{}); }
                    },
                    {
                        node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_multi_sample{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_multi_sample{}); }
                    },
                    {
                        node_name::polygon_offset_fill,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_polygon_offset_fill{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_polygon_offset_fill{}); }
                    },
                    {
                        node_name::polygon_offset_line,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_polygon_offset_line{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_polygon_offset_line{}); }
                    },
                    {
                        node_name::polygon_offset_point,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_polygon_offset_point{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_polygon_offset_point{}); }
                    },
                    {
                        node_name::polygon_smooth,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_polygon_smooth{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_polygon_smooth{}); }
                    },
                    {
                        node_name::primitive_restart,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_primitive_restart{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_primitive_restart{}); }
                    },
                    {
                        node_name::primitive_restart_fixed_index,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_primitive_restart_fixed_index{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_primitive_restart_fixed_index{}); }
                    },
                    {
                        node_name::rasterizer_discard,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_rasterizer_discard{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_rasterizer_discard{}); }
                    },
                    {
                        node_name::sample_alpha_to_coverage,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_sample_alpha_to_coverage{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_sample_alpha_to_coverage{}); }
                    },
                    {
                        node_name::sample_alpha_to_one,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_sample_alpha_to_one{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_sample_alpha_to_one{}); }
                    },
                    {
                        node_name::sample_coverage,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_sample_coverage{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_sample_coverage{}); }
                    },
                    {
                        node_name::sample_shading,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_sample_shading{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_sample_shading{}); }
                    },
                    {
                        node_name::sample_mask,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_sample_mask{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_sample_mask{}); }
                    },
                    {
                        node_name::scissor_test,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_scissor_test{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_scissor_test{}); }
                    },
                    {
                        node_name::stencil_test,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_stencil_test{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_stencil_test{}); }
                    },
                    {
                        node_name::texture_cube_map_seamless,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_texture_cube_map_seamless{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_texture_cube_map_seamless{}); }
                    },
                    {
                        node_name::blend_and_multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}, gl_multi_sample{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}, gl_multi_sample{}); }
                    },
                    {
                        node_name::program_point_size,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_program_point_size{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_program_point_size{}); }
                    },
                    {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
                    {
                        node_name::blend_set_dst,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
                    {
                        node_name::blend_set_colour,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return 
                                set_payload(capManager, 
                                    gl_blend{
@@ -1369,7 +1369,7 @@ namespace avocet::testing
                    {
                        node_name::blend_set_all,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return 
                                set_payload(capManager,
                                    gl_blend{
@@ -1386,17 +1386,17 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                     {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}); }
                     },
                     {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
@@ -1406,7 +1406,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End clip_distance_0
 
@@ -1414,7 +1414,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End clip_distance_1
 
@@ -1422,7 +1422,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End clip_distance_2
 
@@ -1430,7 +1430,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End colour_logic_op
 
@@ -1438,7 +1438,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End cull_face
 
@@ -1446,7 +1446,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End debug_ouptut
 
@@ -1454,7 +1454,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End debug_ouptut_synchronous
 
@@ -1462,7 +1462,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End depth_clamp
 
@@ -1470,7 +1470,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End depth_test
 
@@ -1478,7 +1478,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End dither
 
@@ -1486,7 +1486,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End framebuffer_srgb
 
@@ -1494,7 +1494,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End line_smooth
 
@@ -1502,12 +1502,12 @@ namespace avocet::testing
                     {
                         node_name::none,
                         "",
-                        [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                        [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                     {
                        node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_multi_sample{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_multi_sample{}); }
                     },
                 }, // End multi_sample
 
@@ -1515,7 +1515,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End polygon_offset_fill
 
@@ -1523,7 +1523,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End polygon_offset_line
 
@@ -1531,7 +1531,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End polygon_offset_point
 
@@ -1539,7 +1539,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End polygon_smooth
 
@@ -1547,7 +1547,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End primitive_restart
 
@@ -1555,7 +1555,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End primitive_restart_fixed_index
 
@@ -1563,7 +1563,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End rasterizer_discard
 
@@ -1571,7 +1571,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End sample_alpha_to_coverage
 
@@ -1579,7 +1579,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End sample_alpha_to_one
 
@@ -1587,7 +1587,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End sample_coverage
 
@@ -1595,7 +1595,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End sample_shading
 
@@ -1603,7 +1603,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End sample_mask
 
@@ -1611,7 +1611,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End scissor_test
 
@@ -1619,7 +1619,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End stencil_test
 
@@ -1627,7 +1627,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End texture_cube_map_seamless
 
@@ -1635,7 +1635,7 @@ namespace avocet::testing
                     {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End program_point_size
 
@@ -1643,22 +1643,22 @@ namespace avocet::testing
                     {
                         node_name::none,
                         "",
-                        [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                        [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                     {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}); }
                     },
                     {
                        node_name::multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_multi_sample{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_multi_sample{}); }
                     },
                     {
                        node_name::blend_and_multi_sample,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}, gl_multi_sample{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}, gl_multi_sample{}); }
                     }
                 }, // End blend_and_multi_sample
 
@@ -1666,21 +1666,21 @@ namespace avocet::testing
                     {
                        node_name::blend_set_dst,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::one}, .destination{blend_mode::dst_alpha}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                    },
                    {
                        node_name::blend_set_colour,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return set_payload(capManager,  gl_blend{.rgb{}, .alpha{}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}});
                        }
                    },
                    {
                        node_name::blend_set_all,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return 
                                set_payload(capManager,
                                    gl_blend{
@@ -1694,12 +1694,12 @@ namespace avocet::testing
                    {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}); }
                    },
                    {
                        node_name::none,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                    },
                 }, // End blend_set_src
 
@@ -1707,12 +1707,12 @@ namespace avocet::testing
                     {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}); }
                     },
                     {
                         node_name::none,
                         "",
-                        [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                        [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End blend_set_dst
 
@@ -1720,12 +1720,12 @@ namespace avocet::testing
                     {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}); }
                     },
                     {
                         node_name::none,
                         "",
-                        [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                        [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End blend_set_colour
 
@@ -1733,19 +1733,19 @@ namespace avocet::testing
                     {
                        node_name::blend_set_src,
                        "",
-                       [&capManager](payload_type) -> payload_type {
+                       [&capManager](const payload_type&) -> payload_type {
                            return set_payload(capManager, gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}}});
                        }
                     },
                     {
                        node_name::blend,
                        "",
-                       [&capManager](payload_type) -> payload_type { return set_payload(capManager, gl_blend{}); }
+                       [&capManager](const payload_type&) -> payload_type { return set_payload(capManager, gl_blend{}); }
                     },
                     {
                         node_name::none,
                         "",
-                        [&capManager](payload_type) -> payload_type { return set_payload(capManager); }
+                        [&capManager](const payload_type&) -> payload_type { return set_payload(capManager); }
                     },
                 }, // End blend_set_all
             },
