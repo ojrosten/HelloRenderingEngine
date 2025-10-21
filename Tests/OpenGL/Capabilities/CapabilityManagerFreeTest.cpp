@@ -572,7 +572,7 @@ namespace avocet::opengl {
     };
 
     class capability_manager {
-        using payload_type 
+        using toggled_payload_type 
             = std::tuple<
                   toggled_capability<capabilities::gl_blend>,
                   toggled_capability<capabilities::gl_clip_distance_0>,
@@ -606,10 +606,44 @@ namespace avocet::opengl {
                   toggled_capability<capabilities::gl_program_point_size>
               >;
 
-        payload_type m_Payload;
+        toggled_payload_type m_Payload;
 
         const decorated_context& m_Context;
     public:
+        using payload_type 
+            = std::tuple<
+                  std::optional<capabilities::gl_blend>,
+                  std::optional<capabilities::gl_clip_distance_0>,
+                  std::optional<capabilities::gl_clip_distance_1>,
+                  std::optional<capabilities::gl_clip_distance_2>,
+                  std::optional<capabilities::gl_colour_logic_op>,
+                  std::optional<capabilities::gl_cull_face>,
+                  std::optional<capabilities::gl_debug_ouptut>,
+                  std::optional<capabilities::gl_debug_ouptut_synchronous>,
+                  std::optional<capabilities::gl_depth_clamp>,
+                  std::optional<capabilities::gl_depth_test>,
+                  std::optional<capabilities::gl_dither>,
+                  std::optional<capabilities::gl_framebuffer_srgb>,
+                  std::optional<capabilities::gl_line_smooth>,
+                  std::optional<capabilities::gl_multi_sample>,
+                  std::optional<capabilities::gl_polygon_offset_fill>,
+                  std::optional<capabilities::gl_polygon_offset_line>,
+                  std::optional<capabilities::gl_polygon_offset_point>,
+                  std::optional<capabilities::gl_polygon_smooth>,
+                  std::optional<capabilities::gl_primitive_restart>,
+                  std::optional<capabilities::gl_primitive_restart_fixed_index>,
+                  std::optional<capabilities::gl_rasterizer_discard>,
+                  std::optional<capabilities::gl_sample_alpha_to_coverage>,
+                  std::optional<capabilities::gl_sample_alpha_to_one>,
+                  std::optional<capabilities::gl_sample_coverage>,
+                  std::optional<capabilities::gl_sample_shading>,
+                  std::optional<capabilities::gl_sample_mask>,
+                  std::optional<capabilities::gl_scissor_test>,
+                  std::optional<capabilities::gl_stencil_test>,
+                  std::optional<capabilities::gl_texture_cube_map_seamless>,
+                  std::optional<capabilities::gl_program_point_size>
+              >;
+
         explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
         {
@@ -619,29 +653,59 @@ namespace avocet::opengl {
 
         template<class... RequestedCaps>
         void new_payload(const std::tuple<RequestedCaps...>& requestedCaps) {
-            auto update{
+            auto updateFn{
                 [&] <class Cap> (toggled_capability<Cap>& cap) {
                     constexpr auto index{sequoia::meta::find_v<std::tuple<RequestedCaps...>, Cap>};
                     if constexpr(index >= sizeof...(RequestedCaps)) {
-                        if(cap.is_enabled) {
-                            capability_common_lifecycle<Cap::capability>::disable(m_Context);
-                            cap.is_enabled = false;
-                        }
+                        disable(cap);
                     }
                     else {
-                        if(!cap.is_enabled) {
-                            capability_common_lifecycle<Cap::capability>::enable(m_Context);
-                            cap.is_enabled = true;
-                        }
-
-                        auto& requestedState{std::get<index>(requestedCaps)};
-                        impl::configure(cap.state, requestedState, m_Context);
-                        cap.state = requestedState;
+                        enable(cap);
+                        update(cap, std::get<index>(requestedCaps));
                     }
                 }
             };
 
-            sequoia::meta::for_each(m_Payload, update);
+            sequoia::meta::for_each(m_Payload, updateFn);
+        }
+
+        void new_payload(const payload_type& payload) {
+            [&, this] <std::size_t... Is>(std::index_sequence<Is...>) {
+                (update(std::get<Is>(m_Payload), std::get<Is>(payload)), ...);
+            }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
+        }
+    private:
+        template<class Cap>
+        void disable(toggled_capability<Cap>& cap) {
+            if(cap.is_enabled) {
+                capability_common_lifecycle<Cap::capability>::disable(m_Context);
+                cap.is_enabled = false;
+            }
+        }
+
+        template<class Cap>
+        void enable(toggled_capability<Cap>& cap) {
+            if(!cap.is_enabled) {
+                capability_common_lifecycle<Cap::capability>::enable(m_Context);
+                cap.is_enabled = true;
+            }
+        }
+
+        template<class Cap>
+        void update(toggled_capability<Cap>& cap, const Cap& requested) {
+            impl::configure(cap.state, requested, m_Context);
+            cap.state = requested;
+        }
+
+        template<class Cap>
+        void update(toggled_capability<Cap>& cap, const std::optional<Cap>& requested) {
+            if(!requested) {
+                disable(cap);
+            }
+            else {
+                enable(cap);
+                update(cap, requested.value());
+            }
         }
     };
 
