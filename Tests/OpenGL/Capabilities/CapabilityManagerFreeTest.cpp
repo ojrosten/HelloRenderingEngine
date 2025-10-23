@@ -558,6 +558,22 @@ namespace avocet::opengl {
     };
 
     class capability_manager {
+        template<gl_capability Cap>
+        struct capability_common_lifecycle {
+            constexpr static auto capability{Cap};
+
+            static void enable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
+            }
+
+            static void disable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
+            }
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
+        };
+
         using toggled_payload_type 
             = std::tuple<
                   toggled_capability<capabilities::gl_blend>,
@@ -661,22 +677,6 @@ namespace avocet::opengl {
             }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
         }
     private:
-        template<gl_capability Cap>
-        struct capability_common_lifecycle {
-            constexpr static auto capability{Cap};
-
-            static void enable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
-            }
-
-            static void disable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
-            }
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
-        };
-
         template<class Cap>
         void disable(toggled_capability<Cap>& cap) {
             if(cap.is_enabled) {
