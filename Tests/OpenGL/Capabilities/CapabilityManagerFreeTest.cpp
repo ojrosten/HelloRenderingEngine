@@ -1430,7 +1430,7 @@ namespace avocet::testing
                                        .alpha{.source{blend_mode::one}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}},
                                        .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}
                                    }
-                           );
+                              );
                        }
                    },
                    {
@@ -1446,7 +1446,7 @@ namespace avocet::testing
                                        .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha},  .algebraic_op{blend_eqn_mode::subtract}},
                                        .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
                                    }
-                           );
+                              );
                        }
                    }
                 }, // End Null Payload
