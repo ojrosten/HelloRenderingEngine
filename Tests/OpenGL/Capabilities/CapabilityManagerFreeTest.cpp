@@ -1118,39 +1118,7 @@ namespace avocet::testing
     }
 
     namespace {
-        using payload_type
-            = std::tuple <
-                  std::optional<capabilities::gl_blend>,
-                  std::optional<capabilities::gl_clip_distance_0>,
-                  std::optional<capabilities::gl_clip_distance_1>,
-                  std::optional<capabilities::gl_clip_distance_2>,
-                  std::optional<capabilities::gl_colour_logic_op>,
-                  std::optional<capabilities::gl_cull_face>,
-                  std::optional<capabilities::gl_debug_ouptut>,
-                  std::optional<capabilities::gl_debug_ouptut_synchronous>,
-                  std::optional<capabilities::gl_depth_clamp>,
-                  std::optional<capabilities::gl_depth_test>,
-                  std::optional<capabilities::gl_dither>,
-                  std::optional<capabilities::gl_framebuffer_srgb>,
-                  std::optional<capabilities::gl_line_smooth>,
-                  std::optional<capabilities::gl_multi_sample>,
-                  std::optional<capabilities::gl_polygon_offset_fill>,
-                  std::optional<capabilities::gl_polygon_offset_line>,
-                  std::optional<capabilities::gl_polygon_offset_point>,
-                  std::optional<capabilities::gl_polygon_smooth>,
-                  std::optional<capabilities::gl_primitive_restart>,
-                  std::optional<capabilities::gl_primitive_restart_fixed_index>,
-                  std::optional<capabilities::gl_rasterizer_discard>,
-                  std::optional<capabilities::gl_sample_alpha_to_coverage>,
-                  std::optional<capabilities::gl_sample_alpha_to_one>,
-                  std::optional<capabilities::gl_sample_coverage>,
-                  std::optional<capabilities::gl_sample_shading>,
-                  std::optional<capabilities::gl_sample_mask>,
-                  std::optional<capabilities::gl_scissor_test>,
-                  std::optional<capabilities::gl_stencil_test>,
-                  std::optional<capabilities::gl_texture_cube_map_seamless>,
-                  std::optional<capabilities::gl_program_point_size>
-              >;
+        using payload_type = capability_manager::payload_type;
 
         template<class... Caps>
         [[nodiscard]]
