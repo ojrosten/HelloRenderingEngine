@@ -546,71 +546,20 @@ namespace avocet::opengl {
         void configure(const gl_program_point_size& previous, const gl_program_point_size& requested, const decorated_context& ctx)
         {
         }
+
+        template<class, template<class> class>
+        struct rebind_optional;
+
+        template<class T, template<class> class TT>
+        using rebind_optional_t = rebind_optional<T, TT>::type;
+
+        template<class... Ts, template<class> class Replacement>
+        struct rebind_optional<std::tuple<std::optional<Ts>...>, Replacement> {
+            using type = std::tuple<Replacement<Ts>...>;
+        };
     }
 
-    template<class T>
-    struct toggled_capability {
-        T state{};
-        bool is_enabled{};
-
-        [[nodiscard]]
-        friend constexpr bool operator==(const toggled_capability&, const toggled_capability&) noexcept = default;
-    };
-
     class capability_manager {
-        template<gl_capability Cap>
-        struct capability_common_lifecycle {
-            constexpr static auto capability{Cap};
-
-            static void enable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
-            }
-
-            static void disable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
-            }
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
-        };
-
-        using toggled_payload_type 
-            = std::tuple<
-                  toggled_capability<capabilities::gl_blend>,
-                  toggled_capability<capabilities::gl_clip_distance_0>,
-                  toggled_capability<capabilities::gl_clip_distance_1>,
-                  toggled_capability<capabilities::gl_clip_distance_2>,
-                  toggled_capability<capabilities::gl_colour_logic_op>,
-                  toggled_capability<capabilities::gl_cull_face>,
-                  toggled_capability<capabilities::gl_debug_ouptut>,
-                  toggled_capability<capabilities::gl_debug_ouptut_synchronous>,
-                  toggled_capability<capabilities::gl_depth_clamp>,
-                  toggled_capability<capabilities::gl_depth_test>,
-                  toggled_capability<capabilities::gl_dither>,
-                  toggled_capability<capabilities::gl_framebuffer_srgb>,
-                  toggled_capability<capabilities::gl_line_smooth>,
-                  toggled_capability<capabilities::gl_multi_sample>,
-                  toggled_capability<capabilities::gl_polygon_offset_fill>,
-                  toggled_capability<capabilities::gl_polygon_offset_line>,
-                  toggled_capability<capabilities::gl_polygon_offset_point>,
-                  toggled_capability<capabilities::gl_polygon_smooth>,
-                  toggled_capability<capabilities::gl_primitive_restart>,
-                  toggled_capability<capabilities::gl_primitive_restart_fixed_index>,
-                  toggled_capability<capabilities::gl_rasterizer_discard>,
-                  toggled_capability<capabilities::gl_sample_alpha_to_coverage>,
-                  toggled_capability<capabilities::gl_sample_alpha_to_one>,
-                  toggled_capability<capabilities::gl_sample_coverage>,
-                  toggled_capability<capabilities::gl_sample_shading>,
-                  toggled_capability<capabilities::gl_sample_mask>,
-                  toggled_capability<capabilities::gl_scissor_test>,
-                  toggled_capability<capabilities::gl_stencil_test>,
-                  toggled_capability<capabilities::gl_texture_cube_map_seamless>,
-                  toggled_capability<capabilities::gl_program_point_size>
-              >;
-
-        toggled_payload_type m_Payload;
-
-        const decorated_context& m_Context;
     public:
         using payload_type 
             = std::tuple<
@@ -677,6 +626,38 @@ namespace avocet::opengl {
             }(std::make_index_sequence<std::tuple_size_v<payload_type>>{});
         }
     private:
+
+        template<gl_capability Cap>
+        struct capability_common_lifecycle {
+            constexpr static auto capability{Cap};
+
+            static void enable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
+            }
+
+            static void disable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
+            }
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
+        };
+
+        template<class T>
+        struct toggled_capability {
+            T state{};
+            bool is_enabled{};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const toggled_capability&, const toggled_capability&) noexcept = default;
+        };
+
+        using toggled_payload_type = impl::rebind_optional_t<payload_type, toggled_capability>;
+
+        toggled_payload_type m_Payload;
+
+        const decorated_context& m_Context;
+
         template<class Cap>
         void disable(toggled_capability<Cap>& cap) {
             if(cap.is_enabled) {
