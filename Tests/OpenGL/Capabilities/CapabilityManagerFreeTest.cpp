@@ -548,14 +548,19 @@ namespace avocet::opengl {
         }
 
         template<class, template<class> class>
-        struct rebind_optional;
+        struct rebind_class_template;
 
-        template<class T, template<class> class TT>
-        using rebind_optional_t = rebind_optional<T, TT>::type;
+        template<class T, template<class> class To>
+        using rebind_class_template_t = rebind_class_template<T, To>::type;
 
-        template<class... Ts, template<class> class Replacement>
-        struct rebind_optional<std::tuple<std::optional<Ts>...>, Replacement> {
-            using type = std::tuple<Replacement<Ts>...>;
+        template<class T, template<class> class To>
+        struct rebind_class_template<std::optional<T>, To> {
+            using type = To<T>;
+        };
+
+        template<class... Ts, template<class> class From, template<class> class To>
+        struct rebind_class_template<std::tuple<From<Ts>...>, To> {
+            using type = std::tuple<rebind_class_template_t<From<Ts>, To>...>;
         };
     }
 
@@ -652,7 +657,7 @@ namespace avocet::opengl {
             friend constexpr bool operator==(const toggled_capability&, const toggled_capability&) noexcept = default;
         };
 
-        using toggled_payload_type = impl::rebind_optional_t<payload_type, toggled_capability>;
+        using toggled_payload_type = impl::rebind_class_template_t<payload_type, toggled_capability>;
 
         toggled_payload_type m_Payload;
 
