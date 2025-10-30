@@ -19,6 +19,8 @@
 #include "sequoia/TestFramework/StateTransitionUtilities.hpp"
 #include "sequoia/Physics/PhysicalValues.hpp"
 
+#include <fstream>
+
 namespace avocet::opengl {
 
     enum class gl_capability : GLenum {
@@ -1095,6 +1097,18 @@ namespace sequoia::testing {
 
 namespace avocet::testing
 {
+    namespace {
+        class opengl_call_logger {
+            std::string& m_Record;
+        public:
+            explicit opengl_call_logger(std::string& record) : m_Record{record} {}
+
+            void operator()(this const opengl_call_logger& self, const decorated_context&, const decorator_data& data) {
+                    self.m_Record += std::format("{}\n", data.fn_name);
+            }
+        };
+    }
+
     namespace agl = avocet::opengl;
 
     [[nodiscard]]
@@ -1115,7 +1129,6 @@ namespace avocet::testing
         }
 
         template<class... Caps>
-        [[nodiscard]]
         payload_type set_payload(capability_manager& manager, const capability_manager::payload_type& payload, const Caps&... caps) {
             manager.new_payload(payload);
             manager.new_payload(std::tuple{caps...});
@@ -1169,6 +1182,9 @@ namespace avocet::testing
             blend_set_all                 = 35
         };
 
+        std::string callLog{};
+
+        using namespace std::string_literals;
         using namespace curlew;
         glfw_manager manager{};
         auto w{
@@ -1178,7 +1194,7 @@ namespace avocet::testing
                  .name{""},
                  .hiding{curlew::window_hiding_mode::on},
                  .debug_mode{agl::debugging_mode::off},
-                 .prologue{},
+                 .prologue{opengl_call_logger{callLog}},
                  .epilogue{agl::standard_error_checker{agl::num_messages{10}}},
                  .samples{1}
                 }
@@ -1207,7 +1223,12 @@ namespace avocet::testing
                    {
                        node_name::blend,
                        "",
-                       [&capManager](const payload_type& payload) -> payload_type { return set_payload(capManager, payload, gl_blend{}); }
+                       [&capManager,&callLog,this](const payload_type& payload) -> payload_type {
+                           callLog.clear();
+                           auto newPayload{set_payload(capManager, payload, gl_blend{})};
+                           check(equality, "", callLog, "Enable\n"s);
+                           return newPayload;
+                       }
                    },
                    {
                        node_name::clip_distance_0,
@@ -1416,7 +1437,16 @@ namespace avocet::testing
                     {
                        node_name::blend,
                        "",
-                       [&capManager](const payload_type& payload) -> payload_type { return set_payload(capManager, payload, gl_blend{}); }
+                       [&capManager,&callLog,this](const payload_type& payload) -> payload_type {
+                           callLog.clear();
+                           auto newPayload{set_payload(capManager, payload, gl_blend{})};
+                           check(equality, "", callLog, "Enable\n"s);
+                           callLog.clear();
+                           capManager.new_payload(std::tuple{gl_blend{}});
+                           check(equality, "", callLog, ""s);
+
+                           return set_payload(capManager, payload, gl_blend{});
+                        }
                     },
                     {
                        node_name::blend_set_src,
