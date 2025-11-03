@@ -65,6 +65,18 @@ namespace {
             return message;
         }
     };
+
+    struct intel_info_processor {
+        [[nodiscard]]
+        std::string operator()(std::string message, const agl::debug_info& info) const {
+            const auto separator{message.empty() ? "" : "\n\n"};
+            if((info.severity != agl::debug_severity::notification) && (info.id != 2)) {
+                (message += separator) += agl::to_detailed_message(info);
+            }
+
+            return message;
+        }
+    };
 }
 
 int main()
@@ -74,17 +86,17 @@ int main()
         curlew::glfw_manager manager{};
         std::cout << curlew::rendering_setup_summary(manager.get_rendering_setup());
 
-        using error_checker = agl::standard_error_checker<agl::default_error_code_processor, agl::default_debug_info_processor>;
+        using error_checker = agl::standard_error_checker<agl::default_error_code_processor, intel_info_processor>;
         auto w{
             manager.create_window(
-                {.width {1600},
-                 .height{1600},
+                {.width {800},
+                 .height{800},
                  .name{"Hello Rendering Engine"},
                  .hiding{curlew::window_hiding_mode::off},
                  .debug_mode{agl::debugging_mode::dynamic},
                  .prologue{},
                  .epilogue{error_checker{agl::num_messages{10}}},
-                 .samples{16}
+                 .samples{4}
                 }
             )
         };
@@ -100,11 +112,11 @@ int main()
         avocet::unique_image twilight  {get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
         avocet::unique_image fluttershy{get_image_dir() / "Fluttershy.png",              avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
-        agl::quad<GLdouble, agl::dimensionality{3}> partiallyTransparentQuad{
+        agl::quad<GLdouble, agl::dimensionality{3}> partiallyTransparentQuadUpper{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    sequoia::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.0, -0.5};
+                    (sequoia::get<0>(vert) *= 0.75) += agl::local_coordinates<GLdouble, agl::dimensionality{3}> {-0.15, -0.2};
                 }
 
                 return verts;
@@ -112,8 +124,17 @@ int main()
             make_label("Quad")
         };
 
-        shaderProgram3DDoubleMonochrome.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.4f});
+        agl::quad<GLdouble, agl::dimensionality{3}> partiallyTransparentQuadLower{
+            ctx,
+            [](std::ranges::random_access_range auto verts) {
+                for(auto& vert : verts) {
+                    (sequoia::get<0>(vert) *= 0.75) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{-0.15, -0.75};
+                }
 
+                return verts;
+            },
+            make_label("Quad")
+        };
 
         constexpr GLfloat radius{0.4f};
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
@@ -230,14 +251,17 @@ int main()
         discShaderProgram2D.set_uniform("radius", cutoutRadius);
         discShaderProgram2D.set_uniform("centre", cutoutCentre.values());
 
+        agl::gl_function{&GladGLContext::Disable}(ctx, GL_MULTISAMPLE);
+        agl::gl_function{&GladGLContext::Enable}(ctx, GL_MULTISAMPLE);
+
         while(!glfwWindowShouldClose(&w.get())) {
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
 
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
             //agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_LINE);
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_COVERAGE);
-            agl::gl_function{&GladGLContext::SampleCoverage}(ctx, 0.75, GL_FALSE);
+            //agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_COVERAGE);
+            //agl::gl_function{&GladGLContext::SampleCoverage}(ctx, 0.75, GL_FALSE);
 
             discShaderProgram2DTextured.use();
             disc.draw(agl::texture_unit{5});
@@ -262,13 +286,24 @@ int main()
 
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
 
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
-            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_COVERAGE);
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_ALPHA_TO_COVERAGE);
+            agl::gl_function{&GladGLContext::SampleCoverage}(ctx, 0.75, GL_FALSE);
 
             shaderProgram3DDoubleMonochrome.use();
-            partiallyTransparentQuad.draw();
+            shaderProgram3DDoubleMonochrome.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.4f});
+            partiallyTransparentQuadUpper.draw();
 
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_SAMPLE_COVERAGE);
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_SAMPLE_ALPHA_TO_COVERAGE);
+
+
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
+            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            shaderProgram3DDoubleMonochrome.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.4f});
+            partiallyTransparentQuadLower.draw();
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_BLEND);
+
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();
