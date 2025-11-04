@@ -1207,10 +1207,9 @@ namespace avocet::testing
 
         capability_manager capManager{ctx};
 
-        using graph_type = transition_checker<payload_type>::transition_graph;
-        using edge_type  = graph_type::edge_type;
-
         using namespace capabilities;
+
+        using graph_type = transition_checker<payload_type>::transition_graph;
 
         graph_type graph{
             {
