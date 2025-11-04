@@ -1134,6 +1134,14 @@ namespace avocet::testing
             manager.new_payload(std::tuple{caps...});
             return make_payload(caps...);
         }
+
+        template<class... Caps, class CheckFn>
+        payload_type set_payload(capability_manager& manager, const capability_manager::payload_type& payload, std::string& callLog, CheckFn checkFn, const Caps&... caps) {
+            callLog.clear();
+            auto newPayload{set_payload(manager, payload, caps...)};
+            checkFn(callLog);
+            return newPayload;
+        }
     }
 
     void capability_manager_free_test::run_tests()
@@ -1223,10 +1231,7 @@ namespace avocet::testing
                        node_name::blend,
                        "",
                        [&capManager,&callLog,this](const payload_type& payload) -> payload_type {
-                           callLog.clear();
-                           auto newPayload{set_payload(capManager, payload, gl_blend{})};
-                           check(equality, "", callLog, "Enable\n"s);
-                           return newPayload;
+                           return set_payload(capManager, payload, callLog, [this](const std::string& obtained) { check(equality, "", obtained, "Enable\n"s); }, gl_blend{});
                        }
                    },
                    {
