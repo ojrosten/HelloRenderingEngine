@@ -757,16 +757,16 @@ namespace sequoia::testing {
         }
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& cpuCap, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
-            check(equality, "Source rgb   GPU/CPU",      logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB),        agl::to_gl_enum(obtained.rgb.  source));
-            check(equality, "Source alpha GPU/CPU",      logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA),      agl::to_gl_enum(obtained.alpha.source));
-            check(equality, "Destination rgb   GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_RGB),        agl::to_gl_enum(obtained.rgb.  destination));
-            check(equality, "Destination alpha GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_ALPHA),      agl::to_gl_enum(obtained.alpha.destination));
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB),   agl::to_gl_enum(obtained.rgb.  algebraic_op));
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA), agl::to_gl_enum(obtained.alpha.algebraic_op));
+            check(equality, "Source rgb   GPU/CPU",      logger, agl::to_gl_enum(cpuCap.rgb  .source),       get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB       ));
+            check(equality, "Source alpha GPU/CPU",      logger, agl::to_gl_enum(cpuCap.alpha.source),       get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA     ));
+            check(equality, "Destination rgb   GPU/CPU", logger, agl::to_gl_enum(cpuCap.rgb.  destination),  get_int_param_as<GLenum>(ctx, GL_BLEND_DST_RGB       ));
+            check(equality, "Destination alpha GPU/CPU", logger, agl::to_gl_enum(cpuCap.alpha.destination),  get_int_param_as<GLenum>(ctx, GL_BLEND_DST_ALPHA     ));
+            check(equality, "Blend equation GPU/CPU"   , logger, agl::to_gl_enum(cpuCap.rgb.  algebraic_op), get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB  ));
+            check(equality, "Blend equation GPU/CPU"   , logger, agl::to_gl_enum(cpuCap.alpha.algebraic_op), get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA));
  
-            check(equality, "Colour GPU/CPU",            logger, get_float_params<4>(ctx, GL_BLEND_COLOR),               obtained.colour);
+            check(equality, "Colour GPU/CPU",            logger,                 cpuCap.colour,              get_float_params<4>(ctx, GL_BLEND_COLOR));
         }
     };
 
