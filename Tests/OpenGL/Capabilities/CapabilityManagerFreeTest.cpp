@@ -700,11 +700,12 @@ namespace avocet::opengl {
     };
 
     namespace {
+        template<class T=GLint>
         [[nodiscard]]
-        GLint get_int_param(const decorated_context& ctx, GLenum name) {
+        T get_int_param_as(const decorated_context& ctx, GLenum name) {
             GLint param{};
             gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
-            return param;
+            return static_cast<T>(param);
         }
 
         [[nodiscard]]
@@ -739,8 +740,8 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_blend_data& obtained, const capabilities::gl_blend_data& predicted) {
             namespace agl = avocet::opengl;
-            check(equality, "Source",       logger, agl::to_gl_enum(obtained.source),       agl::to_gl_enum(predicted.source));
-            check(equality, "Destination",  logger, agl::to_gl_enum(obtained.destination),  agl::to_gl_enum(predicted.destination));
+            check(equality, "Source",      logger,  agl::to_gl_enum(obtained.source),       agl::to_gl_enum(predicted.source));
+            check(equality, "Destination", logger,  agl::to_gl_enum(obtained.destination),  agl::to_gl_enum(predicted.destination));
             check(equality, "Algebraic Op", logger, agl::to_gl_enum(obtained.algebraic_op), agl::to_gl_enum(predicted.algebraic_op));
         }
     };
@@ -750,21 +751,21 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const capabilities::gl_blend& predicted) {
             namespace agl = avocet::opengl;
-            check(equality, "RGB",    logger, obtained.rgb,    predicted.rgb);
-            check(equality, "Alpha",  logger, obtained.alpha,  predicted.alpha);
+            check(equality, "RGB", logger, obtained.rgb, predicted.rgb);
+            check(equality, "Alpha", logger, obtained.alpha, predicted.alpha);
             check(equality, "Colour", logger, obtained.colour, predicted.colour);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_blend& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
-            check(equality, "Source rgb   GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_RGB)),        agl::to_gl_enum(obtained.rgb.source));
-            check(equality, "Source alpha GPU/CPU",      logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_SRC_ALPHA)),      agl::to_gl_enum(obtained.alpha.source));
-            check(equality, "Destination rgb   GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_RGB)),        agl::to_gl_enum(obtained.rgb.destination));
-            check(equality, "Destination alpha GPU/CPU", logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_DST_ALPHA)),      agl::to_gl_enum(obtained.alpha.destination));
-            check(equality, "Blend equation GPU/CPU"   , logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_EQUATION_RGB)),   agl::to_gl_enum(obtained.rgb.algebraic_op));
-            check(equality, "Blend equation GPU/CPU"   , logger, static_cast<GLenum>(get_int_param(ctx, GL_BLEND_EQUATION_ALPHA)), agl::to_gl_enum(obtained.alpha.algebraic_op));
-
+            check(equality, "Source rgb   GPU/CPU",      logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB),        agl::to_gl_enum(obtained.rgb.  source));
+            check(equality, "Source alpha GPU/CPU",      logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA),      agl::to_gl_enum(obtained.alpha.source));
+            check(equality, "Destination rgb   GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_RGB),        agl::to_gl_enum(obtained.rgb.  destination));
+            check(equality, "Destination alpha GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_ALPHA),      agl::to_gl_enum(obtained.alpha.destination));
+            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB),   agl::to_gl_enum(obtained.rgb.  algebraic_op));
+            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA), agl::to_gl_enum(obtained.alpha.algebraic_op));
+ 
             check(equality, "Colour GPU/CPU",            logger, rgba_value{get_float_params<4>(ctx, GL_BLEND_COLOR), agl::units::rgba}, obtained.colour);
         }
     };
@@ -1221,20 +1222,24 @@ namespace avocet::testing
 
         graph_type graph{
             {
-                { // Begin Null Payload
+                { // Begin Payload: none
                     {
                        node_name::blend,
-                       "",
-                       [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_blend{}); }
+                       report(""),
+                       [&capManager](const payload_type& hostPayload) {
+                            return set_payload(capManager, hostPayload, gl_blend{});
+                       }
                     }
-                },// End   Null Payload
-                { // Begin Null Payload
+                },// End   Payload: none
+                { // Begin Payload: blend
                     {
                        node_name::none,
-                       "",
-                       [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                       report(""),
+                       [&capManager](const payload_type& hostPayload) {
+                           return set_payload(capManager, hostPayload);
+                       }
                     },
-                } // End   Null Payload
+                } // End   Payload: blend
             },
             {
                 payload_type{},
@@ -1244,17 +1249,23 @@ namespace avocet::testing
 
         auto checker{
             [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
-                check(equality, {description, no_source_location}, obtained, predicted);
+                check(equality, description, obtained, predicted);
 
-               auto checkGPU{
-                   [&] <class Cap>(const std::optional<Cap>& cap) {
-                       check(equality, "Is enabled", static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))), static_cast<bool>(cap));
-                       if(cap)
-                          check(weak_equivalence, "GPU State", cap.value(), ctx);
-                   }
-               };
+                auto checkGPUState{
+                    [&] <class Cap>(const std::optional<Cap>& cap) {
+                        check(
+                            equality,
+                            "Is enabled",
+                            static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))),
+                            static_cast<bool>(cap)
+                        );
 
-               sequoia::meta::for_each(obtained, checkGPU);
+                        if(cap)
+                           check(weak_equivalence, "GPU State", cap.value(), ctx);
+                    }
+                };
+
+               sequoia::meta::for_each(obtained, checkGPUState);
             }
         };
 
