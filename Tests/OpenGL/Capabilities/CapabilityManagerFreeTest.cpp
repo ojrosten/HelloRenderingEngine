@@ -745,7 +745,9 @@ namespace sequoia::testing {
             check(equality, "Algebraic Op", logger, agl::to_gl_enum(obtained.algebraic_op), agl::to_gl_enum(predicted.algebraic_op));
         }
     };
+}
 
+namespace sequoia::testing {
     template<>
     struct value_tester<capabilities::gl_blend> {
         template<test_mode Mode>
@@ -766,10 +768,12 @@ namespace sequoia::testing {
             check(equality, "Blend equation GPU/CPU"   , logger, agl::to_gl_enum(cpuCap.rgb.  algebraic_op), get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB  ));
             check(equality, "Blend equation GPU/CPU"   , logger, agl::to_gl_enum(cpuCap.alpha.algebraic_op), get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA));
  
-            check(equality, "Colour GPU/CPU",            logger,                 cpuCap.colour,              get_float_params<4>(ctx, GL_BLEND_COLOR));
+            check(equality, "Colour GPU/CPU",            logger,                 cpuCap.colour,                   get_float_params<4>(ctx, GL_BLEND_COLOR));
         }
     };
+}
 
+namespace sequoia::testing {
     template<>
     struct value_tester<capabilities::gl_clip_distance_0> {
         template<test_mode Mode>
