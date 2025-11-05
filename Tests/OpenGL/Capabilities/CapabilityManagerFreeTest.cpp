@@ -180,8 +180,24 @@ namespace sequoia::physics {
 }
 
 namespace avocet::opengl {
-    using sample_coverage_value = sequoia::physics::quantity<units::sample_coverage_t, GLfloat>;
-    using rgba_value            = sequoia::physics::quantity<units::rgba_t, GLfloat>;
+    class sample_coverage_value {
+        GLfloat m_Value{1.0};
+    public:
+        constexpr sample_coverage_value() = default;
+
+        constexpr explicit sample_coverage_value(GLfloat val)
+            : m_Value{val}
+        {
+            if((m_Value < 0.0) || (m_Value > 1.0))
+                throw std::domain_error{std::format("Coverage value of {} requested, but must be in the range [0,1]", m_Value)};
+        }
+
+        [[nodiscard]]
+        constexpr GLfloat raw_value() const noexcept { return m_Value; }
+
+        [[nodiscard]]
+        constexpr friend auto operator<=>(const sample_coverage_value&, const sample_coverage_value&) noexcept = default;
+    };
 
     enum class invert_sample_mask : GLboolean {
         no  = GL_FALSE,
@@ -294,7 +310,7 @@ namespace avocet::opengl {
 
         struct gl_multi_sample {
             constexpr static auto capability{gl_capability::multi_sample};
-            sample_coverage_value coverage_val{1.0, units::sample_coverage};
+            sample_coverage_value coverage_val{1.0};
             invert_sample_mask    invert{invert_sample_mask::no};
 
             [[nodiscard]]
@@ -478,7 +494,7 @@ namespace avocet::opengl {
 
         void configure(const gl_multi_sample& previous, const gl_multi_sample& requested, const decorated_context& ctx) {
             if(requested != previous)
-                gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.value(), static_cast<GLboolean>(requested.invert));
+                gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), static_cast<GLboolean>(requested.invert));
         }
 
         void configure(const gl_line_smooth& previous, const gl_line_smooth& requested, const decorated_context& ctx)
@@ -907,7 +923,7 @@ namespace sequoia::testing {
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const capabilities::gl_multi_sample& obtained, const decorated_context& ctx) {
             namespace agl = avocet::opengl;
-            check(equality, "Sample coverage", logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), obtained.coverage_val.value());
+            check(equality, "Sample coverage", logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), obtained.coverage_val.raw_value());
             check(equality, "Sample invert",   logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(obtained.invert));
         }
     };
@@ -1916,4 +1932,15 @@ namespace avocet::testing
 
         transition_checker<payload_type>::check("", graph2, checker);
     }
+}
+
+namespace std {
+    template<>
+    struct formatter<avocet::opengl::sample_coverage_value> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::sample_coverage_value coverage, auto& ctx) const {
+            return format_to(ctx.out(), "{}", coverage.raw_value());
+        }
+    };
 }
