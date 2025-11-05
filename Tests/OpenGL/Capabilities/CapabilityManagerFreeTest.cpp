@@ -1221,6 +1221,47 @@ namespace avocet::testing
 
         graph_type graph{
             {
+                { // Begin Null Payload
+                    {
+                       node_name::blend,
+                       "",
+                       [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_blend{}); }
+                    }
+                },// End   Null Payload
+                { // Begin Null Payload
+                    {
+                       node_name::none,
+                       "",
+                       [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    },
+                } // End   Null Payload
+            },
+            {
+                payload_type{},
+                make_payload(gl_blend{})
+            }
+        };
+
+        auto checker{
+            [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
+                check(equality, {description, no_source_location}, obtained, predicted);
+
+               auto checkGPU{
+                   [&] <class Cap>(const std::optional<Cap>& cap) {
+                       check(equality, "Is enabled", static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))), static_cast<bool>(cap));
+                       if(cap)
+                          check(weak_equivalence, "GPU State", cap.value(), ctx);
+                   }
+               };
+
+               sequoia::meta::for_each(obtained, checkGPU);
+            }
+        };
+
+        transition_checker<payload_type>::check("", graph, checker);
+
+        graph_type graph2{
+            {
                 {  // Begin Null Payload
                    {
                        node_name::none,
@@ -1858,22 +1899,6 @@ namespace avocet::testing
             }
         };
 
-        auto checker{
-            [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
-                check(equality, {description, no_source_location}, obtained, predicted);
-
-               auto checkGPU{
-                   [&] <class Cap>(const std::optional<Cap>& cap) {
-                       check(equality, "Is enabled", static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))), static_cast<bool>(cap));
-                       if(cap)
-                          check(weak_equivalence, "GPU State", cap.value(), ctx);
-                   }
-               };
-
-               sequoia::meta::for_each(obtained, checkGPU);
-            }
-        };
-
-        transition_checker<payload_type>::check("", graph, checker);
+        transition_checker<payload_type>::check("", graph2, checker);
     }
 }
