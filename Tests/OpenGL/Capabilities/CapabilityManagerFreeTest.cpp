@@ -202,7 +202,7 @@ namespace avocet::opengl {
         struct gl_blend {
             constexpr static auto capability{gl_capability::blend};
             gl_blend_data rgb{}, alpha{rgb};
-            rgba_value colour{};
+            std::array<GLfloat, 4> colour{};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
@@ -423,7 +423,7 @@ namespace avocet::opengl {
                 gl_function{&GladGLContext::BlendFuncSeparate}(ctx, to_gl_enum(requested.rgb.source), to_gl_enum(requested.rgb.destination), to_gl_enum(requested.alpha.source), to_gl_enum(requested.alpha.destination));
 
             if(requested.colour != previous.colour) {
-                const auto& col{requested.colour.values()};
+                const auto& col{requested.colour};
                 gl_function{&GladGLContext::BlendColor}(ctx, col[0], col[1], col[2], col[3]);
             }
 
@@ -766,7 +766,7 @@ namespace sequoia::testing {
             check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB),   agl::to_gl_enum(obtained.rgb.  algebraic_op));
             check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA), agl::to_gl_enum(obtained.alpha.algebraic_op));
  
-            check(equality, "Colour GPU/CPU",            logger, rgba_value{get_float_params<4>(ctx, GL_BLEND_COLOR), agl::units::rgba}, obtained.colour);
+            check(equality, "Colour GPU/CPU",            logger, get_float_params<4>(ctx, GL_BLEND_COLOR),               obtained.colour);
         }
     };
 
@@ -1461,7 +1461,7 @@ namespace avocet::testing
                                    gl_blend{
                                        .rgb{  .source{blend_mode::one}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}},
                                        .alpha{.source{blend_mode::one}, .destination{blend_mode::zero}, .algebraic_op{blend_eqn_mode::add}},
-                                       .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}
+                                       .colour{0.3f, 0.4f, 0.5f, 0.2f}
                                    }
                               );
                        }
@@ -1477,7 +1477,7 @@ namespace avocet::testing
                                    gl_blend{
                                        .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour}, .algebraic_op{blend_eqn_mode::max}},
                                        .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha},  .algebraic_op{blend_eqn_mode::subtract}},
-                                       .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
+                                       .colour{0.1f, 0.7f, 0.9f, 0.8f}
                                    }
                               );
                        }
@@ -1785,7 +1785,7 @@ namespace avocet::testing
                        node_name::blend_set_colour,
                        "",
                        [&capManager](const payload_type& payload) -> payload_type {
-                           return set_payload(capManager,  payload, gl_blend{.rgb{}, .alpha{}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}});
+                           return set_payload(capManager,  payload, gl_blend{.rgb{}, .alpha{}, .colour{0.3f, 0.4f, 0.5f, 0.2f}});
                        }
                    },
                    {
@@ -1799,7 +1799,7 @@ namespace avocet::testing
                                    gl_blend{
                                        .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour},   .algebraic_op{blend_eqn_mode::max}},
                                        .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha}, .algebraic_op{blend_eqn_mode::subtract}},
-                                       .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
+                                       .colour{0.1f, 0.7f, 0.9f, 0.8f}
                                    }
                            );
                        }
@@ -1897,13 +1897,13 @@ namespace avocet::testing
                 payload_type{make_payload(gl_blend{}, gl_multi_sample{})},
                 payload_type{make_payload(gl_blend{.rgb{.source{blend_mode::const_alpha}, .destination{blend_mode::zero},      .algebraic_op{blend_eqn_mode::add}}})},
                 payload_type{make_payload(gl_blend{.rgb{.source{blend_mode::one},         .destination{blend_mode::dst_alpha}, .algebraic_op{blend_eqn_mode::add}}})},
-                payload_type{make_payload(gl_blend{.rgb{}, .alpha{}, .colour{std::array{0.3f, 0.4f, 0.5f, 0.2f}, units::rgba}})},
+                payload_type{make_payload(gl_blend{.rgb{}, .alpha{}, .colour{0.3f, 0.4f, 0.5f, 0.2f}})},
                 payload_type{
                     make_payload(
                         gl_blend{
                             .rgb  {.source{blend_mode::src_colour}, .destination{blend_mode::one_minus_src_colour}, .algebraic_op{blend_eqn_mode::max}},
                             .alpha{.source{blend_mode::src_alpha},  .destination{blend_mode::one_minus_src_alpha},  .algebraic_op{blend_eqn_mode::subtract}},
-                            .colour{std::array{0.1f, 0.7f, 0.9f, 0.8f}, units::rgba}
+                            .colour{0.1f, 0.7f, 0.9f, 0.8f}
                         }
                     )
                 },
