@@ -1275,7 +1275,7 @@ namespace avocet::testing
                     [&] <class Cap>(const std::optional<Cap>& cap) {
                         check(
                             equality,
-                            "Is enabled",
+                            to_string(Cap::capability) + " is enabled",
                             static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))),
                             static_cast<bool>(cap)
                         );
