@@ -1224,7 +1224,7 @@ namespace avocet::testing
                  .hiding{curlew::window_hiding_mode::on},
                  .debug_mode{agl::debugging_mode::off},
                  .prologue{opengl_call_logger{callLog}},
-                 .epilogue{agl::standard_error_checker{agl::num_messages{10}}},
+                 .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}},
                  .samples{1}
                 }
             )

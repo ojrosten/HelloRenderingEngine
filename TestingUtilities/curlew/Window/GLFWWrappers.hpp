@@ -46,7 +46,7 @@ namespace curlew {
         window_hiding_mode hiding{window_hiding_mode::off};
         agl::debugging_mode debug_mode{agl::debugging_mode::dynamic};
         decorator_type prologue{},
-                       epilogue{agl::standard_error_checker{agl::num_messages{10}}};
+                       epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}};
         num_samples samples{1};
     };
 
