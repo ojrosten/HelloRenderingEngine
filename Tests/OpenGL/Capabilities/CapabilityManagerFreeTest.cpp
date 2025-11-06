@@ -17,6 +17,8 @@
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 #include "sequoia/Core/Meta/Utilities.hpp"
 
+#include <format>
+
 namespace{
     using namespace avocet::opengl;
 
@@ -152,6 +154,18 @@ namespace{
             };
 
             sequoia::meta::for_each(m_Payload, update);
+        }
+    };
+}
+
+
+namespace std {
+    template<>
+    struct formatter<sample_coverage_value> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(sample_coverage_value coverage, auto& ctx) const {
+            return format_to(ctx.out(), "{}", coverage.raw_value());
         }
     };
 }
