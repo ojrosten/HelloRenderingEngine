@@ -99,17 +99,30 @@ int main()
         avocet::unique_image twilight  {get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
         avocet::unique_image fluttershy{get_image_dir() / "Fluttershy.png",              avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
-        agl::quad<GLdouble, agl::dimensionality{3}> partiallyTransparentQuad{
+        agl::quad<GLdouble, agl::dimensionality{3}> partiallyTransparentQuadUpper{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
-                    sequoia::get<0>(vert) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{0.0, -0.5};
+                    (sequoia::get<0>(vert) *= 0.75) += agl::local_coordinates<GLdouble, agl::dimensionality{3}> {-0.15, -0.2};
                 }
 
                 return verts;
             },
             make_label("Quad")
         };
+
+        agl::quad<GLdouble, agl::dimensionality{3}> partiallyTransparentQuadLower{
+            ctx,
+            [](std::ranges::random_access_range auto verts) {
+                for(auto& vert : verts) {
+                    (sequoia::get<0>(vert) *= 0.75) += agl::local_coordinates<GLdouble, agl::dimensionality{3}>{-0.15, -0.75};
+                }
+
+                return verts;
+            },
+            make_label("Quad")
+        };
+
 
         shaderProgram3DDoubleMonochrome.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.4f});
 
@@ -257,11 +270,13 @@ int main()
 
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
 
+            shaderProgram3DDoubleMonochrome.use();
+            partiallyTransparentQuadUpper.draw();
+
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
             agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            shaderProgram3DDoubleMonochrome.use();
-            partiallyTransparentQuad.draw();
+            partiallyTransparentQuadLower.draw();
 
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_BLEND);
 
