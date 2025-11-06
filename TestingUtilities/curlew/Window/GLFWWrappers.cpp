@@ -23,10 +23,8 @@ namespace curlew {
         }
 
         void set_debug_context(const agl::debugging_mode mode, const agl::opengl_version& version) {
-            if(mode != agl::debugging_mode::off) {
-                if(agl::debug_output_supported(version))
-                    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, true);
-            }
+            const bool advancedDebugging{(mode != agl::debugging_mode::off) && agl::debug_output_supported(version)};
+            glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, advancedDebugging);
         }
 
         [[nodiscard]]
@@ -59,6 +57,9 @@ namespace curlew {
 
         void init_debug(const agl::decorated_context& ctx)
         {
+            if(ctx.debug_mode() == agl::debugging_mode::off)
+                return;
+
             GLint flags{};
             agl::gl_function{&GladGLContext::GetIntegerv}(ctx, agl::debugging_mode_off, GL_CONTEXT_FLAGS, &flags);
             if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
