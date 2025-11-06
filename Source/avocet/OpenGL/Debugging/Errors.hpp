@@ -10,7 +10,10 @@
 #include "avocet/OpenGL/Debugging/DebugMode.hpp"
 #include "avocet/OpenGL/Utilities/Version.hpp"
 
+#include "sequoia/PlatformSpecific/Preprocessor.hpp"
+
 #include <algorithm>
+#include <print>
 #include <source_location>
 #include <string>
 #include <vector>
@@ -73,8 +76,15 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(debug_type e);
 
+    struct message_id {
+        GLuint value{};
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const message_id&, const message_id&) noexcept = default;
+    };
+
     struct debug_info {
-        GLuint         id{};
+        message_id    id{};
         debug_source   source{};
         debug_type     type{};
         debug_severity severity{};
@@ -100,11 +110,26 @@ namespace avocet::opengl {
         }
     };
 
-    struct default_debug_info_processor {
+    class default_debug_info_processor {
+        std::vector<message_id> m_PrintThenIgnore{};
+    public:
+        default_debug_info_processor() = default;
+
+        explicit default_debug_info_processor(std::initializer_list<message_id> printThenIgnore)
+            : m_PrintThenIgnore{printThenIgnore}
+        {}
+
+        explicit default_debug_info_processor(std::vector<message_id> printThenIgnore)
+            : m_PrintThenIgnore{std::move(printThenIgnore)}
+        {}
+
         [[nodiscard]]
         std::string operator()(std::string message, const debug_info& info) const {
-            const auto separator{message.empty() ? "" : "\n\n"};
-            if(info.severity != debug_severity::notification) {
+            if((info.severity == debug_severity::notification) || std::ranges::find(m_PrintThenIgnore, info.id) != m_PrintThenIgnore.end()) {
+                std::println("{}", to_detailed_message(info));
+            }
+            else {
+                const auto separator{message.empty() ? "" : "\n\n"};
                 (message += separator) += to_detailed_message(info);
             }
 
@@ -191,13 +216,26 @@ namespace avocet::opengl {
                  && std::is_default_constructible_v<ErrorCodeProcessor> && std::is_default_constructible_v<DebugInfoProcessor>
     class standard_error_checker {
         num_messages m_MaxReported;
+        SEQUOIA_NO_UNIQUE_ADDRESS DebugInfoProcessor m_DebugInfoProcessor;
     public:
-        explicit standard_error_checker(num_messages maxReported)
+        standard_error_checker(num_messages maxReported, DebugInfoProcessor debugInfoProcessor)
             : m_MaxReported{maxReported}
+            , m_DebugInfoProcessor{std::move(debugInfoProcessor)}
         {}
 
         void operator()(const decorated_context& ctx, const decorator_data& data) const {
-            check_for_errors(ctx, data.debug_mode, {data.fn_name, data.loc, m_MaxReported}, ErrorCodeProcessor{}, DebugInfoProcessor{});
+            check_for_errors(ctx, data.debug_mode, {data.fn_name, data.loc, m_MaxReported}, ErrorCodeProcessor{}, m_DebugInfoProcessor);
+        }
+    };
+}
+
+namespace std {
+    template<>
+    struct formatter<avocet::opengl::message_id> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::message_id id, auto& ctx) const {
+            return format_to(ctx.out(), "{}", id.value);
         }
     };
 }
