@@ -8,7 +8,9 @@ Checking for equivalence with:
 
   Null Buffer
   [bool]
-  check failed
+  operator== returned false
+  Obtained : false
+  Predicted: true
 
 =======================================
 
@@ -76,7 +78,9 @@ Checking for equivalence with:
 
   Null Buffer
   [bool]
-  check failed
+  operator== returned false
+  Obtained : false
+  Predicted: true
 
 =======================================
 

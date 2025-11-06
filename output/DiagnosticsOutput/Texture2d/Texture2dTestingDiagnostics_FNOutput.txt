@@ -8,7 +8,9 @@ Checking for equivalence with:
 
   Null Texture
   [bool]
-  check failed
+  operator== returned false
+  Obtained : false
+  Predicted: true
 
 =======================================
 
