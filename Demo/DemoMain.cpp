@@ -68,7 +68,7 @@ int main()
                 if(curlew::is_intel(renderingSetup.renderer))
                     return {agl::message_id{2}};
                 else if(curlew::is_nvidia(renderingSetup.renderer))
-                    return {agl::message_id{131204}};
+                    return {agl::message_id{131204}, agl::message_id{131218}};
 
                 return {};
             }()
