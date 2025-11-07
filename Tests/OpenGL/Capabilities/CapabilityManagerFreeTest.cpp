@@ -119,6 +119,30 @@ namespace avocet::opengl {
         max               = GL_MAX
     };
 
+    class sample_coverage_value {
+        GLfloat m_Value{1.0};
+    public:
+        constexpr sample_coverage_value() = default;
+
+        constexpr explicit sample_coverage_value(GLfloat val)
+            : m_Value{val}
+        {
+            if((m_Value < 0.0) || (m_Value > 1.0))
+                throw std::domain_error{std::format("Coverage value of {} requested, but must be in the range [0,1]", m_Value)};
+        }
+
+        [[nodiscard]]
+        constexpr GLfloat raw_value() const noexcept { return m_Value; }
+
+        [[nodiscard]]
+        constexpr friend auto operator<=>(const sample_coverage_value&, const sample_coverage_value&) noexcept = default;
+    };
+
+    enum class invert_sample_mask : GLboolean {
+        no = GL_FALSE,
+        yes = GL_TRUE
+    };
+
     namespace sets {
         template<class Arena>
         struct sample_coverage_values {
@@ -167,6 +191,64 @@ namespace avocet::opengl {
     }
 }
 
+namespace std {
+    template<>
+    struct formatter<avocet::opengl::sample_coverage_value> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::sample_coverage_value coverage, auto& ctx) const {
+            return format_to(ctx.out(), "{}", coverage.raw_value());
+        }
+    };
+
+    template<>
+    struct formatter<avocet::opengl::gl_capability> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::gl_capability cap, auto& ctx) const {
+            return format_to(ctx.out(), "{}", to_string(cap));
+        }
+    private:
+        static std::string_view to_string(avocet::opengl::gl_capability cap) {
+            using enum avocet::opengl::gl_capability;
+            switch(cap) {
+            case blend:                         return "blend";
+            case clip_distance_0:               return "clip_distance_0";
+            case clip_distance_1:               return "clip_distance_1";
+            case clip_distance_2:               return "clip_distance_2";
+            case colour_logic_op:               return "colour_logic_op";
+            case cull_face:                     return "cull_face";
+            case debug_ouptut:                  return "debug_ouptut";
+            case debug_ouptut_synchronous:      return "debug_ouptut_synchronous";
+            case depth_clamp:                   return "depth_clamp";
+            case depth_test:                    return "depth_test";
+            case dither:                        return "dither";
+            case framebuffer_srgb:              return "framebuffer_srgb";
+            case line_smooth:                   return "line_smooth";
+            case multi_sample:                  return "multi_sample";
+            case polygon_offset_fill:           return "polygon_offset_fill";
+            case polygon_offset_line:           return "polygon_offset_line";
+            case polygon_offset_point:          return "polygon_offset_point";
+            case polygon_smooth:                return "polygon_smooth";
+            case primitive_restart:             return "primitive_restart";
+            case primitive_restart_fixed_index: return "primitive_restart_fixed_index";
+            case rasterizer_discard:            return "rasterizer_discard";
+            case sample_alpha_to_coverage:      return "sample_alpha_to_coverage";
+            case sample_alpha_to_one:           return "sample_alpha_to_one";
+            case sample_coverage:               return "sample_coverage";
+            case sample_shading:                return "sample_shading";
+            case sample_mask:                   return "sample_mask";
+            case scissor_test:                  return "scissor_test";
+            case stencil_test:                  return "stencil_test";
+            case texture_cube_map_seamless:     return "texture_cube_map_seamless";
+            case program_point_size:            return "program_point_size";
+            }
+
+            throw std::runtime_error{std::format("Unable to convert gl_capability::{} to a string", to_gl_enum(cap))};
+        }
+    };
+}
+
 namespace sequoia::physics {
     template<std::floating_point T>
     struct default_space<avocet::opengl::units::sample_coverage_t, T> {
@@ -180,30 +262,6 @@ namespace sequoia::physics {
 }
 
 namespace avocet::opengl {
-    class sample_coverage_value {
-        GLfloat m_Value{1.0};
-    public:
-        constexpr sample_coverage_value() = default;
-
-        constexpr explicit sample_coverage_value(GLfloat val)
-            : m_Value{val}
-        {
-            if((m_Value < 0.0) || (m_Value > 1.0))
-                throw std::domain_error{std::format("Coverage value of {} requested, but must be in the range [0,1]", m_Value)};
-        }
-
-        [[nodiscard]]
-        constexpr GLfloat raw_value() const noexcept { return m_Value; }
-
-        [[nodiscard]]
-        constexpr friend auto operator<=>(const sample_coverage_value&, const sample_coverage_value&) noexcept = default;
-    };
-
-    enum class invert_sample_mask : GLboolean {
-        no  = GL_FALSE,
-        yes = GL_TRUE
-    };
-
     namespace capabilities {
 
         struct gl_blend_data {
@@ -1275,7 +1333,7 @@ namespace avocet::testing
                     [&] <class Cap>(const std::optional<Cap>& cap) {
                         check(
                             equality,
-                            to_string(Cap::capability) + " is enabled",
+                            std::format("{}", Cap::capability) + " is enabled",
                             static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))),
                             static_cast<bool>(cap)
                         );
@@ -1932,15 +1990,4 @@ namespace avocet::testing
 
         transition_checker<payload_type>::check("", graph2, checker);
     }
-}
-
-namespace std {
-    template<>
-    struct formatter<avocet::opengl::sample_coverage_value> {
-        constexpr auto parse(auto& ctx) { return ctx.begin(); }
-
-        auto format(avocet::opengl::sample_coverage_value coverage, auto& ctx) const {
-            return format_to(ctx.out(), "{}", coverage.raw_value());
-        }
-    };
 }
