@@ -488,7 +488,7 @@ namespace avocet::testing
 
         //using graph_type = transition_checker<payload_type>::transition_graph;
 
-        /*auto checkFn{
+        /*auto checker{
             [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
                 check(equality, description, obtained, predicted);
 
@@ -510,6 +510,6 @@ namespace avocet::testing
             }
         };
 
-        transition_checker<payload_type>::check("", graph, checkFn);*/
+        transition_checker<payload_type>::check("", graph, checker);*/
     }
 }
