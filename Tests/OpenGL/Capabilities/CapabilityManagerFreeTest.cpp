@@ -476,41 +476,40 @@ namespace avocet::testing
         check("Blending disabled by default",     !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
 
         namespace agl = avocet::opengl;
+        using namespace agl::capabilities;
         agl::capability_manager capManager{ctx};
 
-        check("Multisampling disabled by manager", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("",                                  !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        enum node_name {
+            none            = 0,
+            blend           = 1,
+            multi_sample    = 2,
+            sample_coverage = 3
+        };
 
-        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{}});
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_ONE));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ZERO));
+        //using graph_type = transition_checker<payload_type>::transition_graph;
 
-        capManager.new_payload(
-            std::tuple{
-                agl::capabilities::gl_blend{
-                    .rgb{  .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}}, .algebraic_op{GL_FUNC_ADD}},
-                    .alpha{.modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}}, .algebraic_op{GL_FUNC_ADD}},
-                    .colour{}
-                }
+        /*auto checkFn{
+            [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
+                check(equality, description, obtained, predicted);
+
+                auto checkGPUState{
+                    [&] <class Cap> (const std::optional<Cap>&cap) {
+                        check(
+                            equality,
+                            std::format("{}\n{} is enabled", description, Cap::capability),
+                            static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))),
+                            static_cast<bool>(cap)
+                        );
+
+                        if(cap)
+                            check(weak_equivalence, std::format("{}\nGPU State", description), cap.value(), ctx);
+                    }
+                };
+
+                sequoia::meta::for_each(obtained, checkGPUState);
             }
-        );
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
+        };
 
-        capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{});
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        transition_checker<payload_type>::check("", graph, checkFn);*/
     }
 }
