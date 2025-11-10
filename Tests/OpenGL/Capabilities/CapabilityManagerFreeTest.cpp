@@ -90,7 +90,7 @@ namespace avocet::opengl {
         case program_point_size:            return "program_point_size";
         }
 
-        throw std::runtime_error{std::format("Unable to convert gl_capability::{} to a string", to_gl_enum(cap))};
+        throw std::runtime_error{std::format("Unrecognized option gl_capability::{} while stringifying", to_gl_enum(cap))};
     }
 
     enum class blend_mode : GLenum {
@@ -110,6 +110,30 @@ namespace avocet::opengl {
         one_minus_const_alpha  = GL_ONE_MINUS_CONSTANT_ALPHA
     };
 
+    [[nodiscard]]
+    std::string to_string(blend_mode mode) {
+        using enum blend_mode;
+        switch(mode)
+        {
+        case zero:                   return "zero";
+        case one:                    return "one";
+        case src_colour:             return "src_colour";
+        case one_minus_src_colour:   return "one_minus_src_colour";
+        case dst_colour:             return "dst_colour";
+        case one_minus_dst_colour:   return "one_minus_dst_colour";
+        case src_alpha:              return "src_alpha";
+        case one_minus_src_alpha:    return "one_minus_src_alpha";
+        case dst_alpha:              return "dst_alpha";
+        case one_minus_dst_alpha:    return "one_minus_dst_alpha";
+        case const_colour:           return "const_colour";
+        case one_minus_const_colour: return "one_minus_const_colour";
+        case const_alpha:            return "const_alpha";
+        case one_minus_const_alpha:  return "one_minus_const_alpha ";
+        }
+
+        throw std::runtime_error{std::format("Unrecognized option blend_mode::{} while stringifying", to_gl_enum(mode))};
+    }
+
     enum class blend_eqn_mode : GLenum {
         add               = GL_FUNC_ADD,
         subtract          = GL_FUNC_SUBTRACT,
@@ -117,6 +141,21 @@ namespace avocet::opengl {
         min               = GL_MIN,
         max               = GL_MAX
     };
+
+    [[nodiscard]]
+    std::string to_string(blend_eqn_mode mode) {
+        using enum blend_eqn_mode;
+        switch(mode)
+        {
+        case add:               return "add";
+        case subtract:          return "subtract";
+        case reverse_substract: return "reverse_substract";
+        case min:               return "min";
+        case max:               return "max";
+        }
+
+        throw std::runtime_error{std::format("Unrecognized option blend_eqn_mode::{} while stringifying", to_gl_enum(mode))};
+    }
 
     class sample_coverage_value {
         GLfloat m_Value{1.0};
@@ -161,6 +200,24 @@ namespace std {
             return format_to(ctx.out(), "{}", to_string(cap));
         }
     };
+
+    template<>
+    struct formatter<avocet::opengl::blend_mode> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::blend_mode mode, auto& ctx) const {
+            return format_to(ctx.out(), "{}", to_string(mode));
+        }
+    };
+
+    template<>
+    struct formatter<avocet::opengl::blend_eqn_mode> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::opengl::blend_eqn_mode mode, auto& ctx) const {
+            return format_to(ctx.out(), "{}", to_string(mode));
+        }
+    };
 }
 
 
@@ -182,35 +239,16 @@ namespace avocet::opengl {
     };
 
     namespace capabilities {
-        struct gl_multi_sample : capability_common_lifecycle<gl_capability::multi_sample> {
-            void configure(this const gl_multi_sample&, const decorated_context&) {}
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
-        };
-
-        struct gl_sample_coverage : capability_common_lifecycle<gl_capability::sample_coverage> {
-            sample_coverage_value coverage_val{1.0};
-            invert_sample_mask    mask{invert_sample_mask::no};
-
-            void configure(this const gl_sample_coverage& self, const decorated_context& ctx) {
-                gl_function{&GladGLContext::SampleCoverage}(ctx, self.coverage_val.raw_value(), static_cast<GLboolean>(self.mask));
-            }
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const gl_sample_coverage&, const gl_sample_coverage&) noexcept = default;
-        };
-
-        struct blend_modes {
+        struct gl_blend_modes {
             blend_mode      source{blend_mode::one},
                        destination{blend_mode::zero};
 
             [[nodiscard]]
-            friend constexpr bool operator==(const blend_modes&, const blend_modes&) noexcept = default;
+            friend constexpr bool operator==(const gl_blend_modes&, const gl_blend_modes&) noexcept = default;
         };
 
         struct gl_blend_data {
-            blend_modes modes{};
+            gl_blend_modes modes{};
             blend_eqn_mode algebraic_op{GL_FUNC_ADD};
 
             [[nodiscard]]
@@ -238,6 +276,25 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
+        };
+
+        struct gl_multi_sample : capability_common_lifecycle<gl_capability::multi_sample> {
+            void configure(this const gl_multi_sample&, const decorated_context&) {}
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
+        };
+
+        struct gl_sample_coverage : capability_common_lifecycle<gl_capability::sample_coverage> {
+            sample_coverage_value coverage_val{1.0};
+            invert_sample_mask    invert{invert_sample_mask::no};
+
+            void configure(this const gl_sample_coverage& self, const decorated_context& ctx) {
+                gl_function{&GladGLContext::SampleCoverage}(ctx, self.coverage_val.raw_value(), static_cast<GLboolean>(self.invert));
+            }
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_sample_coverage&, const gl_sample_coverage&) noexcept = default;
         };
     }
 
@@ -295,18 +352,112 @@ namespace avocet::opengl {
     };
 }
 
-namespace avocet::testing
+namespace {
+    namespace agl = avocet::opengl;
+
+    template<class T>
+    [[nodiscard]]
+    T get_int_param_as(const agl::decorated_context& ctx, GLenum name) {
+        GLint param{};
+        agl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
+        return static_cast<T>(param);
+    }
+
+    [[nodiscard]]
+    GLboolean get_bool_param(const agl::decorated_context& ctx, GLenum name) {
+        GLboolean param{};
+        agl::gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
+        return param;
+    }
+
+    [[nodiscard]]
+    GLfloat get_float_param(const agl::decorated_context& ctx, GLenum name) {
+        GLfloat param{};
+        agl::gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
+        return param;
+    }
+
+    template<std::size_t N>
+    [[nodiscard]]
+    std::array<GLfloat, N> get_float_params(const agl::decorated_context& ctx, GLenum name) {
+        std::array<GLfloat, N> params{};
+        agl::gl_function{&GladGLContext::GetFloatv}(ctx, name, params.data());
+        return params;
+    }
+}
+
+namespace sequoia::testing
 {
     namespace agl = avocet::opengl;
 
-    namespace {
-        [[nodiscard]]
-        GLint get_int_param(const agl::decorated_context& ctx, GLenum name) {
-            GLint param{};
-            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
-            return param;
+    template<>
+    struct value_tester<avocet::opengl::capabilities::gl_blend_modes> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_blend_modes& obtained, const agl::capabilities::gl_blend_modes& predicted) {
+            check(equality, "Source",      logger, obtained.source,      predicted.source);
+            check(equality, "Destination", logger, obtained.destination, predicted.destination);
         }
-    }
+    };
+
+    template<>
+    struct value_tester<avocet::opengl::capabilities::gl_blend_data> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_blend_data& obtained, const agl::capabilities::gl_blend_data& predicted) {
+            check(equality, "Modes",       logger, obtained.modes,         predicted.modes);
+            check(equality, "Algebraic Op", logger, obtained.algebraic_op, predicted.algebraic_op);
+        }
+    };
+
+    template<>
+    struct value_tester<avocet::opengl::capabilities::gl_blend> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_blend& obtained, const agl::capabilities::gl_blend& predicted) {
+            check(equality, "RGB",    logger, obtained.rgb,    predicted.rgb);
+            check(equality, "Alpha",  logger, obtained.alpha,  predicted.alpha);
+            check(equality, "Colour", logger, obtained.colour, predicted.colour);
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_blend& cpuCap, const agl::decorated_context& ctx) {
+            check(equality, "Source rgb   GPU/CPU",      logger, agl::to_gl_enum(cpuCap.rgb  .modes.source),      get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB));
+            check(equality, "Source alpha GPU/CPU",      logger, agl::to_gl_enum(cpuCap.alpha.modes.source),      get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA));
+            check(equality, "Destination rgb   GPU/CPU", logger, agl::to_gl_enum(cpuCap.rgb  .modes.destination), get_int_param_as<GLenum>(ctx, GL_BLEND_DST_RGB));
+            check(equality, "Destination alpha GPU/CPU", logger, agl::to_gl_enum(cpuCap.alpha.modes.destination), get_int_param_as<GLenum>(ctx, GL_BLEND_DST_ALPHA));
+            check(equality, "Blend equation GPU/CPU",    logger, agl::to_gl_enum(cpuCap.rgb  .algebraic_op),      get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB));
+            check(equality, "Blend equation GPU/CPU",    logger, agl::to_gl_enum(cpuCap.alpha.algebraic_op),      get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA));
+
+            check(equality, "Colour GPU/CPU", logger, cpuCap.colour, get_float_params<4>(ctx, GL_BLEND_COLOR));
+        }
+    };
+
+    template<>
+    struct value_tester<avocet::opengl::capabilities::gl_sample_coverage> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_sample_coverage& obtained, const agl::capabilities::gl_sample_coverage& predicted) {
+            check(equality, "Coverage",    logger, obtained.coverage_val,            predicted.coverage_val);
+            check(equality, "Invert Mask", logger, agl::to_gl_bool(obtained.invert), agl::to_gl_bool(predicted.invert));
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_sample_coverage& obtained, const agl::decorated_context& ctx) {
+            check(equality, "Coverage",      logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE),  obtained.coverage_val.raw_value());
+            check(equality, "Invert Mask",   logger, get_bool_param (ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(obtained.invert));
+        }
+    };
+
+    template<>
+    struct value_tester<avocet::opengl::capabilities::gl_multi_sample> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::capabilities::gl_multi_sample&) {}
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::decorated_context&) {}
+    };
+}
+
+namespace avocet::testing
+{
+    namespace agl = avocet::opengl;
 
     [[nodiscard]]
     std::filesystem::path capability_manager_free_test::source_file() const
@@ -333,8 +484,8 @@ namespace avocet::testing
         capManager.new_payload(std::tuple{agl::capabilities::gl_blend{}});
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_ONE));
-        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ZERO));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_ONE));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ZERO));
 
         capManager.new_payload(
             std::tuple{
@@ -347,8 +498,8 @@ namespace avocet::testing
         );
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
-        check(equality, "", get_int_param(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
 
         capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
         check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
