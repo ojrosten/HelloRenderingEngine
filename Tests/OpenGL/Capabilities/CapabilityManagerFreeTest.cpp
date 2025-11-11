@@ -611,7 +611,7 @@ namespace sequoia::testing
                     }
                 };
 
-                sequoia::meta::for_each(obtained, checkGPUState);
+                sequoia::meta::for_each(predicted, checkGPUState);
             }
         };
 
