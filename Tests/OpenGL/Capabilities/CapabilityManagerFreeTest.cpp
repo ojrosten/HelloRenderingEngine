@@ -506,10 +506,46 @@ namespace avocet::testing
                     }
                 };
 
-                sequoia::meta::for_each(obtained, checkGPUState);
+                sequoia::meta::for_each(predicted, checkGPUState);
             }
         };
 
         transition_checker<payload_type>::check("", graph, checker);*/
+
+        check("Multisampling disabled by manager", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{}});
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_ONE));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ZERO));
+
+        capManager.new_payload(
+            std::tuple{
+                agl::capabilities::gl_blend{
+                    .rgb{  .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}}, .algebraic_op{GL_FUNC_ADD}},
+                    .alpha{.modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}}, .algebraic_op{GL_FUNC_ADD}},
+                    .colour{}
+                }
+            }
+        );
+
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
+        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
+
+        capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        capManager.new_payload(std::tuple{});
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
+
+        capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
+        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
+        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
     }
 }
