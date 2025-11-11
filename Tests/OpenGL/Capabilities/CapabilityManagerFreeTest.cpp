@@ -135,11 +135,11 @@ namespace avocet::opengl {
     }
 
     enum class blend_eqn_mode : GLenum {
-        add               = GL_FUNC_ADD,
-        subtract          = GL_FUNC_SUBTRACT,
-        reverse_substract = GL_FUNC_REVERSE_SUBTRACT,
-        min               = GL_MIN,
-        max               = GL_MAX
+        add              = GL_FUNC_ADD,
+        subtract         = GL_FUNC_SUBTRACT,
+        reverse_subtract = GL_FUNC_REVERSE_SUBTRACT,
+        min              = GL_MIN,
+        max              = GL_MAX
     };
 
     [[nodiscard]]
@@ -147,11 +147,11 @@ namespace avocet::opengl {
         using enum blend_eqn_mode;
         switch(mode)
         {
-        case add:               return "add";
-        case subtract:          return "subtract";
-        case reverse_substract: return "reverse_substract";
-        case min:               return "min";
-        case max:               return "max";
+        case add:              return "add";
+        case subtract:         return "subtract";
+        case reverse_subtract: return "reverse_subtract";
+        case min:              return "min";
+        case max:              return "max";
         }
 
         throw std::runtime_error{std::format("Unrecognized option blend_eqn_mode::{} while stringifying", to_gl_enum(mode))};
