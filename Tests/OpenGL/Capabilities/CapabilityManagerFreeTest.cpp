@@ -266,7 +266,7 @@ namespace avocet::opengl {
         };
 
         namespace impl {
-            void configure(const decorated_context& ctx, const gl_blend& requested, const gl_blend& current) {
+            void configure(const decorated_context& ctx, const gl_blend& current, const gl_blend& requested) {
                 if((requested.rgb.modes != current.rgb.modes) or (requested.alpha.modes != current.alpha.modes)) {
                     gl_function{&GladGLContext::BlendFuncSeparate}(
                         ctx,
@@ -288,7 +288,7 @@ namespace avocet::opengl {
 
             void configure(const decorated_context&, const gl_multi_sample&, const gl_multi_sample&) {}
 
-            void configure(const decorated_context& ctx, const gl_sample_coverage& requested, const gl_sample_coverage& current) {
+            void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested) {
                 if(requested != current)
                     gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), static_cast<GLboolean>(requested.invert));
             }
@@ -348,7 +348,7 @@ namespace avocet::opengl {
         template<class Cap>
         void update_config(toggled_capability<Cap>& current, const Cap& requested) {
             if(current.state != requested) {
-                capabilities::impl::configure(m_Context, requested, current.state);
+                capabilities::impl::configure(m_Context, current.state, requested);
                 current.state = requested;
             }
         }
@@ -550,10 +550,11 @@ namespace avocet::testing
         agl::capability_manager capManager{ctx};
 
         enum node_name {
-            none            = 0,
-            blend           = 1,
-            multi_sample    = 2,
-            sample_coverage = 3
+            none             = 0,
+            blend            = 1,
+            multi_sample     = 2,
+            sample_coverage  = 3,
+            configured_blend = 4
         };
 
         using graph_type = transition_checker<payload_type>::transition_graph;
@@ -570,7 +571,50 @@ namespace avocet::testing
                         node_name::blend,
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_blend{}); }
-                    }
+                    },
+                    {
+                        node_name::multi_sample,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_multi_sample{}); }
+                    },
+                    {
+                        node_name::sample_coverage,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_sample_coverage{}); }
+                    },
+                    {
+                        node_name::configured_blend,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) {
+                            return
+                                set_payload(
+                                    capManager,
+                                    hostPayload,
+                                    gl_blend{
+                                        .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
+                                        .alpha{.modes{.source{agl::blend_mode::dst_alpha},  .destination{agl::blend_mode::one_minus_dst_alpha}},  .algebraic_op{agl::blend_eqn_mode::reverse_subtract}},
+                                        .colour{0.1f, 0.2f, 0.3f, 0.4f}
+                                    }
+                                );
+                        }
+                    },
+                },
+                {
+                    {
+                        node_name::none,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    },
+                    {
+                        node_name::blend,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_blend{}); }
+                    },
+                    {
+                        node_name::multi_sample,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_multi_sample{}); }
+                    },
                 },
                 {
                     {
@@ -592,13 +636,20 @@ namespace avocet::testing
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
                     }
-                }
+                },
             },
             {
                 payload_type{},
                 make_payload(gl_blend{}),
                 make_payload(gl_multi_sample{}),
-                make_payload(gl_sample_coverage{})
+                make_payload(gl_sample_coverage{}),
+                make_payload(
+                    gl_blend{
+                        .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
+                        .alpha{.modes{.source{agl::blend_mode::dst_alpha},  .destination{agl::blend_mode::one_minus_dst_alpha}},  .algebraic_op{agl::blend_eqn_mode::reverse_subtract}},
+                        .colour{0.1f, 0.2f, 0.3f, 0.4f}
+                    }
+                )
             }
         };
 
@@ -625,41 +676,5 @@ namespace avocet::testing
         };
 
         transition_checker<payload_type>::check("", graph, checker);
-
-        check("Multisampling disabled by manager", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{agl::capabilities::gl_blend{}});
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_ONE));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ZERO));
-
-        capManager.new_payload(
-            std::tuple{
-                agl::capabilities::gl_blend{
-                    .rgb{  .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}}, .algebraic_op{GL_FUNC_ADD}},
-                    .alpha{.modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}}, .algebraic_op{GL_FUNC_ADD}},
-                    .colour{}
-                }
-            }
-        );
-
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_SRC_ALPHA), agl::to_gl_int(GL_SRC_ALPHA));
-        check(equality, "", get_int_param_as<GLint>(ctx, GL_BLEND_DST_ALPHA), agl::to_gl_int(GL_ONE_MINUS_SRC_ALPHA));
-
-        capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{});
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
-
-        capManager.new_payload(std::tuple{agl::capabilities::gl_multi_sample{}});
-        check("",  agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
-        check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
     }
 }
