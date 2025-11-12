@@ -270,8 +270,15 @@ int main()
 
             agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
 
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_COVERAGE);
+            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_ALPHA_TO_COVERAGE);
+            agl::gl_function{&GladGLContext::SampleCoverage}(ctx, 0.75, GL_FALSE);
+
             shaderProgram3DDoubleMonochrome.use();
             partiallyTransparentQuadUpper.draw();
+
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_SAMPLE_COVERAGE);
+            agl::gl_function{&GladGLContext::Disable}(ctx, GL_SAMPLE_ALPHA_TO_COVERAGE);
 
             agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
             agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

@@ -222,22 +222,6 @@ namespace std {
 
 
 namespace avocet::opengl {
-    template<gl_capability Cap>
-    struct capability_common_lifecycle {
-        constexpr static auto capability{Cap};
-
-        static void enable(const decorated_context& ctx) {
-            gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
-        }
-
-        static void disable(const decorated_context& ctx) {
-            gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
-        }
-
-        [[nodiscard]]
-        friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
-    };
-
     namespace capabilities {
         struct gl_blend_modes {
             blend_mode      source{blend_mode::one},
@@ -255,71 +239,142 @@ namespace avocet::opengl {
             friend constexpr bool operator==(const gl_blend_data&, const gl_blend_data&) noexcept = default;
         };
 
-        struct gl_blend : capability_common_lifecycle<gl_capability::blend> {
+        struct gl_blend {
+            constexpr static auto capability{gl_capability::blend};
             gl_blend_data rgb{}, alpha{rgb};
             std::array<GLfloat, 4> colour{};
-
-            void configure(this const gl_blend& self, const decorated_context& ctx) {
-                gl_function{&GladGLContext::BlendFuncSeparate}(
-                    ctx,
-                    to_gl_enum(self.rgb.modes.source),
-                    to_gl_enum(self.rgb.modes.destination),
-                    to_gl_enum(self.alpha.modes.source),
-                    to_gl_enum(self.alpha.modes.destination)
-                );
-
-                gl_function{&GladGLContext::BlendEquationSeparate}(ctx, to_gl_enum(self.rgb.algebraic_op), to_gl_enum(self.alpha.algebraic_op));
-
-                const auto& col{self.colour};
-                gl_function{&GladGLContext::BlendColor}(ctx, col[0], col[1], col[2], col[3]);
-            }
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
         };
 
-        struct gl_multi_sample : capability_common_lifecycle<gl_capability::multi_sample> {
-            void configure(this const gl_multi_sample&, const decorated_context&) {}
+        struct gl_multi_sample {
+            constexpr static auto capability{gl_capability::multi_sample};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
         };
 
-        struct gl_sample_coverage : capability_common_lifecycle<gl_capability::sample_coverage> {
+        struct gl_sample_coverage {
+            constexpr static auto capability{gl_capability::sample_coverage};
+
             sample_coverage_value coverage_val{1.0};
             invert_sample_mask    invert{invert_sample_mask::no};
-
-            void configure(this const gl_sample_coverage& self, const decorated_context& ctx) {
-                gl_function{&GladGLContext::SampleCoverage}(ctx, self.coverage_val.raw_value(), static_cast<GLboolean>(self.invert));
-            }
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_sample_coverage&, const gl_sample_coverage&) noexcept = default;
         };
+
+        namespace impl {
+            void configure(const decorated_context& ctx, const gl_blend& requested, const gl_blend& current) {
+                if((requested.rgb.modes != current.rgb.modes) or (requested.alpha.modes != current.alpha.modes)) {
+                    gl_function{&GladGLContext::BlendFuncSeparate}(
+                        ctx,
+                        to_gl_enum(requested.rgb.modes.source),
+                        to_gl_enum(requested.rgb.modes.destination),
+                        to_gl_enum(requested.alpha.modes.source),
+                        to_gl_enum(requested.alpha.modes.destination)
+                   );
+                }
+
+                if((requested.rgb.algebraic_op != current.rgb.algebraic_op) or (requested.alpha.algebraic_op != current.alpha.algebraic_op))
+                    gl_function{&GladGLContext::BlendEquationSeparate}(ctx, to_gl_enum(requested.rgb.algebraic_op), to_gl_enum(requested.alpha.algebraic_op));
+
+                if(requested.colour != current.colour) {
+                    const auto& col{requested.colour};
+                    gl_function{&GladGLContext::BlendColor}(ctx, col[0], col[1], col[2], col[3]);
+                }
+            }
+
+            void configure(const decorated_context&, const gl_multi_sample&, const gl_multi_sample&) {}
+
+            void configure(const decorated_context& ctx, const gl_sample_coverage& requested, const gl_sample_coverage& current) {
+                if(requested != current)
+                    gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), static_cast<GLboolean>(requested.invert));
+            }
+        }
     }
 
     class capability_manager {
+        template<gl_capability Cap>
+        struct capability_common_lifecycle {
+            constexpr static auto capability{Cap};
+
+            static void enable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
+            }
+
+            static void disable(const decorated_context& ctx) {
+                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
+            }
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
+        };
+
         template<class T>
         struct toggled_capability {
             T state{};
             bool is_enabled{};
         };
 
-        using payload_type
+        using toggled_payload_type
             = std::tuple<
                   toggled_capability<capabilities::gl_blend>,
                   toggled_capability<capabilities::gl_multi_sample>,
                   toggled_capability<capabilities::gl_sample_coverage>
               >;
 
-        payload_type m_Payload;
+        toggled_payload_type m_Payload;
 
         const decorated_context& m_Context;
+
+        template<class Cap>
+        void disable(toggled_capability<Cap>& cap) {
+            if(cap.is_enabled) {
+                capability_common_lifecycle<Cap::capability>::disable(m_Context);
+                cap.is_enabled = false;
+            }
+        }
+
+        template<class Cap>
+        void enable(toggled_capability<Cap>& cap) {
+            if(!cap.is_enabled) {
+                capability_common_lifecycle<Cap::capability>::enable(m_Context);
+                cap.is_enabled = true;
+            }
+        }
+
+        template<class Cap>
+        void update_config(toggled_capability<Cap>& current, const Cap& requested) {
+            if(current.state != requested) {
+                capabilities::impl::configure(m_Context, requested, current.state);
+                current.state = requested;
+            }
+        }
+
+        template<class Cap>
+        void full_update(toggled_capability<Cap>& current, const std::optional<Cap>& requested) {
+            if(!requested) {
+                disable(current);
+            }
+            else {
+                enable(current);
+                update_config(current, requested.value());
+            }
+        }
     public:
+        using payload_type
+            = std::tuple<
+                  std::optional<capabilities::gl_blend>,
+                  std::optional<capabilities::gl_multi_sample>,
+                  std::optional<capabilities::gl_sample_coverage>
+              >;
+
         explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
         {
-            capabilities::gl_multi_sample::disable(m_Context);
+            capability_common_lifecycle<gl_capability::multi_sample>::disable(m_Context);
         }
 
         template<class... RequestedCaps>
@@ -328,26 +383,22 @@ namespace avocet::opengl {
                 [&] <class Cap> (toggled_capability<Cap>& cap) {
                     constexpr auto index{sequoia::meta::find_v<std::tuple<RequestedCaps...>, Cap>};
                     if constexpr(index >= sizeof...(RequestedCaps)) {
-                        if(cap.is_enabled) {
-                            Cap::disable(m_Context);
-                            cap.is_enabled = false;
-                        }
+                        disable(cap);
                     }
                     else {
-                        if(!cap.is_enabled) {
-                            Cap::enable(m_Context);
-                            cap.is_enabled = true;
-                        }
-
-                        if(const auto& requested{std::get<index>(requestedCaps)}; requested != cap.state) {
-                            cap.state = requested;
-                            cap.state.configure(m_Context);
-                        }
+                        enable(cap);
+                        update_config(cap, std::get<index>(requestedCaps));
                     }
                 }
             };
 
             sequoia::meta::for_each(m_Payload, update);
+        }
+
+        void new_payload(const payload_type& payload) {
+            [&, this] <std::size_t... Is>(std::index_sequence<Is...>) {
+                (full_update(std::get<Is>(m_Payload), std::get<Is>(payload)), ...);
+            }(std::make_index_sequence<std::tuple_size_v<toggled_payload_type>>{});
         }
     };
 }
@@ -383,6 +434,25 @@ namespace {
         std::array<GLfloat, N> params{};
         agl::gl_function{&GladGLContext::GetFloatv}(ctx, name, params.data());
         return params;
+    }
+
+    using payload_type = agl::capability_manager::payload_type;
+
+    template<class... Caps>
+    [[nodiscard]]
+    payload_type make_payload(const Caps&... caps) {
+        payload_type payload{};
+        ((std::get<std::optional<Caps>>(payload) = caps), ...);
+        return payload;
+    }
+
+    template<class... Caps>
+    [[nodiscard]]
+    payload_type set_payload(agl::capability_manager& capMan, const payload_type& hostPayload, const Caps&... targetCaps) {
+        capMan.new_payload(hostPayload);
+        const auto payload{make_payload(targetCaps...)};
+        capMan.new_payload(payload);
+        return payload;
     }
 }
 
@@ -486,9 +556,53 @@ namespace avocet::testing
             sample_coverage = 3
         };
 
-        //using graph_type = transition_checker<payload_type>::transition_graph;
+        using graph_type = transition_checker<payload_type>::transition_graph;
 
-        /*auto checker{
+        graph_type graph{
+            {
+                {
+                    {
+                        node_name::none,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    },
+                    {
+                        node_name::blend,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_blend{}); }
+                    }
+                },
+                {
+                    {
+                        node_name::none,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    }
+                },
+                {
+                    {
+                        node_name::none,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    }
+                },
+                {
+                    {
+                        node_name::none,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    }
+                }
+            },
+            {
+                payload_type{},
+                make_payload(gl_blend{}),
+                make_payload(gl_multi_sample{}),
+                make_payload(gl_sample_coverage{})
+            }
+        };
+
+        auto checker{
             [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
                 check(equality, description, obtained, predicted);
 
@@ -510,7 +624,7 @@ namespace avocet::testing
             }
         };
 
-        transition_checker<payload_type>::check("", graph, checker);*/
+        transition_checker<payload_type>::check("", graph, checker);
 
         check("Multisampling disabled by manager", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_MULTISAMPLE));
         check("", !agl::gl_function{&GladGLContext::IsEnabled}(ctx, GL_BLEND));
