@@ -296,26 +296,10 @@ namespace avocet::opengl {
     }
 
     class capability_manager {
-        template<gl_capability Cap>
-        struct capability_common_lifecycle {
-            constexpr static auto capability{Cap};
-
-            static void enable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Enable}(ctx, to_gl_enum(capability));
-            }
-
-            static void disable(const decorated_context& ctx) {
-                gl_function{&GladGLContext::Disable}(ctx, to_gl_enum(capability));
-            }
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const capability_common_lifecycle&, const capability_common_lifecycle&) noexcept = default;
-        };
-
         template<class T>
         struct toggled_capability {
             T state{};
-            bool is_enabled{};
+            bool is_enabled{(T::capability == gl_capability::dither) or (T::capability == gl_capability::multi_sample)};
         };
 
         using toggled_payload_type
@@ -332,7 +316,7 @@ namespace avocet::opengl {
         template<class Cap>
         void disable(toggled_capability<Cap>& cap) {
             if(cap.is_enabled) {
-                capability_common_lifecycle<Cap::capability>::disable(m_Context);
+                gl_function{&GladGLContext::Disable}(m_Context, to_gl_enum(Cap::capability));
                 cap.is_enabled = false;
             }
         }
@@ -340,7 +324,7 @@ namespace avocet::opengl {
         template<class Cap>
         void enable(toggled_capability<Cap>& cap) {
             if(!cap.is_enabled) {
-                capability_common_lifecycle<Cap::capability>::enable(m_Context);
+                gl_function{&GladGLContext::Enable}(m_Context, to_gl_enum(Cap::capability));
                 cap.is_enabled = true;
             }
         }
@@ -374,7 +358,7 @@ namespace avocet::opengl {
         explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
         {
-            capability_common_lifecycle<gl_capability::multi_sample>::disable(m_Context);
+            sequoia::meta::for_each(m_Payload, [this](auto& cap) { disable(cap); });
         }
 
         template<class... RequestedCaps>
