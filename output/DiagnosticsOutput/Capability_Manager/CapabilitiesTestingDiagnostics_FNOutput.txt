@@ -1,0 +1,106 @@
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 34
+
+[avocet::opengl::capabilities::gl_blend]
+operator== returned false
+
+  RGB
+  [avocet::opengl::capabilities::gl_blend_data]
+  operator== returned false
+
+    Modes
+    [avocet::opengl::capabilities::gl_blend_modes]
+    operator== returned false
+
+      Source
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : one
+      Predicted: src_colour
+
+      Destination
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : zero
+      Predicted: one_minus_src_colour
+
+    Algebraic Op
+    [avocet::opengl::blend_eqn_mode]
+    operator== returned false
+    Obtained : add
+    Predicted: subtract
+
+  Alpha
+  [avocet::opengl::capabilities::gl_blend_data]
+  operator== returned false
+
+    Modes
+    [avocet::opengl::capabilities::gl_blend_modes]
+    operator== returned false
+
+      Source
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : one
+      Predicted: dst_alpha
+
+      Destination
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : zero
+      Predicted: one_minus_dst_alpha
+
+    Algebraic Op
+    [avocet::opengl::blend_eqn_mode]
+    operator== returned false
+    Obtained : add
+    Predicted: reverse_subtract
+
+  Colour
+  [std::array<float, 4>]
+  operator== returned false
+
+    Element 0 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.1
+
+    Element 1 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.2
+
+    Element 2 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.3
+
+    Element 3 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.4
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 48
+
+[avocet::opengl::capabilities::gl_sample_coverage]
+operator== returned false
+
+  Coverage
+  [avocet::opengl::sample_coverage_value]
+  operator== returned false
+  Obtained : 1
+  Predicted: 0.5
+
+  Invert Mask
+  [unsigned char]
+  operator== returned false
+  Obtained : 0
+  Predicted: 1
+
+=======================================
+

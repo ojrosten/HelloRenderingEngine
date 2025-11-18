@@ -25,14 +25,14 @@ namespace avocet::opengl::testing {
     }
 
     [[nodiscard]]
-    GLboolean get_bool_param(const opengl::decorated_context& ctx, GLenum name) {
+    inline GLboolean get_bool_param(const opengl::decorated_context& ctx, GLenum name) {
         GLboolean param{};
         opengl::gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
         return param;
     }
 
     [[nodiscard]]
-    GLfloat get_float_param(const opengl::decorated_context& ctx, GLenum name) {
+    inline GLfloat get_float_param(const opengl::decorated_context& ctx, GLenum name) {
         GLfloat param{};
         opengl::gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
         return param;
