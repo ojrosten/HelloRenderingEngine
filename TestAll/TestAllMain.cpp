@@ -18,6 +18,7 @@
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
 #include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
+#include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
@@ -108,6 +109,7 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Capability Manager",
+            capabilities_false_negative_test{"False Negative Test"},
             capability_manager_free_test{"Capability Manager Free Test"}
         );
 
