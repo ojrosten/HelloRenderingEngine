@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Debugging/Errors.hpp"
-#include "avocet/OpenGL/Utilities/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include <filesystem>

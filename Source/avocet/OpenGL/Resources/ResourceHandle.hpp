@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Utilities/Context.hpp"
+#include "avocet/OpenGL/Context/Context.hpp"
 
 #include <array>
 #include <concepts>
