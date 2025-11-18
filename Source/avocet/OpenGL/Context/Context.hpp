@@ -39,6 +39,7 @@ namespace avocet::opengl {
             , m_Epilogue{std::move(epilogue)}
         {
             loader(m_Context);
+            init_debug();
         }
 
         template<class Fn, class... Args>
@@ -74,6 +75,8 @@ namespace avocet::opengl {
         debugging_mode m_Mode{};
         decorator_type m_Prologue{}, m_Epilogue{};
         GladGLContext m_Context{};
+
+        void init_debug();
     };
 
     struct member_info {

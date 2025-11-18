@@ -6,3 +6,31 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Context/Context.hpp"
+#include "avocet/OpenGL/Context/GLFunction.hpp"
+
+namespace avocet::opengl {
+    void decorated_context::init_debug()
+    {
+        if(debug_mode() == debugging_mode::off)
+            return;
+
+        GLint flags{};
+        gl_function{&GladGLContext::GetIntegerv}(*this, debugging_mode_off, GL_CONTEXT_FLAGS, &flags);
+        if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+            if(const auto version{get_opengl_version(*this)}; !debug_output_supported(version))
+                throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
+
+            gl_function{&GladGLContext::Enable}(*this, debugging_mode_off, GL_DEBUG_OUTPUT);
+            gl_function{&GladGLContext::Enable}(*this, debugging_mode_off, GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            gl_function{&GladGLContext::DebugMessageControl}(
+                *this,
+                debugging_mode_off,
+                GL_DONT_CARE,
+                GL_DONT_CARE,
+                GL_DONT_CARE,
+                0,
+                nullptr,
+                GL_TRUE);
+        }
+    }
+}

@@ -54,31 +54,6 @@ namespace curlew {
             if(!gladLoadGLContext(&ctx, glfwGetProcAddress))
                 throw std::runtime_error{"Failed to initialize GLAD"};
         }
-
-        void init_debug(const agl::decorated_context& ctx)
-        {
-            if(ctx.debug_mode() == agl::debugging_mode::off)
-                return;
-
-            GLint flags{};
-            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, agl::debugging_mode_off, GL_CONTEXT_FLAGS, &flags);
-            if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
-                if(const auto version{agl::get_opengl_version(ctx)}; !agl::debug_output_supported(version))
-                    throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and OpengGL version {}", flags, version)};
-
-                agl::gl_function{&GladGLContext::Enable}(ctx, agl::debugging_mode_off, GL_DEBUG_OUTPUT);
-                agl::gl_function{&GladGLContext::Enable}(ctx, agl::debugging_mode_off, GL_DEBUG_OUTPUT_SYNCHRONOUS);
-                agl::gl_function{&GladGLContext::DebugMessageControl}(
-                    ctx,
-                    agl::debugging_mode_off,
-                    GL_DONT_CARE,
-                    GL_DONT_CARE,
-                    GL_DONT_CARE,
-                    0,
-                    nullptr,
-                    GL_TRUE);
-            }
-        }
     }
 
 
@@ -139,7 +114,5 @@ namespace curlew {
             config.epilogue,
             [&win = m_Window](GladGLContext& ctx) { load_gl_fuctions(win, ctx); }
           }
-    {
-        init_debug(m_Context);
-    }
+    {}
 }
