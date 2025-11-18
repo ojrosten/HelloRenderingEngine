@@ -9,6 +9,8 @@
 
 /*! \file */
 
+#include "avocet/OpenGL/Context/Context.hpp"
+
 #include "sequoia/TestFramework/RegularTestCore.hpp"
 
 namespace avocet::testing
@@ -27,8 +29,8 @@ namespace avocet::testing
 
         void run_tests();
     private:
-        void test_blending();
+        void test_blending(const opengl::decorated_context& ctx);
 
-        void test_sample_coverage();
+        void test_sample_coverage(const opengl::decorated_context& ctx);
     };
 }

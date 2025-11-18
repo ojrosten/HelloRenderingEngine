@@ -12,6 +12,8 @@
 #include "CapabilitiesTestingDiagnostics.hpp"
 #include "CapabilitiesTestingUtilities.hpp"
 
+#include "curlew/Window/GLFWWrappers.hpp"
+
 namespace avocet::testing {
     using namespace opengl::capabilities;
 
@@ -23,31 +25,31 @@ namespace avocet::testing {
 
     void capabilities_false_negative_test::run_tests()
     {
-        test_blending();
-        test_sample_coverage();
+        using namespace curlew;
+        glfw_manager manager{};
+        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        test_blending(w.context());
+        test_sample_coverage(w.context());
     }
 
-    void capabilities_false_negative_test::test_blending()
+    void capabilities_false_negative_test::test_blending(const opengl::decorated_context& ctx)
     {
-        check(
-            equality,
-            "",
-            gl_blend{},
-            gl_blend{
-                .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
-                .alpha{.modes{.source{agl::blend_mode::dst_alpha},  .destination{agl::blend_mode::one_minus_dst_alpha}},  .algebraic_op{agl::blend_eqn_mode::reverse_subtract}},
-                .colour{0.1f, 0.2f, 0.3f, 0.4f}
-            }
-        );
+        const gl_blend configuredBlend{
+            .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
+            .alpha{.modes{.source{agl::blend_mode::dst_alpha},  .destination{agl::blend_mode::one_minus_dst_alpha}},  .algebraic_op{agl::blend_eqn_mode::reverse_subtract}},
+            .colour{0.1f, 0.2f, 0.3f, 0.4f}
+        };
+
+        check(equality, "", gl_blend{}, configuredBlend);
+        check(weak_equivalence, "", configuredBlend, ctx);
     }
 
-    void capabilities_false_negative_test::test_sample_coverage()
+    void capabilities_false_negative_test::test_sample_coverage(const opengl::decorated_context& ctx)
     {
-        check(
-            equality,
-            "",
-            gl_sample_coverage{},
-            gl_sample_coverage{.coverage_val{0.5}, .invert{opengl::invert_sample_mask::yes}}
-        );
+        const gl_sample_coverage configuredCoverage{.coverage_val{0.5}, .invert{opengl::invert_sample_mask::yes}};
+
+        check(equality, "", gl_sample_coverage{}, configuredCoverage);
+        check(weak_equivalence, "", configuredCoverage, ctx);
     }
 }

@@ -1,4 +1,4 @@
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 34
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 44
 
 [avocet::opengl::capabilities::gl_blend]
 operator== returned false
@@ -85,13 +85,107 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 48
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 45
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::capabilities::gl_blend>]
+Checking for weak equivalence with:
+[avocet::opengl::decorated_context]
+
+  Source rgb   GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 768
+  Predicted: 1
+
+  Source alpha GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 772
+  Predicted: 1
+
+  Destination rgb   GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 769
+  Predicted: 0
+
+  Destination alpha GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 773
+  Predicted: 0
+
+  Blend equation GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 32778
+  Predicted: 32774
+
+  Blend equation GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 32779
+  Predicted: 32774
+
+  Colour GPU/CPU
+  [std::array<float, 4>]
+  operator== returned false
+
+    Element 0 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0.1
+    Predicted: 0
+
+    Element 1 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0.2
+    Predicted: 0
+
+    Element 2 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0.3
+    Predicted: 0
+
+    Element 3 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0.4
+    Predicted: 0
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 52
 
 [avocet::opengl::capabilities::gl_sample_coverage]
 operator== returned false
 
   Coverage
   [avocet::opengl::sample_coverage_value]
+  operator== returned false
+  Obtained : 1
+  Predicted: 0.5
+
+  Invert Mask
+  [unsigned char]
+  operator== returned false
+  Obtained : 0
+  Predicted: 1
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 53
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::capabilities::gl_sample_coverage>]
+Checking for weak equivalence with:
+[avocet::opengl::decorated_context]
+
+  Coverage
+  [float]
   operator== returned false
   Obtained : 1
   Predicted: 0.5
