@@ -5,7 +5,7 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "avocet/OpenGL/Context/Capabilities.hpp"
+#include "avocet/OpenGL/Capabilities/Capabilities.hpp"
 
 namespace avocet::opengl {
     class decorated_context;

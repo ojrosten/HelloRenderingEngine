@@ -8,8 +8,8 @@ sequoia_init()
 
 set(SourceList
     Core/AssetManagement/Image.cpp
-    OpenGL/Context/Capabilities.cpp
-    OpenGL/Context/CapabilitiesConfiguration.cpp
+    OpenGL/Capabilities/Capabilities.cpp
+    OpenGL/Capabilities/CapabilitiesConfiguration.cpp
     OpenGL/Context/Context.cpp
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp

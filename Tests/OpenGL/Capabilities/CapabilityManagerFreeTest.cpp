@@ -12,7 +12,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/OpenGL/Utilities/Casts.hpp"
-#include "avocet/OpenGL/Context/CapabilitiesConfiguration.hpp"
+#include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
