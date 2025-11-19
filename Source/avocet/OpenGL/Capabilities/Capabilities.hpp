@@ -146,6 +146,13 @@ namespace avocet::opengl {
             [[nodiscard]]
             friend constexpr bool operator==(const gl_sample_coverage&, const gl_sample_coverage&) noexcept = default;
         };
+
+        struct gl_sample_alpha_to_coverage {
+            constexpr static auto capability{gl_capability::sample_alpha_to_coverage};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_sample_alpha_to_coverage&, const gl_sample_alpha_to_coverage&) noexcept = default;
+        };
     }
 }
 

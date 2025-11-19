@@ -22,4 +22,6 @@ namespace avocet::opengl::capabilities::impl {
     inline void configure(const decorated_context&, const gl_multi_sample&, const gl_multi_sample&) {}
 
     void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested);
+
+    inline void configure(const decorated_context&, const gl_sample_alpha_to_coverage&, const gl_sample_alpha_to_coverage&) {}
 }

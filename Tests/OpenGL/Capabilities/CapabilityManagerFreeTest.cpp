@@ -164,11 +164,12 @@ namespace avocet::testing
         agl::capability_manager capManager{ctx};
 
         enum node_name {
-            none             = 0,
-            blend            = 1,
-            multi_sample     = 2,
-            sample_coverage  = 3,
-            configured_blend = 4
+            none                     = 0,
+            blend                    = 1,
+            multi_sample             = 2,
+            sample_coverage          = 3,
+            sample_alpha_to_coverage = 4,
+            configured_blend         = 5
         };
 
         using graph_type = transition_checker<payload_type>::transition_graph;
@@ -195,6 +196,11 @@ namespace avocet::testing
                         node_name::sample_coverage,
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_sample_coverage{}); }
+                    },
+                    {
+                        node_name::sample_alpha_to_coverage,
+                        report(""),
+                        [&win](const payload_type& hostPayload) { return set_payload(win, hostPayload, gl_sample_alpha_to_coverage{}); }
                     },
                     {
                         node_name::configured_blend,
@@ -251,12 +257,20 @@ namespace avocet::testing
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
                     }
                 },
+                {
+                    {
+                        node_name::none,
+                        report(""),
+                        [&win](const payload_type& hostPayload) { return set_payload(win, hostPayload); }
+                    }
+                },
             },
             {
                 payload_type{},
                 make_payload(gl_blend{}),
                 make_payload(gl_multi_sample{}),
                 make_payload(gl_sample_coverage{}),
+                make_payload(gl_sample_alpha_to_coverage{}),
                 make_payload(
                     gl_blend{
                         .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},

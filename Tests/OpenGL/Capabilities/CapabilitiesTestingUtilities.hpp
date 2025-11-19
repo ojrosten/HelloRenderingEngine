@@ -93,6 +93,15 @@ namespace sequoia::testing
     };
 
     template<>
+    struct value_tester<avocet::opengl::capabilities::gl_multi_sample> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::capabilities::gl_multi_sample&) {}
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::decorated_context&) {}
+    };
+
+    template<>
     struct value_tester<avocet::opengl::capabilities::gl_sample_coverage> {
         template<test_mode Mode>
         static void test(equality_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_sample_coverage& obtained, const agl::capabilities::gl_sample_coverage& predicted) {
@@ -109,11 +118,11 @@ namespace sequoia::testing
     };
 
     template<>
-    struct value_tester<avocet::opengl::capabilities::gl_multi_sample> {
+    struct value_tester<avocet::opengl::capabilities::gl_sample_alpha_to_coverage> {
         template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::capabilities::gl_multi_sample&) {}
+        static void test(equality_check_t, test_logger<Mode>&, const agl::capabilities::gl_sample_alpha_to_coverage&, const agl::capabilities::gl_sample_alpha_to_coverage&) {}
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::decorated_context&) {}
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::capabilities::gl_sample_alpha_to_coverage&, const agl::decorated_context&) {}
     };
 }
