@@ -44,7 +44,7 @@ namespace avocet::opengl {
             return to_gl_int(rowAlignment.raw_value());
         }
 
-        void load_to_gpu(const decorated_context_base& ctx, const texture_2d_configurator& config) {
+        void load_to_gpu(const decorated_context& ctx, const texture_2d_configurator& config) {
             gl_function{&GladGLContext::PixelStorei}(ctx, GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
 
             const auto format{to_texture_format(config.data_view.num_channels())};
@@ -65,7 +65,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        GLint extract_texture_2d_param(const decorated_context_base& ctx, GLenum paramName) {
+        GLint extract_texture_2d_param(const decorated_context& ctx, GLenum paramName) {
             GLint param{};
             gl_function{&GladGLContext::GetTexLevelParameteriv}(ctx, GL_TEXTURE_2D, 0, paramName, &param);
             return param;

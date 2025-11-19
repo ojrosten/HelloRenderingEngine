@@ -31,7 +31,7 @@ namespace avocet::testing {
         test_sample_coverage(w.context());
     }
 
-    void capabilities_false_negative_test::test_blending(const opengl::decorated_context_base& ctx)
+    void capabilities_false_negative_test::test_blending(const opengl::decorated_context& ctx)
     {
         const gl_blend configuredBlend{
             .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
@@ -43,7 +43,7 @@ namespace avocet::testing {
         check(weak_equivalence, "", configuredBlend, ctx);
     }
 
-    void capabilities_false_negative_test::test_sample_coverage(const opengl::decorated_context_base& ctx)
+    void capabilities_false_negative_test::test_sample_coverage(const opengl::decorated_context& ctx)
     {
         const gl_sample_coverage configuredCoverage{.coverage_val{0.5}, .invert{opengl::invert_sample_mask::yes}};
 

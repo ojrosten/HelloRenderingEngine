@@ -10,7 +10,7 @@
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl::capabilities::impl {
-    void configure(const decorated_context_base& ctx, const gl_blend& current, const gl_blend& requested) {
+    void configure(const decorated_context& ctx, const gl_blend& current, const gl_blend& requested) {
         if((requested.rgb.modes != current.rgb.modes) or (requested.alpha.modes != current.alpha.modes)) {
             gl_function{&GladGLContext::BlendFuncSeparate}(
                 ctx,
@@ -30,7 +30,7 @@ namespace avocet::opengl::capabilities::impl {
         }
     }
 
-    void configure(const decorated_context_base& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested) {
+    void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested) {
         if(requested != current)
             gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), static_cast<GLboolean>(requested.invert));
     }

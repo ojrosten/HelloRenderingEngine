@@ -23,13 +23,13 @@ namespace avocet::opengl{
     };
 
     [[nodiscard]]
-    std::string get_vendor(const decorated_context_base& ctx);
+    std::string get_vendor(const decorated_context& ctx);
 
     [[nodiscard]]
-    std::string get_renderer(const decorated_context_base& ctx);
+    std::string get_renderer(const decorated_context& ctx);
 
     [[nodiscard]]
-    opengl_version get_opengl_version(const decorated_context_base& ctx);
+    opengl_version get_opengl_version(const decorated_context& ctx);
 
 
     [[nodiscard]]
@@ -38,12 +38,12 @@ namespace avocet::opengl{
     }
 
     [[nodiscard]]
-    inline bool debug_output_supported(const decorated_context_base& ctx) {
+    inline bool debug_output_supported(const decorated_context& ctx) {
         return debug_output_supported(get_opengl_version(ctx));
     }
 
     [[nodiscard]]
-    inline bool object_labels_activated(const decorated_context_base& ctx) { return debug_output_supported(ctx); }
+    inline bool object_labels_activated(const decorated_context& ctx) { return debug_output_supported(ctx); }
 }
 
 

@@ -41,7 +41,7 @@ namespace avocet::opengl {
         constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
-        static contextual_resource_handles<N> generate(const decorated_context_base& ctx) {
+        static contextual_resource_handles<N> generate(const decorated_context& ctx) {
             raw_indices<N> indices{};
             LifeEvents::generate(ctx, indices);
             return {ctx, indices};
@@ -66,7 +66,7 @@ namespace avocet::opengl {
 
         constexpr static std::size_t N{NumResources.value};
 
-        explicit resource_wrapper(const decorated_context_base& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
+        explicit resource_wrapper(const decorated_context& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
         ~resource_wrapper() { lifecycle_type::destroy(m_Handles); }
 
         resource_wrapper(resource_wrapper&&)           noexcept = default;
@@ -91,7 +91,7 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        generic_resource(const decorated_context_base& ctx, const std::array<configurator_type, N>& configs)
+        generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
             for(const auto& [ctxHandle, config] : std::views::zip(contextual_handles(), configs)) {
@@ -119,7 +119,7 @@ namespace avocet::opengl {
         std::string extract_label() const requires (N == 1) { return extract_label(index<0>{}); }
 
         [[nodiscard]]
-        const decorated_context_base& context() const noexcept { return contextual_handles().context(); }
+        const decorated_context& context() const noexcept { return contextual_handles().context(); }
 
         [[nodiscard]]
         friend bool operator==(const generic_resource&, const generic_resource&) noexcept = default;

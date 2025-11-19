@@ -38,9 +38,9 @@ namespace avocet::opengl {
     };
 
     class context_ref {
-        const decorated_context_base* m_Context{};
+        const decorated_context* m_Context{};
     public:
-        context_ref(const decorated_context_base& ctx)
+        context_ref(const decorated_context& ctx)
             : m_Context{&ctx}
         {
         }
@@ -53,7 +53,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        const decorated_context_base& get() const noexcept { return *m_Context; }
+        const decorated_context& get() const noexcept { return *m_Context; }
 
         [[nodiscard]]
         friend bool operator==(const context_ref&, const context_ref&) noexcept = default;
@@ -63,14 +63,14 @@ namespace avocet::opengl {
         context_ref m_Context;
         resource_handle m_Handle;
     public:
-        contextual_resource_handle(const decorated_context_base& ctx, resource_handle h)
+        contextual_resource_handle(const decorated_context& ctx, resource_handle h)
             : m_Context{ctx}
             , m_Handle{std::move(h)}
         {
         }
 
         [[nodiscard]]
-        const decorated_context_base& context() const noexcept { return m_Context.get(); }
+        const decorated_context& context() const noexcept { return m_Context.get(); }
 
         [[nodiscard]]
         const resource_handle& handle() const noexcept { return m_Handle; }
@@ -104,7 +104,7 @@ namespace avocet::opengl {
     class contextual_resource_handles {
         std::array<contextual_resource_handle, N> m_Handles;
     public:
-        contextual_resource_handles(const decorated_context_base& ctx, const raw_indices<N>& indices)
+        contextual_resource_handles(const decorated_context& ctx, const raw_indices<N>& indices)
             : m_Handles{to_array(indices, [&ctx](GLuint i) { return contextual_resource_handle{ctx, resource_handle{i}}; })}
         {}
 
@@ -120,7 +120,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        const decorated_context_base& context() const noexcept
+        const decorated_context& context() const noexcept
             requires (N > 0)
         {
             return m_Handles.front().context();

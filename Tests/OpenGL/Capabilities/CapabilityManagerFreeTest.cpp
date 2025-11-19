@@ -40,7 +40,7 @@ namespace avocet::opengl {
 
         toggled_payload_type m_Payload;
 
-        const decorated_context_base& m_Context;
+        const decorated_context& m_Context;
 
         template<class Cap>
         void disable(toggled_capability<Cap>& cap) {
@@ -84,7 +84,7 @@ namespace avocet::opengl {
                   std::optional<capabilities::gl_sample_coverage>
               >;
 
-        explicit capability_manager(const decorated_context_base& ctx)
+        explicit capability_manager(const decorated_context& ctx)
             : m_Context{ctx}
         {
             sequoia::meta::for_each(m_Payload, [this](auto& cap) { disable(cap); });

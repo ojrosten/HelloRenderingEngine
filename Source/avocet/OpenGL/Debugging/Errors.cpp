@@ -21,14 +21,14 @@ namespace avocet::opengl {
 
     namespace {
         [[nodiscard]]
-        GLint get_max_message_length(const decorated_context_base& ctx) {
+        GLint get_max_message_length(const decorated_context& ctx) {
             GLint maxLen{};
             gl_function{&GladGLContext::GetIntegerv}(ctx, debugging_mode_off, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
             return maxLen;
         }
 
         [[nodiscard]]
-        std::optional<debug_info> get_next_message(const decorated_context_base& ctx) {
+        std::optional<debug_info> get_next_message(const decorated_context& ctx) {
             const static GLint maxLen{get_max_message_length(ctx)};
 
             std::string message(maxLen, ' ');
@@ -54,7 +54,7 @@ namespace avocet::opengl {
         /// function gives platform-independent output. Once std::generator is
         /// available everywhere, the platform-dependent code can be removed.
         [[nodiscard]]
-        error_code get_error(const decorated_context_base& ctx) { return error_code{gl_function{&GladGLContext::GetError}(ctx, debugging_mode_off)}; }
+        error_code get_error(const decorated_context& ctx) { return error_code{gl_function{&GladGLContext::GetError}(ctx, debugging_mode_off)}; }
 
         /// lib++ does not currently support std::generator, a fact which we need to work around
         namespace libcpp_workaround {
@@ -64,7 +64,7 @@ namespace avocet::opengl {
 #endif
 
             [[nodiscard]]
-            std::vector<error_code> get_errors(const decorated_context_base& ctx, num_messages maxNum) {
+            std::vector<error_code> get_errors(const decorated_context& ctx, num_messages maxNum) {
                 std::vector<error_code> errors;
                 for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
                     const error_code e{get_error(ctx)};
@@ -77,7 +77,7 @@ namespace avocet::opengl {
             }
 
             [[nodiscard]]
-            std::vector<debug_info> get_messages(const decorated_context_base& ctx, num_messages maxNum) {
+            std::vector<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum) {
                 std::vector<debug_info> info;
                 for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
                     const std::optional<debug_info> message{get_next_message(ctx)};
@@ -191,7 +191,7 @@ namespace avocet::opengl {
 
 #ifdef __cpp_lib_generator
     [[nodiscard]]
-        STD_GENERATOR<error_code> get_errors(const decorated_context_base& ctx, num_messages maxNum) {
+        STD_GENERATOR<error_code> get_errors(const decorated_context& ctx, num_messages maxNum) {
         for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
             const error_code e{get_error(ctx)};
             if(e == error_code::none) co_return;
@@ -201,7 +201,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    STD_GENERATOR<debug_info> get_messages(const decorated_context_base& ctx, num_messages maxNum) {
+    STD_GENERATOR<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum) {
         for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
             const std::optional<debug_info> message{get_next_message(ctx)};
             if(!message) co_return;
@@ -211,12 +211,12 @@ namespace avocet::opengl {
     }
 #else
     [[nodiscard]]
-    std::vector<error_code> get_errors(const decorated_context_base& ctx, num_messages maxNum) {
+    std::vector<error_code> get_errors(const decorated_context& ctx, num_messages maxNum) {
         return libcpp_workaround::get_errors(ctx, maxNum);
     }
 
     [[nodiscard]]
-    std::vector<debug_info> get_messages(const decorated_context_base& ctx, num_messages maxNum) {
+    std::vector<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum) {
         return libcpp_workaround::get_messages(ctx, maxNum);
     }
 #endif

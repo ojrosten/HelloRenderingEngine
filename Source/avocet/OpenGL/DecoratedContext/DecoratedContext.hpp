@@ -28,18 +28,18 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(std::source_location loc);
 
-    class decorated_context_base {
+    class decorated_context {
     public:
         template<class Fn>
-        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const decorated_context_base&, const decorator_data&>};
+        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const decorated_context&, const decorator_data&>};
 
-        decorated_context_base() = default;
+        decorated_context() = default;
 
         template<class Prologue, class Epilogue, class Loader>
             requires is_decorator_v<Prologue>
                   && is_decorator_v<Epilogue>
                   && std::is_invocable_r_v<GladGLContext, Loader, GladGLContext>
-        decorated_context_base(debugging_mode mode, Prologue prologue, Epilogue epilogue, Loader loader)
+        decorated_context(debugging_mode mode, Prologue prologue, Epilogue epilogue, Loader loader)
             : m_Mode{mode}
             , m_Prologue{std::move(prologue)}
             , m_Epilogue{std::move(epilogue)}
@@ -50,7 +50,7 @@ namespace avocet::opengl {
 
         template<class Fn, class... Args>
             requires (!std::is_void_v<std::invoke_result_t<Fn, Args...>>)
-        std::invoke_result_t<Fn, Args...> invoke_decorated(this const decorated_context_base& self, const decorator_data& data, Fn fn, Args... args) {
+        std::invoke_result_t<Fn, Args...> invoke_decorated(this const decorated_context& self, const decorator_data& data, Fn fn, Args... args) {
             if(self.m_Prologue) self.m_Prologue(self, data);
 
             const auto res{fn(args...)};
@@ -62,7 +62,7 @@ namespace avocet::opengl {
 
         template<class Fn, class... Args>
             requires std::is_void_v<std::invoke_result_t<Fn, Args...>>
-        void invoke_decorated(this const decorated_context_base& self, const decorator_data& data, Fn fn, Args... args) {
+        void invoke_decorated(this const decorated_context& self, const decorator_data& data, Fn fn, Args... args) {
             if(self.m_Prologue) self.m_Prologue(self, data);
 
             fn(args...);
@@ -76,7 +76,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         const GladGLContext& glad_context() const noexcept { return m_Context; }
     private:
-        using decorator_type = std::function<void(const decorated_context_base&, const decorator_data&)>;
+        using decorator_type = std::function<void(const decorated_context&, const decorator_data&)>;
 
         debugging_mode m_Mode{};
         decorator_type m_Prologue{}, m_Epilogue{};

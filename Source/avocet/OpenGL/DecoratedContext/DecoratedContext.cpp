@@ -15,7 +15,7 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
 
-    void decorated_context_base::init_debug()
+    void decorated_context::init_debug()
     {
         if(debug_mode() == debugging_mode::off)
             return;

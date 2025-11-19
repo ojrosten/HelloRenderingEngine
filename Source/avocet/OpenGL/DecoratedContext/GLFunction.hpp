@@ -34,12 +34,12 @@ namespace avocet::opengl {
         gl_function(nullptr_t) = delete;
 
         [[nodiscard]]
-        R operator()(this const gl_function& self, const decorated_context_base& ctx, Args... args, std::source_location loc = std::source_location::current()) {
+        R operator()(this const gl_function& self, const decorated_context& ctx, Args... args, std::source_location loc = std::source_location::current()) {
             return self.invoke(ctx, ctx.debug_mode(), args..., loc);
         }
 
         [[nodiscard]]
-        R operator()(this const gl_function& self, const decorated_context_base& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) {
+        R operator()(this const gl_function& self, const decorated_context& ctx, debugging_mode_off_type, Args... args, std::source_location loc = std::source_location::current()) {
             return self.invoke(ctx, debugging_mode::off, args..., loc);
         }
     private:
@@ -51,13 +51,13 @@ namespace avocet::opengl {
         };
 
         [[nodiscard]]
-        R invoke(this const gl_function& self, const decorated_context_base& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) {
+        R invoke(this const gl_function& self, const decorated_context& ctx, debugging_mode mode, Args... args, std::source_location loc = std::source_location::current()) {
             const auto[fn, name]{self.get_validated_fn_ptr(ctx, loc)};
             return ctx.invoke_decorated({mode, name, loc}, fn, args...);
         }
 
         [[nodiscard]]
-        std::string_view get_name(const decorated_context_base& ctx) const {
+        std::string_view get_name(const decorated_context& ctx) const {
             static_assert(!glad_ctx_member_info.empty());
 
             const auto totalStride{
@@ -81,7 +81,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        named_fn_ptr get_validated_fn_ptr(const decorated_context_base& ctx, std::source_location loc) const {
+        named_fn_ptr get_validated_fn_ptr(const decorated_context& ctx, std::source_location loc) const {
             named_fn_ptr namedFnPtr{ctx.glad_context().*m_PtrToMem, get_name(ctx)};
             return namedFnPtr.fn ? namedFnPtr : throw std::runtime_error{std::format("gl_function: attempting to invoke a null function pointer {} coming via {}", namedFnPtr.name, to_string(loc))};
         }
