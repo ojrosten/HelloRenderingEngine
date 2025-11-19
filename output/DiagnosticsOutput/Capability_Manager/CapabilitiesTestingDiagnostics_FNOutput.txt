@@ -1,4 +1,4 @@
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 44
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 42
 
 [avocet::opengl::capabilities::gl_blend]
 operator== returned false
@@ -85,7 +85,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 45
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 43
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capabilities::gl_blend>]
@@ -158,7 +158,7 @@ Checking for weak equivalence with:
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 52
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 50
 
 [avocet::opengl::capabilities::gl_sample_coverage]
 operator== returned false
@@ -177,7 +177,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 53
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 51
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capabilities::gl_sample_coverage>]
