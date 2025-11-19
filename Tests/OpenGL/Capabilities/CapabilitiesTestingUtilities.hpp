@@ -10,7 +10,7 @@
 /*! \file */
 
 #include "avocet/OpenGL/Capabilities/Capabilities.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/Context.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include "sequoia/TestFramework/FreeCheckers.hpp"

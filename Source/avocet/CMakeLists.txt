@@ -10,11 +10,11 @@ set(SourceList
     Core/AssetManagement/Image.cpp
     OpenGL/Capabilities/Capabilities.cpp
     OpenGL/Capabilities/CapabilitiesConfiguration.cpp
-    OpenGL/Context/Context.cpp
+    OpenGL/ContextBase/ContextBase.cpp
+    OpenGL/ContextBase/Version.cpp
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp
-    OpenGL/Resources/Textures.cpp
-    OpenGL/Utilities/Version.cpp)
+    OpenGL/Resources/Textures.cpp)
 
 add_library(avocet STATIC ${SourceList})
 

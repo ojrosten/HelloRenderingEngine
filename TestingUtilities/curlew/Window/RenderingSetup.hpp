@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Utilities/Version.hpp"
+#include "avocet/OpenGL/ContextBase/Version.hpp"
 
 #include "sequoia/Core/Logic/Bitmask.hpp"
 

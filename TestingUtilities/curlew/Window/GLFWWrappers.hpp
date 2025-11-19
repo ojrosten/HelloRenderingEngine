@@ -11,6 +11,7 @@
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
+#include "avocet/OpenGL/Context/Context.hpp"
 
 #include <string>
 
@@ -39,7 +40,7 @@ namespace curlew {
     };
 
     struct window_config {
-        using decorator_type = std::function<void(const agl::decorated_context&, const agl::decorator_data)>;
+        using decorator_type = std::function<void(const agl::decorated_context_base&, const agl::decorator_data)>;
 
         std::size_t width{800}, height{600};
         std::string name{};

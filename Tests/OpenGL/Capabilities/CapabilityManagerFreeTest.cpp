@@ -14,7 +14,7 @@
 
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/ContextBase/GLFunction.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 #include "sequoia/Core/Meta/Utilities.hpp"

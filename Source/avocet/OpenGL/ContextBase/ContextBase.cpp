@@ -5,11 +5,17 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "avocet/OpenGL/Context/Context.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/ContextBase/ContextBase.hpp"
+#include "avocet/OpenGL/ContextBase/GLFunction.hpp"
+#include "avocet/OpenGL/ContextBase/Version.hpp"
 
 namespace avocet::opengl {
-    void decorated_context::init_debug()
+    namespace fs = std::filesystem;
+
+    [[nodiscard]]
+    std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
+
+    void decorated_context_base::init_debug()
     {
         if(debug_mode() == debugging_mode::off)
             return;
