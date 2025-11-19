@@ -8,7 +8,7 @@
 #pragma once
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
-#include "avocet/OpenGL/ContextBase/ContextBase.hpp"
+#include "avocet/OpenGL/DecoratedContext/DecoratedContext.hpp"
 
 #include <format>
 

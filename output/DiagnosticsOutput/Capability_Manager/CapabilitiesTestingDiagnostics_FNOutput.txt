@@ -90,7 +90,7 @@ Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 43
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capabilities::gl_blend>]
 Checking for weak equivalence with:
-[avocet::opengl::decorated_context]
+[avocet::opengl::decorated_context_base]
 
   Source rgb   GPU/CPU
   [unsigned int]
@@ -182,7 +182,7 @@ Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 51
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capabilities::gl_sample_coverage>]
 Checking for weak equivalence with:
-[avocet::opengl::decorated_context]
+[avocet::opengl::decorated_context_base]
 
   Coverage
   [float]

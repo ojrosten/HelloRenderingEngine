@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/ContextBase/ContextBase.hpp"
+#include "avocet/OpenGL/DecoratedContext/DecoratedContext.hpp"
 #include <bit>
 #include <concepts>
 #include <format>

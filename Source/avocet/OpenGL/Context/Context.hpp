@@ -7,12 +7,8 @@
 
 #pragma once
 
-#include "avocet/OpenGL/ContextBase/ContextBase.hpp"
-#include "avocet/OpenGL/ContextBase/GLFunction.hpp"
+#include "avocet/OpenGL/DecoratedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
 
 namespace avocet::opengl {
-    class decorated_context : public decorated_context_base {
-    public:
-        using decorated_context_base::decorated_context_base;
-    };
 }

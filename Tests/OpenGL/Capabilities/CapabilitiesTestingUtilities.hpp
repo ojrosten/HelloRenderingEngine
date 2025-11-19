@@ -18,21 +18,21 @@
 namespace avocet::opengl::testing {
     template<class T>
     [[nodiscard]]
-    T get_int_param_as(const opengl::decorated_context& ctx, GLenum name) {
+    T get_int_param_as(const opengl::decorated_context_base& ctx, GLenum name) {
         GLint param{};
         opengl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
         return static_cast<T>(param);
     }
 
     [[nodiscard]]
-    inline GLboolean get_bool_param(const opengl::decorated_context& ctx, GLenum name) {
+    inline GLboolean get_bool_param(const opengl::decorated_context_base& ctx, GLenum name) {
         GLboolean param{};
         opengl::gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
         return param;
     }
 
     [[nodiscard]]
-    inline GLfloat get_float_param(const opengl::decorated_context& ctx, GLenum name) {
+    inline GLfloat get_float_param(const opengl::decorated_context_base& ctx, GLenum name) {
         GLfloat param{};
         opengl::gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
         return param;
@@ -40,7 +40,7 @@ namespace avocet::opengl::testing {
 
     template<std::size_t N>
     [[nodiscard]]
-    std::array<GLfloat, N> get_float_params(const opengl::decorated_context& ctx, GLenum name) {
+    std::array<GLfloat, N> get_float_params(const opengl::decorated_context_base& ctx, GLenum name) {
         std::array<GLfloat, N> params{};
         opengl::gl_function{&GladGLContext::GetFloatv}(ctx, name, params.data());
         return params;
@@ -79,7 +79,7 @@ namespace sequoia::testing
         }
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_blend& cpuCap, const agl::decorated_context& ctx) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_blend& cpuCap, const agl::decorated_context_base& ctx) {
             using namespace avocet::opengl::testing;
             check(equality, "Source rgb   GPU/CPU",      logger, agl::to_gl_enum(cpuCap.rgb  .modes.source),      get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB));
             check(equality, "Source alpha GPU/CPU",      logger, agl::to_gl_enum(cpuCap.alpha.modes.source),      get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA));
@@ -101,7 +101,7 @@ namespace sequoia::testing
         }
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_sample_coverage& obtained, const agl::decorated_context& ctx) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_sample_coverage& obtained, const agl::decorated_context_base& ctx) {
             using namespace avocet::opengl::testing;
             check(equality, "Coverage",      logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE),  obtained.coverage_val.raw_value());
             check(equality, "Invert Mask",   logger, get_bool_param (ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(obtained.invert));
@@ -114,6 +114,6 @@ namespace sequoia::testing
         static void test(equality_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::capabilities::gl_multi_sample&) {}
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::decorated_context&) {}
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::decorated_context_base&) {}
     };
 }

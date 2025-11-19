@@ -60,10 +60,10 @@ namespace avocet::opengl {
         };
 
         template<std::size_t N>
-        static void generate(const decorated_context& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenVertexArrays}(ctx, N, indices.data()); }
+        static void generate(const decorated_context_base& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenVertexArrays}(ctx, N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteVertexArrays}(ctx, N, indices.data()); }
+        static void destroy(const decorated_context_base& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteVertexArrays}(ctx, N, indices.data()); }
 
         static void bind(const contextual_resource_handle& h) { gl_function{&GladGLContext::BindVertexArray}(h.context(), get_index(h)); }
 
@@ -81,10 +81,10 @@ namespace avocet::opengl {
         constexpr static auto identifier{object_identifier::buffer};
 
         template<std::size_t N>
-        static void generate(const decorated_context& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenBuffers}(ctx, N, indices.data()); }
+        static void generate(const decorated_context_base& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenBuffers}(ctx, N, indices.data()); }
 
         template<std::size_t N>
-        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteBuffers}(ctx, N, indices.data()); }
+        static void destroy(const decorated_context_base& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteBuffers}(ctx, N, indices.data()); }
     };
 
     template<buffer_species Species, class T>
@@ -111,7 +111,7 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-        vertex_attribute_object(const decorated_context& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
+        vertex_attribute_object(const decorated_context_base& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{ctx, {{label}}}
         {
             using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
@@ -162,7 +162,7 @@ namespace avocet::opengl {
         using value_type = T;
         using base_type = generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>> ;
 
-        generic_buffer_object(const decorated_context& ctx, std::span<const T> data, const optional_label& label)
+        generic_buffer_object(const decorated_context_base& ctx, std::span<const T> data, const optional_label& label)
             : base_type{ctx, {{data, label}}}
         {}
 
@@ -176,7 +176,7 @@ namespace avocet::opengl {
         }
     private:
         [[nodiscard]]
-        static GLint get_buffer_size(const decorated_context& ctx) {
+        static GLint get_buffer_size(const decorated_context_base& ctx) {
             GLint param{};
             gl_function{&GladGLContext::GetBufferParameteriv}(ctx, to_gl_enum(Species), GL_BUFFER_SIZE, &param);
             return param;

@@ -21,7 +21,7 @@ namespace avocet::testing
 
     namespace
     {
-        agl::resource_handle get_current_program_index(const agl::decorated_context& ctx) {
+        agl::resource_handle get_current_program_index(const agl::decorated_context_base& ctx) {
             GLint param{};
             agl::gl_function{&GladGLContext::GetIntegerv}(ctx, GL_CURRENT_PROGRAM, &param);
             if(param < 0)

@@ -10,7 +10,7 @@
 #include "IllegalGPUCallFreeTest.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
-#include "avocet/OpenGL/ContextBase/GLFunction.hpp"
+#include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
 
 #include "glad/gl.h"
 

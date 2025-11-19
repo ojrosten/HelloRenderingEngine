@@ -10,8 +10,8 @@ set(SourceList
     Core/AssetManagement/Image.cpp
     OpenGL/Capabilities/Capabilities.cpp
     OpenGL/Capabilities/CapabilitiesConfiguration.cpp
-    OpenGL/ContextBase/ContextBase.cpp
-    OpenGL/ContextBase/Version.cpp
+    OpenGL/DecoratedContext/DecoratedContext.cpp
+    OpenGL/DecoratedContext/Version.cpp
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp
     OpenGL/Resources/Textures.cpp)

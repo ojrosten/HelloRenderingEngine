@@ -5,8 +5,8 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "avocet/OpenGL/ContextBase/Version.hpp"
-#include "avocet/OpenGL/ContextBase/GLFunction.hpp"
+#include "avocet/OpenGL/DecoratedContext/Version.hpp"
+#include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
 
 #include <format>
 #include <string>

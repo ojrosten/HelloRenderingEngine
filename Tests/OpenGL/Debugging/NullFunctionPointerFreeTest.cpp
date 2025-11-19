@@ -10,7 +10,7 @@
 #include "NullFunctionPointerFreeTest.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
-#include "avocet/OpenGL/ContextBase/GLFunction.hpp"
+#include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
 
 #include "glad/gl.h"
 
@@ -28,13 +28,13 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Invoking gl_function such that it delegates to a null function pointer",
-            [](){ return agl::gl_function{&GladGLContext::GetError}(agl::decorated_context{}, agl::debugging_mode_off); }
+            [](){ return agl::gl_function{&GladGLContext::GetError}(agl::decorated_context_base{}, agl::debugging_mode_off); }
         );
 
         check_exception_thrown<std::runtime_error>(
             "Check for basic errors with no context",
             [](){
-                agl::check_for_basic_errors(agl::decorated_context{}, {.fn_name{}, .loc{std::source_location::current()}, .max_reported{10}}, agl::default_error_code_processor{});
+                agl::check_for_basic_errors(agl::decorated_context_base{}, {.fn_name{}, .loc{std::source_location::current()}, .max_reported{10}}, agl::default_error_code_processor{});
             }
         );
     }

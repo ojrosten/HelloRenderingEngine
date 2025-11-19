@@ -8,8 +8,8 @@
 #pragma once
 
 #include "avocet/OpenGL/Resources/ResourceHandle.hpp"
-#include "avocet/OpenGL/ContextBase/Version.hpp"
-#include "avocet/OpenGL/ContextBase/GLFunction.hpp"
+#include "avocet/OpenGL/DecoratedContext/Version.hpp"
+#include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 #include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
 
@@ -27,7 +27,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline GLint get_max_label_length(const decorated_context& ctx) {
+    inline GLint get_max_label_length(const decorated_context_base& ctx) {
         const static GLint length{
             [&ctx](){
                 GLint param{};

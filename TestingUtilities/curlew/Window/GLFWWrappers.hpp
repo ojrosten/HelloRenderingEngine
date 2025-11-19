@@ -114,7 +114,7 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
-        agl::decorated_context m_Context{};
+        agl::decorated_context_base m_Context{};
 
         window(const window_config& config, const agl::opengl_version& version);
     public:
@@ -127,6 +127,6 @@ namespace curlew {
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
-        [[nodiscard]] const agl::decorated_context& context() const noexcept { return m_Context; }
+        [[nodiscard]] const agl::decorated_context_base& context() const noexcept { return m_Context; }
     };
 }

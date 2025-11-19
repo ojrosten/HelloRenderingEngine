@@ -29,8 +29,8 @@ namespace avocet::testing
 
         void run_tests();
     private:
-        void test_blending(const opengl::decorated_context& ctx);
+        void test_blending(const opengl::decorated_context_base& ctx);
 
-        void test_sample_coverage(const opengl::decorated_context& ctx);
+        void test_sample_coverage(const opengl::decorated_context_base& ctx);
     };
 }
