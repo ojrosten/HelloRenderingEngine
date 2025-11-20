@@ -17,7 +17,6 @@
 #include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
-#include "sequoia/Core/Meta/Utilities.hpp"
 #include "sequoia/TestFramework/StateTransitionUtilities.hpp"
 
 #include <format>
@@ -35,7 +34,9 @@ namespace avocet::opengl {
             = std::tuple<
                   toggled_capability<capabilities::gl_blend>,
                   toggled_capability<capabilities::gl_multi_sample>,
-                  toggled_capability<capabilities::gl_sample_coverage>
+                  toggled_capability<capabilities::gl_sample_alpha_to_coverage>,
+                  toggled_capability<capabilities::gl_sample_coverage>,
+                  toggled_capability<capabilities::gl_stencil_test>
               >;
 
         toggled_payload_type m_Payload;
@@ -81,7 +82,9 @@ namespace avocet::opengl {
             = std::tuple<
                   std::optional<capabilities::gl_blend>,
                   std::optional<capabilities::gl_multi_sample>,
-                  std::optional<capabilities::gl_sample_coverage>
+                  std::optional<capabilities::gl_sample_alpha_to_coverage>,
+                  std::optional<capabilities::gl_sample_coverage>,
+                  std::optional<capabilities::gl_stencil_test>
               >;
 
         explicit capability_manager(const decorated_context& ctx)
@@ -137,6 +140,28 @@ namespace {
         capMan.new_payload(payload);
         return payload;
     }
+
+    using namespace agl::capabilities;
+
+    constexpr gl_blend configuredBlend{
+        .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
+        .alpha{.modes{.source{agl::blend_mode::dst_alpha},  .destination{agl::blend_mode::one_minus_dst_alpha}},  .algebraic_op{agl::blend_eqn_mode::reverse_subtract}},
+        .colour{0.1f, 0.2f, 0.3f, 0.4f}
+    };
+
+    using enum agl::stencil_failure_mode;
+    constexpr gl_stencil_test configuredStencilTest{
+        .front{
+            .func{.comparison{agl::comparison_mode::greater}, .reference_value{42}, .mask{128}},
+            .op{.on_failure{decrement}, .on_pass_with_depth_failure{increment}, .on_pass_without_depth_failure{invert}},
+            .write_mask{7}
+        },
+        .back{
+            .func{.comparison{agl::comparison_mode::less}, .reference_value{24}, .mask{63}},
+            .op{.on_failure{zero}, .on_pass_with_depth_failure{increment_wrap}, .on_pass_without_depth_failure{decrement_wrap}},
+            .write_mask{23}
+        }
+    };
 }
 
 namespace avocet::testing
@@ -167,16 +192,18 @@ namespace avocet::testing
             none                     = 0,
             blend                    = 1,
             multi_sample             = 2,
-            sample_coverage          = 3,
-            sample_alpha_to_coverage = 4,
-            configured_blend         = 5
+            sample_alpha_to_coverage = 3,
+            sample_coverage          = 4,
+            stencil_test             = 5,
+            configured_blend         = 6,
+            configured_stencil_test  = 7
         };
 
         using graph_type = transition_checker<payload_type>::transition_graph;
 
         graph_type graph{
             {
-                {
+                { // Begin Edges: none
                     {
                         node_name::none,
                         report(""),
@@ -191,6 +218,12 @@ namespace avocet::testing
                         node_name::multi_sample,
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_multi_sample{}); }
+                    },
+
+                    {
+                        node_name::sample_alpha_to_coverage,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_sample_alpha_to_coverage{}); }
                     },
                     {
                         node_name::sample_coverage,
@@ -198,28 +231,22 @@ namespace avocet::testing
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_sample_coverage{}); }
                     },
                     {
-                        node_name::sample_alpha_to_coverage,
+                        node_name::stencil_test,
                         report(""),
-                        [&win](const payload_type& hostPayload) { return set_payload(win, hostPayload, gl_sample_alpha_to_coverage{}); }
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_stencil_test{}); }
                     },
                     {
                         node_name::configured_blend,
                         report(""),
-                        [&capManager](const payload_type& hostPayload) {
-                            return
-                                set_payload(
-                                    capManager,
-                                    hostPayload,
-                                    gl_blend{
-                                        .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
-                                        .alpha{.modes{.source{agl::blend_mode::dst_alpha},  .destination{agl::blend_mode::one_minus_dst_alpha}},  .algebraic_op{agl::blend_eqn_mode::reverse_subtract}},
-                                        .colour{0.1f, 0.2f, 0.3f, 0.4f}
-                                    }
-                                );
-                        }
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, configuredBlend); }
                     },
-                },
-                {
+                    {
+                        node_name::configured_stencil_test,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, configuredStencilTest); }
+                    },
+                }, // End   Edges: none
+                {  // Begin Edges: blend
                     {
                         node_name::none,
                         report(""),
@@ -235,71 +262,86 @@ namespace avocet::testing
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_multi_sample{}); }
                     },
-                },
-                {
+                    {
+                        node_name::configured_blend,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, configuredBlend); }
+                    }
+                }, // End   Edges: blend
+                {  // Begin Edges: multi_sample
                     {
                         node_name::none,
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
                     }
-                },
-                {
+                }, // End   Edges: multi_sample
+                {  // Begin Edges: sample_alpha_to_coverage
                     {
                         node_name::none,
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
                     }
-                },
-                {
+                }, // End   Edges: sample_alpha_to_coverage
+                {  // Begin Edges: sample_coverage
                     {
                         node_name::none,
                         report(""),
                         [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
                     }
-                },
-                {
+                }, // End   Edges: sample_coverage
+                {  // Begin Edges: stencil_test
                     {
                         node_name::none,
                         report(""),
-                        [&win](const payload_type& hostPayload) { return set_payload(win, hostPayload); }
-                    }
-                },
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    },
+                    {
+                        node_name::configured_stencil_test,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, configuredStencilTest); }
+                    },
+                }, // End   Edges: stencil_test
+                {  // Begin Edges: configured_blend
+                    {
+                        node_name::none,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    },
+                    {
+                        node_name::blend,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_blend{}); }
+                    },
+                }, // End   Edges: configured_blend
+                {  // Begin Edges: configured_stencil_test
+                    {
+                        node_name::none,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload); }
+                    },
+                    {
+                        node_name::stencil_test,
+                        report(""),
+                        [&capManager](const payload_type& hostPayload) { return set_payload(capManager, hostPayload, gl_stencil_test{}); }
+                    },
+                }, // End   Edges: configured_stencil_test
             },
             {
                 payload_type{},
                 make_payload(gl_blend{}),
                 make_payload(gl_multi_sample{}),
-                make_payload(gl_sample_coverage{}),
                 make_payload(gl_sample_alpha_to_coverage{}),
-                make_payload(
-                    gl_blend{
-                        .rgb  {.modes{.source{agl::blend_mode::src_colour}, .destination{agl::blend_mode::one_minus_src_colour}}, .algebraic_op{agl::blend_eqn_mode::subtract}},
-                        .alpha{.modes{.source{agl::blend_mode::dst_alpha},  .destination{agl::blend_mode::one_minus_dst_alpha}},  .algebraic_op{agl::blend_eqn_mode::reverse_subtract}},
-                        .colour{0.1f, 0.2f, 0.3f, 0.4f}
-                    }
-                )
+                make_payload(gl_sample_coverage{}),
+                make_payload(gl_stencil_test{}),
+                make_payload(configuredBlend),
+                make_payload(configuredStencilTest)
             }
         };
 
         auto checker{
             [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
                 check(equality, description, obtained, predicted);
-
-                auto checkGPUState{
-                    [&] <class Cap> (const std::optional<Cap>&cap) {
-                        check(
-                            equality,
-                            std::format("{}\n{} is enabled", description, Cap::capability),
-                            static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))),
-                            static_cast<bool>(cap)
-                        );
-
-                        if(cap)
-                            check(weak_equivalence, std::format("{}\nGPU State", description), cap.value(), ctx);
-                    }
-                };
-
-                sequoia::meta::for_each(predicted, checkGPUState);
+                check(weak_equivalence, description, ctx, predicted);
             }
         };
 

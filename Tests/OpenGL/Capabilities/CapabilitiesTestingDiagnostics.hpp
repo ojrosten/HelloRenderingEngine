@@ -32,5 +32,7 @@ namespace avocet::testing
         void test_blending(const opengl::decorated_context& ctx);
 
         void test_sample_coverage(const opengl::decorated_context& ctx);
+
+        void test_stencil_test(const opengl::decorated_context& ctx);
     };
 }

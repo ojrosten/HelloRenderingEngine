@@ -104,6 +104,54 @@ namespace avocet::opengl {
         yes = GL_TRUE
     };
 
+    [[nodiscard]]
+    std::string to_string(invert_sample_mask mode);
+
+    enum class stencil_failure_mode : GLenum {
+        keep           = GL_KEEP,
+        zero           = GL_ZERO,
+        replace        = GL_REPLACE,
+        increment      = GL_INCR,
+        increment_wrap = GL_INCR_WRAP,
+        decrement      = GL_DECR,
+        decrement_wrap = GL_DECR_WRAP,
+        invert         = GL_INVERT
+    };
+
+    [[nodiscard]]
+    std::string to_string(stencil_failure_mode mode);
+
+    enum class comparison_mode : GLenum {
+        never            = GL_NEVER,
+        less             = GL_LESS,
+        less_or_equal    = GL_LEQUAL,
+        greater          = GL_GREATER,
+        greater_or_equal = GL_GEQUAL,
+        equal            = GL_EQUAL,
+        not_equal        = GL_NOTEQUAL,
+        always           = GL_ALWAYS
+    };
+
+    [[nodiscard]]
+    std::string to_string(comparison_mode mode);
+
+    enum class face_selection_mode : GLenum {
+        front          = GL_FRONT,
+        back           = GL_BACK,
+        front_and_back = GL_FRONT_AND_BACK
+    };
+
+    [[nodiscard]]
+    std::string to_string(face_selection_mode mode);
+
+    template<class T>
+    inline constexpr bool is_capability_v{
+           std::regular<T>
+        && requires {
+              { T::capability } -> std::convertible_to<gl_capability>;
+          }
+    };
+
     namespace capabilities {
         struct gl_blend_modes {
             blend_mode      source{blend_mode::one},
@@ -153,6 +201,50 @@ namespace avocet::opengl {
             [[nodiscard]]
             friend constexpr bool operator==(const gl_sample_alpha_to_coverage&, const gl_sample_alpha_to_coverage&) noexcept = default;
         };
+
+        struct gl_stencil_func {
+            comparison_mode comparison{comparison_mode::always};
+            GLint reference_value{};
+            GLuint mask{std::numeric_limits<GLuint>::max()};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_stencil_func&, const gl_stencil_func&) noexcept = default;
+        };
+
+        struct gl_stencil_op {
+            stencil_failure_mode
+                on_failure                   {stencil_failure_mode::keep},
+                on_pass_with_depth_failure   {stencil_failure_mode::keep},
+                on_pass_without_depth_failure{stencil_failure_mode::keep};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_stencil_op&, const gl_stencil_op&) noexcept = default;
+        };
+
+        struct gl_stencil_write_mask {
+            GLuint mask{std::numeric_limits<GLuint>::max()};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_stencil_write_mask&, const gl_stencil_write_mask&) noexcept = default;
+        };
+
+        struct gl_stencil_test_separate {
+            gl_stencil_func       func{};
+            gl_stencil_op         op{};
+            gl_stencil_write_mask write_mask{};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_stencil_test_separate&, const gl_stencil_test_separate&) noexcept = default;
+        };
+
+        struct gl_stencil_test {
+            constexpr static auto capability{gl_capability::stencil_test};
+
+            gl_stencil_test_separate front{}, back{front};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_stencil_test&, const gl_stencil_test&) noexcept = default;
+        };
     }
 }
 
@@ -166,30 +258,13 @@ namespace std {
         }
     };
 
-    template<>
-    struct formatter<avocet::opengl::gl_capability> {
+    template<class Enum>
+        requires std::is_scoped_enum_v<Enum> && (std::same_as<std::underlying_type_t<Enum>, GLenum> || std::same_as<std::underlying_type_t<Enum>, GLboolean>)
+    struct formatter<Enum> {
         constexpr auto parse(auto& ctx) { return ctx.begin(); }
 
-        auto format(avocet::opengl::gl_capability cap, auto& ctx) const {
-            return format_to(ctx.out(), "{}", to_string(cap));
-        }
-    };
-
-    template<>
-    struct formatter<avocet::opengl::blend_mode> {
-        constexpr auto parse(auto& ctx) { return ctx.begin(); }
-
-        auto format(avocet::opengl::blend_mode mode, auto& ctx) const {
-            return format_to(ctx.out(), "{}", to_string(mode));
-        }
-    };
-
-    template<>
-    struct formatter<avocet::opengl::blend_eqn_mode> {
-        constexpr auto parse(auto& ctx) { return ctx.begin(); }
-
-        auto format(avocet::opengl::blend_eqn_mode mode, auto& ctx) const {
-            return format_to(ctx.out(), "{}", to_string(mode));
+        auto format(Enum val, auto& ctx) const {
+            return format_to(ctx.out(), "{}", to_string(val));
         }
     };
 }

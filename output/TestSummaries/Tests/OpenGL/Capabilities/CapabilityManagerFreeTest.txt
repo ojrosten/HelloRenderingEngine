@@ -1,2 +1,33 @@
 Capability Manager Free Test
-Standard Top Level Checks:                72;  Failures:  0  [Deep checks: 257]
+Standard Top Level Checks:                44;  Failures:  1  [Deep checks: 626]
+
+Tests/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp, Line 344
+Transition from node 0 to 5
+Tests/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp, Line 235
+
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+Checking for weak equivalence with:
+[std::tuple<std::optional<avocet::opengl::capabilities::gl_blend>, std::optional<avocet::opengl::capabilities::gl_multi_sample>, std::optional<avocet::opengl::capabilities::gl_sample_alpha_to_coverage>, std::optional<avocet::opengl::capabilities::gl_sample_coverage>, std::optional<avocet::opengl::capabilities::gl_stencil_test> >]
+
+  GPU State
+  Comparison performed using:
+  [sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+  Checking for weak equivalence with:
+  [avocet::opengl::capabilities::gl_stencil_test]
+
+    Front Val Mask
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 4294967295
+
+    Back Val Mask
+    [unsigned int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 4294967295
+
+=======================================
+

@@ -24,4 +24,6 @@ namespace avocet::opengl::capabilities::impl {
     void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested);
 
     inline void configure(const decorated_context&, const gl_sample_alpha_to_coverage&, const gl_sample_alpha_to_coverage&) {}
+
+    void configure(const decorated_context& ctx, const gl_stencil_test& current, const gl_stencil_test& requested);
 }

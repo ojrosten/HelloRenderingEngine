@@ -10,6 +10,20 @@
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl {
+    namespace {
+        template<std::integral T>
+        std::string make_error_message(std::string_view enumName, T val) {
+            return std::format("Unrecognized option {}::{} while stringifying", enumName, val);
+        }
+
+        template<class Enum>
+            requires std::is_scoped_enum_v<Enum>
+        [[nodiscard]]
+        std::string error_message(std::string_view enumName, Enum val) {
+            return make_error_message(enumName, to_gl_underlying(val));
+        }
+    }
+
 
     [[nodiscard]]
     std::string to_string(gl_capability cap) {
@@ -47,14 +61,13 @@ namespace avocet::opengl {
         case program_point_size:            return "program_point_size";
         }
 
-        throw std::runtime_error{std::format("Unrecognized option gl_capability::{} while stringifying", to_gl_enum(cap))};
+        throw std::runtime_error{error_message("gl_capability", cap)};
     }
 
     [[nodiscard]]
     std::string to_string(blend_mode mode) {
         using enum blend_mode;
-        switch(mode)
-        {
+        switch(mode) {
         case zero:                   return "zero";
         case one:                    return "one";
         case src_colour:             return "src_colour";
@@ -71,14 +84,13 @@ namespace avocet::opengl {
         case one_minus_const_alpha:  return "one_minus_const_alpha ";
         }
 
-        throw std::runtime_error{std::format("Unrecognized option blend_mode::{} while stringifying", to_gl_enum(mode))};
+        throw std::runtime_error{error_message("blend_mode", mode)};
     }
 
     [[nodiscard]]
     std::string to_string(blend_eqn_mode mode) {
         using enum blend_eqn_mode;
-        switch(mode)
-        {
+        switch(mode) {
         case add:              return "add";
         case subtract:         return "subtract";
         case reverse_subtract: return "reverse_subtract";
@@ -86,6 +98,63 @@ namespace avocet::opengl {
         case max:              return "max";
         }
 
-        throw std::runtime_error{std::format("Unrecognized option blend_eqn_mode::{} while stringifying", to_gl_enum(mode))};
+        throw std::runtime_error{error_message("blend_eqn_mode", mode)};
+    }
+
+    [[nodiscard]]
+    std::string to_string(invert_sample_mask mode) {
+        using enum invert_sample_mask;
+        switch(mode) {
+        case no:  return "no";
+        case yes: return "yes";
+        }
+
+        throw std::runtime_error{error_message("invert_sample_mask", mode)};
+    }
+
+    [[nodiscard]]
+    std::string to_string(stencil_failure_mode mode) {
+        using enum stencil_failure_mode;
+        switch(mode) {
+        case keep          : return "keep";
+        case zero          : return "zero";
+        case replace       : return "replace";
+        case increment     : return "increment";
+        case increment_wrap: return "increment_wrap";
+        case decrement     : return "decrement";
+        case decrement_wrap: return "decrement_wrap";
+        case invert        : return "invert";
+        }
+
+        throw std::runtime_error{error_message("stencil_failure_mode", mode)};
+    }
+
+    [[nodiscard]]
+    std::string to_string(comparison_mode mode) {
+        using enum comparison_mode;
+        switch(mode) {
+        case never           : return "never";
+        case less            : return "less";
+        case less_or_equal   : return "less_or_equal";
+        case greater         : return "greater";
+        case greater_or_equal: return "greater_or_equal";
+        case equal           : return "equal";
+        case not_equal       : return "not_equal";
+        case always          : return "always";
+        };
+
+        throw std::runtime_error{error_message("comparison_mode", mode)};
+    }
+
+    [[nodiscard]]
+    std::string to_string(face_selection_mode mode) {
+        using enum face_selection_mode;
+        switch(mode) {
+        case front         : return "front";
+        case back          : return "back";
+        case front_and_back: return "front_and_back";
+        }
+
+        throw std::runtime_error{error_message("face_selection_mode", mode)};
     }
 }

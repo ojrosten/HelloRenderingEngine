@@ -26,7 +26,7 @@ namespace avocet::opengl {
     constexpr GLint to_gl_int(T val) noexcept { return static_cast<GLint>(val); }
 
     template<class T>
-        requires std::is_scoped_enum_v<T> && std::is_same_v<std::underlying_type_t<T>, GLboolean>
+        requires std::is_scoped_enum_v<T>
     [[nodiscard]]
-    constexpr GLboolean to_gl_bool(T val) noexcept { return static_cast<GLboolean>(val); }
+    constexpr std::underlying_type_t<T> to_gl_underlying(T val) noexcept { return static_cast<std::underlying_type_t<T>>(val); }
 }

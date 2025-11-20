@@ -10,6 +10,36 @@
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl::capabilities::impl {
+    namespace {
+        void do_configure(const decorated_context& ctx, face_selection_mode face, const gl_stencil_func& requested) {
+            gl_function{&GladGLContext::StencilFuncSeparate}(ctx, to_gl_enum(face), to_gl_enum(requested.comparison), requested.reference_value, requested.mask);
+        }
+
+        void do_configure(const decorated_context& ctx, face_selection_mode face, const gl_stencil_op& requested) {
+            gl_function{&GladGLContext::StencilOpSeparate}(ctx, to_gl_enum(face), to_gl_enum(requested.on_failure), to_gl_enum(requested.on_pass_with_depth_failure), to_gl_enum(requested.on_pass_without_depth_failure));
+        }
+
+        void do_configure(const decorated_context& ctx, face_selection_mode face, const gl_stencil_write_mask& requested) {
+            gl_function{&GladGLContext::StencilMaskSeparate}(ctx, to_gl_enum(face), requested.mask);
+        }
+
+        template<class T>
+        void do_configure(const decorated_context& ctx, const T& currentFront, const T& currentBack, const T& requestedFront, const T& requestedBack) {
+            if((requestedFront == requestedBack) and (requestedFront != currentFront) and (requestedBack != currentBack)) {
+                do_configure(ctx, face_selection_mode::front_and_back, requestedFront);
+            }
+            else {
+                if(requestedFront != currentFront) {
+                    do_configure(ctx, face_selection_mode::front, requestedFront);
+                }
+
+                if(requestedBack != currentBack) {
+                    do_configure(ctx, face_selection_mode::back, requestedBack);
+                }
+            }
+        }
+    }
+
     void configure(const decorated_context& ctx, const gl_blend& current, const gl_blend& requested) {
         if((requested.rgb.modes != current.rgb.modes) or (requested.alpha.modes != current.alpha.modes)) {
             gl_function{&GladGLContext::BlendFuncSeparate}(
@@ -33,5 +63,12 @@ namespace avocet::opengl::capabilities::impl {
     void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested) {
         if(requested != current)
             gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), static_cast<GLboolean>(requested.invert));
+    }
+
+    void configure(const decorated_context& ctx, const gl_stencil_test& current, const gl_stencil_test& requested) {
+        do_configure(ctx, current.front.func      , current.back.func      , requested.front.func      , requested.back.func      );
+        do_configure(ctx, current.front.op        , current.back.op        , requested.front.op        , requested.back.op        );
+        do_configure(ctx, current.front.write_mask, current.back.write_mask, requested.front.write_mask, requested.back.write_mask);
+
     }
 }
