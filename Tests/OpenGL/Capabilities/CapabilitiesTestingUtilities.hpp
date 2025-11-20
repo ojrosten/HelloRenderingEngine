@@ -212,30 +212,41 @@ namespace sequoia::testing
             using namespace avocet::opengl;
             check(equality, "Front Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_FUNC      ), predicted.front.func.comparison     );
             check(equality, "Front Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_REF       ), predicted.front.func.reference_value);
-            check(equality, "Front Val Mask", logger, get_int64_param_as<GLuint>       (ctx, GL_STENCIL_VALUE_MASK), predicted.front.func.mask           );
+            check_mask("Front Val Mask", logger, ctx, GL_STENCIL_VALUE_MASK, predicted.front.func.mask);
 
             check(equality, "Front On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_FAIL           ), predicted.front.op.on_failure                   );
             check(equality, "Front On Pass with Depth Failure"   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_PASS_DEPTH_FAIL), predicted.front.op.on_pass_with_depth_failure   );
             check(equality, "Front On Pass without Depth Failure", logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_PASS_DEPTH_PASS), predicted.front.op.on_pass_without_depth_failure);
 
-            check(equality, "Front Write Mask", logger, get_int64_param_as<GLuint>(ctx, GL_STENCIL_WRITEMASK), predicted.front.write_mask.mask);
+            check_mask("Front Write Mask", logger, ctx, GL_STENCIL_WRITEMASK, predicted.front.write_mask.mask);
 
             check(equality, "Back Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_BACK_FUNC      ), predicted.back.func.comparison     );
             check(equality, "Back Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_BACK_REF       ), predicted.back.func.reference_value);
-            check(equality, "Back Val Mask", logger, get_int64_param_as<GLuint>       (ctx, GL_STENCIL_BACK_VALUE_MASK), predicted.back.func.mask           );
+            check_mask("Back Val Mask", logger, ctx, GL_STENCIL_BACK_VALUE_MASK, predicted.back.func.mask);
 
             check(equality, "Back On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_FAIL           ), predicted.back.op.on_failure                   );
             check(equality, "Back On Pass with Depth Failure"   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_PASS_DEPTH_FAIL), predicted.back.op.on_pass_with_depth_failure   );
             check(equality, "Back On Pass without Depth Failure", logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_PASS_DEPTH_PASS), predicted.back.op.on_pass_without_depth_failure);
 
-            check(equality, "Back Write Mask", logger, get_int64_param_as<GLuint>(ctx, GL_STENCIL_BACK_WRITEMASK), predicted.back.write_mask.mask);
+            check_mask("Back Write Mask", logger, ctx, GL_STENCIL_BACK_WRITEMASK, predicted.back.write_mask.mask);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::decorated_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Coverage", logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), predicted.coverage_val.raw_value());
+            check(equality, "Coverage"   , logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), predicted.coverage_val.raw_value());
             check(equality, "Invert Mask", logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(predicted.invert));
         }
+    private:
+      template<test_mode Mode>
+      static void check_mask(std::string description, test_logger<Mode>& logger, const agl::decorated_context& ctx, GLenum name, GLuint predicted) {
+          using namespace avocet::opengl::testing;
+          // Different drivers extract masks somewhat differently. The type is GLuint, though in practice only
+          // the first byte is used. For a mask of all 1s, some drivers report 255 whereas others report
+          // numeric_limits<GLuint>::max()
+          // To give platform-independent output, anything beyond the first byte of the mask is masked.
+          // It's masks all the way down...
+          check(equality, description, logger, get_int64_param_as<GLuint>(ctx, name) & 0xFF, predicted & 0xFF);
+      }
     };
 }

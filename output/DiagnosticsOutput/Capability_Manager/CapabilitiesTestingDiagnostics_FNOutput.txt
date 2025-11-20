@@ -343,7 +343,7 @@ Checking for weak equivalence with:
   Front Val Mask
   [unsigned int]
   operator== returned false
-  Obtained : 0
+  Obtained : 255
   Predicted: 128
 
   Front On Failure
@@ -367,7 +367,7 @@ Checking for weak equivalence with:
   Front Write Mask
   [unsigned int]
   operator== returned false
-  Obtained : 4294967295
+  Obtained : 255
   Predicted: 7
 
   Back Func
@@ -385,7 +385,7 @@ Checking for weak equivalence with:
   Back Val Mask
   [unsigned int]
   operator== returned false
-  Obtained : 0
+  Obtained : 255
   Predicted: 63
 
   Back On Failure
@@ -409,7 +409,7 @@ Checking for weak equivalence with:
   Back Write Mask
   [unsigned int]
   operator== returned false
-  Obtained : 4294967295
+  Obtained : 255
   Predicted: 23
 
 =======================================
