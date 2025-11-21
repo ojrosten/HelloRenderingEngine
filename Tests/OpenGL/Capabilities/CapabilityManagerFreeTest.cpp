@@ -91,6 +91,7 @@ namespace avocet::opengl {
             : m_Context{ctx}
         {
             sequoia::meta::for_each(m_Payload, [this](auto& cap) { disable(cap); });
+            capabilities::impl::compensate_for_driver_init_bugs(m_Context, capabilities::gl_stencil_test{});
         }
 
         template<class... RequestedCaps>

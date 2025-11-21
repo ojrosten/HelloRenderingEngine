@@ -7,6 +7,7 @@
 
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
 #include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
+#include "avocet/OpenGL/DecoratedContext/Version.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl::capabilities::impl {
@@ -38,6 +39,9 @@ namespace avocet::opengl::capabilities::impl {
                 }
             }
         }
+
+        [[nodiscard]]
+        bool is_intel_arc(std::string_view renderer) { return renderer.find("Intel(R) Arc") != std::string::npos; }
     }
 
     void configure(const decorated_context& ctx, const gl_blend& current, const gl_blend& requested) {
@@ -70,5 +74,12 @@ namespace avocet::opengl::capabilities::impl {
         do_configure(ctx, current.front.op        , current.back.op        , requested.front.op        , requested.back.op        );
         do_configure(ctx, current.front.write_mask, current.back.write_mask, requested.front.write_mask, requested.back.write_mask);
 
+    }
+
+    void compensate_for_driver_init_bugs(const decorated_context& ctx, const gl_stencil_test& init) {
+        if(is_intel_arc(get_renderer(ctx))) {
+            const auto& func{init.front.func};
+            gl_function{&GladGLContext::StencilFunc}(ctx, to_gl_enum(func.comparison), func.reference_value, func.mask);
+        }
     }
 }

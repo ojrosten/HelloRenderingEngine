@@ -26,4 +26,6 @@ namespace avocet::opengl::capabilities::impl {
     inline void configure(const decorated_context&, const gl_sample_alpha_to_coverage&, const gl_sample_alpha_to_coverage&) {}
 
     void configure(const decorated_context& ctx, const gl_stencil_test& current, const gl_stencil_test& requested);
+
+    void compensate_for_driver_init_bugs(const decorated_context& ctx, const gl_stencil_test& init);
 }
