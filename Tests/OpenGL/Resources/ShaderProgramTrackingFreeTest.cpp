@@ -30,8 +30,7 @@ namespace avocet::testing
             return agl::resource_handle{static_cast<GLuint>(param)};
         }
 
-        agl::resource_handle make_and_use_shader_program(curlew::glfw_manager& manager,const fs::path& shaderDir) {
-            auto w{manager.create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::resource_handle make_and_use_shader_program(curlew::window w,const fs::path& shaderDir) {
             const auto& ctx{w.context()};
 
             agl::shader_program sp{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
@@ -55,16 +54,14 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::run_tests()
     {
-        curlew::glfw_manager manager{};
-
-        check_serial_tracking_non_overlapping_lifetimes(manager);
+        check_serial_tracking_non_overlapping_lifetimes();
     }
 
-    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes(curlew::glfw_manager& manager)
+    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes()
     {
         const auto shaderDir{working_materials()};
-        const auto prog0{make_and_use_shader_program(manager, shaderDir)},
-                   prog1{make_and_use_shader_program(manager, shaderDir)};
+        const auto prog0{make_and_use_shader_program(create_window({.hiding{curlew::window_hiding_mode::on}}), shaderDir)},
+                   prog1{make_and_use_shader_program(create_window({.hiding{curlew::window_hiding_mode::on}}), shaderDir)};
 
         check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
     }

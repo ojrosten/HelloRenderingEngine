@@ -26,8 +26,7 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+        auto w{create_window({.hiding{window_hiding_mode::on}})};
         const auto& ctx{w.context()};
 
         check_exception_thrown<std::runtime_error>(

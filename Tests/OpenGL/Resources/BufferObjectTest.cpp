@@ -20,8 +20,7 @@ namespace avocet::testing
     void buffer_object_test::run_tests()
     {
         using namespace curlew;
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+        auto w{create_window({.hiding{window_hiding_mode::on}})};
 
         execute<agl::vertex_buffer_object <GLfloat>>(w);
         execute<agl::element_buffer_object<GLubyte>>(w);

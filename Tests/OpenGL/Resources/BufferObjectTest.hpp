@@ -15,12 +15,10 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class buffer_object_test final : public move_only_test
+    class buffer_object_test final : public curlew::common_graphics_move_only_test
     {
     public:
-        using parallelizable_type = std::false_type;
-
-        using move_only_test::move_only_test;
+        using curlew::common_graphics_move_only_test::common_graphics_move_only_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

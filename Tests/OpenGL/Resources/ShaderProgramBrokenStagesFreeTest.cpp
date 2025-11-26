@@ -22,8 +22,8 @@ namespace avocet::testing
     void shader_program_broken_stages_free_test::run_tests()
     {
         using namespace curlew;
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+        ;
+        auto w{create_window({.hiding{window_hiding_mode::on}})};
 
         const auto shaderDir{working_materials()};
 

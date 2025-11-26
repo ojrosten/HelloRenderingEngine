@@ -25,8 +25,8 @@ namespace avocet::testing
     void multiple_illegal_gpu_calls_free_test::run_tests()
     {
         using namespace curlew;
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        auto w{create_window({.hiding{window_hiding_mode::on}})};
         const auto& ctx{w.context()};
 
         if(agl::debug_output_supported(ctx)) {

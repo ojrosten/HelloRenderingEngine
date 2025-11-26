@@ -7,9 +7,10 @@
 
 #pragma once
 
+#include "curlew/Window/GLFWWrappers.hpp"
 #include "curlew/Window/RenderingSetup.hpp"
 
-#include "sequoia/TestFramework/FreeTestCore.hpp"
+#include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
 
 namespace curlew {
     using namespace sequoia::testing;
@@ -21,14 +22,14 @@ namespace curlew {
     [[nodiscard]]
     rendering_setup find_rendering_setup();
 
-    template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none>
-    class basic_graphics_test : public basic_test<Mode, trivial_extender>
+    template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none, class Extender=trivial_extender>
+    class basic_graphics_test : public basic_test<Mode, Extender>
     {
     public:
         using parallelizable_type = std::false_type;
-        using base_test_type = basic_test<Mode, trivial_extender>;
+        using base_test_type = basic_test<Mode, Extender>;
 
-        using basic_test<Mode, trivial_extender>::basic_test;
+        using basic_test<Mode, Extender>::basic_test;
 
         [[nodiscard]]
         std::string summary_discriminator() const
@@ -48,6 +49,12 @@ namespace curlew {
 
         basic_graphics_test(basic_graphics_test&&)            noexcept = default;
         basic_graphics_test& operator=(basic_graphics_test&&) noexcept = default;
+
+        [[nodiscard]]
+        curlew::window create_window(const curlew::window_config& config) {
+            static curlew::glfw_manager st_Manager{};
+            return st_Manager.create_window(config);
+        }
     };
 
     template<selectivity_flavour Selectivity, specificity_flavour Specificity>
@@ -59,5 +66,24 @@ namespace curlew {
     template<selectivity_flavour Selectivity, specificity_flavour Specificity>
     using graphics_false_positive_test = basic_graphics_test<test_mode::false_positive, Selectivity, Specificity>;
 
-    using common_graphics_test = graphics_test<selectivity_flavour::none, specificity_flavour::none>;
+    using common_graphics_test                =                graphics_test<selectivity_flavour::none, specificity_flavour::none>;
+    using common_graphics_false_negative_test = graphics_false_negative_test<selectivity_flavour::none, specificity_flavour::none>;
+    using common_graphics_false_positive_test = graphics_false_positive_test<selectivity_flavour::none, specificity_flavour::none>;
+
+
+    template<test_mode Mode, selectivity_flavour Selectivity, specificity_flavour Specificity>
+    using basic_graphics_move_only_test = basic_graphics_test<Mode, Selectivity, Specificity, move_only_extender<Mode>>;
+
+    template<selectivity_flavour Selectivity, specificity_flavour Specificity>
+    using graphics_move_only_test = basic_graphics_move_only_test<test_mode::standard, Selectivity, Specificity>;
+
+    template<selectivity_flavour Selectivity, specificity_flavour Specificity>
+    using graphics_move_only_false_negative_test = basic_graphics_move_only_test<test_mode::false_negative, Selectivity, Specificity>;
+
+    template<selectivity_flavour Selectivity, specificity_flavour Specificity>
+    using graphics_move_only_false_positive_test = basic_graphics_move_only_test<test_mode::false_positive, Selectivity, Specificity>;
+
+    using common_graphics_move_only_test                =                graphics_move_only_test<selectivity_flavour::none, specificity_flavour::none>;
+    using common_graphics_move_only_false_negative_test = graphics_move_only_false_negative_test<selectivity_flavour::none, specificity_flavour::none>;
+    using common_graphics_move_only_false_positive_test = graphics_move_only_false_positive_test<selectivity_flavour::none, specificity_flavour::none>;
 }

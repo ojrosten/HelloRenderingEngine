@@ -22,8 +22,8 @@ namespace avocet::testing
     void texture_2d_test::run_tests()
     {
         using namespace curlew;
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        auto w{create_window({.hiding{window_hiding_mode::on}})};
 
         check_semantics_via_texture_data(
             "Faithful roundtrip rgba and rgb: data sent and received naturally aligned",

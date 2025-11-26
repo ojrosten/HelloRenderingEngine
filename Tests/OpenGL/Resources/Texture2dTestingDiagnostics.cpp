@@ -22,8 +22,8 @@ namespace avocet::testing
     void texture_2d_false_negative_test::run_tests()
     {
         using namespace curlew;
-        glfw_manager manager{};
-        auto w{manager.create_window({.hiding{window_hiding_mode::on}})};
+
+        auto w{create_window({.hiding{window_hiding_mode::on}})};
 
         using value_type = agl::texture_2d::value_type;
         using opt_data   = std::optional<image_data>;
