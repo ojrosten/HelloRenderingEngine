@@ -88,9 +88,6 @@ namespace curlew {
 
         [[nodiscard]]
         const rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
-
-        [[nodiscard]]
-        static rendering_setup find_rendering_setup();
     };
 
     class [[nodiscard]] window_resource {

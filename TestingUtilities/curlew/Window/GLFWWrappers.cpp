@@ -98,9 +98,6 @@ namespace curlew {
         return setup;
     }
 
-    [[nodiscard]]
-    rendering_setup glfw_manager::find_rendering_setup() { return glfw_manager{}.get_rendering_setup(); }
-
     window glfw_manager::create_window(const window_config& config) { return window{config, m_RenderingSetup.version}; }
 
     window_resource::window_resource(const window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
