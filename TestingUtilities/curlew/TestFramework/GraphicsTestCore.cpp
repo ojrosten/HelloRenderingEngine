@@ -11,8 +11,8 @@
 
 namespace curlew {
     [[nodiscard]]
-    rendering_setup find_rendering_setup() {
-        const static auto setup{glfw_manager::find_rendering_setup()};
+    rendering_setup test_window_manager::find_rendering_setup() {
+        const static auto setup{st_Manager.get_rendering_setup()};
         return setup;
     }
 }

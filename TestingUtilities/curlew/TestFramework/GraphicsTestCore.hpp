@@ -19,8 +19,17 @@ namespace curlew {
     constexpr inline specificity_flavour platform_specific{specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version};
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
-    [[nodiscard]]
-    rendering_setup find_rendering_setup();
+    class test_window_manager {
+        inline static curlew::glfw_manager st_Manager{};
+    public:
+        [[nodiscard]]
+        static rendering_setup find_rendering_setup();
+
+        [[nodiscard]]
+        static curlew::window create_window(const curlew::window_config& config) {
+            return st_Manager.create_window(config);
+        }
+    };
 
     template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none, class Extender=trivial_extender>
     class basic_graphics_test : public basic_test<Mode, Extender>
@@ -35,14 +44,14 @@ namespace curlew {
         std::string summary_discriminator() const
             requires (Selectivity != selectivity_flavour::none)
         {
-            return rendering_setup_discriminator(find_rendering_setup(), Selectivity);
+            return rendering_setup_discriminator(test_window_manager::find_rendering_setup(), Selectivity);
         }
 
         [[nodiscard]]
         std::string output_discriminator() const
             requires (Specificity != specificity_flavour::none)
         {
-            return rendering_setup_discriminator(find_rendering_setup(), Specificity);
+            return rendering_setup_discriminator(test_window_manager::find_rendering_setup(), Specificity);
         }
     protected:
         ~basic_graphics_test() = default;
@@ -51,10 +60,7 @@ namespace curlew {
         basic_graphics_test& operator=(basic_graphics_test&&) noexcept = default;
 
         [[nodiscard]]
-        curlew::window create_window(const curlew::window_config& config) {
-            static curlew::glfw_manager st_Manager{};
-            return st_Manager.create_window(config);
-        }
+        curlew::window create_window(const curlew::window_config& config) { return test_window_manager::create_window(config); }
     };
 
     template<selectivity_flavour Selectivity, specificity_flavour Specificity>
