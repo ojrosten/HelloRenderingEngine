@@ -11,18 +11,16 @@
 
 #include "avocet/OpenGL/Context/Context.hpp"
 
-#include "sequoia/TestFramework/RegularTestCore.hpp"
+#include "curlew/TestFramework/GraphicsTestCore.hpp"
 
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class capabilities_false_negative_test final : public regular_false_negative_test
+    class capabilities_false_negative_test final : public curlew::graphics_false_negative_test<curlew::selectivity_flavour::none, curlew::specificity_flavour::renderer>
     {
     public:
-        using parallelizable_type = std::false_type;
-
-        using regular_false_negative_test::regular_false_negative_test;
+        using curlew::graphics_false_negative_test<curlew::selectivity_flavour::none, curlew::specificity_flavour::renderer>::graphics_false_negative_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;

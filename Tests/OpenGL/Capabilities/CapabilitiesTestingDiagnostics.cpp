@@ -24,7 +24,7 @@ namespace avocet::testing {
     void capabilities_false_negative_test::run_tests()
     {
         using namespace curlew;
-        auto w{ create_window({.hiding{curlew::window_hiding_mode::on}, .compensate{agl::attempt_to_compensate_for_driver_bugs::no} })};
+        auto w{ create_window({.hiding{curlew::window_hiding_mode::on}})};
 
         test_blending(w.context());
         test_sample_coverage(w.context());

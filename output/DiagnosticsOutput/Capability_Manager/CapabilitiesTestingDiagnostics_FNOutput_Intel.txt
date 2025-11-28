@@ -1,0 +1,416 @@
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 42
+
+[avocet::opengl::capabilities::gl_blend]
+operator== returned false
+
+  RGB
+  [avocet::opengl::capabilities::gl_blend_data]
+  operator== returned false
+
+    Modes
+    [avocet::opengl::capabilities::gl_blend_modes]
+    operator== returned false
+
+      Source
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : one
+      Predicted: src_colour
+
+      Destination
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : zero
+      Predicted: one_minus_src_colour
+
+    Algebraic Op
+    [avocet::opengl::blend_eqn_mode]
+    operator== returned false
+    Obtained : add
+    Predicted: subtract
+
+  Alpha
+  [avocet::opengl::capabilities::gl_blend_data]
+  operator== returned false
+
+    Modes
+    [avocet::opengl::capabilities::gl_blend_modes]
+    operator== returned false
+
+      Source
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : one
+      Predicted: dst_alpha
+
+      Destination
+      [avocet::opengl::blend_mode]
+      operator== returned false
+      Obtained : zero
+      Predicted: one_minus_dst_alpha
+
+    Algebraic Op
+    [avocet::opengl::blend_eqn_mode]
+    operator== returned false
+    Obtained : add
+    Predicted: reverse_subtract
+
+  Colour
+  [std::array<float, 4>]
+  operator== returned false
+
+    Element 0 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.1
+
+    Element 1 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.2
+
+    Element 2 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.3
+
+    Element 3 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.4
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 43
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+Checking for weak equivalence with:
+[avocet::opengl::capabilities::gl_blend]
+
+  Source rgb   GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 1
+  Predicted: 768
+
+  Source alpha GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 1
+  Predicted: 772
+
+  Destination rgb   GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 0
+  Predicted: 769
+
+  Destination alpha GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 0
+  Predicted: 773
+
+  Blend equation GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 32774
+  Predicted: 32778
+
+  Blend equation GPU/CPU
+  [unsigned int]
+  operator== returned false
+  Obtained : 32774
+  Predicted: 32779
+
+  Colour GPU/CPU
+  [std::array<float, 4>]
+  operator== returned false
+
+    Element 0 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.1
+
+    Element 1 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.2
+
+    Element 2 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.3
+
+    Element 3 of range incorrect
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.4
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 50
+
+[avocet::opengl::capabilities::gl_sample_coverage]
+operator== returned false
+
+  Coverage
+  [avocet::opengl::sample_coverage_value]
+  operator== returned false
+  Obtained : 1
+  Predicted: 0.5
+
+  Invert Mask
+  [avocet::opengl::invert_sample_mask]
+  operator== returned false
+  Obtained : no
+  Predicted: yes
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 51
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+Checking for weak equivalence with:
+[avocet::opengl::capabilities::gl_sample_coverage]
+
+  Coverage
+  [float]
+  operator== returned false
+  Obtained : 1
+  Predicted: 0.5
+
+  Invert Mask
+  [unsigned char]
+  operator== returned false
+  Obtained : 0
+  Predicted: 1
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 70
+
+[avocet::opengl::capabilities::gl_stencil_test]
+operator== returned false
+
+  Front
+  [avocet::opengl::capabilities::gl_stencil_test_separate]
+  operator== returned false
+
+    Func
+    [avocet::opengl::capabilities::gl_stencil_func]
+    operator== returned false
+
+      Comparison
+      [avocet::opengl::comparison_mode]
+      operator== returned false
+      Obtained : always
+      Predicted: greater
+
+      Reference Value
+      [int]
+      operator== returned false
+      Obtained : 0
+      Predicted: 42
+
+      Mask
+      [unsigned int]
+      operator== returned false
+      Obtained : 4294967295
+      Predicted: 128
+
+    Op
+    [avocet::opengl::capabilities::gl_stencil_op]
+    operator== returned false
+
+      On Failure
+      [avocet::opengl::stencil_failure_mode]
+      operator== returned false
+      Obtained : keep
+      Predicted: decrement
+
+      On Pass with depth failure
+      [avocet::opengl::stencil_failure_mode]
+      operator== returned false
+      Obtained : keep
+      Predicted: increment
+
+      On Pass without depth failure
+      [avocet::opengl::stencil_failure_mode]
+      operator== returned false
+      Obtained : keep
+      Predicted: invert
+
+    Write Mask
+    [avocet::opengl::capabilities::gl_stencil_write_mask]
+    operator== returned false
+
+      Value
+      [unsigned int]
+      operator== returned false
+      Obtained : 4294967295
+      Predicted: 7
+
+  Back
+  [avocet::opengl::capabilities::gl_stencil_test_separate]
+  operator== returned false
+
+    Func
+    [avocet::opengl::capabilities::gl_stencil_func]
+    operator== returned false
+
+      Comparison
+      [avocet::opengl::comparison_mode]
+      operator== returned false
+      Obtained : always
+      Predicted: less
+
+      Reference Value
+      [int]
+      operator== returned false
+      Obtained : 0
+      Predicted: 24
+
+      Mask
+      [unsigned int]
+      operator== returned false
+      Obtained : 4294967295
+      Predicted: 63
+
+    Op
+    [avocet::opengl::capabilities::gl_stencil_op]
+    operator== returned false
+
+      On Failure
+      [avocet::opengl::stencil_failure_mode]
+      operator== returned false
+      Obtained : keep
+      Predicted: zero
+
+      On Pass with depth failure
+      [avocet::opengl::stencil_failure_mode]
+      operator== returned false
+      Obtained : keep
+      Predicted: increment_wrap
+
+      On Pass without depth failure
+      [avocet::opengl::stencil_failure_mode]
+      operator== returned false
+      Obtained : keep
+      Predicted: decrement_wrap
+
+    Write Mask
+    [avocet::opengl::capabilities::gl_stencil_write_mask]
+    operator== returned false
+
+      Value
+      [unsigned int]
+      operator== returned false
+      Obtained : 4294967295
+      Predicted: 23
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 71
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+Checking for weak equivalence with:
+[avocet::opengl::capabilities::gl_stencil_test]
+
+  Front Func
+  [avocet::opengl::comparison_mode]
+  operator== returned false
+  Obtained : always
+  Predicted: greater
+
+  Front Ref Val
+  [int]
+  operator== returned false
+  Obtained : 0
+  Predicted: 42
+
+  Front Val Mask
+  [unsigned int]
+  operator== returned false
+  Obtained : 0
+  Predicted: 128
+
+  Front On Failure
+  [avocet::opengl::stencil_failure_mode]
+  operator== returned false
+  Obtained : keep
+  Predicted: decrement
+
+  Front On Pass with Depth Failure
+  [avocet::opengl::stencil_failure_mode]
+  operator== returned false
+  Obtained : keep
+  Predicted: increment
+
+  Front On Pass without Depth Failure
+  [avocet::opengl::stencil_failure_mode]
+  operator== returned false
+  Obtained : keep
+  Predicted: invert
+
+  Front Write Mask
+  [unsigned int]
+  operator== returned false
+  Obtained : 255
+  Predicted: 7
+
+  Back Func
+  [avocet::opengl::comparison_mode]
+  operator== returned false
+  Obtained : always
+  Predicted: less
+
+  Back Ref Val
+  [int]
+  operator== returned false
+  Obtained : 0
+  Predicted: 24
+
+  Back Val Mask
+  [unsigned int]
+  operator== returned false
+  Obtained : 0
+  Predicted: 63
+
+  Back On Failure
+  [avocet::opengl::stencil_failure_mode]
+  operator== returned false
+  Obtained : keep
+  Predicted: zero
+
+  Back On Pass with Depth Failure
+  [avocet::opengl::stencil_failure_mode]
+  operator== returned false
+  Obtained : keep
+  Predicted: increment_wrap
+
+  Back On Pass without Depth Failure
+  [avocet::opengl::stencil_failure_mode]
+  operator== returned false
+  Obtained : keep
+  Predicted: decrement_wrap
+
+  Back Write Mask
+  [unsigned int]
+  operator== returned false
+  Obtained : 255
+  Predicted: 23
+
+=======================================
+
