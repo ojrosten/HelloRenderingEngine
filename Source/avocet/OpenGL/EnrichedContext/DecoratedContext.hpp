@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/DecoratedContext/DebugMode.hpp"
+#include "avocet/OpenGL/Context/DebugMode.hpp"
 
 #include <array>
 #include <concepts>

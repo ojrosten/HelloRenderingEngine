@@ -7,7 +7,7 @@
 
 #include "curlew/Window/GLFWWrappers.hpp"
 
-#include "avocet/OpenGL/Context/Context.hpp"
+#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
 
 #include "GLFW/glfw3.h"
 

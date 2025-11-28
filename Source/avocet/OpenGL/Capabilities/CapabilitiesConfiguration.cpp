@@ -6,8 +6,8 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
-#include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
-#include "avocet/OpenGL/DecoratedContext/Version.hpp"
+#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl::capabilities::impl {

@@ -11,7 +11,7 @@
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
-#include "avocet/OpenGL/Context/Context.hpp"
+#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
 
 #include <string>
 

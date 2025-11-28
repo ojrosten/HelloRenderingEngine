@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/DecoratedContext/Version.hpp"
+#include "avocet/OpenGL/Context/Version.hpp"
 
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"
 

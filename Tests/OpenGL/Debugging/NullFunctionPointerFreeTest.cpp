@@ -10,7 +10,7 @@
 #include "NullFunctionPointerFreeTest.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
-#include "avocet/OpenGL/DecoratedContext/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLFunction.hpp"
 
 #include "glad/gl.h"
 
