@@ -240,7 +240,7 @@ namespace avocet::opengl {
         struct gl_stencil_test {
             constexpr static auto capability{gl_capability::stencil_test};
 
-            gl_stencil_test_separate front{}, back{front};
+            gl_stencil_test_separate front{}, back{};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_stencil_test&, const gl_stencil_test&) noexcept = default;
