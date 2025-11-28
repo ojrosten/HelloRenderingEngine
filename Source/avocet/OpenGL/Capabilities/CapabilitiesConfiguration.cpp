@@ -25,7 +25,7 @@ namespace avocet::opengl::capabilities::impl {
         }
 
         template<class T>
-        void do_configure(const decorated_context& ctx, const T& currentFront, const T& currentBack, const T& requestedFront, const T& requestedBack) {
+        void dispatch_stencil_config(const decorated_context& ctx, const T& currentFront, const T& currentBack, const T& requestedFront, const T& requestedBack) {
             if((requestedFront == requestedBack) and (requestedFront != currentFront) and (requestedBack != currentBack)) {
                 do_configure(ctx, face_selection_mode::front_and_back, requestedFront);
             }
@@ -70,9 +70,9 @@ namespace avocet::opengl::capabilities::impl {
     }
 
     void configure(const decorated_context& ctx, const gl_stencil_test& current, const gl_stencil_test& requested) {
-        do_configure(ctx, current.front.func      , current.back.func      , requested.front.func      , requested.back.func      );
-        do_configure(ctx, current.front.op        , current.back.op        , requested.front.op        , requested.back.op        );
-        do_configure(ctx, current.front.write_mask, current.back.write_mask, requested.front.write_mask, requested.back.write_mask);
+        dispatch_stencil_config(ctx, current.front.func      , current.back.func      , requested.front.func      , requested.back.func      );
+        dispatch_stencil_config(ctx, current.front.op        , current.back.op        , requested.front.op        , requested.back.op        );
+        dispatch_stencil_config(ctx, current.front.write_mask, current.back.write_mask, requested.front.write_mask, requested.back.write_mask);
 
     }
 
