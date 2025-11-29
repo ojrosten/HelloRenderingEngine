@@ -9,6 +9,8 @@
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
+#include "avocet/Core/Formatting/Formatting.hpp"
+
 #include "sequoia/FileSystem/FileSystem.hpp"
 
 #include <fstream>
@@ -28,7 +30,7 @@ namespace avocet::opengl {
             case fragment: return "fragment";
             }
 
-            throw std::runtime_error{std::format("shader_species - unexpected value: {}", to_gl_enum(species))};
+            throw std::runtime_error{error_message("shader_species", species)};
         }
 
         template<class T>
@@ -108,7 +110,7 @@ namespace avocet::opengl {
             {}
 
             [[nodiscard]]
-            std::string name() const { return to_string(m_Species) + " shader"; }
+            std::string name() const { return std::format("{} shader", m_Species); }
         };
 
         class shader_program_checker : public shader_checker {

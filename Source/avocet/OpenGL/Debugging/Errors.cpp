@@ -9,6 +9,8 @@
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
+#include "avocet/Core/Formatting/Formatting.hpp"
+
 #include <filesystem>
 #include <format>
 #include <iostream>
@@ -109,7 +111,7 @@ namespace avocet::opengl {
             return "Out of memory";
         }
 
-        throw std::runtime_error{"error_code: unrecognized option"};
+        throw std::runtime_error{error_message("error_code", e)};
     }
 
     [[nodiscard]]
@@ -123,7 +125,7 @@ namespace avocet::opengl {
         case notification: return "Notification";
         }
 
-        throw std::runtime_error{"debug_severity: unrecognized option"};
+        throw std::runtime_error{error_message("debug_severity", e)};
     }
 
 
@@ -140,7 +142,7 @@ namespace avocet::opengl {
         case other:           return "Other";
         }
 
-        throw std::runtime_error{"debug_source: unrecognized option"};
+        throw std::runtime_error{error_message("debug_source", e)};
     }
 
     [[nodiscard]]
@@ -159,7 +161,7 @@ namespace avocet::opengl {
         case other:                return "Other";
         }
 
-        throw std::runtime_error{"debug_type: unrecognized option"};
+        throw std::runtime_error{error_message("debug_type", e)};
     }
 
     [[nodiscard]]
@@ -168,9 +170,9 @@ namespace avocet::opengl {
             std::format(
                 "Id: {}; Source: {}; Type: {}; Severity: {}\n{}",
                 info.id,
-                to_string(debug_source{info.source}),
-                to_string(debug_type{info.type}),
-                to_string(debug_severity{info.severity}),
+                debug_source{info.source},
+                debug_type{info.type},
+                debug_severity{info.severity},
                 info.message
             );
     }

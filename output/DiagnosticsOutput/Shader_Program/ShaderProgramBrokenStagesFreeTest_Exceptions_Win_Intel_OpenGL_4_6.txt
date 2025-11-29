@@ -3,7 +3,7 @@ Broken Vertex Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected following invocation of CompileShader originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 149:
+OpenGL error detected following invocation of CompileShader originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 151:
 Id: 0; Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 2, "": ERROR: 0:8: '}' : syntax error syntax error
 
@@ -15,7 +15,7 @@ Broken Fragment Shader
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected following invocation of CompileShader originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 149:
+OpenGL error detected following invocation of CompileShader originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 151:
 Id: 0; Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_COMPILE error has been generated. GLSL compile failed for shader 3, "": ERROR: 0:7: '{' : syntax error syntax error
 
@@ -27,7 +27,7 @@ Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected following invocation of LinkProgram originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 190:
+OpenGL error detected following invocation of LinkProgram originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 192:
 Id: 1; Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": Varying "colour" has different type width across different shaders.
 
