@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "avocet/Core/Formatting/Formatting.hpp"
+
 #include "glad/gl.h"
 
 #include <array>
@@ -255,16 +257,6 @@ namespace std {
 
         auto format(avocet::opengl::sample_coverage_value coverage, auto& ctx) const {
             return format_to(ctx.out(), "{}", coverage.raw_value());
-        }
-    };
-
-    template<class Enum>
-        requires std::is_scoped_enum_v<Enum> && (std::same_as<std::underlying_type_t<Enum>, GLenum> || std::same_as<std::underlying_type_t<Enum>, GLboolean>)
-    struct formatter<Enum> {
-        constexpr auto parse(auto& ctx) { return ctx.begin(); }
-
-        auto format(Enum val, auto& ctx) const {
-            return format_to(ctx.out(), "{}", to_string(val));
         }
     };
 }

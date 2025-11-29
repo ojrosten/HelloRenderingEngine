@@ -83,6 +83,7 @@ int main()
                  .debug_mode{agl::debugging_mode::dynamic},
                  .prologue{},
                  .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{acceptableWarnings}}},
+                 .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
                  .samples{4}
                 }
             )

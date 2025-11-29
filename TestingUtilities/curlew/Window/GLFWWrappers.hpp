@@ -11,7 +11,7 @@
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
 
 #include <string>
 
@@ -40,7 +40,7 @@ namespace curlew {
     };
 
     struct window_config {
-        using decorator_type = std::function<void(const agl::decorated_context&, const agl::decorator_data)>;
+        using decorator_type = std::function<void(const agl::context&, const agl::decorator_data)>;
 
         std::size_t width{800}, height{600};
         std::string name{};
@@ -48,6 +48,7 @@ namespace curlew {
         agl::debugging_mode debug_mode{agl::debugging_mode::dynamic};
         decorator_type prologue{},
                        epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}};
+        agl::attempt_to_compensate_for_driver_bugs compensate{agl::attempt_to_compensate_for_driver_bugs::yes};
         num_samples samples{1};
     };
 
@@ -111,7 +112,7 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
-        agl::decorated_context m_Context{};
+        agl::decorated_context m_Context;
 
         window(const window_config& config, const agl::opengl_version& version);
     public:

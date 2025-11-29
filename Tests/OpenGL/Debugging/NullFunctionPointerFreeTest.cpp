@@ -26,15 +26,13 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        check_exception_thrown<std::runtime_error>(
-            "Invoking gl_function such that it delegates to a null function pointer",
-            [](){ return agl::gl_function{&GladGLContext::GetError}(agl::decorated_context{}, agl::debugging_mode_off); }
-        );
+        using decorator_type = std::function<void(const agl::context&, const agl::decorator_data)>;
 
         check_exception_thrown<std::runtime_error>(
-            "Check for basic errors with no context",
-            [](){
-                agl::check_for_basic_errors(agl::decorated_context{}, {.fn_name{}, .loc{std::source_location::current()}, .max_reported{10}}, agl::default_error_code_processor{});
+            "Invoking gl_function such that it delegates to a null function pointer",
+            []() {
+                agl::decorated_context nothingLoaded{agl::debugging_mode::off, [](GladGLContext ctx) { return ctx; }, decorator_type{}, decorator_type{}};
+                return agl::gl_function{&GladGLContext::GetError}(nothingLoaded);
             }
         );
     }

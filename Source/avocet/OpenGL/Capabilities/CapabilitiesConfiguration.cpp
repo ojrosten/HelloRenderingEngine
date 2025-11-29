@@ -6,6 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
+#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"

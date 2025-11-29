@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "avocet/OpenGL/Context/Context.hpp"
 #include "avocet/OpenGL/Context/Version.hpp"
 
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"
@@ -135,16 +136,16 @@ namespace avocet::opengl {
 
 #ifdef __cpp_lib_generator
     [[nodiscard]]
-    STD_GENERATOR<error_code> get_errors(const decorated_context& ctx, num_messages maxNum);
+    STD_GENERATOR<error_code> get_errors(const context& ctx, num_messages maxNum);
 
     [[nodiscard]]
-    STD_GENERATOR<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum);
+    STD_GENERATOR<debug_info> get_messages(const context& ctx, num_messages maxNum);
 #else
     [[nodiscard]]
-    std::vector<error_code> get_errors(const decorated_context& ctx, num_messages maxNum);
+    std::vector<error_code> get_errors(const context& ctx, num_messages maxNum);
 
     [[nodiscard]]
-    std::vector<debug_info> get_messages(const decorated_context& ctx, num_messages maxNum);
+    std::vector<debug_info> get_messages(const context& ctx, num_messages maxNum);
 #endif
 
     struct error_message_info {
@@ -164,7 +165,7 @@ namespace avocet::opengl {
 
     template<class ErrorProcessor>
         requires is_error_code_processor_v<ErrorProcessor>
-    void check_for_basic_errors(const decorated_context& ctx, const error_message_info& info, ErrorProcessor processor)
+    void check_for_basic_errors(const context& ctx, const error_message_info& info, ErrorProcessor processor)
     {
         const std::string errorMessage{std::ranges::fold_left(get_errors(ctx, info.max_reported), std::string{}, processor)};
 
@@ -174,7 +175,7 @@ namespace avocet::opengl {
 
     template<class ErrorProcessor>
         requires is_debug_info_processor_v<ErrorProcessor>
-    void check_for_advanced_errors(const decorated_context& ctx, const error_message_info& info, ErrorProcessor processor) {
+    void check_for_advanced_errors(const context& ctx, const error_message_info& info, ErrorProcessor processor) {
         const std::string errorMessage{
             std::ranges::fold_left(get_messages(ctx, info.max_reported),  std::string{}, processor)
         };
@@ -185,7 +186,7 @@ namespace avocet::opengl {
 
     template<class ErrorCodeProcessor, class DebugInfoProcessor>
         requires is_error_code_processor_v<ErrorCodeProcessor>&& is_debug_info_processor_v<DebugInfoProcessor>
-    void check_for_errors(const decorated_context& ctx, debugging_mode mode, const error_message_info& info, ErrorCodeProcessor errorCodeProcessor, DebugInfoProcessor&& debugInfoProcessor) {
+    void check_for_errors(const context& ctx, debugging_mode mode, const error_message_info& info, ErrorCodeProcessor errorCodeProcessor, DebugInfoProcessor&& debugInfoProcessor) {
         if(mode != debugging_mode::off) {
             if(debug_output_supported(ctx))
                 check_for_advanced_errors(ctx, info, std::move(debugInfoProcessor));
@@ -206,8 +207,8 @@ namespace avocet::opengl {
             , m_DebugInfoProcessor{std::move(debugInfoProcessor)}
         {}
 
-        void operator()(const decorated_context& ctx, const decorator_data& data) const {
-            check_for_errors(ctx, data.debug_mode, {data.fn_name, data.loc, m_MaxReported}, ErrorCodeProcessor{}, m_DebugInfoProcessor);
+        void operator()(const context& ctx, const decorator_data& data) const {
+            check_for_errors(ctx, ctx.debug_mode(), {data.fn_name, data.loc, m_MaxReported}, ErrorCodeProcessor{}, m_DebugInfoProcessor);
         }
     };
 }

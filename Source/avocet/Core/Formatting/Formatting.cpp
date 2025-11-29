@@ -7,17 +7,13 @@
 
 #pragma once
 
-#include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+#include "avocet/Core/Formatting/Formatting.hpp"
 
-#include <type_traits>
+#include <filesystem>
 
-namespace avocet::opengl {
-    enum class debugging_mode { off = 0, dynamic };
+namespace avocet {
+    namespace fs = std::filesystem;
 
-    template<debugging_mode Mode>
-    struct debugging_mode_constant : std::integral_constant<debugging_mode, Mode> {};
-
-    using debugging_mode_off_type = debugging_mode_constant<debugging_mode::off>;
-
-    inline constexpr debugging_mode_off_type debugging_mode_off{};
+    [[nodiscard]]
+    std::string to_string(std::source_location loc) { return std::format("{}, line {}", fs::path{loc.file_name()}.generic_string(), loc.line()); }
 }

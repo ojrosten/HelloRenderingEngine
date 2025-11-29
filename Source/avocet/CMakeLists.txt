@@ -8,10 +8,12 @@ sequoia_init()
 
 set(SourceList
     Core/AssetManagement/Image.cpp
+    Core/Formatting/Formatting.cpp
     OpenGL/Capabilities/Capabilities.cpp
     OpenGL/Capabilities/CapabilitiesConfiguration.cpp
+    OpenGL/Context/Context.cpp
+    OpenGL/Context/ContextBase.cpp
     OpenGL/Context/Version.cpp
-    OpenGL/EnrichedContext/DecoratedContext.cpp
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp
     OpenGL/Resources/Textures.cpp)

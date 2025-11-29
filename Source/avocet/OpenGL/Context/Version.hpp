@@ -8,7 +8,7 @@
 #pragma once
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/ContextBase.hpp"
 
 #include <format>
 
@@ -23,14 +23,13 @@ namespace avocet::opengl{
     };
 
     [[nodiscard]]
-    std::string get_vendor(const decorated_context& ctx);
+    std::string get_vendor(const context_base& ctx);
 
     [[nodiscard]]
-    std::string get_renderer(const decorated_context& ctx);
+    std::string get_renderer(const context_base& ctx);
 
     [[nodiscard]]
-    opengl_version get_opengl_version(const decorated_context& ctx);
-
+    opengl_version get_opengl_version(const context_base& ctx);
 
     [[nodiscard]]
     constexpr bool debug_output_supported(opengl_version version) noexcept {
@@ -38,12 +37,12 @@ namespace avocet::opengl{
     }
 
     [[nodiscard]]
-    inline bool debug_output_supported(const decorated_context& ctx) {
+    inline bool debug_output_supported(const context_base& ctx) {
         return debug_output_supported(get_opengl_version(ctx));
     }
 
     [[nodiscard]]
-    inline bool object_labels_activated(const decorated_context& ctx) { return debug_output_supported(ctx); }
+    inline bool object_labels_activated(const context_base& ctx) { return debug_output_supported(ctx); }
 }
 
 

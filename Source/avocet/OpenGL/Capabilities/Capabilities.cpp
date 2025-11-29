@@ -7,24 +7,9 @@
 
 #include "avocet/OpenGL/Capabilities/Capabilities.hpp"
 
-#include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/Core/Formatting/Formatting.hpp"
 
 namespace avocet::opengl {
-    namespace {
-        template<std::integral T>
-        std::string make_error_message(std::string_view enumName, T val) {
-            return std::format("Unrecognized option {}::{} while stringifying", enumName, val);
-        }
-
-        template<class Enum>
-            requires std::is_scoped_enum_v<Enum>
-        [[nodiscard]]
-        std::string error_message(std::string_view enumName, Enum val) {
-            return make_error_message(enumName, to_gl_underlying(val));
-        }
-    }
-
-
     [[nodiscard]]
     std::string to_string(gl_capability cap) {
         using enum gl_capability;

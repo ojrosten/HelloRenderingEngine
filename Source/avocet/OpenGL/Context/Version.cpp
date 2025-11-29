@@ -14,17 +14,17 @@
 
 namespace avocet::opengl{
     [[nodiscard]]
-    std::string get_vendor(const decorated_context& ctx) {
+    std::string get_vendor(const context_base& ctx) {
         return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_VENDOR))};
     }
 
     [[nodiscard]]
-    std::string get_renderer(const decorated_context& ctx) {
+    std::string get_renderer(const context_base& ctx) {
         return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_RENDERER))};
     }
 
     [[nodiscard]]
-    opengl_version get_opengl_version(const decorated_context& ctx) {
+    opengl_version get_opengl_version(const context_base& ctx) {
         if(ctx.glad_context().VERSION_4_6) return {4, 6};
         if(ctx.glad_context().VERSION_4_5) return {4, 5};
         if(ctx.glad_context().VERSION_4_4) return {4, 4};
