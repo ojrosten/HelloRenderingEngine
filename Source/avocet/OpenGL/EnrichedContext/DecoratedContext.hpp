@@ -27,7 +27,7 @@ namespace avocet::opengl {
 
         template<class Fn, class... Args>
             requires (!std::is_void_v<std::invoke_result_t<Fn, Args...>>)
-        std::invoke_result_t<Fn, Args...> invoke_decorated(this const decorated_context& self, const decorator_data& data, Fn fn, Args... args) {
+        std::invoke_result_t<Fn, Args...> invoke(this const decorated_context& self, const decorator_data& data, Fn fn, Args... args) {
             if(self.m_Prologue) self.m_Prologue(self, data);
         
             const auto res{fn(args...)};
@@ -39,7 +39,7 @@ namespace avocet::opengl {
         
         template<class Fn, class... Args>
             requires std::is_void_v<std::invoke_result_t<Fn, Args...>>
-        void invoke_decorated(this const decorated_context& self, const decorator_data& data, Fn fn, Args... args) {
+        void invoke(this const decorated_context& self, const decorator_data& data, Fn fn, Args... args) {
             if(self.m_Prologue) self.m_Prologue(self, data);
         
             fn(args...);

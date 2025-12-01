@@ -41,7 +41,7 @@ namespace avocet::opengl {
         R operator()(this const gl_function& self, const C& ctx, Args... args, std::source_location loc = std::source_location::current())
         {
             const auto [fn, name] {self.get_validated_fn_ptr(ctx, loc)};
-            return ctx.invoke_decorated({name, loc}, fn, args...);
+            return ctx.invoke({name, loc}, fn, args...);
         }
     private:
         pointer_to_member_type m_PtrToMem;

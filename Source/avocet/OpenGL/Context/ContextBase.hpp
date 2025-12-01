@@ -63,7 +63,7 @@ namespace avocet::opengl {
         }
 
         template<class Fn, class... Args>
-        std::invoke_result_t<Fn, Args...> invoke_decorated(this const context_base&, const decorator_data&, Fn fn, Args... args) {
+        std::invoke_result_t<Fn, Args...> invoke(this const context_base&, const decorator_data&, Fn fn, Args... args) {
             return fn(args...);
         }
 
