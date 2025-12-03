@@ -31,8 +31,7 @@ namespace avocet::testing
         check_exception_thrown<std::runtime_error>(
             "Invoking gl_function such that it delegates to a null function pointer",
             []() {
-                agl::decorated_context nothingLoaded{agl::debugging_mode::off, [](GladGLContext ctx) { return ctx; }, decorator_type{}, decorator_type{}};
-                return agl::gl_function{&GladGLContext::GetError}(nothingLoaded);
+                agl::capable_context nothingLoaded{agl::debugging_mode::off, [](GladGLContext ctx) { return ctx; }, decorator_type{}, decorator_type{}, agl::attempt_to_compensate_for_driver_bugs::no};
             }
         );
     }

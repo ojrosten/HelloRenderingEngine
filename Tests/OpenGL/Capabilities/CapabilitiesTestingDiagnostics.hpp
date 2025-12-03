@@ -27,10 +27,10 @@ namespace avocet::testing
 
         void run_tests();
     private:
-        void test_blending(const opengl::decorated_context& ctx);
+        void test_blending(const opengl::capable_context& ctx);
 
-        void test_sample_coverage(const opengl::decorated_context& ctx);
+        void test_sample_coverage(const opengl::capable_context& ctx);
 
-        void test_stencil_test(const opengl::decorated_context& ctx);
+        void test_stencil_test(const opengl::capable_context& ctx);
     };
 }

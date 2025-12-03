@@ -158,7 +158,7 @@ namespace sequoia::testing
     };
 
     template<>
-    struct value_tester<avocet::opengl::decorated_context> {
+    struct value_tester<avocet::opengl::capable_context> {
         // TO DO: Remove this duplication after Lecture 35
         using payload_type 
             = std::tuple<
@@ -170,7 +170,7 @@ namespace sequoia::testing
               >;
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::decorated_context& ctx, const payload_type& payload) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const payload_type& payload) {
             auto checkGPUState{
                     [&] <class Cap> (const std::optional<Cap>&cap) {
                         testing::check(
@@ -191,11 +191,11 @@ namespace sequoia::testing
 
         template<test_mode Mode, class T>
             requires avocet::opengl::is_capability_v<T>
-        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::decorated_context&, const T&) {}
+        static void test(weak_equivalence_check_t, test_logger<Mode>&, const agl::capable_context&, const T&) {}
 
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::decorated_context& ctx, const agl::capabilities::gl_blend& cpuCap) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_blend& cpuCap) {
             using namespace avocet::opengl::testing;
             check(equality, "Source rgb   GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB)       , agl::to_gl_enum(cpuCap.rgb.modes.source));
             check(equality, "Source alpha GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA)     , agl::to_gl_enum(cpuCap.alpha.modes.source));
@@ -208,7 +208,7 @@ namespace sequoia::testing
         }
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::decorated_context& ctx, const agl::capabilities::gl_stencil_test& predicted) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_stencil_test& predicted) {
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
             check(equality, "Front Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_FUNC      ), predicted.front.func.comparison     );
@@ -233,14 +233,14 @@ namespace sequoia::testing
         }
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::decorated_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
             using namespace avocet::opengl::testing;
             check(equality, "Coverage"   , logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), predicted.coverage_val.raw_value());
             check(equality, "Invert Mask", logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(predicted.invert));
         }
     private:
       template<test_mode Mode>
-      static void check_mask(std::string description, test_logger<Mode>& logger, const agl::decorated_context& ctx, GLenum name, GLuint predicted) {
+      static void check_mask(std::string description, test_logger<Mode>& logger, const agl::capable_context& ctx, GLenum name, GLuint predicted) {
           using namespace avocet::opengl::testing;
           // Different drivers extract masks somewhat differently. The type is GLuint, though in practice only
           // the first byte is used. For a mask of all 1s, some drivers report 255 whereas others report

@@ -53,6 +53,21 @@ namespace {
     std::string make_label(std::string_view name, std::source_location loc = std::source_location::current()) {
         return std::format("{} created at {} line {}", name, sequoia::back(fs::path{loc.file_name()}).string(), loc.line());
     }
+
+    using payload_type = agl::capable_context::payload_type;
+
+    template<class... Caps>
+    [[nodiscard]]
+    payload_type make_payload(const Caps&... caps) {
+        payload_type payload{};
+        ((std::get<std::optional<Caps>>(payload) = caps), ...);
+        return payload;
+    }
+
+    template<class... Caps>
+    void set_payload(const agl::capable_context& ctx, const Caps&... targetCaps) {
+        ctx.new_payload(make_payload(targetCaps...));
+    }
 }
 
 int main()
@@ -248,45 +263,92 @@ int main()
 
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-            discShaderProgram2DTextured.use();
-            disc.draw(agl::texture_unit{5});
+            {
+                set_payload(ctx);
+                discShaderProgram2DTextured.use();
+                disc.draw(agl::texture_unit{5});
+            }
 
-            shaderProgram2DMixedTextures.use();
-            sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+            {
+                set_payload(ctx);
+                shaderProgram2DMixedTextures.use();
+                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+            }
 
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_STENCIL_TEST);
+            {
+                set_payload(
+                    ctx,
+                    agl::capabilities::gl_stencil_test{
+                        .front{
+                            .func{.comparison{agl::comparison_mode::greater}, .reference_value{1}, .mask{255}},
+                            .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::replace} },
+                            .write_mask{255}
+                        }
+                    }
+                );
+                discShaderProgram2D.use();
+                cutout.draw();
+            }
 
-            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_GREATER, 1, 255);
-            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_REPLACE);
-            discShaderProgram2D.use();
-            cutout.draw();
+            {
+                set_payload(
+                    ctx,
+                    agl::capabilities::gl_stencil_test{
+                        .front{
+                            .func{.comparison{agl::comparison_mode::greater}, .reference_value{1}, .mask{255}},
+                            .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::keep} },
+                            .write_mask{255}
+                        }
+                    }
+                );
+                shaderProgram2DTextured.use();
+                hearts.draw(agl::texture_unit{8});
+            }
 
-            agl::gl_function{&GladGLContext::StencilOp}(ctx, GL_KEEP, GL_KEEP, GL_KEEP);
-            shaderProgram2DTextured.use();
-            hearts.draw(agl::texture_unit{8});
+            {
+                set_payload(
+                    ctx,
+                    agl::capabilities::gl_stencil_test{
+                        .front{
+                            .func{.comparison{agl::comparison_mode::equal}, .reference_value{1}, .mask{255}},
+                            .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::keep} },
+                            .write_mask{255}
+                        }
+                    }
+                );
+                shaderProgram2DTextured.use();
+                hex.draw(agl::texture_unit{8});
+            }
 
-            agl::gl_function{&GladGLContext::StencilFunc}(ctx, GL_EQUAL, 1, 255);
-            shaderProgram2DTextured.use();
-            hex.draw(agl::texture_unit{8});
+            {
+                set_payload(
+                    ctx,
+                    agl::capabilities::gl_multi_sample{},
+                    agl::capabilities::gl_sample_coverage{.coverage_val{0.75}, .invert{agl::invert_sample_mask::no}},
+                    agl::capabilities::gl_sample_alpha_to_coverage{}
+                );
+                shaderProgram3DDoubleMonochrome.use();
+                partiallyTransparentQuadUpper.draw();
+            }
 
-            agl::gl_function{&GladGLContext::Disable}(ctx, GL_STENCIL_TEST);
-
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_COVERAGE);
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_SAMPLE_ALPHA_TO_COVERAGE);
-            agl::gl_function{&GladGLContext::SampleCoverage}(ctx, 0.75, GL_FALSE);
-
-            shaderProgram3DDoubleMonochrome.use();
-            partiallyTransparentQuadUpper.draw();
-
-            agl::gl_function{&GladGLContext::Disable}(ctx, GL_SAMPLE_COVERAGE);
-            agl::gl_function{&GladGLContext::Disable}(ctx, GL_SAMPLE_ALPHA_TO_COVERAGE);
-
-            agl::gl_function{&GladGLContext::Enable}(ctx, GL_BLEND);
-            agl::gl_function{&GladGLContext::BlendFunc}(ctx, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-            partiallyTransparentQuadLower.draw();
-
-            agl::gl_function{&GladGLContext::Disable}(ctx, GL_BLEND);
+            {
+                set_payload(
+                    ctx,
+                    agl::capabilities::gl_blend{
+                        .rgb{
+                            .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}},
+                            .algebraic_op{agl::blend_eqn_mode::add}
+                        },
+                        .alpha{
+                            .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}},
+                            .algebraic_op{agl::blend_eqn_mode::add}
+                        },
+                        .colour{}
+                    }
+                );
+                shaderProgram3DDoubleMonochrome.use();
+                partiallyTransparentQuadLower.draw();
+            }
 
             glfwSwapBuffers(&w.get());
             glfwPollEvents();

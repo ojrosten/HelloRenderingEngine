@@ -111,6 +111,7 @@ namespace curlew {
             [&win = m_Window](GladGLContext ctx) { return load_gl_fuctions(win, ctx); },
             config.prologue,
             config.epilogue,
+            config.compensate
           }
     {}
 }

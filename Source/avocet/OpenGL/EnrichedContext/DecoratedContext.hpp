@@ -46,6 +46,12 @@ namespace avocet::opengl {
         
             if(self.m_Epilogue) self.m_Epilogue(self, data);
         }
+    protected:
+        ~decorated_context() = default;
+
+        decorated_context(decorated_context&&) noexcept = default;
+
+        decorated_context& operator=(decorated_context&&) noexcept = default;
     private:
         using decorator_type = std::function<void(const context&, const decorator_data&)>;
 

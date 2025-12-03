@@ -44,7 +44,7 @@ namespace avocet::opengl {
         constexpr const GladGLContext& get() const noexcept { return m_Context; }
 
         [[nodiscard]]
-        friend constexpr bool operator==(const unique_glad_context& lhs, const unique_glad_context& rhs) {
+        friend constexpr bool operator==(const unique_glad_context& lhs, const unique_glad_context& rhs) noexcept {
             return &lhs == &rhs;
         }
     };
