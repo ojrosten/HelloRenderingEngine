@@ -158,16 +158,27 @@ namespace sequoia::testing
     };
 
     template<>
+    struct value_tester<avocet::opengl::capabilities::gl_polygon_offset> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_polygon_offset& obtained, const agl::capabilities::gl_polygon_offset& predicted) {
+            check(equality, "Factor", logger, obtained.factor, predicted.factor);
+            check(equality, "Units",  logger, obtained.units , predicted.units);
+        }
+    };
+
+    template<>
+    struct value_tester<avocet::opengl::capabilities::gl_depth_test> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>& logger, const agl::capabilities::gl_depth_test& obtained, const agl::capabilities::gl_depth_test& predicted) {
+            check(equality, "Func", logger, obtained.func, predicted.func);
+            check(equality, "Mask", logger, obtained.mask, predicted.mask);
+            check(equality, "Poly Offset", logger, obtained.poly_offset, predicted.poly_offset);
+        }
+    };
+
+    template<>
     struct value_tester<avocet::opengl::capable_context> {
-        // TO DO: Remove this duplication after Lecture 35
-        using payload_type 
-            = std::tuple<
-                  std::optional<avocet::opengl::capabilities::gl_blend>,
-                  std::optional<avocet::opengl::capabilities::gl_multi_sample>,
-                  std::optional<avocet::opengl::capabilities::gl_sample_alpha_to_coverage>,
-                  std::optional<avocet::opengl::capabilities::gl_sample_coverage>,
-                  std::optional<avocet::opengl::capabilities::gl_stencil_test>
-              >;
+        using payload_type = agl::capable_context::payload_type;
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const payload_type& payload) {
@@ -195,24 +206,46 @@ namespace sequoia::testing
 
 
         template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_blend& cpuCap) {
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_blend& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Source rgb   GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB)       , agl::to_gl_enum(cpuCap.rgb.modes.source));
-            check(equality, "Source alpha GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA)     , agl::to_gl_enum(cpuCap.alpha.modes.source));
-            check(equality, "Destination rgb   GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_RGB)       , agl::to_gl_enum(cpuCap.rgb.modes.destination));
-            check(equality, "Destination alpha GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_ALPHA)     , agl::to_gl_enum(cpuCap.alpha.modes.destination));
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB)  , agl::to_gl_enum(cpuCap.rgb.algebraic_op));
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA), agl::to_gl_enum(cpuCap.alpha.algebraic_op));
+            check(equality, "Source rgb   GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB)       , agl::to_gl_enum(predicted.rgb.modes.source));
+            check(equality, "Source alpha GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA)     , agl::to_gl_enum(predicted.alpha.modes.source));
+            check(equality, "Destination rgb   GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_RGB)       , agl::to_gl_enum(predicted.rgb.modes.destination));
+            check(equality, "Destination alpha GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_ALPHA)     , agl::to_gl_enum(predicted.alpha.modes.destination));
+            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB)  , agl::to_gl_enum(predicted.rgb.algebraic_op));
+            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA), agl::to_gl_enum(predicted.alpha.algebraic_op));
 
-            check(equality, "Colour GPU/CPU", logger, get_float_params<4>(ctx, GL_BLEND_COLOR), cpuCap.colour);
+            check(equality, "Colour GPU/CPU", logger, get_float_params<4>(ctx, GL_BLEND_COLOR), predicted.colour);
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_polygon_offset& predicted) {
+            using namespace avocet::opengl::testing;
+            check(equality, "Factor", logger, get_float_param(ctx, GL_POLYGON_OFFSET_FACTOR), predicted.factor);
+            check(equality, "Units" , logger, get_float_param(ctx, GL_POLYGON_OFFSET_UNITS) , predicted.units);
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_depth_test& predicted) {
+            using namespace avocet::opengl::testing;
+            check(equality, "Func"       , logger, get_int_param_as<GLenum>(ctx, GL_DEPTH_FUNC), agl::to_gl_enum(predicted.func));
+            check(equality, "MasK"       , logger, get_bool_param(ctx, GL_DEPTH_WRITEMASK)     , agl::to_gl_boolean(predicted.mask));
+            check(weak_equivalence, "Poly Offset", logger, ctx, predicted.poly_offset);
+        }
+
+        template<test_mode Mode>
+        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
+            using namespace avocet::opengl::testing;
+            check(equality, "Coverage"   , logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), predicted.coverage_val.raw_value());
+            check(equality, "Invert Mask", logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), agl::to_gl_boolean(predicted.invert));
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_stencil_test& predicted) {
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
-            check(equality, "Front Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_FUNC      ), predicted.front.func.comparison     );
-            check(equality, "Front Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_REF       ), predicted.front.func.reference_value);
+            check(equality, "Front Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_FUNC), predicted.front.func.comparison     );
+            check(equality, "Front Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_REF ), predicted.front.func.reference_value);
             check_mask("Front Val Mask", logger, ctx, GL_STENCIL_VALUE_MASK, predicted.front.func.mask);
 
             check(equality, "Front On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_FAIL           ), predicted.front.op.on_failure                   );
@@ -221,8 +254,8 @@ namespace sequoia::testing
 
             check_mask("Front Write Mask", logger, ctx, GL_STENCIL_WRITEMASK, predicted.front.write_mask.mask);
 
-            check(equality, "Back Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_BACK_FUNC      ), predicted.back.func.comparison     );
-            check(equality, "Back Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_BACK_REF       ), predicted.back.func.reference_value);
+            check(equality, "Back Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_BACK_FUNC), predicted.back.func.comparison     );
+            check(equality, "Back Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_BACK_REF ), predicted.back.func.reference_value);
             check_mask("Back Val Mask", logger, ctx, GL_STENCIL_BACK_VALUE_MASK, predicted.back.func.mask);
 
             check(equality, "Back On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_FAIL           ), predicted.back.op.on_failure                   );
@@ -230,13 +263,6 @@ namespace sequoia::testing
             check(equality, "Back On Pass without Depth Failure", logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_PASS_DEPTH_PASS), predicted.back.op.on_pass_without_depth_failure);
 
             check_mask("Back Write Mask", logger, ctx, GL_STENCIL_BACK_WRITEMASK, predicted.back.write_mask.mask);
-        }
-
-        template<test_mode Mode>
-        static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
-            using namespace avocet::opengl::testing;
-            check(equality, "Coverage"   , logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), predicted.coverage_val.raw_value());
-            check(equality, "Invert Mask", logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), static_cast<GLboolean>(predicted.invert));
         }
     private:
       template<test_mode Mode>

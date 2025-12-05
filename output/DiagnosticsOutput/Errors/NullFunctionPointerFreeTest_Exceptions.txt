@@ -3,7 +3,7 @@ Invoking gl_function such that it delegates to a null function pointer
 
 Expected Exception Type:
 [std::runtime_error]
-gl_function: attempting to invoke a null function pointer Disable coming via Source/avocet/OpenGL/EnrichedContext/CapableContext.hpp, line 42
+gl_function: attempting to invoke a null function pointer Disable coming via Source/avocet/OpenGL/EnrichedContext/CapableContext.hpp, line 43
 
 =======================================
 

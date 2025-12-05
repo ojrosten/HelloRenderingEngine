@@ -43,6 +43,18 @@ namespace avocet::testing {
         check(weak_equivalence, "", ctx       , configuredBlend);
     }
 
+    void capabilities_false_negative_test::test_depth_test(const opengl::capable_context& ctx)
+    {
+        constexpr gl_depth_test configuredDepthTest{
+            .func{agl::comparison_mode::greater_or_equal},
+            .mask{agl::depth_buffer_write_mode::disabled},
+            .poly_offset{0.4f, 1.2f}
+        };
+
+        check(equality        , "", gl_depth_test{}, configuredDepthTest);
+        check(weak_equivalence, "", ctx            , configuredDepthTest);
+    }
+
     void capabilities_false_negative_test::test_sample_coverage(const opengl::capable_context& ctx)
     {
         constexpr gl_sample_coverage configuredCoverage{.coverage_val{0.5}, .invert{opengl::invert_sample_mask::yes}};

@@ -67,7 +67,7 @@ namespace avocet::opengl::capabilities::impl {
 
     void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested) {
         if(requested != current)
-            gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), static_cast<GLboolean>(requested.invert));
+            gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), to_gl_boolean(requested.invert));
     }
 
     void configure(const decorated_context& ctx, const gl_stencil_test& current, const gl_stencil_test& requested) {
@@ -81,7 +81,7 @@ namespace avocet::opengl::capabilities::impl {
             gl_function{&GladGLContext::DepthFunc}(ctx, to_gl_enum(requested.func));
 
         if(requested.mask != current.mask)
-            gl_function{&GladGLContext::DepthMask}(ctx, static_cast<GLboolean>(requested.mask));
+            gl_function{&GladGLContext::DepthMask}(ctx, to_gl_boolean(requested.mask));
 
         if(requested.poly_offset != current.poly_offset)
             gl_function{&GladGLContext::PolygonOffset}(ctx, requested.poly_offset.factor, requested.poly_offset.units);

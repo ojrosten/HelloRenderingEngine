@@ -151,6 +151,9 @@ namespace avocet::opengl {
         enabled  = GL_TRUE
     };
 
+    [[nodiscard]]
+    std::string to_string(depth_buffer_write_mode mode);
+
     template<class T>
     inline constexpr bool is_capability_v{
            std::regular<T>
