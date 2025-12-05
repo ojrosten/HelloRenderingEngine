@@ -61,6 +61,13 @@ namespace sequoia::testing
 {
     namespace agl = avocet::opengl;
 
+    template<class Cap>
+        requires avocet::opengl::is_capability_v<Cap> && std::is_empty_v<Cap>
+    struct value_tester<Cap> {
+        template<test_mode Mode>
+        static void test(equality_check_t, test_logger<Mode>&, const Cap&, const Cap&) {}
+    };
+
     template<>
     struct value_tester<avocet::opengl::capabilities::gl_blend_modes> {
         template<test_mode Mode>
@@ -87,12 +94,6 @@ namespace sequoia::testing
             check(equality, "Alpha" , logger, obtained.alpha , predicted.alpha);
             check(equality, "Colour", logger, obtained.colour, predicted.colour);
         }
-    };
-
-    template<>
-    struct value_tester<avocet::opengl::capabilities::gl_multi_sample> {
-        template<test_mode Mode>
-        static void test(equality_check_t, test_logger<Mode>&, const agl::capabilities::gl_multi_sample&, const agl::capabilities::gl_multi_sample&) {}
     };
 
     template<>

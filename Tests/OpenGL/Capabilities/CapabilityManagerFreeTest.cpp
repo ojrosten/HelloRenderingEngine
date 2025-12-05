@@ -95,12 +95,15 @@ namespace avocet::testing
             blend                    = 1,
             depth_test               = 2,
             multi_sample             = 3,
-            sample_alpha_to_coverage = 4,
-            sample_coverage          = 5,
-            stencil_test             = 6,
-            configured_blend         = 7,
-            configured_depth_test    = 8,
-            configured_stencil_test  = 9
+            polygon_offset_fill      = 4,
+            polygon_offset_line      = 5,
+            polygon_offset_point     = 6,
+            sample_alpha_to_coverage = 7,
+            sample_coverage          = 8,
+            stencil_test             = 9,
+            configured_blend         = 10,
+            configured_depth_test    = 11,
+            configured_stencil_test  = 12
         };
 
         using graph_type = transition_checker<payload_type>::transition_graph;
@@ -128,7 +131,21 @@ namespace avocet::testing
                         report(""),
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_multi_sample{}); }
                     },
-
+                    {
+                        node_name::polygon_offset_fill,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_polygon_offset_fill{}); }
+                    },
+                    {
+                        node_name::polygon_offset_line,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_polygon_offset_line{}); }
+                    },
+                    {
+                        node_name::polygon_offset_point,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_polygon_offset_point{}); }
+                    },
                     {
                         node_name::sample_alpha_to_coverage,
                         report(""),
@@ -206,6 +223,27 @@ namespace avocet::testing
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
                     }
                 }, // End   Edges: multi_sample
+                {  // Begin Edges: polygon_offset_fill
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    }
+                }, // End   Edges: polygon_offset_fill
+                {  // Begin Edges: polygon_offset_line
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    }
+                }, // End   Edges: polygon_offset_line
+                {  // Begin Edges: polygon_offset_point
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    }
+                }, // End   Edges: polygon_offset_point
                 {  // Begin Edges: sample_alpha_to_coverage
                     {
                         node_name::none,
@@ -274,6 +312,9 @@ namespace avocet::testing
                 make_payload(gl_blend{}),
                 make_payload(gl_depth_test{}),
                 make_payload(gl_multi_sample{}),
+                make_payload(gl_polygon_offset_fill{}),
+                make_payload(gl_polygon_offset_line{}),
+                make_payload(gl_polygon_offset_point{}),
                 make_payload(gl_sample_alpha_to_coverage{}),
                 make_payload(gl_sample_coverage{}),
                 make_payload(gl_stencil_test{}),

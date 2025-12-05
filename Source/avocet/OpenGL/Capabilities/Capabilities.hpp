@@ -163,6 +163,7 @@ namespace avocet::opengl {
     };
 
     namespace capabilities {
+        /******************************* Blending *******************************/
         struct gl_blend_modes {
             blend_mode      source{blend_mode::one},
                 destination{blend_mode::zero};
@@ -188,12 +189,60 @@ namespace avocet::opengl {
             friend constexpr bool operator==(const gl_blend&, const gl_blend&) noexcept = default;
         };
 
+        /******************************* Depth Testing *******************************/
+
+        struct gl_polygon_offset {
+            GLfloat factor{};
+            GLfloat units{};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset&, const gl_polygon_offset&) noexcept = default;
+        };
+
+        struct gl_depth_test {
+            constexpr static auto capability{gl_capability::depth_test};
+
+            comparison_mode func{comparison_mode::less};
+            depth_buffer_write_mode mask{depth_buffer_write_mode::enabled};
+            gl_polygon_offset poly_offset{};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_depth_test&, const gl_depth_test&) noexcept = default;
+        };
+
+        /******************************* Multisampling *******************************/
+
         struct gl_multi_sample {
             constexpr static auto capability{gl_capability::multi_sample};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_multi_sample&, const gl_multi_sample&) noexcept = default;
         };
+
+        /******************************* Polygon Offsetting *******************************/
+
+        struct gl_polygon_offset_fill {
+            constexpr static auto capability{gl_capability::polygon_offset_fill};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset_fill&, const gl_polygon_offset_fill&) noexcept = default;
+        };
+
+        struct gl_polygon_offset_line {
+            constexpr static auto capability{gl_capability::polygon_offset_line};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset_line&, const gl_polygon_offset_line&) noexcept = default;
+        };
+
+        struct gl_polygon_offset_point {
+            constexpr static auto capability{gl_capability::polygon_offset_point};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset_point&, const gl_polygon_offset_point&) noexcept = default;
+        };
+
+        /******************************* Sample Coverage *******************************/
 
         struct gl_sample_coverage {
             constexpr static auto capability{gl_capability::sample_coverage};
@@ -205,12 +254,16 @@ namespace avocet::opengl {
             friend constexpr bool operator==(const gl_sample_coverage&, const gl_sample_coverage&) noexcept = default;
         };
 
+        /******************************* Sample Alpha to Coverage *******************************/
+
         struct gl_sample_alpha_to_coverage {
             constexpr static auto capability{gl_capability::sample_alpha_to_coverage};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_sample_alpha_to_coverage&, const gl_sample_alpha_to_coverage&) noexcept = default;
         };
+
+        /******************************* Stencil Testing *******************************/
 
         struct gl_stencil_func {
             comparison_mode comparison{comparison_mode::always};
@@ -254,25 +307,6 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_stencil_test&, const gl_stencil_test&) noexcept = default;
-        };
-
-        struct gl_polygon_offset {
-            GLfloat factor{};
-            GLfloat units{};
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const gl_polygon_offset&, const gl_polygon_offset&) noexcept = default;
-        };
-
-        struct gl_depth_test {
-            constexpr static auto capability{gl_capability::depth_test};
-
-            comparison_mode func{comparison_mode::less};
-            depth_buffer_write_mode mask{depth_buffer_write_mode::enabled};
-            gl_polygon_offset poly_offset{};
-
-            [[nodiscard]]
-            friend constexpr bool operator==(const gl_depth_test&, const gl_depth_test&) noexcept = default;
         };
     }
 }
