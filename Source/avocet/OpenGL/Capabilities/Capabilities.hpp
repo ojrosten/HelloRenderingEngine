@@ -146,6 +146,11 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(face_selection_mode mode);
 
+    enum class depth_buffer_write_mode : GLboolean {
+        disabled = GL_FALSE,
+        enabled  = GL_TRUE
+    };
+
     template<class T>
     inline constexpr bool is_capability_v{
            std::regular<T>
@@ -246,6 +251,25 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_stencil_test&, const gl_stencil_test&) noexcept = default;
+        };
+
+        struct gl_polygon_offset {
+            GLfloat factor{};
+            GLfloat units{};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_polygon_offset&, const gl_polygon_offset&) noexcept = default;
+        };
+
+        struct gl_depth_test {
+            constexpr static auto capability{gl_capability::depth_test};
+
+            comparison_mode func{comparison_mode::less};
+            depth_buffer_write_mode mask{depth_buffer_write_mode::enabled};
+            gl_polygon_offset poly_offset{};
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const gl_depth_test&, const gl_depth_test&) noexcept = default;
         };
     }
 }
