@@ -88,7 +88,7 @@ operator== returned false
 Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 43
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+[sequoia::testing::value_tester<avocet::opengl::capable_context>]
 Checking for weak equivalence with:
 [avocet::opengl::capabilities::gl_blend]
 
@@ -158,7 +158,7 @@ Checking for weak equivalence with:
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 50
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 62
 
 [avocet::opengl::capabilities::gl_sample_coverage]
 operator== returned false
@@ -177,10 +177,10 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 51
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 63
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+[sequoia::testing::value_tester<avocet::opengl::capable_context>]
 Checking for weak equivalence with:
 [avocet::opengl::capabilities::gl_sample_coverage]
 
@@ -198,7 +198,7 @@ Checking for weak equivalence with:
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 70
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 82
 
 [avocet::opengl::capabilities::gl_stencil_test]
 operator== returned false
@@ -321,10 +321,10 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 71
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 83
 
 Comparison performed using:
-[sequoia::testing::value_tester<avocet::opengl::decorated_context>]
+[sequoia::testing::value_tester<avocet::opengl::capable_context>]
 Checking for weak equivalence with:
 [avocet::opengl::capabilities::gl_stencil_test]
 
