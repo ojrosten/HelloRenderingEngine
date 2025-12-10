@@ -8,6 +8,8 @@
 #pragma once
 
 #include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "sequoia/Core/Meta/Concepts.hpp"
+#include "sequoia/Core/ContainerUtilities/Iterator.hpp"
 
 #include <array>
 #include <concepts>
