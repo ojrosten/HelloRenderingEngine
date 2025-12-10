@@ -83,7 +83,7 @@ namespace avocet::opengl {
     };
 
     [[nodiscard]]
-    inline GLuint get_index(const contextual_resource_ref& h) { return h.handle().index(); }
+    inline GLuint get_index(contextual_resource_ref h) { return h.handle().index(); }
 
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
