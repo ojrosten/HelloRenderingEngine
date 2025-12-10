@@ -142,4 +142,15 @@ namespace avocet::opengl {
 
         throw std::runtime_error{error_message("face_selection_mode", mode)};
     }
+
+    [[nodiscard]]
+    std::string to_string(depth_buffer_write_mode mode) {
+        using enum depth_buffer_write_mode;
+        switch(mode) {
+        case disabled: return "disabled";
+        case enabled : return "enabled";
+        }
+
+        throw std::runtime_error{error_message("depth_buffer_write_mode", mode)};
+    }
 }

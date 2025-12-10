@@ -64,6 +64,12 @@ namespace {
             .write_mask{23}
         }
     };
+
+    constexpr gl_depth_test configuredDepthTest{
+        .func{agl::comparison_mode::greater_or_equal},
+        .mask{agl::depth_buffer_write_mode::disabled},
+        .poly_offset{0.4f, 1.2f}
+    };
 }
 
 namespace avocet::testing
@@ -87,12 +93,17 @@ namespace avocet::testing
         enum node_name {
             none                     = 0,
             blend                    = 1,
-            multi_sample             = 2,
-            sample_alpha_to_coverage = 3,
-            sample_coverage          = 4,
-            stencil_test             = 5,
-            configured_blend         = 6,
-            configured_stencil_test  = 7
+            depth_test               = 2,
+            multi_sample             = 3,
+            polygon_offset_fill      = 4,
+            polygon_offset_line      = 5,
+            polygon_offset_point     = 6,
+            sample_alpha_to_coverage = 7,
+            sample_coverage          = 8,
+            stencil_test             = 9,
+            configured_blend         = 10,
+            configured_depth_test    = 11,
+            configured_stencil_test  = 12
         };
 
         using graph_type = transition_checker<payload_type>::transition_graph;
@@ -111,11 +122,30 @@ namespace avocet::testing
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_blend{}); }
                     },
                     {
+                        node_name::depth_test,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_depth_test{}); }
+                    },
+                    {
                         node_name::multi_sample,
                         report(""),
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_multi_sample{}); }
                     },
-
+                    {
+                        node_name::polygon_offset_fill,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_polygon_offset_fill{}); }
+                    },
+                    {
+                        node_name::polygon_offset_line,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_polygon_offset_line{}); }
+                    },
+                    {
+                        node_name::polygon_offset_point,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_polygon_offset_point{}); }
+                    },
                     {
                         node_name::sample_alpha_to_coverage,
                         report(""),
@@ -135,6 +165,11 @@ namespace avocet::testing
                         node_name::configured_blend,
                         report(""),
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, configuredBlend); }
+                    },
+                    {
+                        node_name::configured_depth_test,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, configuredDepthTest); }
                     },
                     {
                         node_name::configured_stencil_test,
@@ -164,6 +199,23 @@ namespace avocet::testing
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, configuredBlend); }
                     }
                 }, // End   Edges: blend
+                {  // Begin Edges: depth_test
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    },
+                    {
+                        node_name::depth_test,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_depth_test{}); }
+                    },
+                    {
+                        node_name::configured_depth_test,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, configuredDepthTest); }
+                    }
+                }, // End    Edges: depth_test
                 {  // Begin Edges: multi_sample
                     {
                         node_name::none,
@@ -171,6 +223,27 @@ namespace avocet::testing
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
                     }
                 }, // End   Edges: multi_sample
+                {  // Begin Edges: polygon_offset_fill
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    }
+                }, // End   Edges: polygon_offset_fill
+                {  // Begin Edges: polygon_offset_line
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    }
+                }, // End   Edges: polygon_offset_line
+                {  // Begin Edges: polygon_offset_point
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    }
+                }, // End   Edges: polygon_offset_point
                 {  // Begin Edges: sample_alpha_to_coverage
                     {
                         node_name::none,
@@ -209,6 +282,18 @@ namespace avocet::testing
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_blend{}); }
                     },
                 }, // End   Edges: configured_blend
+                {  // Begin Edges: configured_depth_test
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    },
+                    {
+                        node_name::depth_test,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_depth_test{}); }
+                    },
+                }, // End   Edges: configured_depth_test
                 {  // Begin Edges: configured_stencil_test
                     {
                         node_name::none,
@@ -225,11 +310,16 @@ namespace avocet::testing
             {
                 payload_type{},
                 make_payload(gl_blend{}),
+                make_payload(gl_depth_test{}),
                 make_payload(gl_multi_sample{}),
+                make_payload(gl_polygon_offset_fill{}),
+                make_payload(gl_polygon_offset_line{}),
+                make_payload(gl_polygon_offset_point{}),
                 make_payload(gl_sample_alpha_to_coverage{}),
                 make_payload(gl_sample_coverage{}),
                 make_payload(gl_stencil_test{}),
                 make_payload(configuredBlend),
+                make_payload(configuredDepthTest),
                 make_payload(configuredStencilTest)
             }
         };

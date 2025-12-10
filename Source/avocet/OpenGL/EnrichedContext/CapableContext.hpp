@@ -28,7 +28,11 @@ namespace avocet::opengl {
         using toggled_payload_type
             = std::tuple<
                   toggled_capability<capabilities::gl_blend>,
+                  toggled_capability<capabilities::gl_depth_test>,
                   toggled_capability<capabilities::gl_multi_sample>,
+                  toggled_capability<capabilities::gl_polygon_offset_fill>,
+                  toggled_capability<capabilities::gl_polygon_offset_line>,
+                  toggled_capability<capabilities::gl_polygon_offset_point>,
                   toggled_capability<capabilities::gl_sample_alpha_to_coverage>,
                   toggled_capability<capabilities::gl_sample_coverage>,
                   toggled_capability<capabilities::gl_stencil_test>
@@ -74,7 +78,11 @@ namespace avocet::opengl {
         using payload_type
             = std::tuple<
                   std::optional<capabilities::gl_blend>,
+                  std::optional<capabilities::gl_depth_test>,
                   std::optional<capabilities::gl_multi_sample>,
+                  std::optional<capabilities::gl_polygon_offset_fill>,
+                  std::optional<capabilities::gl_polygon_offset_line>,
+                  std::optional<capabilities::gl_polygon_offset_point>,
                   std::optional<capabilities::gl_sample_alpha_to_coverage>,
                   std::optional<capabilities::gl_sample_coverage>,
                   std::optional<capabilities::gl_stencil_test>

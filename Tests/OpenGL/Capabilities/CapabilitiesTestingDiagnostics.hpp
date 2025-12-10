@@ -29,6 +29,8 @@ namespace avocet::testing
     private:
         void test_blending(const opengl::capable_context& ctx);
 
+        void test_depth_test(const opengl::capable_context& ctx);
+
         void test_sample_coverage(const opengl::capable_context& ctx);
 
         void test_stencil_test(const opengl::capable_context& ctx);

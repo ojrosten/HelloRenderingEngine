@@ -109,7 +109,9 @@ int main()
             discShaderProgram2D             {ctx, get_vertex_shader_dir() / "2D" / "Disc.vs",                  get_fragment_shader_dir() / "2D"      / "Disc.fs"},
             discShaderProgram2DTextured     {ctx, get_vertex_shader_dir() / "2D" / "DiscTextured.vs",          get_fragment_shader_dir() / "2D"      / "DiscTextured.fs"},
             shaderProgram2DTextured         {ctx, get_vertex_shader_dir() / "2D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
+            shaderProgram2DMonochrome       {ctx, get_vertex_shader_dir() / "2D" / "Identity.vs",              get_fragment_shader_dir() / "General" / "Monochrome.fs"},
             shaderProgram2DMixedTextures    {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
+            shaderProgram3DTextured         {ctx, get_vertex_shader_dir() / "3D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
             shaderProgram3DDoubleMonochrome {ctx, get_vertex_shader_dir() / "3D" / "IdentityDouble.vs",        get_fragment_shader_dir() / "General" / "Monochrome.fs"};
 
         avocet::unique_image twilight  {get_image_dir() / "PrincessTwilightSparkle.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
@@ -124,7 +126,7 @@ int main()
 
                 return verts;
             },
-            make_label("Quad")
+            make_label("Upper Quad")
         };
 
         agl::quad<GLdouble, agl::dimensionality{3}> partiallyTransparentQuadLower{
@@ -136,12 +138,10 @@ int main()
 
                 return verts;
             },
-            make_label("Quad")
+            make_label("Lower Quad")
         };
 
-
         shaderProgram3DDoubleMonochrome.set_uniform("colour", std::array{1.0f, 0.5f, 0.2f, 0.4f});
-
 
         constexpr GLfloat radius{0.4f};
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> centre{-0.5f, 0.5f};
@@ -221,7 +221,7 @@ int main()
 
         avocet::unique_image hearty{get_image_dir() / "Hearts.png", avocet::flip_vertically::yes, avocet::all_channels_in_image};
 
-        agl::quad<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat >> hearts{
+        agl::quad<GLfloat, agl::dimensionality{2}, agl::texture_coordinates<GLfloat>> hearts{
             ctx,
             [](std::ranges::random_access_range auto verts) {
                 for(auto& vert : verts) {
@@ -238,6 +238,26 @@ int main()
             },
             make_label("Wall of Hearts")
         };
+
+        agl::quad<GLfloat, agl::dimensionality{3}, agl::texture_coordinates<GLfloat>> upperHearts{
+            ctx,
+            [](std::ranges::random_access_range auto verts) {
+                for(auto& vert : verts) {
+                    (sequoia::get<0>(vert) *= 1.4f) += agl::local_coordinates<GLfloat, agl::dimensionality{3}>{0.5f, 0.5f, 0.1f};
+                }
+
+                return verts;
+            },
+            agl::texture_2d_configurator{
+                .data_view{hearty},
+                .decoding{agl::sampling_decoding::srgb},
+                .parameter_setter{ [&ctx]() { agl::gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                .label{"Hearts"}
+            },
+            make_label("Upper Wall of Hearts")
+        };
+
+        shaderProgram3DTextured.set_uniform("image", 7);
 
         constexpr GLfloat cutoutRadius{0.25f};
         constexpr agl::local_coordinates<GLfloat, agl::dimensionality{2}> cutoutCentre{-0.5f, -0.5f};
@@ -270,9 +290,34 @@ int main()
             }
 
             {
-                set_payload(ctx);
+                set_payload(ctx, agl::capabilities::gl_depth_test{});
                 shaderProgram2DMixedTextures.use();
                 sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+            }
+
+            {
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_LINE);
+                set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-1.0}}}, agl::capabilities::gl_polygon_offset_line{});
+                shaderProgram2DMonochrome.use();
+                shaderProgram2DMonochrome.set_uniform("colour", std::array{1.0f, 0.0f, 0.0f, 1.0f});
+                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
+            }
+
+            {
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_POINT);
+                agl::gl_function{&GladGLContext::PointSize}(ctx, 10);
+                set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-2.0}}}, agl::capabilities::gl_polygon_offset_point{});
+                shaderProgram2DMonochrome.use();
+                shaderProgram2DMonochrome.set_uniform("colour", std::array{0.0f, 0.0f, 1.0f, 1.0f});
+                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
+            }
+
+            {
+                set_payload(ctx, agl::capabilities::gl_depth_test{});
+                shaderProgram3DTextured.use();
+                upperHearts.draw(agl::texture_unit{7});
             }
 
             {

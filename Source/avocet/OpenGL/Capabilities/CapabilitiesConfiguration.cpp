@@ -67,14 +67,24 @@ namespace avocet::opengl::capabilities::impl {
 
     void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested) {
         if(requested != current)
-            gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), static_cast<GLboolean>(requested.invert));
+            gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), to_gl_boolean(requested.invert));
     }
 
     void configure(const decorated_context& ctx, const gl_stencil_test& current, const gl_stencil_test& requested) {
         dispatch_stencil_config(ctx, current.front.func      , current.back.func      , requested.front.func      , requested.back.func      );
         dispatch_stencil_config(ctx, current.front.op        , current.back.op        , requested.front.op        , requested.back.op        );
         dispatch_stencil_config(ctx, current.front.write_mask, current.back.write_mask, requested.front.write_mask, requested.back.write_mask);
+    }
 
+    void configure(const decorated_context& ctx, const gl_depth_test& current, const gl_depth_test& requested) {
+        if(requested.func != current.func)
+            gl_function{&GladGLContext::DepthFunc}(ctx, to_gl_enum(requested.func));
+
+        if(requested.mask != current.mask)
+            gl_function{&GladGLContext::DepthMask}(ctx, to_gl_boolean(requested.mask));
+
+        if(requested.poly_offset != current.poly_offset)
+            gl_function{&GladGLContext::PolygonOffset}(ctx, requested.poly_offset.factor, requested.poly_offset.units);
     }
 
     void compensate_for_driver_init_bugs(const decorated_context& ctx, const gl_stencil_test& init) {

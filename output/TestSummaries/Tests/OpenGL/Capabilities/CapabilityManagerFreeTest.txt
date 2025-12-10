@@ -1,2 +1,2 @@
 Capability Manager Free Test
-Standard Top Level Checks:                42;  Failures:  0  [Deep checks: 624]
+Standard Top Level Checks:                68;  Failures:  0  [Deep checks: 1285]
