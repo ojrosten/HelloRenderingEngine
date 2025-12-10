@@ -41,7 +41,7 @@ namespace avocet::opengl {
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        contextual_resource_ref handle() const noexcept { return {m_Handle.context(), m_Handle.begin()[0]}; } // TO DO: FIX
+        contextual_resource_ref handle() const noexcept { return *m_Handle.begin(); }
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;

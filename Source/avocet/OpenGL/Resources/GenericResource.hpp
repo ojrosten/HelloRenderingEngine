@@ -94,27 +94,22 @@ namespace avocet::opengl {
         generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
-            /*for(const auto& [ctxHandle, config] : std::views::zip(contextual_handles(), configs)) {
-                if(ctxHandle.handle() == resource_handle{})
-                    throw std::runtime_error{"generic_resource  - null resource"};
+          using iter_t = contextual_resource_handles<1>::const_iterator;
+          static_assert(std::input_iterator<iter_t>);
+          static_assert(std::ranges::range<contextual_resource_handles<1>>);
+            for(const auto& [ctxRsrcRef, config] : std::views::zip(contextual_handles(), configs)) {
+                if(ctxRsrcRef.handle() == resource_handle{})
+                    throw std::runtime_error{"generic_resource - null resource"};
 
-                lifecycle_type::bind(ctxHandle);
-                lifecycle_type::configure(ctxHandle, config);
-            }*/
-
-            for(const auto& [ctxHandle, config] : std::views::zip(contextual_handles(), configs)) {
-                if(ctxHandle == resource_handle{})
-                    throw std::runtime_error{"generic_resource  - null resource"};
-
-                lifecycle_type::bind(contextual_resource_ref{ctx, ctxHandle});
-                lifecycle_type::configure(contextual_resource_ref{ctx, ctxHandle}, config);
+                lifecycle_type::bind(ctxRsrcRef);
+                lifecycle_type::configure(ctxRsrcRef, config);
             }
         }
 
         [[nodiscard]]
         bool is_null() const noexcept {
             auto isNull{[](contextual_resource_ref h) { return h.handle() == resource_handle{}; }};
-            //assert(std::ranges::all_of(contextual_handles(), isNull) or std::ranges::none_of(contextual_handles(), isNull)); // TOI DO: FIX
+            assert(std::ranges::all_of(contextual_handles(), isNull) or std::ranges::none_of(contextual_handles(), isNull));
             return isNull(contextual_handle(index<0>{}));
         }
 
@@ -148,6 +143,6 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        contextual_resource_ref contextual_handle(index<I>) const noexcept { return {context(), contextual_handles().begin()[I]}; }
+        contextual_resource_ref contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
     };
 }

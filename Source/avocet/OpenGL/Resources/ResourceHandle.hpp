@@ -12,6 +12,7 @@
 #include "sequoia/Core/ContainerUtilities/Iterator.hpp"
 
 #include <array>
+#include <cassert>
 #include <concepts>
 #include <span>
 #include <utility>
@@ -102,21 +103,55 @@ namespace avocet::opengl {
         return to_array(std::span(from), std::move(fn));
     }
 
+    template<std::input_or_output_iterator Iterator>
+    class contextual_deref_policy
+    {
+    public:
+      using value_type = contextual_resource_ref;
+      using reference  = contextual_resource_ref;
+
+      constexpr contextual_deref_policy() = default;
+      constexpr explicit contextual_deref_policy(const decorated_context& ctx) : m_Context{&ctx} {}
+
+      [[nodiscard]]
+      constexpr reference get(Iterator i) const
+      {
+        assert(m_Context);
+        return {*m_Context, *i};
+      }
+
+      [[nodiscard]]
+      friend constexpr bool operator==(const contextual_deref_policy&, const contextual_deref_policy&) noexcept = default;
+    protected:
+      constexpr contextual_deref_policy(const contextual_deref_policy&)     = default;
+      constexpr contextual_deref_policy(contextual_deref_policy&&) noexcept = default;
+
+      ~contextual_deref_policy() = default;
+
+      constexpr contextual_deref_policy& operator=(const contextual_deref_policy&)     = default;
+      constexpr contextual_deref_policy& operator=(contextual_deref_policy&&) noexcept = default;
+    private:
+      const decorated_context* m_Context{};
+    };
+  
     template<std::size_t N>
     class contextual_resource_handles {
         context_ref m_Context;
         std::array<resource_handle, N> m_Handles;
+        using citer_t = std::array<resource_handle, N>::const_iterator;
     public:
+        using const_iterator = sequoia::utilities::iterator<citer_t, contextual_deref_policy<citer_t>>;
+      
         contextual_resource_handles(const decorated_context& ctx, const raw_indices<N>& indices)
             : m_Context{ctx}
             , m_Handles{to_array(indices, [&ctx](GLuint i) { return resource_handle{i}; })}
         {}
 
         [[nodiscard]]
-        auto begin() const noexcept { return m_Handles.begin(); }
+        const_iterator begin() const noexcept { return {m_Handles.begin(), context()}; }
 
         [[nodiscard]]
-        auto end() const noexcept { return m_Handles.end(); }
+        const_iterator end() const noexcept { return {m_Handles.end(), context()}; }
 
         [[nodiscard]]
         raw_indices<N> get_raw_indices() const {
