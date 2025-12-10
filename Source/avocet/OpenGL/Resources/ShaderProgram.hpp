@@ -17,8 +17,8 @@
 namespace avocet::opengl {
     template<class T>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, const contextual_resource_handle& handle) {
-            { t.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
+        requires(T& t, const contextual_resource_ref& handle) {
+            { t.create(handle.context()) } -> std::same_as<contextual_resource_handles<1>>;
             T::destroy(handle);
         }
     };
@@ -26,7 +26,7 @@ namespace avocet::opengl {
     template<class LifeEvents>
         requires has_shader_lifecycle_events_v<LifeEvents>
     class generic_shader_resource {
-        contextual_resource_handle m_Handle;
+        contextual_resource_handles<1> m_Handle;
     public:
         template<class... Args>
             requires std::is_constructible_v<LifeEvents, Args...>
@@ -34,14 +34,14 @@ namespace avocet::opengl {
             : m_Handle{LifeEvents{args...}.create(ctx)}
         {}
 
-        ~generic_shader_resource() { LifeEvents::destroy(m_Handle); }
+        ~generic_shader_resource() { LifeEvents::destroy(handle()); }
 
         generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        const contextual_resource_handle& handle() const noexcept { return m_Handle; }
+        contextual_resource_ref handle() const noexcept { return {m_Handle.context(), m_Handle.begin()[0]}; } // TO DO: FIX
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
@@ -53,11 +53,11 @@ namespace avocet::opengl {
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
-        static contextual_resource_handle create(const decorated_context& ctx) {
-            return contextual_resource_handle{ctx, resource_handle{gl_function{&GladGLContext::CreateProgram}(ctx)}};
+        contextual_resource_handles<1> create(const decorated_context& ctx) {
+            return contextual_resource_handles<1>{ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
         }
 
-        static void destroy(const contextual_resource_handle& handle) { gl_function{&GladGLContext::DeleteProgram}(handle.context(), get_index(handle)); }
+        static void destroy(const contextual_resource_ref& handle) { gl_function{&GladGLContext::DeleteProgram}(handle.context(), get_index(handle)); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;

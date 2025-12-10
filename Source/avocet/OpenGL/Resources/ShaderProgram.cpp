@@ -47,7 +47,7 @@ namespace avocet::opengl {
             using gl_param_getter    = gl_function<void(GLuint, GLenum, GLint*)>;
             using gl_info_log_getter = gl_function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
 
-            shader_checker(const contextual_resource_handle& h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
+            shader_checker(contextual_resource_ref h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
                 : m_Handle{h}
                 , m_ParamGetter{paramGetter}
                 , m_InfoLogGetter{logGetter}
@@ -63,7 +63,7 @@ namespace avocet::opengl {
         protected:
             ~shader_checker() = default;
         private:
-            const contextual_resource_handle& m_Handle;
+            contextual_resource_ref m_Handle;
             gl_param_getter    m_ParamGetter;
             gl_info_log_getter m_InfoLogGetter;
 
@@ -89,11 +89,11 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            contextual_resource_handle create(const decorated_context& ctx) {
-                return contextual_resource_handle{ctx, resource_handle{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}};
+            contextual_resource_handles<1> create(const decorated_context& ctx) {
+                return {ctx, {gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}};
             }
 
-            static void destroy(const contextual_resource_handle& handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }
+            static void destroy(const contextual_resource_ref& handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
