@@ -109,6 +109,7 @@ int main()
             discShaderProgram2D             {ctx, get_vertex_shader_dir() / "2D" / "Disc.vs",                  get_fragment_shader_dir() / "2D"      / "Disc.fs"},
             discShaderProgram2DTextured     {ctx, get_vertex_shader_dir() / "2D" / "DiscTextured.vs",          get_fragment_shader_dir() / "2D"      / "DiscTextured.fs"},
             shaderProgram2DTextured         {ctx, get_vertex_shader_dir() / "2D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
+            shaderProgram2DMonochrome       {ctx, get_vertex_shader_dir() / "2D" / "Identity.vs",              get_fragment_shader_dir() / "General" / "Monochrome.fs"},
             shaderProgram2DMixedTextures    {ctx, get_vertex_shader_dir() / "2D" / "IdentityTwiceTextured.vs", get_fragment_shader_dir() / "General" / "MixedTextures.fs"},
             shaderProgram3DTextured         {ctx, get_vertex_shader_dir() / "3D" / "IdentityTextured.vs",      get_fragment_shader_dir() / "General" / "Textured.fs"},
             shaderProgram3DDoubleMonochrome {ctx, get_vertex_shader_dir() / "3D" / "IdentityDouble.vs",        get_fragment_shader_dir() / "General" / "Monochrome.fs"};
@@ -289,13 +290,32 @@ int main()
             }
 
             {
-                set_payload(ctx);
+                set_payload(ctx, agl::capabilities::gl_depth_test{});
                 shaderProgram2DMixedTextures.use();
                 sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
             }
 
             {
-                set_payload(ctx);
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_LINE);
+                set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-1.0}}}, agl::capabilities::gl_polygon_offset_line{});
+                shaderProgram2DMonochrome.use();
+                shaderProgram2DMonochrome.set_uniform("colour", std::array{1.0f, 0.0f, 0.0f, 1.0f});
+                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
+            }
+
+            {
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_POINT);
+                agl::gl_function{&GladGLContext::PointSize}(ctx, 10);
+                set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-2.0}}}, agl::capabilities::gl_polygon_offset_point{});
+                shaderProgram2DMonochrome.use();
+                shaderProgram2DMonochrome.set_uniform("colour", std::array{0.0f, 0.0f, 1.0f, 1.0f});
+                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
+            }
+
+            {
+                set_payload(ctx, agl::capabilities::gl_depth_test{});
                 shaderProgram3DTextured.use();
                 upperHearts.draw(agl::texture_unit{7});
             }
