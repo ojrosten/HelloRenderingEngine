@@ -94,9 +94,6 @@ namespace avocet::opengl {
         generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
-          using iter_t = contextual_resource_handles<1>::const_iterator;
-          static_assert(std::input_iterator<iter_t>);
-          static_assert(std::ranges::range<contextual_resource_handles<1>>);
             for(const auto& [ctxRsrcRef, config] : std::views::zip(contextual_handles(), configs)) {
                 if(ctxRsrcRef.handle() == resource_handle{})
                     throw std::runtime_error{"generic_resource - null resource"};
