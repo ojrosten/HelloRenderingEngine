@@ -12,6 +12,7 @@
 #include "sequoia/Core/ContainerUtilities/Iterator.hpp"
 
 #include <array>
+#include <cassert>
 #include <concepts>
 #include <span>
 #include <utility>
