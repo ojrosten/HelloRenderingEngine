@@ -1,0 +1,4 @@
+﻿{
+  "version": 10,
+  "include": ["../dependencies/sequoia/build_system/CMakePresetsCommon.json"]
+}
