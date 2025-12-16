@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - home/ojrosten/HelloRenderingEngine/Source/avocet/OpenGL/Capabilities/CapabilitiesConfiguration.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory /home/ojrosten/HelloRenderingEngine/Source/avocet/OpenGL/Capabilities">/home/ojrosten/HelloRenderingEngine/Source/avocet/OpenGL/Capabilities</a> - CapabilitiesConfiguration.cpp<span style="font-size: 80%;"> (source / <a href="CapabilitiesConfiguration.cpp.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryMed">88.7&nbsp;%</td>
+            <td class="headerCovTableEntry">53</td>
+            <td class="headerCovTableEntry">47</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2025-12-16 18:48:05</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">91.7&nbsp;%</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">11</td>
+          </tr>
+                  <tr><td><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : ////////////////////////////////////////////////////////////////////</span>
+<span id="L2"><span class="lineNum">       2</span>              : //                Copyright Oliver J. Rosten 2025.                //</span>
+<span id="L3"><span class="lineNum">       3</span>              : // Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //</span>
+<span id="L4"><span class="lineNum">       4</span>              : //    (See accompanying file LICENSE.md or copy at                //</span>
+<span id="L5"><span class="lineNum">       5</span>              : //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //</span>
+<span id="L6"><span class="lineNum">       6</span>              : ////////////////////////////////////////////////////////////////////</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : #include &quot;avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>              : #include &quot;avocet/OpenGL/EnrichedContext/DecoratedContext.hpp&quot;</span>
+<span id="L10"><span class="lineNum">      10</span>              : #include &quot;avocet/OpenGL/Context/GLFunction.hpp&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>              : #include &quot;avocet/OpenGL/Context/Version.hpp&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>              : #include &quot;avocet/OpenGL/Utilities/Casts.hpp&quot;</span>
+<span id="L13"><span class="lineNum">      13</span>              : </span>
+<span id="L14"><span class="lineNum">      14</span>              : namespace avocet::opengl::capabilities::impl {</span>
+<span id="L15"><span class="lineNum">      15</span>              :     namespace {</span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">           6 :         void do_configure(const decorated_context&amp; ctx, face_selection_mode face, const gl_stencil_func&amp; requested) {</span></span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           6 :             gl_function{&amp;GladGLContext::StencilFuncSeparate}(ctx, to_gl_enum(face), to_gl_enum(requested.comparison), requested.reference_value, requested.mask);</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">           6 :         }</span></span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">           6 :         void do_configure(const decorated_context&amp; ctx, face_selection_mode face, const gl_stencil_op&amp; requested) {</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">           6 :             gl_function{&amp;GladGLContext::StencilOpSeparate}(ctx, to_gl_enum(face), to_gl_enum(requested.on_failure), to_gl_enum(requested.on_pass_with_depth_failure), to_gl_enum(requested.on_pass_without_depth_failure));</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           6 :         }</span></span>
+<span id="L23"><span class="lineNum">      23</span>              : </span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           6 :         void do_configure(const decorated_context&amp; ctx, face_selection_mode face, const gl_stencil_write_mask&amp; requested) {</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           6 :             gl_function{&amp;GladGLContext::StencilMaskSeparate}(ctx, to_gl_enum(face), requested.mask);</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           6 :         }</span></span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span>              :         template&lt;class T&gt;</span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          12 :         void dispatch_stencil_config(const decorated_context&amp; ctx, const T&amp; currentFront, const T&amp; currentBack, const T&amp; requestedFront, const T&amp; requestedBack) {</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          12 :             if((requestedFront == requestedBack) and (requestedFront != currentFront) and (requestedBack != currentBack)) {</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">           6 :                 do_configure(ctx, face_selection_mode::front_and_back, requestedFront);</span></span>
+<span id="L32"><span class="lineNum">      32</span>              :             }</span>
+<span id="L33"><span class="lineNum">      33</span>              :             else {</span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           6 :                 if(requestedFront != currentFront) {</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           6 :                     do_configure(ctx, face_selection_mode::front, requestedFront);</span></span>
+<span id="L36"><span class="lineNum">      36</span>              :                 }</span>
+<span id="L37"><span class="lineNum">      37</span>              : </span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           6 :                 if(requestedBack != currentBack) {</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           6 :                     do_configure(ctx, face_selection_mode::back, requestedBack);</span></span>
+<span id="L40"><span class="lineNum">      40</span>              :                 }</span>
+<span id="L41"><span class="lineNum">      41</span>              :             }</span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">          12 :         }</span></span>
+<span id="L43"><span class="lineNum">      43</span>              : </span>
+<span id="L44"><span class="lineNum">      44</span>              :         [[nodiscard]]</span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          17 :         bool is_intel_arc(std::string_view renderer) { return renderer.find(&quot;Intel(R) Arc&quot;) != std::string::npos; }</span></span>
+<span id="L46"><span class="lineNum">      46</span>              :     }</span>
+<span id="L47"><span class="lineNum">      47</span>              : </span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">           4 :     void configure(const decorated_context&amp; ctx, const gl_blend&amp; current, const gl_blend&amp; requested) {</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           4 :         if((requested.rgb.modes != current.rgb.modes) or (requested.alpha.modes != current.alpha.modes)) {</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           4 :             gl_function{&amp;GladGLContext::BlendFuncSeparate}(</span></span>
+<span id="L51"><span class="lineNum">      51</span>              :                 ctx,</span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">           4 :                 to_gl_enum(requested.rgb.modes.source),</span></span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">           4 :                 to_gl_enum(requested.rgb.modes.destination),</span></span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           4 :                 to_gl_enum(requested.alpha.modes.source),</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           4 :                 to_gl_enum(requested.alpha.modes.destination)</span></span>
+<span id="L56"><span class="lineNum">      56</span>              :             );</span>
+<span id="L57"><span class="lineNum">      57</span>              :         }</span>
+<span id="L58"><span class="lineNum">      58</span>              : </span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">           4 :         if((requested.rgb.algebraic_op != current.rgb.algebraic_op) or (requested.alpha.algebraic_op != current.alpha.algebraic_op))</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">           4 :             gl_function{&amp;GladGLContext::BlendEquationSeparate}(ctx, to_gl_enum(requested.rgb.algebraic_op), to_gl_enum(requested.alpha.algebraic_op));</span></span>
+<span id="L61"><span class="lineNum">      61</span>              : </span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">           4 :         if(requested.colour != current.colour) {</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">           4 :             const auto&amp; col{requested.colour};</span></span>
+<span id="L64"><span class="lineNum">      64</span> <span class="tlaGNC">           4 :             gl_function{&amp;GladGLContext::BlendColor}(ctx, col[0], col[1], col[2], col[3]);</span></span>
+<span id="L65"><span class="lineNum">      65</span>              :         }</span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">           4 :     }</span></span>
+<span id="L67"><span class="lineNum">      67</span>              : </span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaUNC">           0 :     void configure(const decorated_context&amp; ctx, const gl_sample_coverage&amp; current, const gl_sample_coverage&amp; requested) {</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaUNC">           0 :         if(requested != current)</span></span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaUNC">           0 :             gl_function{&amp;GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), to_gl_boolean(requested.invert));</span></span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaUNC">           0 :     }</span></span>
+<span id="L72"><span class="lineNum">      72</span>              : </span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">           4 :     void configure(const decorated_context&amp; ctx, const gl_stencil_test&amp; current, const gl_stencil_test&amp; requested) {</span></span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">           4 :         dispatch_stencil_config(ctx, current.front.func      , current.back.func      , requested.front.func      , requested.back.func      );</span></span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">           4 :         dispatch_stencil_config(ctx, current.front.op        , current.back.op        , requested.front.op        , requested.back.op        );</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           4 :         dispatch_stencil_config(ctx, current.front.write_mask, current.back.write_mask, requested.front.write_mask, requested.back.write_mask);</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">           4 :     }</span></span>
+<span id="L78"><span class="lineNum">      78</span>              : </span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaGNC">           4 :     void configure(const decorated_context&amp; ctx, const gl_depth_test&amp; current, const gl_depth_test&amp; requested) {</span></span>
+<span id="L80"><span class="lineNum">      80</span> <span class="tlaGNC">           4 :         if(requested.func != current.func)</span></span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">           4 :             gl_function{&amp;GladGLContext::DepthFunc}(ctx, to_gl_enum(requested.func));</span></span>
+<span id="L82"><span class="lineNum">      82</span>              : </span>
+<span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">           4 :         if(requested.mask != current.mask)</span></span>
+<span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">           4 :             gl_function{&amp;GladGLContext::DepthMask}(ctx, to_gl_boolean(requested.mask));</span></span>
+<span id="L85"><span class="lineNum">      85</span>              : </span>
+<span id="L86"><span class="lineNum">      86</span> <span class="tlaGNC">           4 :         if(requested.poly_offset != current.poly_offset)</span></span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaGNC">           4 :             gl_function{&amp;GladGLContext::PolygonOffset}(ctx, requested.poly_offset.factor, requested.poly_offset.units);</span></span>
+<span id="L88"><span class="lineNum">      88</span> <span class="tlaGNC">           4 :     }</span></span>
+<span id="L89"><span class="lineNum">      89</span>              : </span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          17 :     void compensate_for_driver_init_bugs(const decorated_context&amp; ctx, const gl_stencil_test&amp; init) {</span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          17 :         if(is_intel_arc(get_renderer(ctx))) {</span></span>
+<span id="L92"><span class="lineNum">      92</span> <span class="tlaUNC">           0 :             const auto&amp; func{init.front.func};</span></span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaUNC">           0 :             gl_function{&amp;GladGLContext::StencilFunc}(ctx, to_gl_enum(func.comparison), func.reference_value, func.mask);</span></span>
+<span id="L94"><span class="lineNum">      94</span>              :         }</span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          17 :     }</span></span>
+<span id="L96"><span class="lineNum">      96</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>
