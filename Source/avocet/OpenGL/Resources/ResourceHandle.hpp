@@ -62,28 +62,28 @@ namespace avocet::opengl {
         friend bool operator==(const context_ref&, const context_ref&) noexcept = default;
     };
 
-    class contextual_resource_handle {
-        context_ref m_Context;
-        resource_handle m_Handle;
+    class contextual_resource_view {
+        const decorated_context* m_Context{};
+        const resource_handle* m_Handle{};
     public:
-        contextual_resource_handle(const decorated_context& ctx, resource_handle h)
-            : m_Context{ctx}
-            , m_Handle{std::move(h)}
+        contextual_resource_view(const decorated_context& ctx, const resource_handle& h)
+            : m_Context{&ctx}
+            , m_Handle{&h}
         {
         }
 
         [[nodiscard]]
-        const decorated_context& context() const noexcept { return m_Context.get(); }
+        const decorated_context& context() const noexcept { return *m_Context; }
 
         [[nodiscard]]
-        const resource_handle& handle() const noexcept { return m_Handle; }
+        const resource_handle& handle() const noexcept { return *m_Handle; }
 
         [[nodiscard]]
-        friend bool operator==(const contextual_resource_handle&, const contextual_resource_handle&) noexcept = default;
+        friend bool operator==(const contextual_resource_view&, const contextual_resource_view&) noexcept = default;
     };
 
     [[nodiscard]]
-    inline GLuint get_index(const contextual_resource_handle& h) { return h.handle().index(); }
+    inline GLuint get_index(contextual_resource_view h) { return h.handle().index(); }
 
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
@@ -103,33 +103,68 @@ namespace avocet::opengl {
         return to_array(std::span(from), std::move(fn));
     }
 
-    template<std::size_t N>
-    class contextual_resource_handles {
-        std::array<contextual_resource_handle, N> m_Handles;
+    class contextual_deref_policy {
+        const decorated_context* m_Context{};
+    protected:
+        ~contextual_deref_policy() = default;
+
+        contextual_deref_policy& operator=(const contextual_deref_policy&) = default;
     public:
-        contextual_resource_handles(const decorated_context& ctx, const raw_indices<N>& indices)
-            : m_Handles{to_array(indices, [&ctx](GLuint i) { return contextual_resource_handle{ctx, resource_handle{i}}; })}
+        using value_type = contextual_resource_view;
+        using reference  = contextual_resource_view;
+
+        contextual_deref_policy() = default;
+
+        explicit contextual_deref_policy(const decorated_context& ctx) : m_Context{&ctx}
         {}
 
-        [[nodiscard]]
-        auto begin() const noexcept { return m_Handles.begin(); }
+        contextual_deref_policy(const contextual_deref_policy&) = default;
 
+        template<std::input_or_output_iterator Iterator>
         [[nodiscard]]
-        auto end() const noexcept { return m_Handles.end(); }
-
-        [[nodiscard]]
-        raw_indices<N> get_raw_indices() const {
-            return to_array(m_Handles, [](const contextual_resource_handle& h) { return get_index(h); });
+        reference get(Iterator i) const {
+            assert(m_Context);
+            return {*m_Context, *i};
         }
 
         [[nodiscard]]
-        const decorated_context& context() const noexcept
-            requires (N > 0)
-        {
-            return m_Handles.front().context();
+        friend bool operator==(const contextual_deref_policy&, const contextual_deref_policy&) = default;
+    };
+
+    template<std::size_t N>
+    class contextual_resource_handles {
+        using array_t = std::array<resource_handle, N>;
+        context_ref m_Context;
+        array_t m_Handles;
+
+        using citer_t = array_t::const_iterator;
+    public:
+        using const_iterator = sequoia::utilities::iterator<citer_t, contextual_deref_policy>;
+
+        contextual_resource_handles(const decorated_context& ctx, const raw_indices<N>& indices)
+            : m_Context{ctx}
+            , m_Handles{to_array(indices, [&ctx](GLuint i) { return resource_handle{i}; })}
+        {}
+
+        [[nodiscard]]
+        const_iterator begin() const noexcept { return {m_Handles.begin(), context()}; }
+
+        [[nodiscard]]
+        const_iterator end() const noexcept { return {m_Handles.end(), context()}; }
+
+        [[nodiscard]]
+        raw_indices<N> get_raw_indices() const {
+            return to_array(m_Handles, [](const resource_handle& h) { return h.index(); });
+        }
+
+        [[nodiscard]]
+        const decorated_context& context() const noexcept {
+            return m_Context.get();
         }
 
         [[nodiscard]]
         friend bool operator==(const contextual_resource_handles&, const contextual_resource_handles&) noexcept = default;
     };
+
+    using contextual_resource_handle = contextual_resource_handles<1>;
 }

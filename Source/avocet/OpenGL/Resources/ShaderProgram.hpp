@@ -17,7 +17,7 @@
 namespace avocet::opengl {
     template<class T>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, const contextual_resource_handle& handle) {
+        requires(T& t, contextual_resource_view handle) {
             { t.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
             T::destroy(handle);
         }
@@ -34,14 +34,14 @@ namespace avocet::opengl {
             : m_Handle{LifeEvents{args...}.create(ctx)}
         {}
 
-        ~generic_shader_resource() { LifeEvents::destroy(m_Handle); }
+        ~generic_shader_resource() { LifeEvents::destroy(view()); }
 
         generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        const contextual_resource_handle& handle() const noexcept { return m_Handle; }
+        contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
@@ -49,15 +49,15 @@ namespace avocet::opengl {
 
     template<class LifeEvents>
     [[nodiscard]]
-    GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.handle()); }
+    GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.view()); }
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
         static contextual_resource_handle create(const decorated_context& ctx) {
-            return contextual_resource_handle{ctx, resource_handle{gl_function{&GladGLContext::CreateProgram}(ctx)}};
+            return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
         }
 
-        static void destroy(const contextual_resource_handle& handle) { gl_function{&GladGLContext::DeleteProgram}(handle.context(), get_index(handle)); }
+        static void destroy(contextual_resource_view handle) { gl_function{&GladGLContext::DeleteProgram}(handle.context(), get_index(handle)); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
@@ -87,7 +87,7 @@ namespace avocet::opengl {
         ~shader_program() { program_tracker::reset(m_Resource); }
 
         [[nodiscard]]
-        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.handle()); }
+        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.view()); }
 
         void use() { program_tracker::utilize(m_Resource); }
 
@@ -120,7 +120,7 @@ namespace avocet::opengl {
         template<class... Args>
         void do_set_uniform(std::string_view name, gl_function<void(GLint, Args...)> fn, Args... args) {
             use();
-            fn(m_Resource.handle().context(), extract_uniform_location(name), args...);
+            fn(m_Resource.view().context(), extract_uniform_location(name), args...);
         }
 
         class program_tracker {
@@ -128,7 +128,7 @@ namespace avocet::opengl {
         public:
             static void utilize(const shader_program_resource& spr) {
                 if(const auto index{get_index(spr)}; index != st_Current) {
-                    gl_function{&GladGLContext::UseProgram}(spr.handle().context(), index);
+                    gl_function{&GladGLContext::UseProgram}(spr.view().context(), index);
                     st_Current = index;
                 }
             }
