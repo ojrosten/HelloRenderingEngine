@@ -27,8 +27,7 @@ namespace avocet::opengl {
 
         resource_handle(resource_handle&& other) noexcept : m_Index{std::exchange(other.m_Index, 0)} {}
 
-        resource_handle& operator=(resource_handle&& other) noexcept
-        {
+        resource_handle& operator=(resource_handle&& other) noexcept {
             std::ranges::swap(m_Index, other.m_Index);
             return *this;
         }
@@ -69,8 +68,7 @@ namespace avocet::opengl {
         contextual_resource_view(const decorated_context& ctx, const resource_handle& h)
             : m_Context{&ctx}
             , m_Handle{&h}
-        {
-        }
+        {}
 
         [[nodiscard]]
         const decorated_context& context() const noexcept { return *m_Context; }
@@ -115,7 +113,8 @@ namespace avocet::opengl {
 
         contextual_deref_policy() = default;
 
-        explicit contextual_deref_policy(const decorated_context& ctx) : m_Context{&ctx}
+        explicit contextual_deref_policy(const decorated_context& ctx)
+            : m_Context{&ctx}
         {}
 
         contextual_deref_policy(const contextual_deref_policy&) = default;
@@ -158,9 +157,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        const decorated_context& context() const noexcept {
-            return m_Context.get();
-        }
+        const decorated_context& context() const noexcept { return m_Context.get(); }
 
         [[nodiscard]]
         friend bool operator==(const contextual_resource_handles&, const contextual_resource_handles&) noexcept = default;
