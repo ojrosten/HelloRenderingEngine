@@ -65,9 +65,9 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteVertexArrays}(ctx, N, indices.data()); }
 
-        static void bind(const contextual_resource_handle& h) { gl_function{&GladGLContext::BindVertexArray}(h.context(), get_index(h)); }
+        static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindVertexArray}(h.context(), get_index(h)); }
 
-        static void configure(const contextual_resource_handle& h, const configurator& config) {
+        static void configure(contextual_resource_view h, const configurator& config) {
             add_label(identifier, h, config.label);
         }
     };
@@ -95,9 +95,9 @@ namespace avocet::opengl {
             optional_label label;
         };
 
-        static void bind(const contextual_resource_handle& h) { gl_function{&GladGLContext::BindBuffer}(h.context(), to_gl_enum(Species), get_index(h)); }
+        static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindBuffer}(h.context(), to_gl_enum(Species), get_index(h)); }
 
-        static void configure(const contextual_resource_handle& h, const configurator& config) {
+        static void configure(contextual_resource_view h, const configurator& config) {
             add_label(identifier, h, config.label);
             gl_function{&GladGLContext::BufferData}(h.context(), to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
         }

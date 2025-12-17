@@ -72,7 +72,7 @@ namespace avocet::opengl {
         }
     }
 
-    void texture_2d_lifecycle_events::configure(const contextual_resource_handle& h, const configurator& config) {
+    void texture_2d_lifecycle_events::configure(contextual_resource_view h, const configurator& config) {
         add_label(identifier, h, config.label);
         load_to_gpu(h.context(), config);
         if(config.parameter_setter)

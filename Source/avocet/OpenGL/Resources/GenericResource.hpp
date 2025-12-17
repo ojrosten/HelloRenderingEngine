@@ -23,7 +23,7 @@ namespace avocet::opengl {
 
     template<num_resources NumResources, class T>
     inline constexpr bool has_resource_lifecycle_events_v{
-        requires(raw_indices<NumResources.value>& indices, const contextual_resource_handle& h) {
+        requires(raw_indices<NumResources.value>& indices, contextual_resource_view h) {
             T::generate(h.context(), indices);
             T::destroy(h.context(), indices);
             { T::identifier } -> std::convertible_to<object_identifier>;
@@ -51,9 +51,9 @@ namespace avocet::opengl {
             LifeEvents::destroy(h.context(), h.get_raw_indices());
         }
 
-        static void bind(const contextual_resource_handle& h) { LifeEvents::bind(h); }
+        static void bind(contextual_resource_view h) { LifeEvents::bind(h); }
 
-        static void configure(const contextual_resource_handle& h, const configurator_type& config) {
+        static void configure(contextual_resource_view h, const configurator_type& config) {
             LifeEvents::configure(h, config);
         }
     };
@@ -94,18 +94,18 @@ namespace avocet::opengl {
         generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
-            for(const auto& [ctxHandle, config] : std::views::zip(contextual_handles(), configs)) {
-                if(ctxHandle.handle() == resource_handle{})
+            for(const auto& [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {
+                if(ctxRsrc.handle() == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
-                lifecycle_type::bind(ctxHandle);
-                lifecycle_type::configure(ctxHandle, config);
+                lifecycle_type::bind(ctxRsrc);
+                lifecycle_type::configure(ctxRsrc, config);
             }
         }
 
         [[nodiscard]]
         bool is_null() const noexcept {
-            auto isNull{[](const contextual_resource_handle& h) { return h.handle() == resource_handle{}; }};
+            auto isNull{[](contextual_resource_view h) { return h.handle() == resource_handle{}; }};
             assert(std::ranges::all_of(contextual_handles(), isNull) or std::ranges::none_of(contextual_handles(), isNull));
             return isNull(contextual_handle(index<0>{}));
         }
@@ -140,6 +140,6 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        const contextual_resource_handle& contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+        contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
     };
 }
