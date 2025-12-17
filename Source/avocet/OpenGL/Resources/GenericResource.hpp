@@ -94,12 +94,12 @@ namespace avocet::opengl {
         generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
-            for(const auto& [ctxHandle, config] : std::views::zip(contextual_handles(), configs)) {
-                if(ctxHandle.handle() == resource_handle{})
+            for(const auto& [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {
+                if(ctxRsrc.handle() == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
-                lifecycle_type::bind(ctxHandle);
-                lifecycle_type::configure(ctxHandle, config);
+                lifecycle_type::bind(ctxRsrc);
+                lifecycle_type::configure(ctxRsrc, config);
             }
         }
 
