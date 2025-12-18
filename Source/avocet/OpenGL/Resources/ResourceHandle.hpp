@@ -112,9 +112,7 @@ namespace avocet::opengl {
 
         contextual_deref_policy() = default;
 
-        explicit contextual_deref_policy(const decorated_context& ctx)
-            : m_Context{&ctx}
-        {}
+        explicit contextual_deref_policy(const decorated_context& ctx) : m_Context{&ctx} {}
 
         contextual_deref_policy(const contextual_deref_policy&) = default;
 
@@ -126,7 +124,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        friend bool operator==(const contextual_deref_policy&, const contextual_deref_policy&) = default;
+        friend bool operator==(const contextual_deref_policy&, const contextual_deref_policy&) noexcept = default;
     };
 
     template<std::size_t N>
