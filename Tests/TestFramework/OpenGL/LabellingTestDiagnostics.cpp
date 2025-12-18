@@ -18,7 +18,7 @@ namespace avocet::testing
         return std::source_location::current().file_name();
     }
 
-    void labelling_false_negative_test::labelling_tests(const curlew::window& w)
+    void labelling_false_negative_test::labelling_tests(const curlew::opengl_window& w)
     {
         namespace agl = avocet::opengl;
         const auto shaderDir{working_materials()};

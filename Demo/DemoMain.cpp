@@ -13,6 +13,7 @@
 
 #include "sequoia/FileSystem/FileSystem.hpp"
 
+#include "Volk/volk.h"
 #include "GLFW/glfw3.h"
 
 #include <iostream>
@@ -87,6 +88,23 @@ int main()
 
                 return {};
             }()
+        };
+
+        auto vulkanWindow{
+            manager.create_window(curlew::vulkan_window_config{.width{800}, .height{800}, .name{"Hello Vulkan Rendering Engine"}})
+        };
+
+        uint32_t extensionCount = 0;
+        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+        std::println("Vulkan extensions supported {}\n", extensionCount);
+
+        std::jthread vkWin{
+            [&vulkanWindow]() {
+                while(!glfwWindowShouldClose(&vulkanWindow.get())) {
+                    glfwPollEvents();
+                }
+            }
         };
 
         auto w{

@@ -18,7 +18,7 @@ namespace avocet::testing
         return std::source_location::current().file_name();
     }
 
-    void buffer_object_labelling_free_test::labelling_tests(const curlew::window& w)
+    void buffer_object_labelling_free_test::labelling_tests(const curlew::opengl_window& w)
     {
         execute<agl::vertex_buffer_object <GLfloat>>(w);
         execute<agl::element_buffer_object<GLubyte>>(w);
@@ -26,7 +26,7 @@ namespace avocet::testing
 
     template<class Buffer>
         requires is_gl_buffer_v<Buffer>
-    void buffer_object_labelling_free_test::execute(const curlew::window& w)
+    void buffer_object_labelling_free_test::execute(const curlew::opengl_window& w)
     {
         std::string label{"This is a nice label!"};
         Buffer buffer{w.context(), {}, label};

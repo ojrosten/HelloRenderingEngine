@@ -26,7 +26,7 @@ namespace curlew {
         static rendering_setup find_rendering_setup();
 
         [[nodiscard]]
-        static curlew::window create_window(const curlew::window_config& config) {
+        static curlew::opengl_window create_window(const curlew::opengl_window_config& config) {
             return st_Manager.create_window(config);
         }
     };
@@ -60,7 +60,7 @@ namespace curlew {
         basic_graphics_test& operator=(basic_graphics_test&&) noexcept = default;
 
         [[nodiscard]]
-        curlew::window create_window(const curlew::window_config& config) { return test_window_manager::create_window(config); }
+        curlew::opengl_window create_window(const curlew::opengl_window_config& config) { return test_window_manager::create_window(config); }
     };
 
     template<selectivity_flavour Selectivity, specificity_flavour Specificity>

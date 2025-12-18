@@ -39,7 +39,7 @@ namespace curlew {
         friend constexpr auto operator<=>(const num_samples&, const num_samples&) noexcept = default;
     };
 
-    struct window_config {
+    struct opengl_window_config {
         using decorator_type = std::function<void(const agl::context&, const agl::decorator_data)>;
 
         std::size_t width{800}, height{600};
@@ -50,6 +50,11 @@ namespace curlew {
                        epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}};
         agl::attempt_to_compensate_for_driver_bugs compensate{agl::attempt_to_compensate_for_driver_bugs::yes};
         num_samples samples{1};
+    };
+
+    struct vulkan_window_config {
+        std::size_t width{800}, height{600};
+        std::string name{};
     };
 
     class glfw_manager;
@@ -66,7 +71,8 @@ namespace curlew {
         glfw_resource& operator=(const glfw_resource&) = delete;
     };
 
-    class window;
+    class opengl_window;
+    class vulkan_window;
 
     class [[nodiscard]] glfw_manager {
         glfw_resource m_Resource{};
@@ -85,18 +91,24 @@ namespace curlew {
         glfw_manager& operator=(const glfw_manager&) = delete;
 
         [[nodiscard]]
-        window create_window(const window_config& config);
+        opengl_window create_window(const opengl_window_config& config);
+
+        [[nodiscard]]
+        vulkan_window create_window(const vulkan_window_config& config);
 
         [[nodiscard]]
         const rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
     };
 
     class [[nodiscard]] window_resource {
-        friend window;
+        friend opengl_window;
+        friend vulkan_window;
 
         GLFWwindow& m_Window;
 
-        window_resource(const window_config& config, const agl::opengl_version& version);
+        window_resource(const opengl_window_config& config, const agl::opengl_version& version);
+
+        window_resource(const vulkan_window_config& config);
     public:
 
         window_resource(const window_resource&) = delete;
@@ -108,23 +120,40 @@ namespace curlew {
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window; }
     };
 
-    class [[nodiscard]] window {
+    class [[nodiscard]] opengl_window {
         friend glfw_manager;
 
         window_resource m_Window;
         agl::capable_context m_Context;
 
-        window(const window_config& config, const agl::opengl_version& version);
+        opengl_window(const opengl_window_config& config, const agl::opengl_version& version);
     public:
 
-        window(const window&) = delete;
+        opengl_window(const opengl_window&) = delete;
 
-        window& operator=(const window&) = delete;
+        opengl_window& operator=(const opengl_window&) = delete;
 
-        ~window() = default;
+        ~opengl_window() = default;
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
         [[nodiscard]] const agl::capable_context& context() const noexcept { return m_Context; }
+    };
+
+    class [[nodiscard]] vulkan_window {
+        friend glfw_manager;
+
+        window_resource m_Window;
+
+        vulkan_window(const vulkan_window_config& config);
+    public:
+
+        vulkan_window(const vulkan_window&) = delete;
+
+        vulkan_window& operator=(const vulkan_window&) = delete;
+
+        ~vulkan_window() = default;
+
+        [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };
 }

@@ -16,7 +16,7 @@
 namespace curlew {
     template<class T>
     inline constexpr bool has_labelling_tests_v{
-        requires (T& t, const window& w) { t.labelling_tests(w); }
+        requires (T& t, const opengl_window& w) { t.labelling_tests(w); }
     };
 
     template<test_mode Mode>

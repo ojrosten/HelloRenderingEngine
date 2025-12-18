@@ -9,10 +9,11 @@
 
 #include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
 
-#include "GLFW/glfw3.h"
-
 #include <iostream>
 #include <format>
+
+#include "Volk/volk.h"
+#include "GLFW/glfw3.h"
 
 namespace curlew {
     namespace {
@@ -32,7 +33,8 @@ namespace curlew {
         constexpr int to_int(num_samples samples) { return static_cast<int>(samples.value()); }
 
         [[nodiscard]]
-        GLFWwindow& make_window(const window_config& config, const agl::opengl_version& version) {
+        GLFWwindow& make_window(const opengl_window_config& config, const agl::opengl_version& version) {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -43,7 +45,16 @@ namespace curlew {
             set_debug_context(config.debug_mode, version);
 
             auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
-            return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
+            return win ? *win : throw std::runtime_error{"Failed to create GLFW OpenGL window"};
+        }
+
+        [[nodiscard]]
+        GLFWwindow& make_window(const vulkan_window_config& config) {
+            glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+            glfwWindowHint(GLFW_VISIBLE, true);
+
+            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
+            return win ? *win : throw std::runtime_error{"Failed to create GLFW window suitable for Vulkan"};
         }
 
         [[nodiscard]]
@@ -73,7 +84,7 @@ namespace curlew {
 
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
-        auto w{window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::off}}, referenceVersion)};
+        auto w{opengl_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::off}}, referenceVersion)};
         return {agl::get_opengl_version(w.context()), agl::get_vendor(w.context()), agl::get_renderer(w.context())};
     }
 
@@ -98,13 +109,17 @@ namespace curlew {
         return setup;
     }
 
-    window glfw_manager::create_window(const window_config& config) { return window{config, m_RenderingSetup.version}; }
+    opengl_window glfw_manager::create_window(const opengl_window_config& config) { return opengl_window{config, m_RenderingSetup.version}; }
 
-    window_resource::window_resource(const window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
+    vulkan_window glfw_manager::create_window(const vulkan_window_config& config) { return vulkan_window{config}; }
+
+    window_resource::window_resource(const opengl_window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
+
+    window_resource::window_resource(const vulkan_window_config& config) : m_Window{make_window(config)} {}
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
-    window::window(const window_config& config, const agl::opengl_version& version)
+    opengl_window::opengl_window(const opengl_window_config& config, const agl::opengl_version& version)
         : m_Window{config, version}
         , m_Context{
             config.debug_mode,
@@ -114,4 +129,12 @@ namespace curlew {
             config.compensate
           }
     {}
+
+    vulkan_window::vulkan_window(const vulkan_window_config& config)
+        : m_Window{config}
+    {
+        if(volkInitialize() != VK_SUCCESS) {
+            throw std::runtime_error{"Unable to initialize Volk"};
+        }
+    }
 }

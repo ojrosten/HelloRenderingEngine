@@ -31,7 +31,7 @@ namespace avocet::testing
 
     template<class Buffer>
         requires is_gl_buffer_v<Buffer>
-    void buffer_object_false_negative_test::execute(const curlew::window& w)
+    void buffer_object_false_negative_test::execute(const curlew::opengl_window& w)
     {
         using T = Buffer::value_type;
         using opt_span = std::optional<std::span<const T>>;

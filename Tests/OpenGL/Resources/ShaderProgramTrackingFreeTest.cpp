@@ -30,7 +30,7 @@ namespace avocet::testing
             return agl::resource_handle{static_cast<GLuint>(param)};
         }
 
-        agl::resource_handle make_and_use_shader_program(curlew::window w,const fs::path& shaderDir) {
+        agl::resource_handle make_and_use_shader_program(curlew::opengl_window w,const fs::path& shaderDir) {
             const auto& ctx{w.context()};
 
             agl::shader_program sp{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
