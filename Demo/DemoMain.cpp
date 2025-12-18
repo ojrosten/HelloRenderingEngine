@@ -90,6 +90,9 @@ int main()
             }()
         };
 
+        // TO DO: we really want the windows inside a coroutine. The latter draws and yields,
+        // unless the window is due to close, in which case it returns, ending the life
+        // of the window
         auto vulkanWindow{
             manager.create_window(curlew::vulkan_window_config{.width{800}, .height{800}, .name{"Hello Vulkan Rendering Engine"}})
         };
