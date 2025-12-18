@@ -99,14 +99,6 @@ int main()
 
         std::println("Vulkan extensions supported {}\n", extensionCount);
 
-        std::jthread vkWin{
-            [&vulkanWindow]() {
-                while(!glfwWindowShouldClose(&vulkanWindow.get())) {
-                    glfwPollEvents();
-                }
-            }
-        };
-
         auto w{
             manager.create_window(
                 {.width {800},
@@ -296,124 +288,126 @@ int main()
         discShaderProgram2D.set_uniform("radius", cutoutRadius);
         discShaderProgram2D.set_uniform("centre", cutoutCentre.values());
 
-        while(!glfwWindowShouldClose(&w.get())) {
-            agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
+        while(!glfwWindowShouldClose(&w.get()) || !glfwWindowShouldClose(&vulkanWindow.get())) {
+            if(!glfwWindowShouldClose(&w.get())) {
+                agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
 
-            agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+                agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-            {
-                set_payload(ctx);
-                discShaderProgram2DTextured.use();
-                disc.draw(agl::texture_unit{5});
-            }
+                {
+                    set_payload(ctx);
+                    discShaderProgram2DTextured.use();
+                    disc.draw(agl::texture_unit{5});
+                }
 
-            {
-                set_payload(ctx, agl::capabilities::gl_depth_test{});
-                shaderProgram2DMixedTextures.use();
-                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
-            }
+                {
+                    set_payload(ctx, agl::capabilities::gl_depth_test{});
+                    shaderProgram2DMixedTextures.use();
+                    sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+                }
 
-            {
-                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_LINE);
-                set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-1.0}}}, agl::capabilities::gl_polygon_offset_line{});
-                shaderProgram2DMonochrome.use();
-                shaderProgram2DMonochrome.set_uniform("colour", std::array{1.0f, 0.0f, 0.0f, 1.0f});
-                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
-                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
-            }
+                {
+                    agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_LINE);
+                    set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-1.0}}}, agl::capabilities::gl_polygon_offset_line{});
+                    shaderProgram2DMonochrome.use();
+                    shaderProgram2DMonochrome.set_uniform("colour", std::array{1.0f, 0.0f, 0.0f, 1.0f});
+                    sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+                    agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
+                }
 
-            {
-                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_POINT);
-                agl::gl_function{&GladGLContext::PointSize}(ctx, 10);
-                set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-2.0}}}, agl::capabilities::gl_polygon_offset_point{});
-                shaderProgram2DMonochrome.use();
-                shaderProgram2DMonochrome.set_uniform("colour", std::array{0.0f, 0.0f, 1.0f, 1.0f});
-                sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
-                agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
-            }
+                {
+                    agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_POINT);
+                    agl::gl_function{&GladGLContext::PointSize}(ctx, 10);
+                    set_payload(ctx, agl::capabilities::gl_depth_test{.poly_offset{.factor{}, .units{-2.0}}}, agl::capabilities::gl_polygon_offset_point{});
+                    shaderProgram2DMonochrome.use();
+                    shaderProgram2DMonochrome.set_uniform("colour", std::array{0.0f, 0.0f, 1.0f, 1.0f});
+                    sept.draw(std::array{agl::texture_unit{2}, agl::texture_unit{3}});
+                    agl::gl_function{&GladGLContext::PolygonMode}(ctx, GL_FRONT_AND_BACK, GL_FILL);
+                }
 
-            {
-                set_payload(ctx, agl::capabilities::gl_depth_test{});
-                shaderProgram3DTextured.use();
-                upperHearts.draw(agl::texture_unit{7});
-            }
+                {
+                    set_payload(ctx, agl::capabilities::gl_depth_test{});
+                    shaderProgram3DTextured.use();
+                    upperHearts.draw(agl::texture_unit{7});
+                }
 
-            {
-                set_payload(
-                    ctx,
-                    agl::capabilities::gl_stencil_test{
-                        .front{
-                            .func{.comparison{agl::comparison_mode::greater}, .reference_value{1}, .mask{255}},
-                            .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::replace} },
-                            .write_mask{255}
+                {
+                    set_payload(
+                        ctx,
+                        agl::capabilities::gl_stencil_test{
+                            .front{
+                                .func{.comparison{agl::comparison_mode::greater}, .reference_value{1}, .mask{255}},
+                                .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::replace} },
+                                .write_mask{255}
+                            }
                         }
-                    }
-                );
-                discShaderProgram2D.use();
-                cutout.draw();
-            }
+                    );
+                    discShaderProgram2D.use();
+                    cutout.draw();
+                }
 
-            {
-                set_payload(
-                    ctx,
-                    agl::capabilities::gl_stencil_test{
-                        .front{
-                            .func{.comparison{agl::comparison_mode::greater}, .reference_value{1}, .mask{255}},
-                            .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::keep} },
-                            .write_mask{255}
+                {
+                    set_payload(
+                        ctx,
+                        agl::capabilities::gl_stencil_test{
+                            .front{
+                                .func{.comparison{agl::comparison_mode::greater}, .reference_value{1}, .mask{255}},
+                                .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::keep} },
+                                .write_mask{255}
+                            }
                         }
-                    }
-                );
-                shaderProgram2DTextured.use();
-                hearts.draw(agl::texture_unit{8});
-            }
+                    );
+                    shaderProgram2DTextured.use();
+                    hearts.draw(agl::texture_unit{8});
+                }
 
-            {
-                set_payload(
-                    ctx,
-                    agl::capabilities::gl_stencil_test{
-                        .front{
-                            .func{.comparison{agl::comparison_mode::equal}, .reference_value{1}, .mask{255}},
-                            .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::keep} },
-                            .write_mask{255}
+                {
+                    set_payload(
+                        ctx,
+                        agl::capabilities::gl_stencil_test{
+                            .front{
+                                .func{.comparison{agl::comparison_mode::equal}, .reference_value{1}, .mask{255}},
+                                .op{.on_failure{agl::stencil_failure_mode::keep}, .on_pass_with_depth_failure{agl::stencil_failure_mode::keep}, .on_pass_without_depth_failure{agl::stencil_failure_mode::keep} },
+                                .write_mask{255}
+                            }
                         }
-                    }
-                );
-                shaderProgram2DTextured.use();
-                hex.draw(agl::texture_unit{8});
-            }
+                    );
+                    shaderProgram2DTextured.use();
+                    hex.draw(agl::texture_unit{8});
+                }
 
-            {
-                set_payload(
-                    ctx,
-                    agl::capabilities::gl_multi_sample{},
-                    agl::capabilities::gl_sample_coverage{.coverage_val{0.75}, .invert{agl::invert_sample_mask::no}},
-                    agl::capabilities::gl_sample_alpha_to_coverage{}
-                );
-                shaderProgram3DDoubleMonochrome.use();
-                partiallyTransparentQuadUpper.draw();
-            }
+                {
+                    set_payload(
+                        ctx,
+                        agl::capabilities::gl_multi_sample{},
+                        agl::capabilities::gl_sample_coverage{.coverage_val{0.75}, .invert{agl::invert_sample_mask::no}},
+                        agl::capabilities::gl_sample_alpha_to_coverage{}
+                    );
+                    shaderProgram3DDoubleMonochrome.use();
+                    partiallyTransparentQuadUpper.draw();
+                }
 
-            {
-                set_payload(
-                    ctx,
-                    agl::capabilities::gl_blend{
-                        .rgb{
-                            .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}},
-                            .algebraic_op{agl::blend_eqn_mode::add}
-                        },
-                        .alpha{
-                            .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}},
-                            .algebraic_op{agl::blend_eqn_mode::add}
-                        },
-                        .colour{}
-                    }
-                );
-                shaderProgram3DDoubleMonochrome.use();
-                partiallyTransparentQuadLower.draw();
-            }
+                {
+                    set_payload(
+                        ctx,
+                        agl::capabilities::gl_blend{
+                            .rgb{
+                                .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}},
+                                .algebraic_op{agl::blend_eqn_mode::add}
+                            },
+                            .alpha{
+                                .modes{.source{agl::blend_mode::src_alpha}, .destination{agl::blend_mode::one_minus_src_alpha}},
+                                .algebraic_op{agl::blend_eqn_mode::add}
+                            },
+                            .colour{}
+                        }
+                    );
+                    shaderProgram3DDoubleMonochrome.use();
+                    partiallyTransparentQuadLower.draw();
+                }
 
-            glfwSwapBuffers(&w.get());
+                glfwSwapBuffers(&w.get());
+            }
             glfwPollEvents();
         }
     }
