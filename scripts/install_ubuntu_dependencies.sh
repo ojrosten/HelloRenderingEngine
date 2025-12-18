@@ -15,7 +15,13 @@ dependencies=(
 	libxrandr-dev
 	libxinerama-dev
 	libxcursor-dev
-	libxi-dev)
+	libxi-dev
+	vulkan-tools
+	libvulkan-dev
+	vulkan-validationlayers
+	spirv-tools
+	glslang-tools
+	)
 
 sudo apt install ppa-purge
 sudo ppa-purge ppa:kisak/kisak-mesa
