@@ -38,8 +38,9 @@ if (APPLE)
     target_link_directories(avocet PUBLIC /opt/homebrew/opt/llvm@21/lib/c++)
 endif()
 
-find_package(Vulkan REQUIRED COMPONENTS volk)
-target_link_libraries(avocet PUBLIC Vulkan::volk)
+find_package(Vulkan REQUIRED)
+add_subdirectory(${Dependencies}/volk volk)
+target_link_libraries(avocet PUBLIC volk)
 target_include_directories(avocet PUBLIC ${Vulkan_INCLUDE_DIR})
 
 sequoia_finalize_library(avocet)
