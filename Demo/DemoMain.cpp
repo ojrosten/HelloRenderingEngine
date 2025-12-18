@@ -13,7 +13,7 @@
 
 #include "sequoia/FileSystem/FileSystem.hpp"
 
-#include "Volk/volk.h"
+#include "volk.h"
 #include "GLFW/glfw3.h"
 
 #include <iostream>

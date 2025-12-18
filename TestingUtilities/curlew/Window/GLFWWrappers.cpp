@@ -12,7 +12,7 @@
 #include <iostream>
 #include <format>
 
-#include "Volk/volk.h"
+#include "volk.h"
 #include "GLFW/glfw3.h"
 
 namespace curlew {
