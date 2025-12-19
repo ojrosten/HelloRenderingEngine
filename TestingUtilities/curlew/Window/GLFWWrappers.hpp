@@ -70,6 +70,9 @@ namespace curlew {
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
         vulkan_create_info create_info{};
+        std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};
+
+        const vulkan_window_config& check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const;
     };
 
     class glfw_manager;
@@ -160,9 +163,9 @@ namespace curlew {
         friend glfw_manager;
 
         window_resource m_Window;
-        vk::raii::Instance m_Instance;
-        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
         std::vector<vk::LayerProperties> m_LayerProperties;
+        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
+        vk::raii::Instance m_Instance;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:

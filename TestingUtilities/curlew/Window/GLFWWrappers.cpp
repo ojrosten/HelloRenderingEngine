@@ -85,6 +85,8 @@ namespace curlew {
             vk::InstanceCreateInfo createInfo{
                 .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
                 .pApplicationInfo{&appInfo},
+                .enabledLayerCount{static_cast<std::uint32_t>(config.validation_layers.size())},
+                .ppEnabledLayerNames{config.validation_layers.data()},
                 .enabledExtensionCount{extensions.count},
                 .ppEnabledExtensionNames{extensions.names}
             };
@@ -167,11 +169,21 @@ namespace curlew {
           }
     {}
 
+    const vulkan_window_config& vulkan_window_config::check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const {
+        for(const auto& requested : validation_layers) {
+            auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
+            if(found == layerProperties.end())
+                throw std::runtime_error{std::format("Unable to find requested validation layer {}", requested)};
+        }
+
+        return *this;
+    }
+
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
         : m_Window{config}
-        , m_Instance{make_instance(vulkanContext, config)}
-        , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
+        , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
+        , m_Instance{make_instance(vulkanContext, config.check_validation_layer_support(m_LayerProperties))}
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
