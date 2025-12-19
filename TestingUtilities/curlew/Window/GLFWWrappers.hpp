@@ -161,7 +161,8 @@ namespace curlew {
 
         window_resource m_Window;
         vk::raii::Instance m_Instance;
-        std::vector<vk::ExtensionProperties> m_Extensions;
+        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
+        std::vector<vk::LayerProperties> m_LayerProperties;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:
@@ -173,7 +174,10 @@ namespace curlew {
         ~vulkan_window() = default;
 
         [[nodiscard]]
-        std::span<const vk::ExtensionProperties> extension_properites() const noexcept { return m_Extensions; }
+        std::span<const vk::ExtensionProperties> extension_properites() const noexcept { return m_ExtensionProperties; }
+
+        [[nodiscard]]
+        std::span<const vk::LayerProperties> layer_properites() const noexcept { return m_LayerProperties; }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };

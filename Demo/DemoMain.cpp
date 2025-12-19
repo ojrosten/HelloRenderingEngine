@@ -108,6 +108,10 @@ int main()
             std::println("{:45}, version {}", p.extensionName.data(), p.specVersion);
         }
 
+        for(const auto& p : vulkanWindow.layer_properites()) {
+            std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
+        }
+
         auto w{
             manager.create_window(
                 {.width {800},

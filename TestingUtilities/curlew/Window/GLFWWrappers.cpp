@@ -170,7 +170,8 @@ namespace curlew {
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
         : m_Window{config}
         , m_Instance{make_instance(vulkanContext, config)}
-        , m_Extensions{vk::enumerateInstanceExtensionProperties(nullptr)}
+        , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
+        , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
