@@ -93,7 +93,14 @@ int main()
         // unless the window is due to close, in which case it returns, ending the life
         // of the window
         auto vulkanWindow{
-            manager.create_window(curlew::vulkan_window_config{.width{800}, .height{800}, .name{"Hello Vulkan Rendering Engine"}})
+            manager.create_window(
+                curlew::vulkan_window_config{
+                    .width{800},
+                    .height{800},
+                    .create_info{
+                        .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}}
+                }
+            )
         };
 
         auto w{

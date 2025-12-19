@@ -52,7 +52,7 @@ namespace curlew {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
             glfwWindowHint(GLFW_VISIBLE, true);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.create_info.app_info.app.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window suitable for Vulkan"};
         }
 
@@ -66,26 +66,31 @@ namespace curlew {
             return ctx;
         }
 
+        struct vulkan_extensions {
+            std::uint32_t count{};
+            const char** names{glfwGetRequiredInstanceExtensions(&count)};
+        };
+
         [[nodiscard]]
-        VkInstance make_instance() {
-            VkApplicationInfo app_info{
+        VkInstance make_instance(const vulkan_window_config& config) {
+            VkApplicationInfo appInfo{
                 .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
-                .pApplicationName{"No Name"},
-                .applicationVersion{VK_MAKE_VERSION(1, 0, 0)},
-                .pEngineName{"No Engine"},
-                .engineVersion{VK_MAKE_VERSION(1, 0, 0)},
+                .pApplicationName{config.create_info.app_info.app.name.data()},
+                .applicationVersion{config.create_info.app_info.app.version},
+                .pEngineName{config.create_info.app_info.engine.name.data()},
+                .engineVersion{config.create_info.app_info.engine.version},
                 .apiVersion{VK_API_VERSION_1_0}
             };
             vulkan_extensions extensions{};
-            VkInstanceCreateInfo create_info{
+            VkInstanceCreateInfo createInfo{
                 .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
-                .pApplicationInfo{&app_info},
+                .pApplicationInfo{&appInfo},
                 .enabledExtensionCount{extensions.count},
                 .ppEnabledExtensionNames{extensions.names}
             };
 
             VkInstance instance{};
-            if(auto result{vkCreateInstance(&create_info, nullptr, &instance)}; result != VK_SUCCESS)
+            if(auto result{vkCreateInstance(&createInfo, nullptr, &instance)}; result != VK_SUCCESS)
                 throw std::runtime_error{std::format("Vulkan instance creation failed with error code {}", static_cast<int>(result))};
 
             return instance;
@@ -159,19 +164,11 @@ namespace curlew {
 
     vulkan_window::vulkan_window(const vulkan_window_config& config)
         : m_Window{config}
-        , m_Instance{}
+        , m_Instance{config}
     {}
 
-    const char** get_vk_instance_extensions(std::uint32_t& count) {
-        const char** names{glfwGetRequiredInstanceExtensions(&count)};
-        if(auto code{glfwGetError(nullptr)}; code != GLFW_NO_ERROR)
-            throw std::runtime_error{std::format("GFLW error code {}", code)};
-
-        return names;
-    }
-
-    vulkan_instance::vulkan_instance()
-        : m_Instance{make_instance()}
+    vulkan_instance::vulkan_instance(const vulkan_window_config& config)
+        : m_Instance{make_instance(config)}
     {
         volkLoadInstanceOnly(m_Instance);
     }
