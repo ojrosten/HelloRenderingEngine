@@ -98,7 +98,8 @@ int main()
                     .width{800},
                     .height{800},
                     .create_info{
-                        .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}}
+                        .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}
+                     }
                 }
             )
         };
