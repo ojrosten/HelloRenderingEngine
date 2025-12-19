@@ -67,21 +67,6 @@ namespace curlew {
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
         std::string name{"No Name"};
-        VkApplicationInfo app_info{
-            .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
-            .pApplicationName{name.data()},
-            .applicationVersion{VK_MAKE_VERSION(1, 0, 0)},
-            .pEngineName{"No Engine"},
-            .engineVersion{VK_MAKE_VERSION(1, 0, 0)},
-            .apiVersion{VK_API_VERSION_1_0}
-        };
-        vulkan_extensions extensions{};
-        VkInstanceCreateInfo create_info{
-            .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
-            .pApplicationInfo{&app_info},
-            .enabledExtensionCount{extensions.count},
-            .ppEnabledExtensionNames{extensions.names}
-        };
     };
 
     class glfw_manager;
@@ -170,7 +155,7 @@ namespace curlew {
     class [[nodiscard]] vulkan_instance {
         VkInstance m_Instance;
     public:
-        explicit vulkan_instance(const VkInstanceCreateInfo& createInfo);
+        vulkan_instance();
 
         vulkan_instance(const vulkan_instance&) = delete;
 

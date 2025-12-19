@@ -66,9 +66,26 @@ namespace curlew {
             return ctx;
         }
 
-        VkInstance make_instance(const VkInstanceCreateInfo& createInfo) {
+        [[nodiscard]]
+        VkInstance make_instance() {
+            VkApplicationInfo app_info{
+                .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
+                .pApplicationName{"No Name"},
+                .applicationVersion{VK_MAKE_VERSION(1, 0, 0)},
+                .pEngineName{"No Engine"},
+                .engineVersion{VK_MAKE_VERSION(1, 0, 0)},
+                .apiVersion{VK_API_VERSION_1_0}
+            };
+            vulkan_extensions extensions{};
+            VkInstanceCreateInfo create_info{
+                .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
+                .pApplicationInfo{&app_info},
+                .enabledExtensionCount{extensions.count},
+                .ppEnabledExtensionNames{extensions.names}
+            };
+
             VkInstance instance{};
-            if(auto result{vkCreateInstance(&createInfo, nullptr, &instance)}; result != VK_SUCCESS)
+            if(auto result{vkCreateInstance(&create_info, nullptr, &instance)}; result != VK_SUCCESS)
                 throw std::runtime_error{std::format("Vulkan instance creation failed with error code {}", static_cast<int>(result))};
 
             return instance;
@@ -142,15 +159,19 @@ namespace curlew {
 
     vulkan_window::vulkan_window(const vulkan_window_config& config)
         : m_Window{config}
-        , m_Instance{config.create_info}
+        , m_Instance{}
     {}
 
     const char** get_vk_instance_extensions(std::uint32_t& count) {
-        return glfwGetRequiredInstanceExtensions(&count);
+        const char** names{glfwGetRequiredInstanceExtensions(&count)};
+        if(auto code{glfwGetError(nullptr)}; code != GLFW_NO_ERROR)
+            throw std::runtime_error{std::format("GFLW error code {}", code)};
+
+        return names;
     }
 
-    vulkan_instance::vulkan_instance(const VkInstanceCreateInfo& createInfo)
-        : m_Instance{make_instance(createInfo)}
+    vulkan_instance::vulkan_instance()
+        : m_Instance{make_instance()}
     {
         volkLoadInstanceOnly(m_Instance);
     }
