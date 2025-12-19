@@ -14,6 +14,8 @@
 
 #include "GLFW/glfw3.h"
 
+VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
+
 namespace curlew {
     namespace {
         void errorCallback(int error, const char* description) {
@@ -72,8 +74,8 @@ namespace curlew {
         };
 
         [[nodiscard]]
-        VkInstance make_instance(const vulkan_window_config& config) {
-            VkApplicationInfo appInfo{
+        vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const vulkan_window_config& config) {
+            vk::ApplicationInfo appInfo{
                 .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
                 .pApplicationName{config.create_info.app_info.app.name.data()},
                 .applicationVersion{config.create_info.app_info.app.version},
@@ -82,25 +84,25 @@ namespace curlew {
                 .apiVersion{VK_API_VERSION_1_0}
             };
             vulkan_extensions extensions{};
-            VkInstanceCreateInfo createInfo{
+            vk::InstanceCreateInfo createInfo{
                 .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
                 .pApplicationInfo{&appInfo},
                 .enabledExtensionCount{extensions.count},
                 .ppEnabledExtensionNames{extensions.names}
             };
 
-            VkInstance instance{};
-            if(auto result{vkCreateInstance(&createInfo, nullptr, &instance)}; result != VK_SUCCESS)
-                throw std::runtime_error{std::format("Vulkan instance creation failed with error code {}", static_cast<int>(result))};
-
-            return instance;
+            return vk::raii::Instance{vulkanContext, createInfo};
         }
 
         [[nodiscard]]
-        std::uint32_t get_extension_count() {
-            std::uint32_t count{};
-            vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
-            return count;
+        vk::raii::Context make_vulkan_context() {
+            if(volkInitialize() != VK_SUCCESS) {
+                throw std::runtime_error{"Unable to initialize Volk\n"};
+            }
+
+            VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+
+            return vk::raii::Context{vkGetInstanceProcAddr};
         }
     }
 
@@ -115,20 +117,18 @@ namespace curlew {
 
     glfw_manager::glfw_manager()
         : m_RenderingSetup{do_find_rendering_setup()}
+        , m_VulkanContext{make_vulkan_context()}
     {
-        if(volkInitialize() != VK_SUCCESS) {
-            throw std::runtime_error{"Unable to initialize Volk\n"};
-        }
     }
 
     [[nodiscard]]
-    rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
+    opengl_rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{opengl_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::off}}, referenceVersion)};
         return {agl::get_opengl_version(w.context()), agl::get_vendor(w.context()), agl::get_renderer(w.context())};
     }
 
     [[nodiscard]]
-    rendering_setup glfw_manager::do_find_rendering_setup() const {
+    opengl_rendering_setup glfw_manager::do_find_rendering_setup() const {
         constexpr agl::opengl_version trialVersion{.major{4}, .minor{avocet::is_windows() ? 6 : 1}};
 
         const auto setup{attempt_to_find_rendering_setup(trialVersion)};
@@ -150,7 +150,7 @@ namespace curlew {
 
     opengl_window glfw_manager::create_window(const opengl_window_config& config) { return opengl_window{config, m_RenderingSetup.version}; }
 
-    vulkan_window glfw_manager::create_window(const vulkan_window_config& config) { return vulkan_window{config}; }
+    vulkan_window glfw_manager::create_window(const vulkan_window_config& config) { return vulkan_window{config, m_VulkanContext}; }
 
     window_resource::window_resource(const opengl_window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
 
@@ -169,22 +169,12 @@ namespace curlew {
           }
     {}
 
-    vulkan_window::vulkan_window(const vulkan_window_config& config)
+    vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
         : m_Window{config}
-        , m_Instance{config}
-        , m_Extensions(get_extension_count())
+        , m_Instance{make_instance(vulkanContext, config)}
+        , m_Extensions{vk::enumerateInstanceExtensionProperties(nullptr)}
     {
-        auto count{static_cast<std::uint32_t>(m_Extensions.size())};
-        vkEnumerateInstanceExtensionProperties(nullptr, &count, m_Extensions.data());
-    }
-
-    vulkan_instance::vulkan_instance(const vulkan_window_config& config)
-        : m_Instance{make_instance(config)}
-    {
-        volkLoadInstanceOnly(m_Instance);
-    }
-
-    vulkan_instance::~vulkan_instance() {
-        vkDestroyInstance(m_Instance, nullptr);
+        volkLoadInstance(*m_Instance);
+        VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
     }
 }

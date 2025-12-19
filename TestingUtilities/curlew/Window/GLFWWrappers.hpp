@@ -16,7 +16,13 @@
 #include <span>
 #include <string>
 
+#define VK_NO_PROTOTYPES
 #include "volk.h"
+
+#define VULKAN_HPP_NO_STRUCT_CONSTRUCTORS
+#define VULKAN_HPP_ENABLE_DYNAMIC_LOADER_TOOL 0
+#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
+#include <vulkan/vulkan_raii.hpp>
 
 #include "GLFW/glfw3.h"
 
@@ -94,13 +100,14 @@ namespace curlew {
 
     class [[nodiscard]] glfw_manager {
         glfw_resource m_Resource{};
-        rendering_setup m_RenderingSetup{};
+        opengl_rendering_setup m_RenderingSetup{};
+        vk::raii::Context m_VulkanContext;
 
         [[nodiscard]]
-        rendering_setup attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const;
+        opengl_rendering_setup attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const;
       
         [[nodiscard]]
-        rendering_setup do_find_rendering_setup() const;
+        opengl_rendering_setup do_find_rendering_setup() const;
     public:
         glfw_manager();
 
@@ -115,7 +122,7 @@ namespace curlew {
         vulkan_window create_window(const vulkan_window_config& config);
 
         [[nodiscard]]
-        const rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
+        const opengl_rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
     };
 
     class [[nodiscard]] window_resource {
@@ -158,26 +165,14 @@ namespace curlew {
         [[nodiscard]] const agl::capable_context& context() const noexcept { return m_Context; }
     };
 
-    class [[nodiscard]] vulkan_instance {
-        VkInstance m_Instance;
-    public:
-        vulkan_instance(const vulkan_window_config& config);
-
-        vulkan_instance(const vulkan_instance&) = delete;
-
-        vulkan_instance& operator=(const vulkan_instance&) = delete;
-
-        ~vulkan_instance();
-    };
-
     class [[nodiscard]] vulkan_window {
         friend glfw_manager;
 
         window_resource m_Window;
-        vulkan_instance m_Instance;
-        std::vector<VkExtensionProperties> m_Extensions;
+        vk::raii::Instance m_Instance;
+        std::vector<vk::ExtensionProperties> m_Extensions;
 
-        vulkan_window(const vulkan_window_config& config);
+        vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:
 
         vulkan_window(const vulkan_window&) = delete;
@@ -187,7 +182,7 @@ namespace curlew {
         ~vulkan_window() = default;
 
         [[nodiscard]]
-        std::span<const VkExtensionProperties> extension_properites() const noexcept { return m_Extensions; }
+        std::span<const vk::ExtensionProperties> extension_properites() const noexcept { return m_Extensions; }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };

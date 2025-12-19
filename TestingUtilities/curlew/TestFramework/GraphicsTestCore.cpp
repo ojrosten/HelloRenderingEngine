@@ -11,7 +11,7 @@
 
 namespace curlew {
     [[nodiscard]]
-    rendering_setup test_window_manager::find_rendering_setup() {
+    opengl_rendering_setup test_window_manager::find_rendering_setup() {
         const static auto setup{st_Manager.get_rendering_setup()};
         return setup;
     }

@@ -105,7 +105,7 @@ int main()
         };
 
         for(const auto& p : vulkanWindow.extension_properites()) {
-            std::println("{:45}, version {}", p.extensionName, p.specVersion);
+            std::println("{:45}, version {}", p.extensionName.data(), p.specVersion);
         }
 
         auto w{

@@ -23,7 +23,7 @@ namespace curlew {
         inline static curlew::glfw_manager st_Manager{};
     public:
         [[nodiscard]]
-        static rendering_setup find_rendering_setup();
+        static opengl_rendering_setup find_rendering_setup();
 
         [[nodiscard]]
         static curlew::opengl_window create_window(const curlew::opengl_window_config& config) {

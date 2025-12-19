@@ -46,19 +46,19 @@ namespace curlew {
     [[nodiscard]]
     bool is_nvidia(std::string_view renderer);
 
-    struct rendering_setup {
+    struct opengl_rendering_setup {
         avocet::opengl::opengl_version version;
         std::string vendor{}, renderer{};
     };
 
     [[nodiscard]]
-    std::string rendering_setup_discriminator(rendering_setup setup, selectivity_flavour selectivity);
+    std::string rendering_setup_discriminator(opengl_rendering_setup setup, selectivity_flavour selectivity);
 
     [[nodiscard]]
-    std::string rendering_setup_discriminator(rendering_setup setup, specificity_flavour specificity);
+    std::string rendering_setup_discriminator(opengl_rendering_setup setup, specificity_flavour specificity);
 
     [[nodiscard]]
-    std::string rendering_setup_summary(const rendering_setup& setup);
+    std::string rendering_setup_summary(const opengl_rendering_setup& setup);
 
     [[nodiscard]]
     constexpr specificity_flavour full_specificity() noexcept {

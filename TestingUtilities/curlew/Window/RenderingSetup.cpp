@@ -61,7 +61,7 @@ namespace curlew {
         template<class Flavour>
             requires(std::is_scoped_enum_v<Flavour>)
         [[nodiscard]]
-        std::string do_make_discriminator(rendering_setup setup, Flavour flavour) {
+        std::string do_make_discriminator(opengl_rendering_setup setup, Flavour flavour) {
             std::string str{};
             if(os_dependent(flavour))
                 str += operating_system();
@@ -101,13 +101,13 @@ namespace curlew {
 
 
     [[nodiscard]]
-    std::string rendering_setup_discriminator(rendering_setup setup, selectivity_flavour selectivity) { return do_make_discriminator(setup, selectivity); }
+    std::string rendering_setup_discriminator(opengl_rendering_setup setup, selectivity_flavour selectivity) { return do_make_discriminator(setup, selectivity); }
 
     [[nodiscard]]
-    std::string rendering_setup_discriminator(rendering_setup setup, specificity_flavour specificity) { return do_make_discriminator(setup, specificity); }
+    std::string rendering_setup_discriminator(opengl_rendering_setup setup, specificity_flavour specificity) { return do_make_discriminator(setup, specificity); }
 
     [[nodiscard]]
-    std::string rendering_setup_summary(const rendering_setup& setup) {
+    std::string rendering_setup_summary(const opengl_rendering_setup& setup) {
         return std::format("GL Vendor  : {}\nGL Renderer: {}\nGL Version : {}\n", setup.vendor, setup.renderer, setup.version);
     }
 }
