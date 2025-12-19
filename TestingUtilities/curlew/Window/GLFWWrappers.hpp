@@ -15,6 +15,10 @@
 
 #include <string>
 
+#include "volk.h"
+
+#include "GLFW/glfw3.h"
+
 struct GLFWwindow;
 
 namespace curlew {
@@ -52,9 +56,32 @@ namespace curlew {
         num_samples samples{1};
     };
 
+    [[nodiscard]]
+    const char** get_vk_instance_extensions(std::uint32_t& count);
+
+    struct vulkan_extensions {
+        std::uint32_t count{};
+        const char** names{get_vk_instance_extensions(count)};
+    };
+
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
-        std::string name{};
+        std::string name{"No Name"};
+        VkApplicationInfo app_info{
+            .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
+            .pApplicationName{name.data()},
+            .applicationVersion{VK_MAKE_VERSION(1, 0, 0)},
+            .pEngineName{"No Engine"},
+            .engineVersion{VK_MAKE_VERSION(1, 0, 0)},
+            .apiVersion{VK_API_VERSION_1_0}
+        };
+        vulkan_extensions extensions{};
+        VkInstanceCreateInfo create_info{
+            .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
+            .pApplicationInfo{&app_info},
+            .enabledExtensionCount{extensions.count},
+            .ppEnabledExtensionNames{extensions.names}
+        };
     };
 
     class glfw_manager;
@@ -140,10 +167,23 @@ namespace curlew {
         [[nodiscard]] const agl::capable_context& context() const noexcept { return m_Context; }
     };
 
+    class [[nodiscard]] vulkan_instance {
+        VkInstance m_Instance;
+    public:
+        explicit vulkan_instance(const VkInstanceCreateInfo& createInfo);
+
+        vulkan_instance(const vulkan_instance&) = delete;
+
+        vulkan_instance& operator=(const vulkan_instance&) = delete;
+
+        ~vulkan_instance();
+    };
+
     class [[nodiscard]] vulkan_window {
         friend glfw_manager;
 
         window_resource m_Window;
+        vulkan_instance m_Instance;
 
         vulkan_window(const vulkan_window_config& config);
     public:

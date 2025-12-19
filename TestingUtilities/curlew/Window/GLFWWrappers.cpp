@@ -12,7 +12,6 @@
 #include <iostream>
 #include <format>
 
-#include "volk.h"
 #include "GLFW/glfw3.h"
 
 namespace curlew {
@@ -66,8 +65,15 @@ namespace curlew {
 
             return ctx;
         }
-    }
 
+        VkInstance make_instance(const VkInstanceCreateInfo& createInfo) {
+            VkInstance instance{};
+            if(auto result{vkCreateInstance(&createInfo, nullptr, &instance)}; result != VK_SUCCESS)
+                throw std::runtime_error{std::format("Vulkan instance creation failed with error code {}", static_cast<int>(result))};
+
+            return instance;
+        }
+    }
 
     glfw_resource::glfw_resource() {
         glfwSetErrorCallback(errorCallback);
@@ -80,7 +86,11 @@ namespace curlew {
 
     glfw_manager::glfw_manager()
         : m_RenderingSetup{do_find_rendering_setup()}
-    {}
+    {
+        if(volkInitialize() != VK_SUCCESS) {
+            throw std::runtime_error{"Unable to initialize Volk\n"};
+        }
+    }
 
     [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
@@ -132,9 +142,20 @@ namespace curlew {
 
     vulkan_window::vulkan_window(const vulkan_window_config& config)
         : m_Window{config}
+        , m_Instance{config.create_info}
+    {}
+
+    const char** get_vk_instance_extensions(std::uint32_t& count) {
+        return glfwGetRequiredInstanceExtensions(&count);
+    }
+
+    vulkan_instance::vulkan_instance(const VkInstanceCreateInfo& createInfo)
+        : m_Instance{make_instance(createInfo)}
     {
-        if(volkInitialize() != VK_SUCCESS) {
-            throw std::runtime_error{"Unable to initialize Volk"};
-        }
+        volkLoadInstanceOnly(m_Instance);
+    }
+
+    vulkan_instance::~vulkan_instance() {
+        vkDestroyInstance(m_Instance, nullptr);
     }
 }
