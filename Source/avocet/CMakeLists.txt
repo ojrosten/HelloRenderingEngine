@@ -16,7 +16,9 @@ set(SourceList
     OpenGL/Context/Version.cpp
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp
-    OpenGL/Resources/Textures.cpp)
+    OpenGL/Resources/Textures.cpp
+    Vulkan/VulkanConfig.cpp
+)
 
 add_library(avocet STATIC ${SourceList})
 

@@ -12,19 +12,10 @@
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
+#include "avocet/Vulkan/VulkanConfig..hpp"
 
 #include <span>
 #include <string>
-
-#define VK_NO_PROTOTYPES
-#include "volk.h"
-
-#define VULKAN_HPP_NO_STRUCT_CONSTRUCTORS
-#define VULKAN_HPP_ENABLE_DYNAMIC_LOADER_TOOL 0
-#define VULKAN_HPP_DISPATCH_LOADER_DYNAMIC 1
-#include <vulkan/vulkan_raii.hpp>
-
-#include "GLFW/glfw3.h"
 
 struct GLFWwindow;
 

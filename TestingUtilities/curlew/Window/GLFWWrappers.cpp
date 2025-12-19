@@ -14,8 +14,6 @@
 
 #include "GLFW/glfw3.h"
 
-VULKAN_HPP_DEFAULT_DISPATCH_LOADER_DYNAMIC_STORAGE
-
 namespace curlew {
     namespace {
         void errorCallback(int error, const char* description) {
