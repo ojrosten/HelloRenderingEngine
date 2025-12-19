@@ -95,6 +95,13 @@ namespace curlew {
 
             return instance;
         }
+
+        [[nodiscard]]
+        std::uint32_t get_extension_count() {
+            std::uint32_t count{};
+            vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr);
+            return count;
+        }
     }
 
     glfw_resource::glfw_resource() {
@@ -165,7 +172,11 @@ namespace curlew {
     vulkan_window::vulkan_window(const vulkan_window_config& config)
         : m_Window{config}
         , m_Instance{config}
-    {}
+        , m_Extensions(get_extension_count())
+    {
+        auto count{static_cast<std::uint32_t>(m_Extensions.size())};
+        vkEnumerateInstanceExtensionProperties(nullptr, &count, m_Extensions.data());
+    }
 
     vulkan_instance::vulkan_instance(const vulkan_window_config& config)
         : m_Instance{make_instance(config)}

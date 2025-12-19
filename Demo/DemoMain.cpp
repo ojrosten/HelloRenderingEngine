@@ -104,6 +104,10 @@ int main()
             )
         };
 
+        for(const auto& p : vulkanWindow.extension_properites()) {
+            std::println("{:45}, version {}", p.extensionName, p.specVersion);
+        }
+
         auto w{
             manager.create_window(
                 {.width {800},

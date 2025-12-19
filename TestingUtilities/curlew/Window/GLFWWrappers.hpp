@@ -13,6 +13,7 @@
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
 
+#include <span>
 #include <string>
 
 #include "volk.h"
@@ -174,6 +175,7 @@ namespace curlew {
 
         window_resource m_Window;
         vulkan_instance m_Instance;
+        std::vector<VkExtensionProperties> m_Extensions;
 
         vulkan_window(const vulkan_window_config& config);
     public:
@@ -183,6 +185,9 @@ namespace curlew {
         vulkan_window& operator=(const vulkan_window&) = delete;
 
         ~vulkan_window() = default;
+
+        [[nodiscard]]
+        std::span<const VkExtensionProperties> extension_properites() const noexcept { return m_Extensions; }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };
