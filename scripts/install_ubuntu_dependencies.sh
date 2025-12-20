@@ -3,7 +3,7 @@
 dependencies=(
 	gcc
 	g++
-	g++-14
+	g++-15
 	libtbb-dev
 	cmake
 	ninja-build
