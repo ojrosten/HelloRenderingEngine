@@ -21,6 +21,7 @@ dependencies=(
 	vulkan-validationlayers
 	spirv-tools
 	glslang-tools
+	glslc
 	)
 
 sudo apt install ppa-purge
