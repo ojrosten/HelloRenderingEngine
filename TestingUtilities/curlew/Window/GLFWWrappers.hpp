@@ -64,13 +64,15 @@ namespace curlew {
     };
 
     struct vulkan_create_info {
+        VkInstanceCreateFlags flags{VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR};
         vulkan_application_info app_info{};
     };
 
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
         vulkan_create_info create_info{};
-        std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};
+        std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};      
+        std::vector<const char*> extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}};
 
         const vulkan_window_config& check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const;
     };

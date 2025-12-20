@@ -66,10 +66,16 @@ namespace curlew {
             return ctx;
         }
 
-        struct vulkan_extensions {
+        [[nodiscard]]
+        std::vector<const char*> build_vulkan_extensions(const vulkan_window_config& config) {
             std::uint32_t count{};
             const char** names{glfwGetRequiredInstanceExtensions(&count)};
-        };
+
+            std::vector<const char*> extensions{std::from_range, std::span<const char*>(names, count)};
+            extensions.append_range(config.extensions);
+
+            return extensions;
+        }
 
         [[nodiscard]]
         vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const vulkan_window_config& config) {
@@ -81,14 +87,15 @@ namespace curlew {
                 .engineVersion{config.create_info.app_info.engine.version},
                 .apiVersion{VK_API_VERSION_1_0}
             };
-            vulkan_extensions extensions{};
+            const auto extensions{build_vulkan_extensions(config)};
             vk::InstanceCreateInfo createInfo{
                 .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
+                .flags{config.create_info.flags},
                 .pApplicationInfo{&appInfo},
                 .enabledLayerCount{static_cast<std::uint32_t>(config.validation_layers.size())},
                 .ppEnabledLayerNames{config.validation_layers.data()},
-                .enabledExtensionCount{extensions.count},
-                .ppEnabledExtensionNames{extensions.names}
+                .enabledExtensionCount{static_cast<std::uint32_t>(extensions.size())},
+                .ppEnabledExtensionNames{extensions.data()}
             };
 
             return vk::raii::Instance{vulkanContext, createInfo};
