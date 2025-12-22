@@ -164,10 +164,11 @@ namespace curlew {
     class [[nodiscard]] vulkan_window {
         friend glfw_manager;
 
-        window_resource m_Window;
-        std::vector<vk::LayerProperties> m_LayerProperties;
-        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
-        vk::raii::Instance m_Instance;
+        window_resource                       m_Window;
+        std::vector<vk::LayerProperties>      m_LayerProperties;
+        std::vector<vk::ExtensionProperties>  m_ExtensionProperties;
+        vk::raii::Instance                    m_Instance;
+        std::vector<vk::raii::PhysicalDevice> m_PhysicalDevices;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:
@@ -183,6 +184,8 @@ namespace curlew {
 
         [[nodiscard]]
         std::span<const vk::LayerProperties> layer_properites() const noexcept { return m_LayerProperties; }
+
+        std::span<const vk::raii::PhysicalDevice> physical_devices() const noexcept { return m_PhysicalDevices; }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };

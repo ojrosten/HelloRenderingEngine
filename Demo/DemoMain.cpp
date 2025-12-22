@@ -70,6 +70,43 @@ namespace {
     }
 }
 
+namespace std {
+    template<>
+    struct formatter<vk::PhysicalDeviceProperties> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(const vk::PhysicalDeviceProperties& properties, auto& ctx) const {
+            return 
+                format_to(
+                    ctx.out(),
+                    "API Version {}\nDriver Version {}\nVendor ID {}\nDevice ID {}\nDevice Type {}\nDevice Name {}",
+                    properties.apiVersion,
+                    properties.driverVersion,
+                    properties.vendorID,
+                    properties.deviceID,
+                    properties.deviceType,
+                    properties.deviceName.data()
+                    // TO DO
+               );
+        }
+    };
+
+    template<>
+    struct formatter<vk::PhysicalDeviceFeatures> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(const vk::PhysicalDeviceFeatures& features, auto& ctx) const {
+            return
+                format_to(
+                    ctx.out(),
+                    "Geometry Shader {}",
+                    static_cast<bool>(features.geometryShader)
+                    // TO DO
+                );
+        }
+    };
+}
+
 int main()
 {
     try
@@ -104,12 +141,19 @@ int main()
             )
         };
 
+        std::println("Extension Properites");
         for(const auto& p : vulkanWindow.extension_properites()) {
             std::println("{:45}, version {}", p.extensionName.data(), p.specVersion);
         }
 
+        std::println("Layer Properites");
         for(const auto& p : vulkanWindow.layer_properites()) {
             std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
+        }
+
+        std::println("Physical Devices");
+        for(const auto& d : vulkanWindow.physical_devices()) {
+            std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
         }
 
         auto w{

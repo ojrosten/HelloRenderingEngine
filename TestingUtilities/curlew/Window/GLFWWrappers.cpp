@@ -85,7 +85,7 @@ namespace curlew {
                 .applicationVersion{config.create_info.app_info.app.version},
                 .pEngineName{config.create_info.app_info.engine.name.data()},
                 .engineVersion{config.create_info.app_info.engine.version},
-                .apiVersion{VK_API_VERSION_1_0}
+                .apiVersion{VK_API_VERSION_1_1}
             };
             const auto extensions{build_vulkan_extensions(config)};
             vk::InstanceCreateInfo createInfo{
@@ -191,6 +191,7 @@ namespace curlew {
         , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(vulkanContext, config.check_validation_layer_support(m_LayerProperties))}
+        , m_PhysicalDevices{m_Instance.enumeratePhysicalDevices()}
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
