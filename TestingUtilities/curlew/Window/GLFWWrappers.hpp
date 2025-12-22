@@ -76,12 +76,22 @@ namespace curlew {
         vulkan_application_info app_info{};
     };
 
+    struct vulkan_physical_device {
+        vk::raii::PhysicalDevice device;
+        queue_family_indices q_family_indices{};
+    };
+
+    struct vulkan_device_config {
+        std::function<vulkan_physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::raii::SurfaceKHR&)> selector{};
+        std::vector<const char*> extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}};
+    };
+
     class vulkan_logical_device {
         vk::raii::Device m_Device;
         vk::raii::Queue  m_GraphicsQueue,
                          m_PresentQueue; // TO DO: make these optional?
     public:
-        vulkan_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices);
+        explicit vulkan_logical_device(const vulkan_physical_device& physDevice);
     };
 
     struct vulkan_window_config {
@@ -89,9 +99,7 @@ namespace curlew {
         vulkan_create_info create_info{};
         std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};
         std::vector<const char*> extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}};
-        std::function<vulkan_logical_device(std::span<const vk::raii::PhysicalDevice>, const vk::raii::SurfaceKHR&)> device_selector;
-
-        const vulkan_window_config& check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const;
+        vulkan_device_config device_config{};
     };
 
     class glfw_manager;
@@ -181,12 +189,12 @@ namespace curlew {
     class [[nodiscard]] vulkan_window {
         friend glfw_manager;
 
-        window_resource                       m_Window;
-        std::vector<vk::LayerProperties>      m_LayerProperties;
-        std::vector<vk::ExtensionProperties>  m_ExtensionProperties;
-        vk::raii::Instance                    m_Instance;
-        vk::raii::SurfaceKHR                  m_Surface;
-        vulkan_logical_device                 m_PhysicalDevice;
+        window_resource                      m_Window;
+        std::vector<vk::LayerProperties>     m_LayerProperties;
+        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
+        vk::raii::Instance                   m_Instance;
+        vk::raii::SurfaceKHR                 m_Surface;
+        vulkan_logical_device                m_LogicalDevice;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:

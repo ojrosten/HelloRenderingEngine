@@ -68,6 +68,17 @@ namespace {
     void set_payload(const agl::capable_context& ctx, const Caps&... targetCaps) {
         ctx.new_payload(make_payload(targetCaps...));
     }
+
+    [[nodiscard]]
+    bool has_required_extensions(const vk::raii::PhysicalDevice& device, std::span<const char* const> requiredExtensions) {
+        const auto extensions{device.enumerateDeviceExtensionProperties()};
+        for(const auto& required : requiredExtensions) {
+            if(std::ranges::find_if(extensions, [required](std::string_view actualName) { return std::string_view{required} == actualName; }, [](const vk::ExtensionProperties& prop) { return prop.extensionName.data(); }) == extensions.end())
+                return false;
+        }
+
+        return true;
+    }
 }
 
 namespace std {
@@ -131,13 +142,16 @@ int main()
         // of the window
 
         auto deviceSelector{
-            [](std::span<const vk::raii::PhysicalDevice> devices, const vk::raii::SurfaceKHR& surface) -> curlew::vulkan_logical_device {
+            [](std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::raii::SurfaceKHR& surface) -> curlew::vulkan_physical_device {
                 // For now, print out details of all discovered devices
                 for(const auto& d : devices) {
                     std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
                 }
 
                 for(const auto& device : devices) {
+                    if(!has_required_extensions(device, requiredExtensions))
+                        continue;
+
                     curlew::queue_family_indices qFamilyIndices{};
 
                     const auto qFamiliesProperties{device.getQueueFamilyProperties2()};
@@ -166,7 +180,10 @@ int main()
                     .create_info{
                         .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}
                      },
-                    .device_selector{deviceSelector}
+                    .device_config{
+                        .selector{deviceSelector},
+                        .extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}}
+                    }
                 }
             )
         };

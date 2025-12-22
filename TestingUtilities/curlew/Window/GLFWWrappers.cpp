@@ -89,6 +89,17 @@ namespace curlew {
             return vk::raii::Context{vkGetInstanceProcAddr};
         }
 
+
+        const vulkan_window_config& check_validation_layer_support(const vulkan_window_config& config, std::span<const vk::LayerProperties> layerProperties) {
+            for(const auto& requested : config.validation_layers) {
+                auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
+                if(found == layerProperties.end())
+                    throw std::runtime_error{std::format("Unable to find requested validation layer {}", requested)};
+            }
+
+            return config;
+        }
+
         [[nodiscard]]
         vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const vulkan_window_config& config) {
             vk::ApplicationInfo appInfo{
@@ -114,10 +125,10 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        vk::raii::Device make_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices) {
+        vk::raii::Device make_logical_device(const vulkan_physical_device& physDevice) {
             const float queuePriority{1.0}; // TO DO: allow for customization
 
-            std::vector<std::uint32_t> uniqueFamiliesIndices{qFamilyIndices.graphics.value(), qFamilyIndices.present.value()};
+            std::vector<std::uint32_t> uniqueFamiliesIndices{physDevice.q_family_indices.graphics.value(), physDevice.q_family_indices.present.value()};
             std::ranges::sort(uniqueFamiliesIndices);
             const auto qCreateInfos{
                 std::views::transform(
@@ -142,7 +153,7 @@ namespace curlew {
                 .pEnabledFeatures{&features}
             };
 
-            return device.createDevice(createInfo);
+            return physDevice.device.createDevice(createInfo);
         }
 
         [[nodiscard]]
@@ -218,20 +229,10 @@ namespace curlew {
           }
     {}
 
-    const vulkan_window_config& vulkan_window_config::check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const {
-        for(const auto& requested : validation_layers) {
-            auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
-            if(found == layerProperties.end())
-                throw std::runtime_error{std::format("Unable to find requested validation layer {}", requested)};
-        }
-
-        return *this;
-    }
-
-    vulkan_logical_device::vulkan_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices)
-        : m_Device{make_logical_device(device, qFamilyIndices)}
-        , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{qFamilyIndices.graphics.value()}})}
-        , m_PresentQueue {m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{qFamilyIndices.present .value()}})}
+    vulkan_logical_device::vulkan_logical_device(const vulkan_physical_device& physDevice)
+        : m_Device{make_logical_device(physDevice)}
+        , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.graphics.value()}})}
+        , m_PresentQueue {m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.present .value()}})}
     {
     }
 
@@ -239,9 +240,9 @@ namespace curlew {
         : m_Window{config}
         , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
-        , m_Instance{make_instance(vulkanContext, config.check_validation_layer_support(m_LayerProperties))}
+        , m_Instance{make_instance(vulkanContext, check_validation_layer_support(config, m_LayerProperties))}
         , m_Surface{make_surface(m_Instance, m_Window)}
-        , m_PhysicalDevice{config.device_selector(m_Instance.enumeratePhysicalDevices(), m_Surface)}
+        , m_LogicalDevice{config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, m_Surface)}
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
