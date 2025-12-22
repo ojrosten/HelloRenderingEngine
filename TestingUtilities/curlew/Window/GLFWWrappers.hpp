@@ -91,7 +91,7 @@ namespace curlew {
         vk::raii::Queue  m_GraphicsQueue,
                          m_PresentQueue; // TO DO: make these optional?
     public:
-        explicit vulkan_logical_device(const vulkan_physical_device& physDevice);
+        vulkan_logical_device(const vulkan_physical_device& physDevice, std::span<const char* const> extensions);
     };
 
     struct vulkan_window_config {

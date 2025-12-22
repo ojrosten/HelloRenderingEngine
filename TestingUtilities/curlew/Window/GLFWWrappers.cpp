@@ -125,7 +125,7 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        vk::raii::Device make_logical_device(const vulkan_physical_device& physDevice) {
+        vk::raii::Device make_logical_device(const vulkan_physical_device& physDevice, std::span<const char* const> extensions) {
             const float queuePriority{1.0}; // TO DO: allow for customization
 
             std::vector<std::uint32_t> uniqueFamiliesIndices{physDevice.q_family_indices.graphics.value(), physDevice.q_family_indices.present.value()};
@@ -150,6 +150,8 @@ namespace curlew {
                 .sType{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO},
                 .queueCreateInfoCount{static_cast<std::uint32_t>(qCreateInfos.size())},
                 .pQueueCreateInfos{qCreateInfos.data()},
+                .enabledExtensionCount{static_cast<std::uint32_t>(extensions.size())},
+                .ppEnabledExtensionNames{extensions.data()},
                 .pEnabledFeatures{&features}
             };
 
@@ -229,8 +231,8 @@ namespace curlew {
           }
     {}
 
-    vulkan_logical_device::vulkan_logical_device(const vulkan_physical_device& physDevice)
-        : m_Device{make_logical_device(physDevice)}
+    vulkan_logical_device::vulkan_logical_device(const vulkan_physical_device& physDevice, std::span<const char* const> extensions)
+        : m_Device{make_logical_device(physDevice, extensions)}
         , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.graphics.value()}})}
         , m_PresentQueue {m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.present .value()}})}
     {
@@ -242,7 +244,7 @@ namespace curlew {
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(vulkanContext, check_validation_layer_support(config, m_LayerProperties))}
         , m_Surface{make_surface(m_Instance, m_Window)}
-        , m_LogicalDevice{config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, m_Surface)}
+        , m_LogicalDevice{config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, m_Surface), config.device_config.extensions}
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
