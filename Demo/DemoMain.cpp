@@ -129,6 +129,21 @@ int main()
         // TO DO: we really want the windows inside a coroutine. The latter draws and yields,
         // unless the window is due to close, in which case it returns, ending the life
         // of the window
+
+        auto deviceSelector{
+            [](std::span<const vk::raii::PhysicalDevice> devices) {
+                if(devices.empty())
+                    throw std::runtime_error{"No devices found by Vulkan"};
+
+                for(const auto& d : devices) {
+                    std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
+                }
+
+                // Just choose the first one, for now!
+                return devices.front();
+            }
+        };
+
         auto vulkanWindow{
             manager.create_window(
                 curlew::vulkan_window_config{
@@ -136,7 +151,8 @@ int main()
                     .height{800},
                     .create_info{
                         .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}
-                     }
+                     },
+                    .device_selector{deviceSelector}
                 }
             )
         };
@@ -151,10 +167,10 @@ int main()
             std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
         }
 
-        std::println("Physical Devices");
+        /*std::println("Physical Devices");
         for(const auto& d : vulkanWindow.physical_devices()) {
             std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
-        }
+        }*/
 
         auto w{
             manager.create_window(

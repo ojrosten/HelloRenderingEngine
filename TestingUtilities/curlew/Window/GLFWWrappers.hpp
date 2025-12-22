@@ -14,6 +14,7 @@
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
 #include "avocet/Vulkan/VulkanConfig..hpp"
 
+#include <functional>
 #include <span>
 #include <string>
 
@@ -73,6 +74,7 @@ namespace curlew {
         vulkan_create_info create_info{};
         std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};      
         std::vector<const char*> extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}};
+        std::function<vk::raii::PhysicalDevice (std::span<const vk::raii::PhysicalDevice>)> device_selector;
 
         const vulkan_window_config& check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const;
     };
@@ -168,7 +170,7 @@ namespace curlew {
         std::vector<vk::LayerProperties>      m_LayerProperties;
         std::vector<vk::ExtensionProperties>  m_ExtensionProperties;
         vk::raii::Instance                    m_Instance;
-        std::vector<vk::raii::PhysicalDevice> m_PhysicalDevices;
+        vk::raii::PhysicalDevice              m_PhysicalDevice;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:
@@ -184,8 +186,6 @@ namespace curlew {
 
         [[nodiscard]]
         std::span<const vk::LayerProperties> layer_properites() const noexcept { return m_LayerProperties; }
-
-        std::span<const vk::raii::PhysicalDevice> physical_devices() const noexcept { return m_PhysicalDevices; }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };

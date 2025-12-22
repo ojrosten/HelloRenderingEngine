@@ -191,7 +191,7 @@ namespace curlew {
         , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(vulkanContext, config.check_validation_layer_support(m_LayerProperties))}
-        , m_PhysicalDevices{m_Instance.enumeratePhysicalDevices()}
+        , m_PhysicalDevice{config.device_selector(m_Instance.enumeratePhysicalDevices())}
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
