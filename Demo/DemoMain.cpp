@@ -131,7 +131,7 @@ int main()
         // of the window
 
         auto deviceSelector{
-            [](std::span<const vk::raii::PhysicalDevice> devices) {
+            [](std::span<const vk::raii::PhysicalDevice> devices) -> curlew::vulkan_logical_device /*Wrong level of abstraction!*/ {
                 // For now, print out details of all discovered devices
                 for(const auto& d : devices) {
                     std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
@@ -154,7 +154,7 @@ int main()
                 }
 
                 // Just choose the first one, for now!
-                return *found;
+                return {*found, curlew::queue_family_indices{.graphics{static_cast<std::uint32_t>(std::ranges::distance(devices.begin(), found))}}};
             }
         };
 

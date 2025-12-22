@@ -78,6 +78,17 @@ namespace curlew {
         }
 
         [[nodiscard]]
+        vk::raii::Context make_vulkan_context() {
+            if(volkInitialize() != VK_SUCCESS) {
+                throw std::runtime_error{"Unable to initialize Volk\n"};
+            }
+
+            VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+
+            return vk::raii::Context{vkGetInstanceProcAddr};
+        }
+
+        [[nodiscard]]
         vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const vulkan_window_config& config) {
             vk::ApplicationInfo appInfo{
                 .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
@@ -102,14 +113,26 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        vk::raii::Context make_vulkan_context() {
-            if(volkInitialize() != VK_SUCCESS) {
-                throw std::runtime_error{"Unable to initialize Volk\n"};
-            }
+        vk::raii::Device make_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices) {
+            const float queuePriority{1.0}; // TO DO: allow for customization
 
-            VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
+            vk::DeviceQueueCreateInfo qInfo{
+                .sType{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO},
+                .queueFamilyIndex{qFamilyIndices.graphics.value()},
+                .queueCount{1},
+                .pQueuePriorities{&queuePriority}
+            };
 
-            return vk::raii::Context{vkGetInstanceProcAddr};
+            vk::PhysicalDeviceFeatures features{};
+
+            vk::DeviceCreateInfo createInfo{
+                .sType{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO},
+                .queueCreateInfoCount{1},
+                .pQueueCreateInfos{&qInfo},
+                .pEnabledFeatures{&features}
+            };
+
+            return device.createDevice(createInfo);
         }
     }
 
@@ -184,6 +207,12 @@ namespace curlew {
         }
 
         return *this;
+    }
+
+    vulkan_logical_device::vulkan_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices)
+        : m_Device{make_logical_device(device, qFamilyIndices)}
+        , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{qFamilyIndices.graphics.value()}})}
+    {
     }
 
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)

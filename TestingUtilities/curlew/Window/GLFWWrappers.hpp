@@ -15,6 +15,7 @@
 #include "avocet/Vulkan/VulkanConfig..hpp"
 
 #include <functional>
+#include <optional>
 #include <span>
 #include <string>
 
@@ -64,9 +65,20 @@ namespace curlew {
         product_info app{}, engine{};
     };
 
+    struct queue_family_indices {
+        std::optional<std::uint32_t> graphics{};
+    };
+
     struct vulkan_create_info {
         VkInstanceCreateFlags flags{VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR};
         vulkan_application_info app_info{};
+    };
+
+    class vulkan_logical_device {
+        vk::raii::Device m_Device;
+        vk::raii::Queue m_GraphicsQueue; // TO DO: make this optional?
+    public:
+        vulkan_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices);
     };
 
     struct vulkan_window_config {
@@ -74,7 +86,7 @@ namespace curlew {
         vulkan_create_info create_info{};
         std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};
         std::vector<const char*> extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}};
-        std::function<vk::raii::PhysicalDevice (std::span<const vk::raii::PhysicalDevice>)> device_selector;
+        std::function<vulkan_logical_device(std::span<const vk::raii::PhysicalDevice>)> device_selector;
 
         const vulkan_window_config& check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const;
     };
@@ -170,7 +182,7 @@ namespace curlew {
         std::vector<vk::LayerProperties>      m_LayerProperties;
         std::vector<vk::ExtensionProperties>  m_ExtensionProperties;
         vk::raii::Instance                    m_Instance;
-        vk::raii::PhysicalDevice              m_PhysicalDevice;
+        vulkan_logical_device                 m_PhysicalDevice;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:
