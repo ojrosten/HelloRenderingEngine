@@ -182,6 +182,7 @@ namespace curlew {
         std::vector<vk::LayerProperties>      m_LayerProperties;
         std::vector<vk::ExtensionProperties>  m_ExtensionProperties;
         vk::raii::Instance                    m_Instance;
+        vk::raii::SurfaceKHR                  m_Surface;
         vulkan_logical_device                 m_PhysicalDevice;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);

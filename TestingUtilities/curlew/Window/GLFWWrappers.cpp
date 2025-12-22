@@ -134,6 +134,15 @@ namespace curlew {
 
             return device.createDevice(createInfo);
         }
+
+        [[nodiscard]]
+        vk::raii::SurfaceKHR make_surface(vk::raii::Instance& instance, window_resource& window) {
+            VkSurfaceKHR rawSurface{};
+            if(glfwCreateWindowSurface(*instance, &window.get(), nullptr, &rawSurface) != VK_SUCCESS)
+                throw std::runtime_error{"Window surface creation failed"};
+
+            return vk::raii::SurfaceKHR{instance, rawSurface};
+        }
     }
 
     glfw_resource::glfw_resource() {
@@ -220,6 +229,7 @@ namespace curlew {
         , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(vulkanContext, config.check_validation_layer_support(m_LayerProperties))}
+        , m_Surface{make_surface(m_Instance, m_Window)}
         , m_PhysicalDevice{config.device_selector(m_Instance.enumeratePhysicalDevices())}
     {
         volkLoadInstance(*m_Instance);
