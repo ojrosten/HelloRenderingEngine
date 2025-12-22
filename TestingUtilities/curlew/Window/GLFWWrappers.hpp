@@ -66,7 +66,9 @@ namespace curlew {
     };
 
     struct queue_family_indices {
-        std::optional<std::uint32_t> graphics{};
+        std::optional<std::uint32_t>
+            graphics{},
+            present{};
     };
 
     struct vulkan_create_info {
@@ -86,7 +88,7 @@ namespace curlew {
         vulkan_create_info create_info{};
         std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};
         std::vector<const char*> extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}};
-        std::function<vulkan_logical_device(std::span<const vk::raii::PhysicalDevice>)> device_selector;
+        std::function<vulkan_logical_device(std::span<const vk::raii::PhysicalDevice>, const vk::raii::SurfaceKHR&)> device_selector;
 
         const vulkan_window_config& check_validation_layer_support(std::span<const vk::LayerProperties> layerProperties) const;
     };

@@ -131,30 +131,30 @@ int main()
         // of the window
 
         auto deviceSelector{
-            [](std::span<const vk::raii::PhysicalDevice> devices) -> curlew::vulkan_logical_device /*Wrong level of abstraction!*/ {
+            [](std::span<const vk::raii::PhysicalDevice> devices, const vk::raii::SurfaceKHR& surface) -> curlew::vulkan_logical_device {
                 // For now, print out details of all discovered devices
                 for(const auto& d : devices) {
                     std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
                 }
 
-                auto queueFamilyPred{
-                    [](const std::vector<vk::QueueFamilyProperties2>& queueFamiliesProperties) {
-                        return std::ranges::find_if(
-                            queueFamiliesProperties, 
-                            [](const vk::QueueFamilyProperties2& properties) -> bool {
-                                return (properties.queueFamilyProperties.queueFlags & vk::QueueFlagBits::eGraphics) == vk::QueueFlagBits::eGraphics;
-                            }
-                        ) != queueFamiliesProperties.end();
+                for(const auto& device : devices) {
+                    curlew::queue_family_indices qFamilyIndices{};
+
+                    const auto qFamiliesProperties{device.getQueueFamilyProperties2()};
+                    for(auto i : std::views::iota(std::uint32_t{}, static_cast<std::uint32_t>(qFamiliesProperties.size()))) {
+                        const vk::QueueFamilyProperties2& properties{qFamiliesProperties[i]};
+                        if((properties.queueFamilyProperties.queueFlags & vk::QueueFlagBits::eGraphics) == vk::QueueFlagBits::eGraphics)
+                            qFamilyIndices.graphics = i;
+
+                        if(device.getSurfaceSupportKHR(i, *surface))
+                            qFamilyIndices.present = i;
+
+                        if(qFamilyIndices.graphics && qFamilyIndices.present)
+                            return {device, qFamilyIndices};
                     }
-                };
-
-                auto found{std::ranges::find_if(devices, queueFamilyPred, [](const vk::raii::PhysicalDevice& device) { return device.getQueueFamilyProperties2(); })};
-                if(found == devices.end()) {
-                    throw std::runtime_error{"No devices found by Vulkan which supportS queue graphics"};
                 }
-
-                // Just choose the first one, for now!
-                return {*found, curlew::queue_family_indices{.graphics{static_cast<std::uint32_t>(std::ranges::distance(devices.begin(), found))}}};
+              
+                throw std::runtime_error{"No devices found by Vulkan which support the graphics and presentation surface"};
             }
         };
 
@@ -180,11 +180,6 @@ int main()
         for(const auto& p : vulkanWindow.layer_properites()) {
             std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
         }
-
-        /*std::println("Physical Devices");
-        for(const auto& d : vulkanWindow.physical_devices()) {
-            std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
-        }*/
 
         auto w{
             manager.create_window(
