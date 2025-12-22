@@ -78,7 +78,8 @@ namespace curlew {
 
     class vulkan_logical_device {
         vk::raii::Device m_Device;
-        vk::raii::Queue m_GraphicsQueue; // TO DO: make this optional?
+        vk::raii::Queue  m_GraphicsQueue,
+                         m_PresentQueue; // TO DO: make these optional?
     public:
         vulkan_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices);
     };

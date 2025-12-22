@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <format>
+#include <ranges>
 
 #include "GLFW/glfw3.h"
 
@@ -116,19 +117,28 @@ namespace curlew {
         vk::raii::Device make_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices) {
             const float queuePriority{1.0}; // TO DO: allow for customization
 
-            vk::DeviceQueueCreateInfo qInfo{
-                .sType{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO},
-                .queueFamilyIndex{qFamilyIndices.graphics.value()},
-                .queueCount{1},
-                .pQueuePriorities{&queuePriority}
+            std::vector<std::uint32_t> uniqueFamiliesIndices{qFamilyIndices.graphics.value(), qFamilyIndices.present.value()};
+            std::ranges::sort(uniqueFamiliesIndices);
+            const auto qCreateInfos{
+                std::views::transform(
+                    std::ranges::subrange{uniqueFamiliesIndices.begin(), std::ranges::unique(uniqueFamiliesIndices).begin()},
+                    [&queuePriority](const std::uint32_t i) -> vk::DeviceQueueCreateInfo {
+                        return {
+                            .sType{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO},
+                            .queueFamilyIndex{i},
+                            .queueCount{1},
+                            .pQueuePriorities{&queuePriority}
+                        };
+                    }
+                ) | std::ranges::to<std::vector>()
             };
 
             vk::PhysicalDeviceFeatures features{};
 
             vk::DeviceCreateInfo createInfo{
                 .sType{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO},
-                .queueCreateInfoCount{1},
-                .pQueueCreateInfos{&qInfo},
+                .queueCreateInfoCount{static_cast<std::uint32_t>(qCreateInfos.size())},
+                .pQueueCreateInfos{qCreateInfos.data()},
                 .pEnabledFeatures{&features}
             };
 
@@ -221,6 +231,7 @@ namespace curlew {
     vulkan_logical_device::vulkan_logical_device(const vk::raii::PhysicalDevice& device, const queue_family_indices& qFamilyIndices)
         : m_Device{make_logical_device(device, qFamilyIndices)}
         , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{qFamilyIndices.graphics.value()}})}
+        , m_PresentQueue {m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{qFamilyIndices.present .value()}})}
     {
     }
 
