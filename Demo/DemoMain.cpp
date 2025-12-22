@@ -132,15 +132,29 @@ int main()
 
         auto deviceSelector{
             [](std::span<const vk::raii::PhysicalDevice> devices) {
-                if(devices.empty())
-                    throw std::runtime_error{"No devices found by Vulkan"};
-
+                // For now, print out details of all discovered devices
                 for(const auto& d : devices) {
                     std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
                 }
 
+                auto queueFamilyPred{
+                    [](const std::vector<vk::QueueFamilyProperties2>& queueFamiliesProperties) {
+                        return std::ranges::find_if(
+                            queueFamiliesProperties, 
+                            [](const vk::QueueFamilyProperties2& properties) -> bool {
+                                return (properties.queueFamilyProperties.queueFlags & vk::QueueFlagBits::eGraphics) == vk::QueueFlagBits::eGraphics;
+                            }
+                        ) != queueFamiliesProperties.end();
+                    }
+                };
+
+                auto found{std::ranges::find_if(devices, queueFamilyPred, [](const vk::raii::PhysicalDevice& device) { return device.getQueueFamilyProperties2(); })};
+                if(found == devices.end()) {
+                    throw std::runtime_error{"No devices found by Vulkan which supportS queue graphics"};
+                }
+
                 // Just choose the first one, for now!
-                return devices.front();
+                return *found;
             }
         };
 

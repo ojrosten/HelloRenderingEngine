@@ -72,7 +72,7 @@ namespace curlew {
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
         vulkan_create_info create_info{};
-        std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};      
+        std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};
         std::vector<const char*> extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}};
         std::function<vk::raii::PhysicalDevice (std::span<const vk::raii::PhysicalDevice>)> device_selector;
 
