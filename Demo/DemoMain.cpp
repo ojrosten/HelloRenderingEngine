@@ -142,7 +142,7 @@ int main()
         // of the window
 
         auto deviceSelector{
-            [](std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::raii::SurfaceKHR& surface) -> curlew::vulkan_physical_device {
+            [](std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) -> curlew::vulkan::physical_device {
                 // For now, print out details of all discovered devices
                 for(const auto& d : devices) {
                     std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
@@ -152,7 +152,11 @@ int main()
                     if(!has_required_extensions(device, requiredExtensions))
                         continue;
 
-                    curlew::queue_family_indices qFamilyIndices{};
+                    const curlew::vulkan::swap_chain_support_details swapChainDetails{device, surfaceInfo};
+                    if(swapChainDetails.formats.empty() || swapChainDetails.presentModes.empty())
+                        continue;
+
+                    curlew::vulkan::queue_family_indices qFamilyIndices{};
 
                     const auto qFamiliesProperties{device.getQueueFamilyProperties2()};
                     for(auto i : std::views::iota(std::uint32_t{}, static_cast<std::uint32_t>(qFamiliesProperties.size()))) {
@@ -160,7 +164,7 @@ int main()
                         if((properties.queueFamilyProperties.queueFlags & vk::QueueFlagBits::eGraphics) == vk::QueueFlagBits::eGraphics)
                             qFamilyIndices.graphics = i;
 
-                        if(device.getSurfaceSupportKHR(i, *surface))
+                        if(device.getSurfaceSupportKHR(i, surfaceInfo.surface))
                             qFamilyIndices.present = i;
 
                         if(qFamilyIndices.graphics && qFamilyIndices.present)
@@ -180,6 +184,8 @@ int main()
                     .create_info{
                         .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}
                      },
+                    .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
+                    .extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}, {VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME}},
                     .device_config{
                         .selector{deviceSelector},
                         .extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}}

@@ -61,45 +61,55 @@ namespace curlew {
         std::uint32_t version{VK_MAKE_VERSION(1, 0, 0)};
     };
 
-    struct vulkan_application_info {
-        product_info app{}, engine{};
-    };
+    namespace vulkan {
+        struct application_info {
+            product_info app{}, engine{};
+        };
 
-    struct queue_family_indices {
-        std::optional<std::uint32_t>
-            graphics{},
-            present{};
-    };
+        struct queue_family_indices {
+            std::optional<std::uint32_t>
+                graphics{},
+                present{};
+        };
 
-    struct vulkan_create_info {
-        VkInstanceCreateFlags flags{VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR};
-        vulkan_application_info app_info{};
-    };
+        struct create_info {
+            VkInstanceCreateFlags flags{VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR};
+            application_info app_info{};
+        };
 
-    struct vulkan_physical_device {
-        vk::raii::PhysicalDevice device;
-        queue_family_indices q_family_indices{};
-    };
+        struct swap_chain_support_details {
+            swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
 
-    struct vulkan_device_config {
-        std::function<vulkan_physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::raii::SurfaceKHR&)> selector{};
-        std::vector<const char*> extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}};
-    };
+            vk::SurfaceCapabilities2KHR capabilities{};
+            std::vector<vk::SurfaceFormat2KHR> formats{};
+            std::vector<vk::PresentModeKHR> presentModes{};
+        };
 
-    class vulkan_logical_device {
-        vk::raii::Device m_Device;
-        vk::raii::Queue  m_GraphicsQueue,
-                         m_PresentQueue; // TO DO: make these optional?
-    public:
-        vulkan_logical_device(const vulkan_physical_device& physDevice, std::span<const char* const> extensions);
-    };
+        struct physical_device {
+            vk::raii::PhysicalDevice device;
+            queue_family_indices q_family_indices{};
+        };
+
+        struct device_config {
+            std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::PhysicalDeviceSurfaceInfo2KHR&)> selector{};
+            std::vector<const char*> extensions{};
+        };
+
+        class logical_device {
+            vk::raii::Device m_Device;
+            vk::raii::Queue  m_GraphicsQueue,
+                             m_PresentQueue; // TO DO: make these optional?
+        public:
+            logical_device(const physical_device& physDevice, std::span<const char* const> extensions);
+        };
+    }
 
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
-        vulkan_create_info create_info{};
-        std::vector<const char*> validation_layers{{"VK_LAYER_KHRONOS_validation"}};
-        std::vector<const char*> extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}};
-        vulkan_device_config device_config{};
+        vulkan::create_info create_info{};
+        std::vector<const char*> validation_layers{};
+        std::vector<const char*> extensions{};
+        vulkan::device_config device_config{};
     };
 
     class glfw_manager;
@@ -194,7 +204,7 @@ namespace curlew {
         std::vector<vk::ExtensionProperties> m_ExtensionProperties;
         vk::raii::Instance                   m_Instance;
         vk::raii::SurfaceKHR                 m_Surface;
-        vulkan_logical_device                m_LogicalDevice;
+        vulkan::logical_device               m_LogicalDevice;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
     public:

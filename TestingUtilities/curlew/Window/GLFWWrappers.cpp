@@ -89,7 +89,7 @@ namespace curlew {
             return vk::raii::Context{vkGetInstanceProcAddr};
         }
 
-
+        using namespace vulkan;
         const vulkan_window_config& check_validation_layer_support(const vulkan_window_config& config, std::span<const vk::LayerProperties> layerProperties) {
             for(const auto& requested : config.validation_layers) {
                 auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
@@ -108,7 +108,7 @@ namespace curlew {
                 .applicationVersion{config.create_info.app_info.app.version},
                 .pEngineName{config.create_info.app_info.engine.name.data()},
                 .engineVersion{config.create_info.app_info.engine.version},
-                .apiVersion{VK_API_VERSION_1_1}
+                .apiVersion{VK_API_VERSION_1_4}
             };
             const auto extensions{build_vulkan_extensions(config)};
             vk::InstanceCreateInfo createInfo{
@@ -125,7 +125,7 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        vk::raii::Device make_logical_device(const vulkan_physical_device& physDevice, std::span<const char* const> extensions) {
+        vk::raii::Device make_logical_device(const physical_device& physDevice, std::span<const char* const> extensions) {
             const float queuePriority{1.0}; // TO DO: allow for customization
 
             std::vector<std::uint32_t> uniqueFamiliesIndices{physDevice.q_family_indices.graphics.value(), physDevice.q_family_indices.present.value()};
@@ -231,11 +231,20 @@ namespace curlew {
           }
     {}
 
-    vulkan_logical_device::vulkan_logical_device(const vulkan_physical_device& physDevice, std::span<const char* const> extensions)
-        : m_Device{make_logical_device(physDevice, extensions)}
-        , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.graphics.value()}})}
-        , m_PresentQueue {m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.present .value()}})}
-    {
+    namespace vulkan {
+        swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo)
+            : capabilities{physDevice.getSurfaceCapabilities2KHR(surfaceInfo)}
+            , formats{physDevice.getSurfaceFormats2KHR(surfaceInfo)}
+            , presentModes{physDevice.getSurfacePresentModesKHR(surfaceInfo.surface)}
+        {
+        }
+
+        logical_device::logical_device(const physical_device& physDevice, std::span<const char* const> extensions)
+            : m_Device{make_logical_device(physDevice, extensions)}
+            , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.graphics.value()}})}
+            , m_PresentQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.present.value()}})}
+        {
+        }
     }
 
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
@@ -244,7 +253,7 @@ namespace curlew {
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(vulkanContext, check_validation_layer_support(config, m_LayerProperties))}
         , m_Surface{make_surface(m_Instance, m_Window)}
-        , m_LogicalDevice{config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, m_Surface), config.device_config.extensions}
+        , m_LogicalDevice{config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}), config.device_config.extensions}
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
