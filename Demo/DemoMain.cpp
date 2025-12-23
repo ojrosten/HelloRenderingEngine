@@ -79,6 +79,49 @@ namespace {
 
         return true;
     }
+
+    [[nodiscard]]
+    vk::PresentModeKHR swap_chain_present_mode_selector(std::span<const vk::PresentModeKHR> available) {
+        auto found{std::ranges::find(available, vk::PresentModeKHR::eMailbox)};
+        if(found != available.end())
+            return *found;
+
+        return vk::PresentModeKHR::eFifo;
+    }
+
+    [[nodiscard]]
+    vk::Extent2D swap_chain_extent_selector(const vk::SurfaceCapabilities2KHR& capabilities, vk::Extent2D framebufferExtent) {
+        constexpr auto maxSize{std::numeric_limits<uint32_t>::max()};
+        const auto& surfCaps{capabilities.surfaceCapabilities};
+        if(surfCaps.currentExtent.width != maxSize) {
+            return surfCaps.currentExtent;
+        }
+        else {
+            return {
+                .width {std::clamp(framebufferExtent.width,  surfCaps.minImageExtent.width,  surfCaps.maxImageExtent.width)},
+                .height{std::clamp(framebufferExtent.height, surfCaps.minImageExtent.height, surfCaps.maxImageExtent.height)}
+            };
+        }
+    }
+
+    [[nodiscard]]
+    vk::SurfaceFormat2KHR swap_chain_format_selector(std::span<const vk::SurfaceFormat2KHR> available) {
+        if(available.empty())
+            throw std::runtime_error{"No available surface formats"};
+
+        auto found{
+            std::ranges::find_if(
+                available,
+                [](const vk::SurfaceFormat2KHR& format) {
+                    return (format.surfaceFormat.format == vk::Format::eB8G8R8Srgb) && (format.surfaceFormat.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear);
+                }
+            )
+        };
+        if(found != available.end())
+            return *found;
+
+        return available.front();
+    }
 }
 
 namespace std {
@@ -142,7 +185,7 @@ int main()
         // of the window
 
         auto deviceSelector{
-            [](std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) -> curlew::vulkan::physical_device {
+            [](std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent) -> curlew::vulkan::physical_device {
                 // For now, print out details of all discovered devices
                 for(const auto& d : devices) {
                     std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
@@ -152,8 +195,8 @@ int main()
                     if(!has_required_extensions(device, requiredExtensions))
                         continue;
 
-                    const curlew::vulkan::swap_chain_support_details swapChainDetails{device, surfaceInfo};
-                    if(swapChainDetails.formats.empty() || swapChainDetails.presentModes.empty())
+                    const curlew::vulkan::swap_chain_support_details swapChainDetails{device, surfaceInfo, framebufferExtent};
+                    if(swapChainDetails.formats.empty() || swapChainDetails.present_modes.empty())
                         continue;
 
                     curlew::vulkan::queue_family_indices qFamilyIndices{};
@@ -168,7 +211,7 @@ int main()
                             qFamilyIndices.present = i;
 
                         if(qFamilyIndices.graphics && qFamilyIndices.present)
-                            return {device, qFamilyIndices};
+                            return {device, qFamilyIndices, swapChainDetails};
                     }
                 }
               
@@ -188,7 +231,13 @@ int main()
                     .extensions{{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME}, {VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME}},
                     .device_config{
                         .selector{deviceSelector},
-                        .extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}}
+                        .extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}},
+                        .swap_chain{
+                            .format_selector{swap_chain_format_selector},
+                            .present_mode_selector{swap_chain_present_mode_selector},
+                            .extent_selector{swap_chain_extent_selector},
+                            .image_usage_flags{vk::ImageUsageFlagBits::eColorAttachment}
+                        }
                     }
                 }
             )

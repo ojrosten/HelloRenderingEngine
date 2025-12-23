@@ -166,6 +166,41 @@ namespace curlew {
 
             return vk::raii::SurfaceKHR{instance, rawSurface};
         }
+
+        [[nodiscard]]
+        vk::raii::SwapchainKHR make_swap_chain(const physical_device& physDevice, const vk::raii::Device& device, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const curlew::vulkan::swap_chain_support_details& swapChainDetails) {
+            const auto maxImageCount{swapChainDetails.capabilities.surfaceCapabilities.maxImageCount},
+                       minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount};
+
+            vk::SwapchainCreateInfoKHR createInfo{
+                .surface{surfaceInfo.surface},
+                .minImageCount{maxImageCount ? maxImageCount : minImageCount + 1},
+                .imageFormat{swapChainConfig.format_selector(swapChainDetails.formats).surfaceFormat.format},
+                .imageExtent{swapChainConfig.extent_selector(swapChainDetails.capabilities, swapChainDetails.framebuffer_extent)},
+                .imageArrayLayers{1}, // Always 1 unless developing a stereoscopic app
+                .imageUsage{swapChainConfig.image_usage_flags},
+                .preTransform{swapChainDetails.capabilities.surfaceCapabilities.currentTransform},
+                .compositeAlpha{VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR}, // Change this to blend with other windows in the windowing system
+                .presentMode{swapChainConfig.present_mode_selector(swapChainDetails.present_modes)},
+                .clipped{VK_FALSE},
+                .oldSwapchain{VK_NULL_HANDLE}
+            };
+
+            const auto& qFamIndices{physDevice.q_family_indices};
+            const std::array<uint32_t, 2> rawQFamIndices{qFamIndices.graphics.value(), qFamIndices.present.value()};
+            if(qFamIndices.graphics != qFamIndices.present) {
+                createInfo.imageSharingMode      = vk::SharingMode::eConcurrent;
+                createInfo.queueFamilyIndexCount = 1;
+                createInfo.pQueueFamilyIndices   = rawQFamIndices.data();
+            }
+            else {
+                createInfo.imageSharingMode      = vk::SharingMode::eExclusive;
+                createInfo.queueFamilyIndexCount = 0;
+                createInfo.pQueueFamilyIndices   = nullptr;
+            }
+
+            return vk::raii::SwapchainKHR{device, createInfo};
+        }
     }
 
     glfw_resource::glfw_resource() {
@@ -232,19 +267,31 @@ namespace curlew {
     {}
 
     namespace vulkan {
-        swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo)
+        swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
             : capabilities{physDevice.getSurfaceCapabilities2KHR(surfaceInfo)}
             , formats{physDevice.getSurfaceFormats2KHR(surfaceInfo)}
-            , presentModes{physDevice.getSurfacePresentModesKHR(surfaceInfo.surface)}
+            , present_modes{physDevice.getSurfacePresentModesKHR(surfaceInfo.surface)}
+            , framebuffer_extent{framebufferExtent}
         {
         }
 
-        logical_device::logical_device(const physical_device& physDevice, std::span<const char* const> extensions)
-            : m_Device{make_logical_device(physDevice, extensions)}
+        logical_device::logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo)
+            : m_PhysicalDevice{physDevice.device}
+            , m_Device{make_logical_device(physDevice, deviceConfig.extensions)}
             , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.graphics.value()}})}
             , m_PresentQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.present.value()}})}
+            , m_SwapChain{make_swap_chain(physDevice, m_Device, surfaceInfo, deviceConfig.swap_chain, physDevice.swap_chain_details)}
+            , m_SwapChainImages{m_SwapChain.getImages()}
         {
         }
+    }
+
+    [[nodiscard]]
+    vk::Extent2D vulkan_window::get_framebuffer_extent() {
+        int width{}, height{};
+        glfwGetFramebufferSize(&m_Window.get(), &width, &height);
+
+        return {static_cast<std::uint32_t>(width), static_cast<std::uint32_t>(height)};
     }
 
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
@@ -253,7 +300,12 @@ namespace curlew {
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(vulkanContext, check_validation_layer_support(config, m_LayerProperties))}
         , m_Surface{make_surface(m_Instance, m_Window)}
-        , m_LogicalDevice{config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}), config.device_config.extensions}
+        // TO DO: get rid of duplication!
+        , m_LogicalDevice{
+            config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}, get_framebuffer_extent()),
+            config.device_config,
+            vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}
+        }
     {
         volkLoadInstance(*m_Instance);
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
