@@ -30,8 +30,8 @@ namespace avocet::vulkan {
             present{};
     };
 
-    struct create_info {
-        VkInstanceCreateFlags flags{VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR};
+    struct instance_info {
+        vk::InstanceCreateFlags flags{vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR};
         application_info app_info{};
     };
 
@@ -79,5 +79,32 @@ namespace avocet::vulkan {
         std::vector<vk::ImageView> m_SwapChainImageViews;
     public:
         logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
+    };
+
+    struct presentation_config {
+        std::size_t width{800}, height{600};
+        instance_info create_info{};
+        std::vector<const char*> validation_layers{};
+        std::vector<const char*> extensions{};
+        device_config device_config{};
+    };
+
+    class presentable {
+        std::vector<vk::LayerProperties>     m_LayerProperties;
+        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
+        vk::raii::Instance                   m_Instance;
+        vk::raii::SurfaceKHR                 m_Surface;
+        avocet::vulkan::logical_device       m_LogicalDevice;
+    public:
+        presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent);
+
+        [[nodiscard]]
+        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_ExtensionProperties; }
+
+        [[nodiscard]]
+        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_LayerProperties; }
+
+        [[nodiscard]]
+        const vk::raii::Instance& instance() const noexcept { return m_Instance; }
     };
 }

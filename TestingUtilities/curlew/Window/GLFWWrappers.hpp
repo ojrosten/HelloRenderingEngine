@@ -59,10 +59,7 @@ namespace curlew {
 
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
-        avocet::vulkan::create_info create_info{};
-        std::vector<const char*> validation_layers{};
-        std::vector<const char*> extensions{};
-        avocet::vulkan::device_config device_config{};
+        avocet::vulkan::presentation_config vk_config;
     };
 
     class glfw_manager;
@@ -152,12 +149,8 @@ namespace curlew {
     class [[nodiscard]] vulkan_window {
         friend glfw_manager;
 
-        window_resource                      m_Window;
-        std::vector<vk::LayerProperties>     m_LayerProperties;
-        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
-        vk::raii::Instance                   m_Instance;
-        vk::raii::SurfaceKHR                 m_Surface;
-        avocet::vulkan::logical_device       m_LogicalDevice;
+        window_resource             m_Window;
+        avocet::vulkan::presentable m_Presentable;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
 
@@ -172,10 +165,10 @@ namespace curlew {
         ~vulkan_window() = default;
 
         [[nodiscard]]
-        std::span<const vk::ExtensionProperties> extension_properites() const noexcept { return m_ExtensionProperties; }
+        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_Presentable.extension_properties(); }
 
         [[nodiscard]]
-        std::span<const vk::LayerProperties> layer_properites() const noexcept { return m_LayerProperties; }
+        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_Presentable.layer_properties(); }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
     };

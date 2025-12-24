@@ -53,7 +53,7 @@ namespace curlew {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
             glfwWindowHint(GLFW_VISIBLE, true);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.create_info.app_info.app.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.vk_config.create_info.app_info.app.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window suitable for Vulkan"};
         }
 
@@ -68,17 +68,6 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        std::vector<const char*> build_vulkan_extensions(const vulkan_window_config& config) {
-            std::uint32_t count{};
-            const char** names{glfwGetRequiredInstanceExtensions(&count)};
-
-            std::vector<const char*> extensions{std::from_range, std::span<const char*>(names, count)};
-            extensions.append_range(config.extensions);
-
-            return extensions;
-        }
-
-        [[nodiscard]]
         vk::raii::Context make_vulkan_context() {
             if(volkInitialize() != VK_SUCCESS) {
                 throw std::runtime_error{"Unable to initialize Volk\n"};
@@ -89,43 +78,8 @@ namespace curlew {
             return vk::raii::Context{vkGetInstanceProcAddr};
         }
 
-        const vulkan_window_config& check_validation_layer_support(const vulkan_window_config& config, std::span<const vk::LayerProperties> layerProperties) {
-            for(const auto& requested : config.validation_layers) {
-                auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
-                if(found == layerProperties.end())
-                    throw std::runtime_error{std::format("Unable to find requested validation layer {}", requested)};
-            }
-
-            return config;
-        }
-
         [[nodiscard]]
-        vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const vulkan_window_config& config) {
-            vk::ApplicationInfo appInfo{
-                .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
-                .pApplicationName{config.create_info.app_info.app.name.data()},
-                .applicationVersion{config.create_info.app_info.app.version},
-                .pEngineName{config.create_info.app_info.engine.name.data()},
-                .engineVersion{config.create_info.app_info.engine.version},
-                .apiVersion{VK_API_VERSION_1_4}
-            };
-            const auto extensions{build_vulkan_extensions(config)};
-            vk::InstanceCreateInfo createInfo{
-                .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
-                .flags{config.create_info.flags},
-                .pApplicationInfo{&appInfo},
-                .enabledLayerCount{static_cast<std::uint32_t>(config.validation_layers.size())},
-                .ppEnabledLayerNames{config.validation_layers.data()},
-                .enabledExtensionCount{static_cast<std::uint32_t>(extensions.size())},
-                .ppEnabledExtensionNames{extensions.data()}
-            };
-
-            return vk::raii::Instance{vulkanContext, createInfo};
-        }
-
-
-        [[nodiscard]]
-        vk::raii::SurfaceKHR make_surface(vk::raii::Instance& instance, window_resource& window) {
+        vk::raii::SurfaceKHR make_surface(vk::raii::Instance& instance, curlew::window_resource& window) {
             VkSurfaceKHR rawSurface{};
             if(glfwCreateWindowSurface(*instance, &window.get(), nullptr, &rawSurface) != VK_SUCCESS)
                 throw std::runtime_error{"Window surface creation failed"};
@@ -207,18 +161,14 @@ namespace curlew {
 
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
         : m_Window{config}
-        , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
-        , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
-        , m_Instance{make_instance(vulkanContext, check_validation_layer_support(config, m_LayerProperties))}
-        , m_Surface{make_surface(m_Instance, m_Window)}
-        // TO DO: get rid of duplication!
-        , m_LogicalDevice{
-            config.device_config.selector(m_Instance.enumeratePhysicalDevices(), config.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}, get_framebuffer_extent()),
-            config.device_config,
-            vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}
-        }
+        , m_Presentable{
+              config.vk_config,
+              vulkanContext,
+              [&window = m_Window](vk::raii::Instance& instance) -> vk::raii::SurfaceKHR { return make_surface(instance, window); },
+              get_framebuffer_extent()
+         }
     {
-        volkLoadInstance(*m_Instance);
-        VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Instance);
+        volkLoadInstance(*m_Presentable.instance());
+        VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Presentable.instance());
     }
 }
