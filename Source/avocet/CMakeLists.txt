@@ -17,6 +17,7 @@ set(SourceList
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp
     OpenGL/Resources/Textures.cpp
+    Vulkan/Presentation/Presentation.cpp
     Vulkan/VulkanConfig.cpp
 )
 

@@ -12,7 +12,7 @@
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
-#include "avocet/Vulkan/VulkanConfig..hpp"
+#include "avocet/Vulkan/Presentation/Presentation.hpp"
 
 #include <functional>
 #include <optional>
@@ -56,80 +56,13 @@ namespace curlew {
         num_samples samples{1};
     };
 
-    struct product_info {
-        std::string   name{};
-        std::uint32_t version{VK_MAKE_VERSION(1, 0, 0)};
-    };
-
-    namespace vulkan {
-        struct application_info {
-            product_info app{}, engine{};
-        };
-
-        struct queue_family_indices {
-            std::optional<std::uint32_t>
-                graphics{},
-                present{};
-        };
-
-        struct create_info {
-            VkInstanceCreateFlags flags{VK_INSTANCE_CREATE_ENUMERATE_PORTABILITY_BIT_KHR};
-            application_info app_info{};
-        };
-
-        struct swap_chain_support_details {
-            swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent);
-
-            vk::SurfaceCapabilities2KHR capabilities{};
-            std::vector<vk::SurfaceFormat2KHR> formats{};
-            std::vector<vk::PresentModeKHR> present_modes{};
-            vk::Extent2D framebuffer_extent{};
-        };
-
-        struct physical_device {
-            vk::raii::PhysicalDevice device;
-            queue_family_indices q_family_indices{};
-            swap_chain_support_details swap_chain_details;
-        };
-
-        struct swap_chain_config {
-            std::function<vk::SurfaceFormat2KHR (std::span<const vk::SurfaceFormat2KHR>)> format_selector{};
-            std::function<vk::PresentModeKHR (std::span<const vk::PresentModeKHR>)> present_mode_selector{};
-            std::function<vk::Extent2D (const vk::SurfaceCapabilities2KHR&, vk::Extent2D)> extent_selector{};
-
-            vk::ImageUsageFlags image_usage_flags{};
-        };
-
-        struct device_config {
-            std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::PhysicalDeviceSurfaceInfo2KHR&, vk::Extent2D)> selector{};
-            std::vector<const char*> extensions{};
-            swap_chain_config swap_chain{};
-        };
-
-        struct swap_chain {
-            vk::raii::SwapchainKHR chain;
-            vk::Format format;
-        };
-
-        class logical_device {
-            vk::raii::PhysicalDevice m_PhysicalDevice;
-            vk::raii::Device m_Device;
-            vk::raii::Queue  m_GraphicsQueue,
-                             m_PresentQueue; // TO DO: make these optional?
-            swap_chain m_SwapChain;
-            std::vector<vk::Image> m_SwapChainImages;
-            std::vector<vk::ImageView> m_SwapChainImageViews;
-        public:
-            logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
-        };
-    }
 
     struct vulkan_window_config {
         std::size_t width{800}, height{600};
-        vulkan::create_info create_info{};
+        avocet::vulkan::create_info create_info{};
         std::vector<const char*> validation_layers{};
         std::vector<const char*> extensions{};
-        vulkan::device_config device_config{};
+        avocet::vulkan::device_config device_config{};
     };
 
     class glfw_manager;
@@ -224,7 +157,7 @@ namespace curlew {
         std::vector<vk::ExtensionProperties> m_ExtensionProperties;
         vk::raii::Instance                   m_Instance;
         vk::raii::SurfaceKHR                 m_Surface;
-        vulkan::logical_device               m_LogicalDevice;
+        avocet::vulkan::logical_device       m_LogicalDevice;
 
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
 
