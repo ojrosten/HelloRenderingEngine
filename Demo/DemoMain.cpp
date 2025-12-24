@@ -11,6 +11,8 @@
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 #include "avocet/OpenGL/Geometry/Polygon.hpp"
 
+#include "avocet/Vulkan/Common/Formatting.hpp"
+
 #include "sequoia/FileSystem/FileSystem.hpp"
 
 #include <iostream>
@@ -137,42 +139,38 @@ namespace {
 
         return available.front();
     }
-}
 
-namespace std {
-    template<>
-    struct formatter<vk::PhysicalDeviceProperties> {
-        constexpr auto parse(auto& ctx) { return ctx.begin(); }
-
-        auto format(const vk::PhysicalDeviceProperties& properties, auto& ctx) const {
-            return 
-                format_to(
-                    ctx.out(),
-                    "API Version {}\nDriver Version {}\nVendor ID {}\nDevice ID {}\nDevice Type {}\nDevice Name {}",
-                    properties.apiVersion,
-                    properties.driverVersion,
-                    properties.vendorID,
-                    properties.deviceID,
-                    properties.deviceType,
-                    properties.deviceName.data()
-                    // TO DO
-               );
+    avocet::vulkan::physical_device device_selector(std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent) {
+        // For now, print out details of all discovered devices
+        for(const auto& d : devices) {
+            std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
         }
-    };
-
-    template<>
-    struct formatter<vk::PhysicalDeviceFeatures> {
-        constexpr auto parse(auto& ctx) { return ctx.begin(); }
-
-        auto format(const vk::PhysicalDeviceFeatures& features, auto& ctx) const {
-            return
-                format_to(
-                    ctx.out(),
-                    "Geometry Shader {}",
-                    static_cast<bool>(features.geometryShader)
-                    // TO DO
-                );
+        
+        for(const auto& device : devices) {
+            if(!has_required_extensions(device, requiredExtensions))
+                continue;
+        
+            const avocet::vulkan::swap_chain_support_details swapChainDetails{device, surfaceInfo, framebufferExtent};
+            if(swapChainDetails.formats.empty() || swapChainDetails.present_modes.empty())
+                continue;
+        
+            avocet::vulkan::queue_family_indices qFamilyIndices{};
+        
+            const auto qFamiliesProperties{device.getQueueFamilyProperties2()};
+            for(auto i : std::views::iota(std::uint32_t{}, static_cast<std::uint32_t>(qFamiliesProperties.size()))) {
+                const vk::QueueFamilyProperties2& properties{qFamiliesProperties[i]};
+                if((properties.queueFamilyProperties.queueFlags & vk::QueueFlagBits::eGraphics) == vk::QueueFlagBits::eGraphics)
+                    qFamilyIndices.graphics = i;
+        
+                if(device.getSurfaceSupportKHR(i, surfaceInfo.surface))
+                    qFamilyIndices.present = i;
+        
+                if(qFamilyIndices.graphics && qFamilyIndices.present)
+                    return {device, qFamilyIndices, swapChainDetails};
+            }
         }
+        
+        throw std::runtime_error{"No devices found by Vulkan which support the graphics and presentation surface"};
     };
 }
 
@@ -199,41 +197,6 @@ int main()
         // unless the window is due to close, in which case it returns, ending the life
         // of the window
 
-        auto deviceSelector{
-            [](std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent) -> avocet::vulkan::physical_device {
-                // For now, print out details of all discovered devices
-                for(const auto& d : devices) {
-                    std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
-                }
-
-                for(const auto& device : devices) {
-                    if(!has_required_extensions(device, requiredExtensions))
-                        continue;
-
-                    const avocet::vulkan::swap_chain_support_details swapChainDetails{device, surfaceInfo, framebufferExtent};
-                    if(swapChainDetails.formats.empty() || swapChainDetails.present_modes.empty())
-                        continue;
-
-                    avocet::vulkan::queue_family_indices qFamilyIndices{};
-
-                    const auto qFamiliesProperties{device.getQueueFamilyProperties2()};
-                    for(auto i : std::views::iota(std::uint32_t{}, static_cast<std::uint32_t>(qFamiliesProperties.size()))) {
-                        const vk::QueueFamilyProperties2& properties{qFamiliesProperties[i]};
-                        if((properties.queueFamilyProperties.queueFlags & vk::QueueFlagBits::eGraphics) == vk::QueueFlagBits::eGraphics)
-                            qFamilyIndices.graphics = i;
-
-                        if(device.getSurfaceSupportKHR(i, surfaceInfo.surface))
-                            qFamilyIndices.present = i;
-
-                        if(qFamilyIndices.graphics && qFamilyIndices.present)
-                            return {device, qFamilyIndices, swapChainDetails};
-                    }
-                }
-              
-                throw std::runtime_error{"No devices found by Vulkan which support the graphics and presentation surface"};
-            }
-        };
-
         auto vulkanWindow{
             manager.create_window(
                 curlew::vulkan_window_config{
@@ -246,7 +209,7 @@ int main()
                         .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
                         .extensions{build_vulkan_extensions(std::array{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME})},
                         .device_config{
-                            .selector{deviceSelector},
+                            .selector{device_selector},
                             .extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}},
                             .swap_chain{
                                 .format_selector{swap_chain_format_selector},

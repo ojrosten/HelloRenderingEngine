@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/Vulkan/VulkanConfig..hpp"
+#include "avocet/Vulkan/Common/VulkanConfig.hpp"
 
 #include <cstdint>
 #include <functional>
