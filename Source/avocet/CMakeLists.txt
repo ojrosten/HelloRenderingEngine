@@ -4,6 +4,8 @@ set(Dependencies ${CMAKE_CURRENT_LIST_DIR}/../../dependencies)
 set(BuildSystem ${Dependencies}/sequoia/build_system)
 include(${BuildSystem}/Utilities.cmake)
 
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+
 sequoia_init()
 
 set(SourceList
@@ -48,9 +50,27 @@ target_link_libraries(avocet PUBLIC volk)
 target_include_directories(avocet PUBLIC ${Vulkan_INCLUDE_DIR})
 
 set(SHADERC_SKIP_TESTS ON CACHE BOOL "" FORCE)
+set(SHADERC_SKIP_EXAMPLES ON CACHE BOOL "" FORCE)
+set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "" FORCE)
 set(SPIRV_SKIP_TESTS ON CACHE BOOL "" FORCE)
 set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "" FORCE)
 add_subdirectory(${Dependencies}/shaderc shaderc)
 target_link_libraries(avocet PUBLIC shaderc_combined)
+
+function(group_external_targets dir folder_name)
+    get_property(targets DIRECTORY "${dir}" PROPERTY BUILDSYSTEM_TARGETS)
+
+    foreach(target ${targets})
+        set_property(TARGET ${target} PROPERTY FOLDER "${folder_name}")
+    endforeach()
+
+    get_property(subdirs DIRECTORY "${dir}" PROPERTY SUBDIRECTORIES)
+
+    foreach(subdir ${subdirs})
+        group_external_targets("${subdir}" "${folder_name}")
+    endforeach()
+endfunction()
+
+group_external_targets(${Dependencies}/shaderc Shaderc)
 
 sequoia_finalize_library(avocet)
