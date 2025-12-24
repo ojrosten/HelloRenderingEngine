@@ -47,4 +47,11 @@ add_subdirectory(${Dependencies}/volk volk)
 target_link_libraries(avocet PUBLIC volk)
 target_include_directories(avocet PUBLIC ${Vulkan_INCLUDE_DIR})
 
+set(SHADERC_SKIP_TESTS ON CACHE BOOL "" FORCE)
+set(SPIRV_SKIP_TESTS ON CACHE BOOL "" FORCE)
+set(SHADERC_ENABLE_SHARED_CRT ON CACHE BOOL "" FORCE)
+add_subdirectory(${Dependencies}/shaderc shaderc)
+target_link_libraries(avocet PUBLIC shaderc_combined)
+#target_link_options(shaderc PRIVATE /NODEFAULTLIB:library)
+
 sequoia_finalize_library(avocet)

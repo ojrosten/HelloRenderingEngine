@@ -7,6 +7,12 @@
 
 #pragma once
 
-namespace avocet {
+#include "shaderc/shaderc.hpp"
 
+#include <filesystem>
+#include <vector>
+
+namespace avocet {
+    [[nodiscard]]
+    std::vector<uint32_t> compile_glsl_to_spv(const std::filesystem::path& sourceFile, shaderc_shader_kind kind, std::string_view label);
 }
