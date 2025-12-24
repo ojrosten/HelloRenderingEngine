@@ -5,6 +5,8 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
+#pragma once
+
 #include "avocet/Vulkan/Presentation/Presentation.hpp"
 
 namespace curlew::vulkan {
