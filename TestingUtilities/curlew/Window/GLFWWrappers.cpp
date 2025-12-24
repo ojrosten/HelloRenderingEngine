@@ -168,14 +168,16 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        vk::raii::SwapchainKHR make_swap_chain(const physical_device& physDevice, const vk::raii::Device& device, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const curlew::vulkan::swap_chain_support_details& swapChainDetails) {
+        swap_chain make_swap_chain(const physical_device& physDevice, const vk::raii::Device& device, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const curlew::vulkan::swap_chain_support_details& swapChainDetails) {
             const auto maxImageCount{swapChainDetails.capabilities.surfaceCapabilities.maxImageCount},
                        minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount};
+
+            const auto format{swapChainConfig.format_selector(swapChainDetails.formats).surfaceFormat.format};
 
             vk::SwapchainCreateInfoKHR createInfo{
                 .surface{surfaceInfo.surface},
                 .minImageCount{maxImageCount ? maxImageCount : minImageCount + 1},
-                .imageFormat{swapChainConfig.format_selector(swapChainDetails.formats).surfaceFormat.format},
+                .imageFormat{format},
                 .imageExtent{swapChainConfig.extent_selector(swapChainDetails.capabilities, swapChainDetails.framebuffer_extent)},
                 .imageArrayLayers{1}, // Always 1 unless developing a stereoscopic app
                 .imageUsage{swapChainConfig.image_usage_flags},
@@ -199,7 +201,37 @@ namespace curlew {
                 createInfo.pQueueFamilyIndices   = nullptr;
             }
 
-            return vk::raii::SwapchainKHR{device, createInfo};
+            return {vk::raii::SwapchainKHR{device, createInfo}, format};
+        }
+
+        [[nodiscard]]
+        std::vector<vk::ImageView> make_swap_chain_image_views(const vk::raii::Device& device, const swap_chain& swapChain, std::span<const vk::Image> images) {
+            return 
+                std::views::transform(
+                    images,
+                    [&device,&swapChain](const vk::Image& image) -> vk::ImageView {
+                        vk::ImageViewCreateInfo info{
+                            .image{image},
+                            .viewType{vk::ImageViewType::e2D},
+                            .format{swapChain.format},
+                            .components{
+                                .r{vk::ComponentSwizzle::eIdentity},
+                                .g{vk::ComponentSwizzle::eIdentity},
+                                .b{vk::ComponentSwizzle::eIdentity},
+                                .a{vk::ComponentSwizzle::eIdentity}
+                            },
+                            .subresourceRange{
+                                .aspectMask{vk::ImageAspectFlagBits::eColor},
+                                .baseMipLevel{0},
+                                .levelCount{1},
+                                .baseArrayLayer{0},
+                                .layerCount{1}
+                            }
+                        };
+                
+                        return device.createImageView(info);
+                    }
+                ) | std::ranges::to<std::vector>();
         }
     }
 
@@ -281,7 +313,8 @@ namespace curlew {
             , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.graphics.value()}})}
             , m_PresentQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.present.value()}})}
             , m_SwapChain{make_swap_chain(physDevice, m_Device, surfaceInfo, deviceConfig.swap_chain, physDevice.swap_chain_details)}
-            , m_SwapChainImages{m_SwapChain.getImages()}
+            , m_SwapChainImages{m_SwapChain.chain.getImages()}
+            , m_SwapChainImageViews{make_swap_chain_image_views(m_Device, m_SwapChain, m_SwapChainImages)}
         {
         }
     }

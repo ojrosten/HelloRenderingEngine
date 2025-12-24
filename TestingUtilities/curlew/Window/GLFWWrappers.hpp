@@ -106,13 +106,19 @@ namespace curlew {
             swap_chain_config swap_chain{};
         };
 
+        struct swap_chain {
+            vk::raii::SwapchainKHR chain;
+            vk::Format format;
+        };
+
         class logical_device {
             vk::raii::PhysicalDevice m_PhysicalDevice;
             vk::raii::Device m_Device;
             vk::raii::Queue  m_GraphicsQueue,
                              m_PresentQueue; // TO DO: make these optional?
-            vk::raii::SwapchainKHR m_SwapChain;
+            swap_chain m_SwapChain;
             std::vector<vk::Image> m_SwapChainImages;
+            std::vector<vk::ImageView> m_SwapChainImageViews;
         public:
             logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
         };
