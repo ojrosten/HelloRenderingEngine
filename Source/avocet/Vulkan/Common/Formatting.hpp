@@ -5,6 +5,8 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
+#include "avocet/Core/Formatting/Formatting.hpp"
+
 #include "avocet/Vulkan/Common/VulkanConfig.hpp"
 
 #include <format>
