@@ -58,16 +58,16 @@ add_subdirectory(${Dependencies}/shaderc shaderc)
 target_link_libraries(avocet PUBLIC shaderc_combined)
 
 function(group_external_targets dir folder_name)
-    get_property(targets DIRECTORY "${dir}" PROPERTY BUILDSYSTEM_TARGETS)
+    get_property(targets DIRECTORY ${dir} PROPERTY BUILDSYSTEM_TARGETS)
 
     foreach(target ${targets})
-        set_property(TARGET ${target} PROPERTY FOLDER "${folder_name}")
+        set_property(TARGET ${target} PROPERTY FOLDER ${folder_name})
     endforeach()
 
-    get_property(subdirs DIRECTORY "${dir}" PROPERTY SUBDIRECTORIES)
+    get_property(subdirs DIRECTORY ${dir} PROPERTY SUBDIRECTORIES)
 
     foreach(subdir ${subdirs})
-        group_external_targets("${subdir}" "${folder_name}")
+        group_external_targets(${subdir} ${folder_name})
     endforeach()
 endfunction()
 
