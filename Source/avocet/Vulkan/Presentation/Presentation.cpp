@@ -322,24 +322,25 @@ namespace avocet::vulkan {
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(context, check_validation_layer_support(presentationConfig, m_LayerProperties))}
         , m_Surface{surfaceCreator(m_Instance)}
+        , m_Extent{framebufferExtent}
         , m_LogicalDevice{
-            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}, framebufferExtent),
+            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}, m_Extent),
             presentationConfig.device_config,
             vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}
         },
         m_RenderPass{make_render_pass(m_LogicalDevice)},
-        m_Framebuffers{make_framebuffers(m_LogicalDevice, m_RenderPass, framebufferExtent)},
+        m_Framebuffers{make_framebuffers(m_LogicalDevice, m_RenderPass, m_Extent)},
         m_ViewPort{
             .x{},
             .y{},
-            .width {static_cast<float>(framebufferExtent.width)},
-            .height{static_cast<float>(framebufferExtent.height)},
+            .width {static_cast<float>(m_Extent.width)},
+            .height{static_cast<float>(m_Extent.height)},
             .minDepth{},
             .maxDepth{1.0f}
         },
         m_Scissor{
             .offset{},
-            .extent{framebufferExtent}
+            .extent{m_Extent}
         },
         m_PipelineLayout{m_LogicalDevice.device(), vk::PipelineLayoutCreateInfo{}},
         m_Pipeline{
@@ -354,5 +355,36 @@ namespace avocet::vulkan {
         m_CommandPool{make_command_pool(m_LogicalDevice)},
         m_CommmandBuffers{make_command_buffers(m_LogicalDevice.device(), m_CommandPool)}
     {
+    }
+
+    void presentable::draw(std::uint32_t imageIndex) const {
+        vk::CommandBufferBeginInfo bufferBeginInfo{};
+
+        get_cmd_buffer().begin(bufferBeginInfo);
+
+        vk::ClearValue clearCol{{0.0f, 0.0f, 0.0f, 1.0f}};
+
+        vk::RenderPassBeginInfo renderPassInfo{
+            .renderPass{m_RenderPass},
+            .framebuffer{m_Framebuffers[imageIndex]},
+            .renderArea{
+                .offset{},
+                .extent{m_Extent}
+             },
+            .clearValueCount{1},
+            .pClearValues{&clearCol}
+        };
+
+        get_cmd_buffer().beginRenderPass2(renderPassInfo, vk::SubpassBeginInfo{});
+
+        get_cmd_buffer().bindPipeline(vk::PipelineBindPoint::eGraphics, m_Pipeline);
+
+        get_cmd_buffer().setViewport(0, m_ViewPort);
+        get_cmd_buffer().setScissor(0, m_Scissor);
+        get_cmd_buffer().draw(3, 1, 0, 0);
+
+        get_cmd_buffer().endRenderPass2(vk::SubpassEndInfo{});
+
+        get_cmd_buffer().end();
     }
 }

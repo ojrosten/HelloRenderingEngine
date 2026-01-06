@@ -107,6 +107,7 @@ namespace avocet::vulkan {
         std::vector<vk::ExtensionProperties> m_ExtensionProperties;
         vk::raii::Instance                   m_Instance;
         vk::raii::SurfaceKHR                 m_Surface;
+        vk::Extent2D                         m_Extent;
         avocet::vulkan::logical_device       m_LogicalDevice;
         // TO DO: wrap up the following in a different abstraction
         vk::raii::RenderPass                 m_RenderPass;
@@ -120,6 +121,8 @@ namespace avocet::vulkan {
         vk::raii::CommandPool                m_CommandPool;
         std::vector<vk::raii::CommandBuffer> m_CommmandBuffers;
 
+        const vk::raii::CommandBuffer& get_cmd_buffer() const { return m_CommmandBuffers.at(0); }
+
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
 
@@ -131,5 +134,7 @@ namespace avocet::vulkan {
 
         [[nodiscard]]
         const vk::raii::Instance& instance() const noexcept { return m_Instance; }
+
+        void draw(std::uint32_t imageIndex) const;
     };
 }
