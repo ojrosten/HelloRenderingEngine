@@ -153,7 +153,8 @@ namespace avocet::vulkan {
         vk::raii::RenderPass make_render_pass(const logical_device& logicalDevice) {
             vk::AttachmentDescription2 colourAttachment{
                 .format{logicalDevice.format()},
-                .finalLayout{vk::ImageLayout::ePresentSrcKHR}
+                .loadOp{vk::AttachmentLoadOp::eClear},
+                .finalLayout{vk::ImageLayout::ePresentSrcKHR},
             };
 
             vk::AttachmentReference2 colourAttachmentRef{
