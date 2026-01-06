@@ -7,6 +7,8 @@
 
 #include "avocet/Vulkan/Presentation/Presentation.hpp"
 
+#include "avocet/Vulkan/Shaders/Shaders.hpp"
+
 #include <ranges>
 
 namespace avocet::vulkan {
@@ -173,6 +175,83 @@ namespace avocet::vulkan {
 
             return vk::raii::RenderPass{logicalDevice.device(), info};
         }
+
+        [[nodiscard]]
+        std::array<vk::PipelineShaderStageCreateInfo, 2> make_pipeline_shader_info(const vk::raii::ShaderModule& vertModule, const vk::raii::ShaderModule& fragModule) {
+            return {
+                vk::PipelineShaderStageCreateInfo{
+                    .stage{vk::ShaderStageFlagBits::eVertex},
+                    .module{vertModule},
+                    .pName{"main"}
+                },
+                vk::PipelineShaderStageCreateInfo{
+                    .stage{vk::ShaderStageFlagBits::eFragment},
+                    .module{fragModule},
+                    .pName{"main"}
+                }
+            };
+        }
+
+        [[nodiscard]]
+        vk::PipelineDynamicStateCreateInfo make_pipeline_dynamic_info(std::span<const vk::DynamicState> states) {
+            return vk::PipelineDynamicStateCreateInfo{
+                .dynamicStateCount{static_cast<std::uint32_t>(states.size())},
+                .pDynamicStates{states.data()}
+            };
+        }
+
+        [[nodiscard]]
+        vk::raii::Pipeline make_pipeline(const vk::raii::Device& device, const vk::raii::ShaderModule& vertModule, const vk::raii::ShaderModule& fragModule) {
+            const std::array<vk::PipelineShaderStageCreateInfo, 2> shaderStages{make_pipeline_shader_info(vertModule, fragModule)};
+
+            vk::PipelineVertexInputStateCreateInfo vertInfo{};
+
+            vk::PipelineInputAssemblyStateCreateInfo assemblyInfo{
+                .topology{vk::PrimitiveTopology::eTriangleList}
+            };
+
+            vk::PipelineViewportStateCreateInfo viewportInfo{
+                .viewportCount{1},
+                //.pViewports{&m_ViewPort}, These can now be dynamic and not baked into the pipeline
+                .scissorCount{1},
+                //.pScissors{&m_Scissor}
+            };
+
+            vk::PipelineRasterizationStateCreateInfo rasterInfo{
+                .lineWidth{1.0}
+            };
+
+            vk::PipelineMultisampleStateCreateInfo multismapleInfo{
+
+            };
+
+            vk::PipelineColorBlendAttachmentState blendState{
+                .blendEnable{}
+            };
+
+            vk::PipelineColorBlendStateCreateInfo blendInfo{
+                .attachmentCount{1},
+                .pAttachments{&blendState}
+            };
+
+            std::array<vk::DynamicState, 2> dynamicStates{vk::DynamicState::eViewport, vk::DynamicState::eScissor};
+            const auto dynamicInfo{make_pipeline_dynamic_info(dynamicStates)};
+
+            vk::GraphicsPipelineCreateInfo info{
+               .stageCount{2},
+               .pStages{shaderStages.data()},
+               .pVertexInputState{&vertInfo},
+               .pInputAssemblyState{&assemblyInfo},
+               .pViewportState{&viewportInfo},
+               .pRasterizationState{&rasterInfo},
+               .pMultisampleState{&multismapleInfo},
+               .pDepthStencilState{},
+               .pColorBlendState{&blendInfo},
+               .pDynamicState{&dynamicInfo}
+            };
+
+            return {device, nullptr, info};
+        }
     }
 
     swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
@@ -194,7 +273,7 @@ namespace avocet::vulkan {
     {
     }
 
-    presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent)
+    presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath)
         : m_LayerProperties{vk::enumerateInstanceLayerProperties()}
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(context, check_validation_layer_support(presentationConfig, m_LayerProperties))}
@@ -217,21 +296,8 @@ namespace avocet::vulkan {
             .offset{},
             .extent{framebufferExtent}
         },
-        m_PipelineLayout{m_LogicalDevice.device(), vk::PipelineLayoutCreateInfo{}}
+        m_PipelineLayout{m_LogicalDevice.device(), vk::PipelineLayoutCreateInfo{}},
+        m_Pipeline{make_pipeline(m_LogicalDevice.device(), create_shader_module(m_LogicalDevice.device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader, ""), create_shader_module(m_LogicalDevice.device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, ""))}
     {
-        vk::PipelineViewportStateCreateInfo foo{
-            .viewportCount{1},
-            //.pViewports{&m_ViewPort}, These can now be dynamic and not baked into the pipeline
-            .scissorCount{1},
-            //.pScissors{&m_Scissor}
-        };
-
-        vk::PipelineRasterizationStateCreateInfo raster{
-            .lineWidth{1.0}
-        };
-
-        vk::PipelineColorBlendAttachmentState blend{
-            .blendEnable{}
-        };
     }
 }

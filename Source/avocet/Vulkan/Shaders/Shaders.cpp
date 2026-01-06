@@ -20,40 +20,6 @@ namespace avocet::vulkan {
 
             return vk::raii::ShaderModule{device, info};
         }
-
-        [[nodiscard]]
-        std::array<vk::PipelineShaderStageCreateInfo, 2> make_pipeline_shader_info(const vk::raii::ShaderModule& vertModule, const vk::raii::ShaderModule& fragModule) {
-            return {
-                vk::PipelineShaderStageCreateInfo{
-                    .stage{vk::ShaderStageFlagBits::eVertex},
-                    .module{vertModule},
-                    .pName{"main"}
-                },
-                vk::PipelineShaderStageCreateInfo{
-                    .stage{vk::ShaderStageFlagBits::eFragment},
-                    .module{fragModule},
-                    .pName{"main"}
-                }
-            };
-        }
-
-        [[nodiscard]]
-        vk::PipelineDynamicStateCreateInfo make_pipeline_dynamic_info(std::span<const vk::DynamicState> states) {
-            return vk::PipelineDynamicStateCreateInfo{
-                .dynamicStateCount{static_cast<std::uint32_t>(states.size())},
-                .pDynamicStates{states.data()}
-            };
-        }
-
-        void foo() {
-            vk::PipelineVertexInputStateCreateInfo vertInfo{
-
-            };
-
-            vk::PipelineInputAssemblyStateCreateInfo assemblyInfo{
-                .topology{vk::PrimitiveTopology::eTriangleList}
-            };
-        }
     }
 
     [[nodiscard]]

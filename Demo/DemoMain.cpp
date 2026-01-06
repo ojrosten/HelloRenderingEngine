@@ -113,7 +113,9 @@ int main()
                             .image_usage_flags{vk::ImageUsageFlagBits::eColorAttachment}
                         }
                     }
-                }
+                },
+                get_vertex_shader_dir()   / "2D"      / "Disc.vs",
+                get_fragment_shader_dir() / "General" / "Monochrome.fs"
             )
         };
 

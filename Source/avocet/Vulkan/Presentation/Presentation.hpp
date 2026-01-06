@@ -10,6 +10,7 @@
 #include "avocet/Vulkan/Common/VulkanConfig.hpp"
 
 #include <cstdint>
+#include <filesystem>
 #include <functional>
 #include <span>
 #include <string>
@@ -105,8 +106,9 @@ namespace avocet::vulkan {
         vk::Viewport                         m_ViewPort;
         vk::Rect2D                           m_Scissor;
         vk::raii::PipelineLayout             m_PipelineLayout;
+        vk::raii::Pipeline                   m_Pipeline;
     public:
-        presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent);
+        presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
 
         [[nodiscard]]
         std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_ExtensionProperties; }
