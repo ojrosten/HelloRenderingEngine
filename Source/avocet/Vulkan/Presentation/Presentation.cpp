@@ -300,8 +300,8 @@ namespace avocet::vulkan {
         m_PipelineLayout{m_LogicalDevice.device(), vk::PipelineLayoutCreateInfo{}},
         m_Pipeline{
             make_pipeline(m_LogicalDevice.device(),
-            create_shader_module(m_LogicalDevice.device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader, "foo"),
-            create_shader_module(m_LogicalDevice.device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, "bar"))
+            create_shader_module(m_LogicalDevice.device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader, vertShaderPath.generic_string()),
+            create_shader_module(m_LogicalDevice.device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string()))
         }
     {
     }
