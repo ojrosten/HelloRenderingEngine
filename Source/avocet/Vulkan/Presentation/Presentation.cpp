@@ -276,6 +276,16 @@ namespace avocet::vulkan {
                     }
                 ) | std::ranges::to<std::vector>();
         }
+
+        [[nodiscard]]
+        vk::raii::CommandPool make_command_pool(const logical_device& logicalDevice) {
+            vk::CommandPoolCreateInfo info{
+                .flags{vk::CommandPoolCreateFlagBits::eResetCommandBuffer},
+                .queueFamilyIndex{logicalDevice.q_family_indices().graphics.value()}
+            };
+
+            return vk::raii::CommandPool{logicalDevice.device(), info};
+        }
     }
 
     swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
@@ -286,12 +296,12 @@ namespace avocet::vulkan {
     {
     }
 
-    logical_device::logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo)
-        : m_PhysicalDevice{physDevice.device}
-        , m_Device{make_logical_device(physDevice, deviceConfig.extensions)}
-        , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.graphics.value()}})}
-        , m_PresentQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{physDevice.q_family_indices.present.value()}})}
-        , m_SwapChain{make_swap_chain(physDevice, m_Device, surfaceInfo, deviceConfig.swap_chain, physDevice.swap_chain_details)}
+    logical_device::logical_device(physical_device physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo)
+        : m_PhysicalDevice{std::move(physDevice)}
+        , m_Device{make_logical_device(m_PhysicalDevice, deviceConfig.extensions)}
+        , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{m_PhysicalDevice.q_family_indices.graphics.value()}})}
+        , m_PresentQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{m_PhysicalDevice.q_family_indices.present.value()}})}
+        , m_SwapChain{make_swap_chain(m_PhysicalDevice, m_Device, surfaceInfo, deviceConfig.swap_chain, m_PhysicalDevice.swap_chain_details)}
         , m_SwapChainImages{m_SwapChain.chain.getImages()}
         , m_SwapChainImageViews{make_swap_chain_image_views(m_Device, m_SwapChain, m_SwapChainImages)}
     {
@@ -330,7 +340,8 @@ namespace avocet::vulkan {
                 m_PipelineLayout,
                 m_RenderPass
             )
-        }
+        },
+        m_CommandPool{make_command_pool(m_LogicalDevice)}
     {
     }
 }

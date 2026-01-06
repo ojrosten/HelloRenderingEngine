@@ -71,7 +71,7 @@ namespace avocet::vulkan {
     };
 
     class logical_device {
-        vk::raii::PhysicalDevice m_PhysicalDevice;
+        physical_device  m_PhysicalDevice;
         vk::raii::Device m_Device;
         vk::raii::Queue  m_GraphicsQueue,
                          m_PresentQueue; // TO DO: make these optional?
@@ -79,7 +79,10 @@ namespace avocet::vulkan {
         std::vector<vk::Image> m_SwapChainImages;
         std::vector<vk::raii::ImageView> m_SwapChainImageViews;
     public:
-        logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
+        logical_device(physical_device physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
+
+        [[nodiscard]]
+        const queue_family_indices& q_family_indices() const noexcept { return m_PhysicalDevice.q_family_indices; }
 
         [[nodiscard]]
         const vk::raii::Device& device() const noexcept { return m_Device; }
@@ -113,6 +116,8 @@ namespace avocet::vulkan {
         vk::Rect2D                           m_Scissor;
         vk::raii::PipelineLayout             m_PipelineLayout;
         vk::raii::Pipeline                   m_Pipeline;
+
+        vk::raii::CommandPool                m_CommandPool;
 
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
