@@ -77,12 +77,15 @@ namespace avocet::vulkan {
                          m_PresentQueue; // TO DO: make these optional?
         swap_chain m_SwapChain;
         std::vector<vk::Image> m_SwapChainImages;
-        std::vector<vk::ImageView> m_SwapChainImageViews;
+        std::vector<vk::raii::ImageView> m_SwapChainImageViews;
     public:
         logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
 
         [[nodiscard]]
         const vk::raii::Device& device() const noexcept { return m_Device; }
+
+        [[nodiscard]]
+        std::span<const vk::raii::ImageView> swapchain_image_views() const noexcept { return m_SwapChainImageViews; }
 
         [[nodiscard]]
         vk::Format format() const noexcept { return m_SwapChain.format; }
@@ -102,11 +105,15 @@ namespace avocet::vulkan {
         vk::raii::Instance                   m_Instance;
         vk::raii::SurfaceKHR                 m_Surface;
         avocet::vulkan::logical_device       m_LogicalDevice;
+        // TO DO: wrap up the following in a different abstraction
         vk::raii::RenderPass                 m_RenderPass;
+        std::vector<vk::raii::Framebuffer>   m_Framebuffers;
+
         vk::Viewport                         m_ViewPort;
         vk::Rect2D                           m_Scissor;
         vk::raii::PipelineLayout             m_PipelineLayout;
         vk::raii::Pipeline                   m_Pipeline;
+
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
 

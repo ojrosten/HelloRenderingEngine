@@ -120,11 +120,11 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        std::vector<vk::ImageView> make_swap_chain_image_views(const vk::raii::Device& device, const swap_chain& swapChain, std::span<const vk::Image> images) {
+        std::vector<vk::raii::ImageView> make_swap_chain_image_views(const vk::raii::Device& device, const swap_chain& swapChain, std::span<const vk::Image> images) {
             return
                 std::views::transform(
                     images,
-                    [&device, &swapChain](const vk::Image& image) -> vk::ImageView {
+                    [&device, &swapChain](const vk::Image& image) -> vk::raii::ImageView {
                         vk::ImageViewCreateInfo info{
                             .image{image},
                             .viewType{vk::ImageViewType::e2D},
@@ -256,6 +256,26 @@ namespace avocet::vulkan {
 
             return {device, nullptr, info};
         }
+
+        [[nodiscard]]
+        std::vector<vk::raii::Framebuffer> make_framebuffers(const logical_device& logicalDevice, const vk::raii::RenderPass& renderPass, vk::Extent2D extent) {
+            return
+                std::views::transform(
+                    logicalDevice.swapchain_image_views(),
+                    [&](vk::ImageView view) -> vk::raii::Framebuffer {
+                        vk::FramebufferCreateInfo info{
+                            .renderPass{renderPass},
+                            .attachmentCount{1},
+                            .pAttachments{&view},
+                            .width{extent.width},
+                            .height{extent.height},
+                            .layers{1}
+                        };
+
+                        return {logicalDevice.device(), info};
+                    }
+                ) | std::ranges::to<std::vector>();
+        }
     }
 
     swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
@@ -288,6 +308,7 @@ namespace avocet::vulkan {
             vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}
         },
         m_RenderPass{make_render_pass(m_LogicalDevice)},
+        m_Framebuffers{make_framebuffers(m_LogicalDevice, m_RenderPass, framebufferExtent)},
         m_ViewPort{
             .x{},
             .y{},
