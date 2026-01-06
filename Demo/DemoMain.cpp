@@ -114,8 +114,8 @@ int main()
                         }
                     }
                 },
-                get_vertex_shader_dir()   / "2D"      / "Disc.vs",
-                get_fragment_shader_dir() / "General" / "Monochrome.fs"
+                get_vertex_shader_dir()   / "2D"      / "FixedColouredTri.vs",
+                get_fragment_shader_dir() / "General" / "PropagatedColour.fs"
             )
         };
 

@@ -14,7 +14,7 @@ namespace avocet::vulkan {
         [[nodiscard]]
         vk::raii::ShaderModule do_create_shader_module(const vk::raii::Device& device, std::span<const std::uint32_t> byteCode) {
             vk::ShaderModuleCreateInfo info{
-                .codeSize{byteCode.size()},
+                .codeSize{byteCode.size() * sizeof(std::uint32_t)},
                 .pCode{byteCode.data()}
             };
 
