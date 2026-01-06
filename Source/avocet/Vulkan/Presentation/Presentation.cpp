@@ -202,7 +202,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        vk::raii::Pipeline make_pipeline(const vk::raii::Device& device, const vk::raii::ShaderModule& vertModule, const vk::raii::ShaderModule& fragModule) {
+        vk::raii::Pipeline make_pipeline(const vk::raii::Device& device, const vk::raii::ShaderModule& vertModule, const vk::raii::ShaderModule& fragModule, const vk::raii::PipelineLayout& pipelineLayout, const vk::raii::RenderPass& renderPass) {
             const std::array<vk::PipelineShaderStageCreateInfo, 2> shaderStages{make_pipeline_shader_info(vertModule, fragModule)};
 
             vk::PipelineVertexInputStateCreateInfo vertInfo{};
@@ -248,7 +248,10 @@ namespace avocet::vulkan {
                .pMultisampleState{&multismapleInfo},
                .pDepthStencilState{},
                .pColorBlendState{&blendInfo},
-               .pDynamicState{&dynamicInfo}
+               .pDynamicState{&dynamicInfo},
+               .layout{pipelineLayout},
+               .renderPass{renderPass},
+               .subpass{}
             };
 
             return {device, nullptr, info};
@@ -299,9 +302,13 @@ namespace avocet::vulkan {
         },
         m_PipelineLayout{m_LogicalDevice.device(), vk::PipelineLayoutCreateInfo{}},
         m_Pipeline{
-            make_pipeline(m_LogicalDevice.device(),
-            create_shader_module(m_LogicalDevice.device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader, vertShaderPath.generic_string()),
-            create_shader_module(m_LogicalDevice.device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string()))
+            make_pipeline(
+                m_LogicalDevice.device(),
+                create_shader_module(m_LogicalDevice.device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader  , vertShaderPath.generic_string()),
+                create_shader_module(m_LogicalDevice.device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string()),
+                m_PipelineLayout,
+                m_RenderPass
+            )
         }
     {
     }
