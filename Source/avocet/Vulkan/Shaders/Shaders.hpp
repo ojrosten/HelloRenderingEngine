@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////
-//                Copyright Oliver J. Rosten 2025.                //
+//                Copyright Oliver J. Rosten 2026.                //
 // Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //
 //    (See accompanying file LICENSE.md or copy at                //
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
@@ -7,12 +7,11 @@
 
 #pragma once
 
-#include "shaderc/shaderc.hpp"
+#include "avocet/Vulkan/Common/VulkanConfig.hpp"
 
-#include <filesystem>
-#include <vector>
+#include "avocet/Core/ShaderCompilation/ShaderCompiler.hpp"
 
-namespace avocet {
+namespace avocet::vulkan {
     [[nodiscard]]
-    std::vector<uint32_t> compile_glsl_to_spv(const std::filesystem::path& shaderPath, shaderc_shader_kind kind, std::string_view label);
+    vk::raii::ShaderModule create_shader_module(const vk::raii::Device& device, const std::filesystem::path& shaderPath, shaderc_shader_kind kind, std::string_view label);
 }

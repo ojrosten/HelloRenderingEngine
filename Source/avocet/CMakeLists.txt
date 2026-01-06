@@ -22,6 +22,7 @@ set(SourceList
     OpenGL/Resources/Textures.cpp
     Vulkan/Common/VulkanConfig.cpp
     Vulkan/Presentation/Presentation.cpp
+    Vulkan/Shaders/Shaders.cpp
 )
 
 add_library(avocet STATIC ${SourceList})

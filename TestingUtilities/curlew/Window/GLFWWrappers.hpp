@@ -57,10 +57,7 @@ namespace curlew {
     };
 
 
-    struct vulkan_window_config {
-        std::size_t width{800}, height{600};
-        avocet::vulkan::presentation_config vk_config;
-    };
+    using vulkan_window_config = avocet::vulkan::presentation_config;
 
     class glfw_manager;
 

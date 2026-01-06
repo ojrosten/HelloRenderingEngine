@@ -32,11 +32,11 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    std::vector<uint32_t> do_compile_glsl_to_spv(const std::filesystem::path& sourceFile, shaderc_shader_kind kind, std::string_view label) {
-        const auto optContent{sequoia::read_to_string(sourceFile)};
+    std::vector<uint32_t> compile_glsl_to_spv(const std::filesystem::path& shaderPath, shaderc_shader_kind kind, std::string_view label) {
+        const auto optContent{sequoia::read_to_string(shaderPath)};
         if(!optContent)
-            throw std::runtime_error{std::format("Unable to read file {}", sourceFile.generic_string())};
+            throw std::runtime_error{std::format("Unable to read file {}", shaderPath.generic_string())};
 
-        return compile_glsl_to_spv(optContent.value(), kind, label);
+        return do_compile_glsl_to_spv(optContent.value(), kind, label);
     }
 }

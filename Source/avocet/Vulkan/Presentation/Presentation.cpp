@@ -146,6 +146,33 @@ namespace avocet::vulkan {
                     }
                 ) | std::ranges::to<std::vector>();
         }
+
+        [[nodiscard]]
+        vk::raii::RenderPass make_render_pass(const logical_device& logicalDevice) {
+            vk::AttachmentDescription2 colourAttachment{
+                .format{logicalDevice.format()},
+                .finalLayout{vk::ImageLayout::ePresentSrcKHR}
+            };
+
+            vk::AttachmentReference2 colourAttachmentRef{
+                .attachment{},
+                .layout{vk::ImageLayout::eColorAttachmentOptimal}
+            };
+
+            vk::SubpassDescription2 subpass{
+                .colorAttachmentCount{1},
+                .pColorAttachments{&colourAttachmentRef}
+            };
+
+            vk::RenderPassCreateInfo2 info{
+                .attachmentCount{1},
+                .pAttachments{&colourAttachment},
+                .subpassCount{1},
+                .pSubpasses{&subpass}
+            };
+
+            return vk::raii::RenderPass{logicalDevice.device(), info};
+        }
     }
 
     swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
@@ -176,6 +203,35 @@ namespace avocet::vulkan {
             presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}, framebufferExtent),
             presentationConfig.device_config,
             vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}
-        }
-    {}
+        },
+        m_RenderPass{make_render_pass(m_LogicalDevice)},
+        m_ViewPort{
+            .x{},
+            .y{},
+            .width {static_cast<float>(framebufferExtent.width)},
+            .height{static_cast<float>(framebufferExtent.height)},
+            .minDepth{},
+            .maxDepth{1.0f}
+        },
+        m_Scissor{
+            .offset{},
+            .extent{framebufferExtent}
+        },
+        m_PipelineLayout{m_LogicalDevice.device(), vk::PipelineLayoutCreateInfo{}}
+    {
+        vk::PipelineViewportStateCreateInfo foo{
+            .viewportCount{1},
+            //.pViewports{&m_ViewPort}, These can now be dynamic and not baked into the pipeline
+            .scissorCount{1},
+            //.pScissors{&m_Scissor}
+        };
+
+        vk::PipelineRasterizationStateCreateInfo raster{
+            .lineWidth{1.0}
+        };
+
+        vk::PipelineColorBlendAttachmentState blend{
+            .blendEnable{}
+        };
+    }
 }

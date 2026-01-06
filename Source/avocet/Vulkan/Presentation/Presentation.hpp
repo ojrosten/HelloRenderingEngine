@@ -79,6 +79,12 @@ namespace avocet::vulkan {
         std::vector<vk::ImageView> m_SwapChainImageViews;
     public:
         logical_device(const physical_device& physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
+
+        [[nodiscard]]
+        const vk::raii::Device& device() const noexcept { return m_Device; }
+
+        [[nodiscard]]
+        vk::Format format() const noexcept { return m_SwapChain.format; }
     };
 
     struct presentation_config {
@@ -95,6 +101,10 @@ namespace avocet::vulkan {
         vk::raii::Instance                   m_Instance;
         vk::raii::SurfaceKHR                 m_Surface;
         avocet::vulkan::logical_device       m_LogicalDevice;
+        vk::raii::RenderPass                 m_RenderPass;
+        vk::Viewport                         m_ViewPort;
+        vk::Rect2D                           m_Scissor;
+        vk::raii::PipelineLayout             m_PipelineLayout;
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent);
 

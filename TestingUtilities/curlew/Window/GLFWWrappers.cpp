@@ -53,7 +53,7 @@ namespace curlew {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
             glfwWindowHint(GLFW_VISIBLE, true);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.vk_config.create_info.app_info.app.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.create_info.app_info.app.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window suitable for Vulkan"};
         }
 
@@ -162,7 +162,7 @@ namespace curlew {
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
         : m_Window{config}
         , m_Presentable{
-              config.vk_config,
+              config,
               vulkanContext,
               [&window = m_Window](vk::raii::Instance& instance) -> vk::raii::SurfaceKHR { return make_surface(instance, window); },
               get_framebuffer_extent()

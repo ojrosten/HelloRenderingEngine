@@ -98,21 +98,19 @@ int main()
                 curlew::vulkan_window_config{
                     .width{800},
                     .height{800},
-                    .vk_config{
-                        .create_info{
-                            .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}
-                         },
-                        .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
-                        .extensions{curlew::vulkan::build_vulkan_extensions(std::array{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME})},
-                        .device_config{
-                            .selector{curlew::vulkan::device_selector{}},
-                            .extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}},
-                            .swap_chain{
-                                .format_selector{curlew::vulkan::swap_chain_format_selector{}},
-                                .present_mode_selector{curlew::vulkan::swap_chain_present_mode_selector{}},
-                                .extent_selector{curlew::vulkan::swap_chain_extent_selector{}},
-                                .image_usage_flags{vk::ImageUsageFlagBits::eColorAttachment}
-                            }
+                    .create_info{
+                        .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}
+                     },
+                    .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
+                    .extensions{curlew::vulkan::build_vulkan_extensions(std::array{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME})},
+                    .device_config{
+                        .selector{curlew::vulkan::device_selector{}},
+                        .extensions{{VK_KHR_SWAPCHAIN_EXTENSION_NAME}},
+                        .swap_chain{
+                            .format_selector{curlew::vulkan::swap_chain_format_selector{}},
+                            .present_mode_selector{curlew::vulkan::swap_chain_present_mode_selector{}},
+                            .extent_selector{curlew::vulkan::swap_chain_extent_selector{}},
+                            .image_usage_flags{vk::ImageUsageFlagBits::eColorAttachment}
                         }
                     }
                 }
