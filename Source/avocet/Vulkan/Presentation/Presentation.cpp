@@ -286,6 +286,16 @@ namespace avocet::vulkan {
 
             return vk::raii::CommandPool{logicalDevice.device(), info};
         }
+
+        [[nodiscard]]
+        std::vector<vk::raii::CommandBuffer> make_command_buffers(const vk::raii::Device& device, const vk::raii::CommandPool& pool) {
+            vk::CommandBufferAllocateInfo allocInfo{
+                .commandPool{pool},
+                .commandBufferCount{1}
+            };
+
+            return device.allocateCommandBuffers(allocInfo);
+        }
     }
 
     swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
@@ -341,7 +351,8 @@ namespace avocet::vulkan {
                 m_RenderPass
             )
         },
-        m_CommandPool{make_command_pool(m_LogicalDevice)}
+        m_CommandPool{make_command_pool(m_LogicalDevice)},
+        m_CommmandBuffers{make_command_buffers(m_LogicalDevice.device(), m_CommandPool)}
     {
     }
 }

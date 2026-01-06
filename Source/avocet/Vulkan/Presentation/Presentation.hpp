@@ -118,6 +118,7 @@ namespace avocet::vulkan {
         vk::raii::Pipeline                   m_Pipeline;
 
         vk::raii::CommandPool                m_CommandPool;
+        std::vector<vk::raii::CommandBuffer> m_CommmandBuffers;
 
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
