@@ -170,5 +170,7 @@ namespace curlew {
         std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_Presentable.layer_properties(); }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
+
+        void draw_frame() { m_Presentable.draw_frame(); }
     };
 }

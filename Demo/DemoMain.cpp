@@ -438,6 +438,11 @@ int main()
 
                 glfwSwapBuffers(&w.get());
             }
+
+            if(!glfwWindowShouldClose(&vulkanWindow.get())) {
+                vulkanWindow.draw_frame();
+            }
+
             glfwPollEvents();
         }
     }

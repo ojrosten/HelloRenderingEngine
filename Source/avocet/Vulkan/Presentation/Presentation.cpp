@@ -9,6 +9,7 @@
 
 #include "avocet/Vulkan/Shaders/Shaders.hpp"
 
+#include <print>
 #include <ranges>
 
 namespace avocet::vulkan {
@@ -26,7 +27,6 @@ namespace avocet::vulkan {
         [[nodiscard]]
         vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const presentation_config& config) {
             vk::ApplicationInfo appInfo{
-                .sType{VK_STRUCTURE_TYPE_APPLICATION_INFO},
                 .pApplicationName{config.create_info.app_info.app.name.data()},
                 .applicationVersion{config.create_info.app_info.app.version},
                 .pEngineName{config.create_info.app_info.engine.name.data()},
@@ -35,7 +35,6 @@ namespace avocet::vulkan {
             };
 
             vk::InstanceCreateInfo createInfo{
-                .sType{VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO},
                 .flags{config.create_info.flags},
                 .pApplicationInfo{&appInfo},
                 .enabledLayerCount{static_cast<std::uint32_t>(config.validation_layers.size())},
@@ -58,7 +57,6 @@ namespace avocet::vulkan {
                     std::ranges::subrange{uniqueFamiliesIndices.begin(), std::ranges::unique(uniqueFamiliesIndices).begin()},
                     [&queuePriority](const std::uint32_t i) -> vk::DeviceQueueCreateInfo {
                         return {
-                            .sType{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO},
                             .queueFamilyIndex{i},
                             .queueCount{1},
                             .pQueuePriorities{&queuePriority}
@@ -69,8 +67,12 @@ namespace avocet::vulkan {
 
             vk::PhysicalDeviceFeatures features{};
 
+            vk::PhysicalDeviceSynchronization2Features syncFeatures{
+                .synchronization2{true}
+            };
+
             vk::DeviceCreateInfo createInfo{
-                .sType{VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO},
+                .pNext{&syncFeatures},
                 .queueCreateInfoCount{static_cast<std::uint32_t>(qCreateInfos.size())},
                 .pQueueCreateInfos{qCreateInfos.data()},
                 .enabledExtensionCount{static_cast<std::uint32_t>(extensions.size())},
@@ -174,11 +176,22 @@ namespace avocet::vulkan {
                 .pColorAttachments{&colourAttachmentRef}
             };
 
+            vk::SubpassDependency2 subpassDep{
+                .srcSubpass{VK_SUBPASS_EXTERNAL},
+                .dstSubpass{},
+                .srcStageMask{vk::PipelineStageFlagBits::eColorAttachmentOutput},
+                .dstStageMask{vk::PipelineStageFlagBits::eColorAttachmentOutput},
+                .srcAccessMask{},
+                .dstAccessMask{vk::AccessFlagBits::eColorAttachmentWrite}
+            };
+
             vk::RenderPassCreateInfo2 info{
                 .attachmentCount{1},
                 .pAttachments{&colourAttachment},
                 .subpassCount{1},
-                .pSubpasses{&subpass}
+                .pSubpasses{&subpass},
+                .dependencyCount{1},
+                .pDependencies{&subpassDep},
             };
 
             return vk::raii::RenderPass{logicalDevice.device(), info};
@@ -360,11 +373,43 @@ namespace avocet::vulkan {
             )
         },
         m_CommandPool{make_command_pool(m_LogicalDevice)},
-        m_CommmandBuffers{make_command_buffers(m_LogicalDevice.device(), m_CommandPool)}
+        m_CommmandBuffers{make_command_buffers(m_LogicalDevice.device(), m_CommandPool)},
+        m_ImageAvailable{m_LogicalDevice.device(), vk::SemaphoreCreateInfo{}},
+        m_RenderFinshed{ m_LogicalDevice.device(), vk::SemaphoreCreateInfo{}},
+        m_FrameInFlight{m_LogicalDevice.device(),  vk::FenceCreateInfo{.flags{vk::FenceCreateFlagBits::eSignaled}}}
     {
     }
 
-    void presentable::draw(std::uint32_t imageIndex) const {
+    void presentable::draw_frame() const {
+        constexpr auto maxTimeout{std::numeric_limits<std::uint64_t>::max()};
+
+        if(m_LogicalDevice.device().waitForFences(*m_FrameInFlight, true, maxTimeout) != vk::Result::eSuccess)
+            throw std::runtime_error{"Waiting for fences failed"};
+
+        m_LogicalDevice.device().resetFences(*m_FrameInFlight);
+
+
+        const auto [ec, imageIndex]{
+            m_LogicalDevice.device().acquireNextImage2KHR(
+                vk::AcquireNextImageInfoKHR{
+                    .swapchain{m_LogicalDevice.get_swap_chain().chain},
+                    .timeout{maxTimeout},
+                    .semaphore{m_ImageAvailable},
+                    .deviceMask{1}
+                }
+            )
+        };
+
+        if(ec != vk::Result::eSuccess)
+            throw std::runtime_error{"Unable to acquire next image index"};
+
+        get_cmd_buffer().reset();
+        record_cmd_buffer(imageIndex);
+        submit_cmd_buffer();
+        present(imageIndex);
+    }
+
+    void presentable::record_cmd_buffer(std::uint32_t imageIndex) const {
         vk::CommandBufferBeginInfo bufferBeginInfo{};
 
         get_cmd_buffer().begin(bufferBeginInfo);
@@ -394,4 +439,47 @@ namespace avocet::vulkan {
 
         get_cmd_buffer().end();
     }
+
+    void presentable::submit_cmd_buffer() const {
+        vk::SemaphoreSubmitInfo waitSemInfo{
+            .semaphore{*m_ImageAvailable},
+            .stageMask{vk::PipelineStageFlagBits2::eColorAttachmentOutput},
+            .deviceIndex{0}
+        };
+
+        vk::CommandBufferSubmitInfo cmdBufInfo{
+            .commandBuffer{get_cmd_buffer()}
+        };
+
+        vk::SemaphoreSubmitInfo sigSemInfo{
+            .semaphore{*m_RenderFinshed}
+        };
+
+        vk::SubmitInfo2 info{
+            .waitSemaphoreInfoCount{1},
+            .pWaitSemaphoreInfos{&waitSemInfo},
+            .commandBufferInfoCount{1},
+            .pCommandBufferInfos{&cmdBufInfo},
+            .signalSemaphoreInfoCount{1},
+            .pSignalSemaphoreInfos{&sigSemInfo}
+        };
+
+        m_LogicalDevice.get_graphics_queue().submit2(info, m_FrameInFlight);
+    }
+
+    void presentable::present(std::uint32_t imageIndex) const {
+        std::array<vk::Semaphore, 1> waitSems{*m_RenderFinshed};
+        std::array<vk::SwapchainKHR, 1> swapChains{*m_LogicalDevice.get_swap_chain().chain};
+        vk::PresentInfoKHR presentInfo{
+            .waitSemaphoreCount{1},
+            .pWaitSemaphores{waitSems.data()},
+            .swapchainCount{1},
+            .pSwapchains{swapChains.data()},
+            .pImageIndices{&imageIndex}
+        };
+
+        if(auto e{m_LogicalDevice.get_graphics_queue().presentKHR(presentInfo)}; e != vk::Result::eSuccess)
+            std::println("Presenting the graphics queue returrned result {}", static_cast<int>(e));
+    }
+
 }

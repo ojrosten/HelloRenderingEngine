@@ -91,7 +91,13 @@ namespace avocet::vulkan {
         std::span<const vk::raii::ImageView> swapchain_image_views() const noexcept { return m_SwapChainImageViews; }
 
         [[nodiscard]]
+        const swap_chain& get_swap_chain() const noexcept { return m_SwapChain; }
+
+        // TO DO: subsume this
+        [[nodiscard]]
         vk::Format format() const noexcept { return m_SwapChain.format; }
+
+        const vk::raii::Queue& get_graphics_queue() const noexcept { return m_GraphicsQueue; }
     };
 
     struct presentation_config {
@@ -121,8 +127,18 @@ namespace avocet::vulkan {
         vk::raii::CommandPool                m_CommandPool;
         std::vector<vk::raii::CommandBuffer> m_CommmandBuffers;
 
+        vk::raii::Semaphore m_ImageAvailable,
+                            m_RenderFinshed;
+
+        vk::raii::Fence m_FrameInFlight;
+
         const vk::raii::CommandBuffer& get_cmd_buffer() const { return m_CommmandBuffers.at(0); }
 
+        void record_cmd_buffer(std::uint32_t imageIndex) const;
+
+        void submit_cmd_buffer() const;
+
+        void present(std::uint32_t imageIndex) const;
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
 
@@ -135,6 +151,6 @@ namespace avocet::vulkan {
         [[nodiscard]]
         const vk::raii::Instance& instance() const noexcept { return m_Instance; }
 
-        void draw(std::uint32_t imageIndex) const;
+        void draw_frame() const;
     };
 }
