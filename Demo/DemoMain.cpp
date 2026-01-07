@@ -113,9 +113,7 @@ int main()
                             .image_usage_flags{vk::ImageUsageFlagBits::eColorAttachment}
                         }
                     }
-                },
-                get_vertex_shader_dir()   / "2D"      / "FixedColouredTri.vs",
-                get_fragment_shader_dir() / "General" / "PropagatedColour.fs"
+                }
             )
         };
 
@@ -318,6 +316,8 @@ int main()
         discShaderProgram2D.set_uniform("radius", cutoutRadius);
         discShaderProgram2D.set_uniform("centre", cutoutCentre.values());
 
+        auto vulkanRenderer{vulkanWindow.make_renderer(get_vertex_shader_dir() / "2D" / "FixedColouredTri.vs", get_fragment_shader_dir() / "General" / "PropagatedColour.fs", 2)};
+
         while(!glfwWindowShouldClose(&w.get()) || !glfwWindowShouldClose(&vulkanWindow.get())) {
             if(!glfwWindowShouldClose(&w.get())) {
                 agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
@@ -440,7 +440,7 @@ int main()
             }
 
             if(!glfwWindowShouldClose(&vulkanWindow.get())) {
-                vulkanWindow.draw_frame();
+                vulkanRenderer.draw_frame();
             }
 
             glfwPollEvents();

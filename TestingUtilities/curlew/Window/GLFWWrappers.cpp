@@ -132,7 +132,7 @@ namespace curlew {
 
     opengl_window glfw_manager::create_window(const opengl_window_config& config) { return opengl_window{config, m_RenderingSetup.version}; }
 
-    vulkan_window glfw_manager::create_window(const vulkan_window_config& config, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath) { return vulkan_window{config, m_VulkanContext, vertShaderPath, fragShaderPath}; }
+    vulkan_window glfw_manager::create_window(const vulkan_window_config& config) { return vulkan_window{config, m_VulkanContext}; }
 
     window_resource::window_resource(const opengl_window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
 
@@ -159,18 +159,21 @@ namespace curlew {
         return {static_cast<std::uint32_t>(width), static_cast<std::uint32_t>(height)};
     }
 
-    vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath)
+    vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
         : m_Window{config}
         , m_Presentable{
               config,
               vulkanContext,
               [&window = m_Window](vk::raii::Instance& instance) -> vk::raii::SurfaceKHR { return make_surface(instance, window); },
-              get_framebuffer_extent(),
-              vertShaderPath,
-              fragShaderPath
+              get_framebuffer_extent()
          }
     {
         volkLoadInstance(*m_Presentable.instance());
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Presentable.instance());
+    }
+
+    [[nodiscard]]
+    avocet::vulkan::renderer vulkan_window::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight) {
+        return {m_Presentable.get_logical_device(), m_Presentable.extent(), vertShaderPath, fragShaderPath, maxFramesInFlight};
     }
 }

@@ -96,9 +96,8 @@ namespace curlew {
         [[nodiscard]]
         opengl_window create_window(const opengl_window_config& config);
 
-        // TO DO: sort out last two arguments
         [[nodiscard]]
-        vulkan_window create_window(const vulkan_window_config& config, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
+        vulkan_window create_window(const vulkan_window_config& config);
 
         [[nodiscard]]
         const opengl_rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
@@ -151,7 +150,7 @@ namespace curlew {
         avocet::vulkan::presentable m_Presentable;
 
         // TO DO: sort out last two arguments
-        vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
+        vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
 
         [[nodiscard]]
         vk::Extent2D get_framebuffer_extent();
@@ -171,7 +170,8 @@ namespace curlew {
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
-        void draw_frame() { m_Presentable.draw_frame(); }
+        [[nodiscard]]
+        avocet::vulkan::renderer make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight);
 
         void wait_idle() { m_Presentable.wait_idle(); }
     };

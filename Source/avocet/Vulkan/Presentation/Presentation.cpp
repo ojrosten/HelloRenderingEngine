@@ -354,7 +354,7 @@ namespace avocet::vulkan {
     {
     }
 
-    presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath)
+    presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent)
         : m_LayerProperties{vk::enumerateInstanceLayerProperties()}
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(context, check_validation_layer_support(presentationConfig, m_LayerProperties))}
@@ -365,41 +365,7 @@ namespace avocet::vulkan {
             presentationConfig.device_config,
             vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}
           }
-        , m_RenderPass{make_render_pass(m_LogicalDevice)}
-        , m_Framebuffers{make_framebuffers(m_LogicalDevice, m_RenderPass, m_Extent)}
-        , m_ViewPort{
-            .x{},
-            .y{},
-            .width {static_cast<float>(m_Extent.width)},
-            .height{static_cast<float>(m_Extent.height)},
-            .minDepth{},
-            .maxDepth{1.0f}
-          }
-        , m_Scissor{
-            .offset{},
-            .extent{m_Extent}
-          }
-        , m_PipelineLayout{m_LogicalDevice.device(), vk::PipelineLayoutCreateInfo{}}
-        , m_Pipeline{
-              make_pipeline(
-                  m_LogicalDevice.device(),
-                  create_shader_module(m_LogicalDevice.device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader  , vertShaderPath.generic_string()),
-                  create_shader_module(m_LogicalDevice.device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string()),
-                  m_PipelineLayout,
-                  m_RenderPass
-              )
-          }
-        , m_CommandPool{make_command_pool(m_LogicalDevice)}
-        , m_CommandBuffers{make_command_buffer(m_LogicalDevice.device(), m_CommandPool, to_uint32(m_LogicalDevice.swapchain_image_views().size()))}
-        , m_Fences{make_fences(m_LogicalDevice.device(), presentationConfig.max_frames_in_flight)}
     {
-    }
-
-    void presentable::draw_frame() const {
-        m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], m_LogicalDevice, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor);
-
-        m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_LogicalDevice.swapchain_image_views().size();
-        m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_Fences.size();
     }
 
     void presentable::wait_idle() const {
@@ -514,7 +480,8 @@ namespace avocet::vulkan {
 
 
     renderer::renderer(const logical_device& logicalDevice, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight)
-        : m_Extent{extent}
+        : m_LogicalDevice{&logicalDevice}
+        , m_Extent{extent}
         , m_RenderPass{make_render_pass(logicalDevice)}
         , m_Framebuffers{make_framebuffers(logicalDevice, m_RenderPass, m_Extent)}
         , m_ViewPort{
@@ -543,4 +510,11 @@ namespace avocet::vulkan {
         , m_CommandBuffers{make_command_buffer(logicalDevice.device(), m_CommandPool, to_uint32(logicalDevice.swapchain_image_views().size()))}
         , m_Fences{make_fences(logicalDevice.device(), maxFramesInFlight)}
     { }
+
+    void renderer::draw_frame() const {
+        m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor);
+
+        m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_LogicalDevice->swapchain_image_views().size();
+        m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_Fences.size();
+    }
 }
