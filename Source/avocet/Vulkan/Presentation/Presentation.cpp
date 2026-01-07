@@ -84,14 +84,21 @@ namespace avocet::vulkan {
 
         [[nodiscard]]
         swap_chain make_swap_chain(const physical_device& physDevice, const vk::raii::Device& device, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails) {
-            const auto maxImageCount{swapChainDetails.capabilities.surfaceCapabilities.maxImageCount},
-                minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount};
+            
+            const auto requestedMinImageCount{
+                [&swapChainDetails]() {
+                    const auto maxImageCount{swapChainDetails.capabilities.surfaceCapabilities.maxImageCount},
+                               minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount};
+
+                    return (minImageCount == maxImageCount) ? minImageCount : minImageCount + 1;
+                }()
+            };
 
             const auto format{swapChainConfig.format_selector(swapChainDetails.formats).surfaceFormat.format};
 
             vk::SwapchainCreateInfoKHR createInfo{
                 .surface{surfaceInfo.surface},
-                .minImageCount{maxImageCount ? maxImageCount : minImageCount + 1},
+                .minImageCount{requestedMinImageCount},
                 .imageFormat{format},
                 .imageExtent{swapChainConfig.extent_selector(swapChainDetails.capabilities, swapChainDetails.framebuffer_extent)},
                 .imageArrayLayers{1}, // Always 1 unless developing a stereoscopic app
