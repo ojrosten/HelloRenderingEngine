@@ -106,7 +106,7 @@ namespace avocet::vulkan {
         std::vector<const char*> validation_layers{};
         std::vector<const char*> extensions{};
         device_config device_config{};
-        std::uint32_t max_frames_in_flight{2};
+        std::uint32_t max_frames_in_flight{3}; // Dodgy! synchronization breaks if this is less than 3!
     };
 
     class frame_resources {
@@ -166,5 +166,7 @@ namespace avocet::vulkan {
         const vk::raii::Instance& instance() const noexcept { return m_Instance; }
 
         void draw_frame() const;
+
+        void wait_idle() const;
     };
 }

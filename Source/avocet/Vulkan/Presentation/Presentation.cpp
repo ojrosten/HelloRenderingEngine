@@ -386,7 +386,11 @@ namespace avocet::vulkan {
     void presentable::draw_frame() const {
         m_FrameResources[m_CurrentFrame].draw_frame(m_LogicalDevice, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor);
 
-        m_CurrentFrame = ++m_CurrentFrame % m_MaxFramesInFlight;
+        m_CurrentFrame = (m_CurrentFrame + 1) % m_MaxFramesInFlight;
+    }
+
+    void presentable::wait_idle() const {
+        m_LogicalDevice.device().waitIdle();
     }
 
     void frame_resources::draw_frame(const avocet::vulkan::logical_device& logicalDevice, const vk::raii::RenderPass& renderPass, std::span<const vk::raii::Framebuffer> framebuffers, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
@@ -396,7 +400,6 @@ namespace avocet::vulkan {
             throw std::runtime_error{"Waiting for fences failed"};
 
         logicalDevice.device().resetFences(*m_FrameInFlight);
-
 
         const auto [ec, imageIndex]{
             logicalDevice.device().acquireNextImage2KHR(
@@ -416,8 +419,6 @@ namespace avocet::vulkan {
         record_cmd_buffer(renderPass, framebuffers[imageIndex], pipeline, extent, viewport, scissor);
         submit_cmd_buffer(logicalDevice);
         present(logicalDevice, imageIndex);
-
-        logicalDevice.device().waitIdle();
     }
 
     void frame_resources::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
@@ -453,7 +454,7 @@ namespace avocet::vulkan {
 
     void frame_resources::submit_cmd_buffer(const avocet::vulkan::logical_device& logicalDevice) const {
         vk::SemaphoreSubmitInfo waitSemInfo{
-            .semaphore{*m_ImageAvailable},
+            .semaphore{m_ImageAvailable},
             .stageMask{vk::PipelineStageFlagBits2::eColorAttachmentOutput},
             .deviceIndex{0}
         };
@@ -463,7 +464,7 @@ namespace avocet::vulkan {
         };
 
         vk::SemaphoreSubmitInfo sigSemInfo{
-            .semaphore{*m_RenderFinished}
+            .semaphore{m_RenderFinished}
         };
 
         vk::SubmitInfo2 info{

@@ -445,6 +445,8 @@ int main()
 
             glfwPollEvents();
         }
+
+        vulkanWindow.wait_idle();
     }
     catch(const std::exception& e)
     {

@@ -172,5 +172,7 @@ namespace curlew {
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
         void draw_frame() { m_Presentable.draw_frame(); }
+
+        void wait_idle() { m_Presentable.wait_idle(); }
     };
 }
