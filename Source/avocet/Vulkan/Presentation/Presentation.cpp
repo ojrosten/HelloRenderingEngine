@@ -16,6 +16,9 @@ namespace avocet::vulkan {
     namespace {
         constexpr auto maxTimeout{std::numeric_limits<std::uint64_t>::max()};
 
+        [[nodiscard]]
+        std::uint32_t to_uint32(std::size_t i) { return static_cast<std::uint32_t>(i); }
+
         const presentation_config& check_validation_layer_support(const presentation_config& config, std::span<const vk::LayerProperties> layerProperties) {
             for(const auto& requested : config.validation_layers) {
                 auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
@@ -39,9 +42,9 @@ namespace avocet::vulkan {
             vk::InstanceCreateInfo createInfo{
                 .flags{config.create_info.flags},
                 .pApplicationInfo{&appInfo},
-                .enabledLayerCount{static_cast<std::uint32_t>(config.validation_layers.size())},
+                .enabledLayerCount{to_uint32(config.validation_layers.size())},
                 .ppEnabledLayerNames{config.validation_layers.data()},
-                .enabledExtensionCount{static_cast<std::uint32_t>(config.extensions.size())},
+                .enabledExtensionCount{to_uint32(config.extensions.size())},
                 .ppEnabledExtensionNames{config.extensions.data()}
             };
 
@@ -75,9 +78,9 @@ namespace avocet::vulkan {
 
             vk::DeviceCreateInfo createInfo{
                 .pNext{&syncFeatures},
-                .queueCreateInfoCount{static_cast<std::uint32_t>(qCreateInfos.size())},
+                .queueCreateInfoCount{to_uint32(qCreateInfos.size())},
                 .pQueueCreateInfos{qCreateInfos.data()},
-                .enabledExtensionCount{static_cast<std::uint32_t>(extensions.size())},
+                .enabledExtensionCount{to_uint32(extensions.size())},
                 .ppEnabledExtensionNames{extensions.data()},
                 .pEnabledFeatures{&features}
             };
@@ -218,7 +221,7 @@ namespace avocet::vulkan {
         [[nodiscard]]
         vk::PipelineDynamicStateCreateInfo make_pipeline_dynamic_info(std::span<const vk::DynamicState> states) {
             return vk::PipelineDynamicStateCreateInfo{
-                .dynamicStateCount{static_cast<std::uint32_t>(states.size())},
+                .dynamicStateCount{to_uint32(states.size())},
                 .pDynamicStates{states.data()}
             };
         }
@@ -388,7 +391,7 @@ namespace avocet::vulkan {
             )
         },
         m_CommandPool{make_command_pool(m_LogicalDevice)},
-        m_CommandBuffers{make_command_buffer(m_LogicalDevice.device(), m_CommandPool, static_cast<std::uint32_t>(m_LogicalDevice.swapchain_image_views().size()))},
+        m_CommandBuffers{make_command_buffer(m_LogicalDevice.device(), m_CommandPool, to_uint32(m_LogicalDevice.swapchain_image_views().size()))},
         m_Fences{make_fences(m_LogicalDevice.device(), presentationConfig.max_frames_in_flight)},
         m_MaxFramesInFlight{presentationConfig.max_frames_in_flight}
     {
