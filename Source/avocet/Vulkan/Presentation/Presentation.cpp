@@ -247,7 +247,8 @@ namespace avocet::vulkan {
             };
 
             vk::PipelineColorBlendAttachmentState blendState{
-                .blendEnable{}
+                .blendEnable{},
+                .colorWriteMask{vk::ColorComponentFlagBits::eR | vk::ColorComponentFlagBits::eG | vk::ColorComponentFlagBits::eB | vk::ColorComponentFlagBits::eA}
             };
 
             vk::PipelineColorBlendStateCreateInfo blendInfo{
