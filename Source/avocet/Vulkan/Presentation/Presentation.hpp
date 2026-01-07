@@ -152,7 +152,6 @@ namespace avocet::vulkan {
         vk::raii::CommandPool                m_CommandPool;
         std::vector<command_buffer>          m_CommandBuffers;
         std::vector<vk::raii::Fence>         m_Fences;
-        std::uint32_t                        m_MaxFramesInFlight{};
         mutable std::uint32_t                m_CurrentFrameIdx{}, m_CurrentImageIdx{};
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
@@ -169,5 +168,23 @@ namespace avocet::vulkan {
         void draw_frame() const;
 
         void wait_idle() const;
+    };
+
+    class renderer {
+        vk::Extent2D                         m_Extent;
+        vk::raii::RenderPass                 m_RenderPass;
+        std::vector<vk::raii::Framebuffer>   m_Framebuffers;
+
+        vk::Viewport                         m_ViewPort;
+        vk::Rect2D                           m_Scissor;
+        vk::raii::PipelineLayout             m_PipelineLayout;
+        vk::raii::Pipeline                   m_Pipeline;
+
+        vk::raii::CommandPool                m_CommandPool;
+        std::vector<command_buffer>          m_CommandBuffers;
+        std::vector<vk::raii::Fence>         m_Fences;
+        mutable std::uint32_t                m_CurrentFrameIdx{}, m_CurrentImageIdx{};
+    public:
+        renderer(const logical_device& logicalDevice, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight);
     };
 }
