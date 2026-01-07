@@ -163,7 +163,7 @@ namespace avocet::vulkan {
         [[nodiscard]]
         vk::raii::RenderPass make_render_pass(const logical_device& logicalDevice) {
             vk::AttachmentDescription2 colourAttachment{
-                .format{logicalDevice.format()},
+                .format{logicalDevice.get_swap_chain().format},
                 .loadOp{vk::AttachmentLoadOp::eClear},
                 .finalLayout{vk::ImageLayout::ePresentSrcKHR},
             };

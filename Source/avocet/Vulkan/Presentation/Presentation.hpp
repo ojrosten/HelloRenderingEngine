@@ -93,10 +93,6 @@ namespace avocet::vulkan {
         [[nodiscard]]
         const swap_chain& get_swap_chain() const noexcept { return m_SwapChain; }
 
-        // TO DO: subsume this
-        [[nodiscard]]
-        vk::Format format() const noexcept { return m_SwapChain.format; }
-
         const vk::raii::Queue& get_graphics_queue() const noexcept { return m_GraphicsQueue; }
     };
 
