@@ -14,6 +14,8 @@
 
 namespace avocet::vulkan {
     namespace {
+        constexpr auto maxTimeout{std::numeric_limits<std::uint64_t>::max()};
+
         const presentation_config& check_validation_layer_support(const presentation_config& config, std::span<const vk::LayerProperties> layerProperties) {
             for(const auto& requested : config.validation_layers) {
                 auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
@@ -309,7 +311,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        std::vector<frame_resources> make_frame_resources(const vk::raii::Device& device, const vk::raii::CommandPool& pool, std::uint32_t num) {
+        std::vector<command_buffer> make_command_buffer(const vk::raii::Device& device, const vk::raii::CommandPool& pool, std::uint32_t num) {
             vk::CommandBufferAllocateInfo allocInfo{
                 .commandPool{pool},
                 .commandBufferCount{num}
@@ -318,8 +320,16 @@ namespace avocet::vulkan {
             return
                 device.allocateCommandBuffers(allocInfo)
                 | std::views::as_rvalue
-                | std::views::transform([&device](vk::raii::CommandBuffer&& commandBuffer) -> frame_resources { return {device, std::move(commandBuffer)}; })
+                | std::views::transform([&device](vk::raii::CommandBuffer&& commandBuffer) -> command_buffer { return {device, std::move(commandBuffer)}; })
                 | std::ranges::to<std::vector>();
+        }
+
+        [[nodiscard]]
+        std::vector<vk::raii::Fence> make_fences(const vk::raii::Device& device, const std::uint32_t num) {
+            return
+                std::views::iota(std::uint32_t{}, num)
+              | std::views::transform([&device](auto) -> vk::raii::Fence { return {device, vk::FenceCreateInfo{.flags{vk::FenceCreateFlagBits::eSignaled}}} ; })
+              | std::ranges::to<std::vector>();
         }
     }
 
@@ -378,28 +388,35 @@ namespace avocet::vulkan {
             )
         },
         m_CommandPool{make_command_pool(m_LogicalDevice)},
-        m_FrameResources{make_frame_resources(m_LogicalDevice.device(), m_CommandPool, presentationConfig.max_frames_in_flight)},
+        m_CommandBuffers{make_command_buffer(m_LogicalDevice.device(), m_CommandPool, static_cast<std::uint32_t>(m_LogicalDevice.swapchain_image_views().size()))},
+        m_Fences{make_fences(m_LogicalDevice.device(), presentationConfig.max_frames_in_flight)},
         m_MaxFramesInFlight{presentationConfig.max_frames_in_flight}
     {
     }
 
     void presentable::draw_frame() const {
-        m_FrameResources[m_CurrentFrame].draw_frame(m_LogicalDevice, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor);
+        m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], m_LogicalDevice, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor);
 
-        m_CurrentFrame = (m_CurrentFrame + 1) % m_MaxFramesInFlight;
+        m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_LogicalDevice.swapchain_image_views().size();
+        m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_MaxFramesInFlight;
     }
 
     void presentable::wait_idle() const {
         m_LogicalDevice.device().waitIdle();
     }
 
-    void frame_resources::draw_frame(const avocet::vulkan::logical_device& logicalDevice, const vk::raii::RenderPass& renderPass, std::span<const vk::raii::Framebuffer> framebuffers, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
-        constexpr auto maxTimeout{std::numeric_limits<std::uint64_t>::max()};
-
-        if(logicalDevice.device().waitForFences(*m_FrameInFlight, true, maxTimeout) != vk::Result::eSuccess)
+    void command_buffer::draw_frame(const vk::raii::Fence& fence,
+                                    const avocet::vulkan::logical_device& logicalDevice,
+                                    const vk::raii::RenderPass& renderPass,
+                                    std::span<const vk::raii::Framebuffer> framebuffers,
+                                    const vk::raii::Pipeline& pipeline,
+                                    vk::Extent2D extent,
+                                    const vk::Viewport& viewport,
+                                    const vk::Rect2D& scissor) const {
+        if(logicalDevice.device().waitForFences(*fence, true, maxTimeout) != vk::Result::eSuccess)
             throw std::runtime_error{"Waiting for fences failed"};
 
-        logicalDevice.device().resetFences(*m_FrameInFlight);
+        logicalDevice.device().resetFences(*fence);
 
         const auto [ec, imageIndex]{
             logicalDevice.device().acquireNextImage2KHR(
@@ -417,11 +434,11 @@ namespace avocet::vulkan {
 
         m_CommandBuffer.reset();
         record_cmd_buffer(renderPass, framebuffers[imageIndex], pipeline, extent, viewport, scissor);
-        submit_cmd_buffer(logicalDevice);
+        submit_cmd_buffer(fence, logicalDevice);
         present(logicalDevice, imageIndex);
     }
 
-    void frame_resources::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
+    void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
         vk::CommandBufferBeginInfo bufferBeginInfo{};
 
         m_CommandBuffer.begin(bufferBeginInfo);
@@ -452,7 +469,7 @@ namespace avocet::vulkan {
         m_CommandBuffer.end();
     }
 
-    void frame_resources::submit_cmd_buffer(const avocet::vulkan::logical_device& logicalDevice) const {
+    void command_buffer::submit_cmd_buffer(const vk::raii::Fence& fence, const avocet::vulkan::logical_device& logicalDevice) const {
         vk::SemaphoreSubmitInfo waitSemInfo{
             .semaphore{m_ImageAvailable},
             .stageMask{vk::PipelineStageFlagBits2::eColorAttachmentOutput},
@@ -476,10 +493,10 @@ namespace avocet::vulkan {
             .pSignalSemaphoreInfos{&sigSemInfo}
         };
 
-        logicalDevice.get_graphics_queue().submit2(info, m_FrameInFlight);
+        logicalDevice.get_graphics_queue().submit2(info, fence);
     }
 
-    void frame_resources::present(const avocet::vulkan::logical_device& logicalDevice, std::uint32_t imageIndex) const {
+    void command_buffer::present(const avocet::vulkan::logical_device& logicalDevice, std::uint32_t imageIndex) const {
         std::array<vk::Semaphore, 1> waitSems{*m_RenderFinished};
         std::array<vk::SwapchainKHR, 1> swapChains{*logicalDevice.get_swap_chain().chain};
         vk::PresentInfoKHR presentInfo{
