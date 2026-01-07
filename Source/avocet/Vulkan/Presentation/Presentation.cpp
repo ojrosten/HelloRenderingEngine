@@ -407,6 +407,8 @@ namespace avocet::vulkan {
         record_cmd_buffer(imageIndex);
         submit_cmd_buffer();
         present(imageIndex);
+
+        m_LogicalDevice.device().waitIdle();
     }
 
     void presentable::record_cmd_buffer(std::uint32_t imageIndex) const {
