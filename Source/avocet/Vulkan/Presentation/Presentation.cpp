@@ -87,8 +87,8 @@ namespace avocet::vulkan {
             
             const auto requestedMinImageCount{
                 [&swapChainDetails]() {
-                    const auto maxImageCount{swapChainDetails.capabilities.surfaceCapabilities.maxImageCount},
-                               minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount};
+                    const auto minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount},
+                               maxImageCount{swapChainDetails.capabilities.surfaceCapabilities.maxImageCount};
 
                     return (minImageCount == maxImageCount) ? minImageCount : minImageCount + 1;
                 }()
