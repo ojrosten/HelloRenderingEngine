@@ -106,6 +106,31 @@ namespace avocet::vulkan {
         std::vector<const char*> validation_layers{};
         std::vector<const char*> extensions{};
         device_config device_config{};
+        std::uint32_t max_frames_in_flight{2};
+    };
+
+    class frame_resources {
+        vk::raii::CommandBuffer m_CommandBuffer;
+
+        vk::raii::Semaphore m_ImageAvailable,
+                            m_RenderFinished;
+
+        vk::raii::Fence m_FrameInFlight;
+
+        void record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const;
+
+        void submit_cmd_buffer(const avocet::vulkan::logical_device& logicalDevice) const;
+
+        void present(const avocet::vulkan::logical_device& logicalDevice, std::uint32_t imageIndex) const;
+    public:
+        frame_resources(const vk::raii::Device& device, vk::raii::CommandBuffer cmdBuffer)
+            : m_CommandBuffer{std::move(cmdBuffer)}
+            , m_ImageAvailable{device, vk::SemaphoreCreateInfo{}}
+            , m_RenderFinished{device, vk::SemaphoreCreateInfo{}}
+            , m_FrameInFlight {device, vk::FenceCreateInfo{.flags{vk::FenceCreateFlagBits::eSignaled}}}
+        { }
+
+        void draw_frame(const avocet::vulkan::logical_device& logicalDevice, const vk::raii::RenderPass& renderPass, std::span<const vk::raii::Framebuffer> framebuffers, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const;
     };
 
     class presentable {
@@ -125,20 +150,9 @@ namespace avocet::vulkan {
         vk::raii::Pipeline                   m_Pipeline;
 
         vk::raii::CommandPool                m_CommandPool;
-        std::vector<vk::raii::CommandBuffer> m_CommmandBuffers;
-
-        vk::raii::Semaphore m_ImageAvailable,
-                            m_RenderFinshed;
-
-        vk::raii::Fence m_FrameInFlight;
-
-        const vk::raii::CommandBuffer& get_cmd_buffer() const { return m_CommmandBuffers.at(0); }
-
-        void record_cmd_buffer(std::uint32_t imageIndex) const;
-
-        void submit_cmd_buffer() const;
-
-        void present(std::uint32_t imageIndex) const;
+        std::vector<frame_resources>         m_FrameResources;
+        std::uint32_t                        m_MaxFramesInFlight{};
+        mutable std::uint32_t                m_CurrentFrame{};
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath);
 
