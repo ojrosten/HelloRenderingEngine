@@ -413,10 +413,38 @@ namespace avocet::vulkan {
         return ec;
     }
 
-    void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
-        vk::CommandBufferBeginInfo bufferBeginInfo{};
+    class [[nodiscard]] command_buffer_sentinel {
+        const vk::raii::CommandBuffer& m_Buffer;
+    public:
+        command_buffer_sentinel(const vk::raii::CommandBuffer& buffer, const vk::CommandBufferBeginInfo& bufferBeginInfo)
+            : m_Buffer{buffer}
+        {
+            m_Buffer.begin(bufferBeginInfo);
+        }
 
-        m_CommandBuffer.begin(bufferBeginInfo);
+        ~command_buffer_sentinel() {
+            m_Buffer.end();
+        }
+    };
+
+    class [[nodiscard]] render_pass_sentinel {
+        const vk::raii::CommandBuffer& m_Buffer;
+        vk::SubpassEndInfo m_SubPassEndInfo;
+    public:
+        render_pass_sentinel(const vk::raii::CommandBuffer& buffer, const vk::RenderPassBeginInfo& renderPassBeginInfo, const vk::SubpassBeginInfo& subPassBeginInfo, const vk::SubpassEndInfo& subPassEndInfo)
+            : m_Buffer{buffer}
+            , m_SubPassEndInfo{subPassEndInfo}
+        {
+            m_Buffer.beginRenderPass2(renderPassBeginInfo, subPassBeginInfo);
+        }
+
+        ~render_pass_sentinel() {
+            m_Buffer.endRenderPass2(m_SubPassEndInfo);
+        }
+    };
+
+    void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
+        command_buffer_sentinel cmdBufferSentinel{m_CommandBuffer, vk::CommandBufferBeginInfo{}};
 
         vk::ClearValue clearCol{{0.0f, 0.0f, 0.0f, 1.0f}};
 
@@ -431,17 +459,12 @@ namespace avocet::vulkan {
             .pClearValues{&clearCol}
         };
 
-        m_CommandBuffer.beginRenderPass2(renderPassInfo, vk::SubpassBeginInfo{});
+        render_pass_sentinel renderPassSentinel{m_CommandBuffer, renderPassInfo, vk::SubpassBeginInfo{}, vk::SubpassEndInfo{}};
 
         m_CommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
-
         m_CommandBuffer.setViewport(0, viewport);
         m_CommandBuffer.setScissor(0, scissor);
         m_CommandBuffer.draw(3, 1, 0, 0);
-
-        m_CommandBuffer.endRenderPass2(vk::SubpassEndInfo{});
-
-        m_CommandBuffer.end();
     }
 
     void command_buffer::submit_cmd_buffer(const vk::raii::Fence& fence, const avocet::vulkan::logical_device& logicalDevice) const {
