@@ -512,7 +512,7 @@ namespace avocet::vulkan {
     }
 
 
-    renderer::renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight)
+    renderer::renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
         , m_Extent{extent}
@@ -534,8 +534,8 @@ namespace avocet::vulkan {
         , m_Pipeline{
               make_pipeline(
                   logicalDevice.device(),
-                  create_shader_module(logicalDevice.device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader  , vertShaderPath.generic_string()),
-                  create_shader_module(logicalDevice.device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string()),
+                  vertShaderModule,
+                  fragShaderModule,
                   m_PipelineLayout,
                   m_RenderPass
               )
@@ -545,18 +545,52 @@ namespace avocet::vulkan {
         , m_Fences{make_fences(logicalDevice.device(), maxFramesInFlight)}
     { }
 
-    void renderer::draw_frame() const {
+    [[nodiscard]]
+    vk::Result renderer::draw_frame() const {
         auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor)};
 
         m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_SwapChain->image_views().size();
         m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_Fences.size();
+
+        return ec;
+    }
+
+    rendering_system::full_renderer::full_renderer(const presentable& p, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight)
+        : vertex  {create_shader_module(p.get_logical_device().device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader  , vertShaderPath.generic_string())}
+        , fragment{create_shader_module(p.get_logical_device().device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string())}
+        , max_frames_in_flight{maxFramesInFlight}
+        , r{p.get_logical_device(), p.get_swap_chain(), p.extent(), vertex, fragment, max_frames_in_flight}
+    {
     }
 
     void rendering_system::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight) {
-        m_Renderers.emplace_back(m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), m_Presentable.extent(), vertShaderPath, fragShaderPath, maxFramesInFlight);
+        m_Renderers.emplace_back(m_Presentable, vertShaderPath, fragShaderPath, maxFramesInFlight);
     }
 
     void rendering_system::rebuild_swapchain() {
+        // Extent needs to be updated!
         m_Presentable.rebuild_swapchain();
+        for(auto& fullRenderer : m_Renderers) {
+            fullRenderer.r = renderer{m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), m_Presentable.extent(), fullRenderer.vertex, fullRenderer.fragment, fullRenderer.max_frames_in_flight};
+        }
+    }
+
+    void rendering_system::draw_all() {
+        if(auto ec{do_draw_all()}; (ec == vk::Result::eErrorOutOfDateKHR) || (ec == vk::Result::eSuboptimalKHR)) {
+            rebuild_swapchain();
+        }
+        else if(ec != vk::Result::eSuccess) {
+            throw std::runtime_error{std::format("Unable to continue rendering due to failure to acquire next swap chain image, error code {}", static_cast<int>(ec))};
+        }
+    }
+
+    [[nodiscard]]
+    vk::Result rendering_system::do_draw_all() const {
+        for(const auto& r : m_Renderers) {
+            if(auto ec{r.r.draw_frame()}; ec != vk::Result::eSuccess)
+                return ec;
+        }
+
+        return vk::Result::eSuccess;
     }
 }

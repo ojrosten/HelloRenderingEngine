@@ -177,8 +177,5 @@ namespace curlew {
         m_System.make_renderer(vertShaderPath, fragShaderPath, maxFramesInFlight);
     }
 
-    void vulkan_window::draw_all() {
-        for(const auto& r : m_System.renderers())
-            r.draw_frame();
-    }
+    void vulkan_window::draw_all() { m_System.draw_all(); }
 }

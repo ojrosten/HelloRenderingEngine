@@ -198,30 +198,45 @@ namespace avocet::vulkan {
     };
 
     class renderer {
-        const logical_device*                m_LogicalDevice{};
-        const swap_chain*                    m_SwapChain{};
-        vk::Extent2D                         m_Extent;
-        vk::raii::RenderPass                 m_RenderPass;
-        std::vector<vk::raii::Framebuffer>   m_Framebuffers;
+        const logical_device*              m_LogicalDevice{};
+        const swap_chain*                  m_SwapChain{};
+        vk::Extent2D                       m_Extent;
 
-        vk::Viewport                         m_ViewPort;
-        vk::Rect2D                           m_Scissor;
-        vk::raii::PipelineLayout             m_PipelineLayout;
-        vk::raii::Pipeline                   m_Pipeline;
+        vk::raii::RenderPass               m_RenderPass;
+        std::vector<vk::raii::Framebuffer> m_Framebuffers;
 
-        vk::raii::CommandPool                m_CommandPool;
-        std::vector<command_buffer>          m_CommandBuffers;
-        std::vector<vk::raii::Fence>         m_Fences;
-        mutable std::uint32_t                m_CurrentFrameIdx{}, m_CurrentImageIdx{};
+        vk::Viewport                       m_ViewPort;
+        vk::Rect2D                         m_Scissor;
+        vk::raii::PipelineLayout           m_PipelineLayout;
+        vk::raii::Pipeline                 m_Pipeline;
+
+        vk::raii::CommandPool              m_CommandPool;
+        std::vector<command_buffer>        m_CommandBuffers;
+        std::vector<vk::raii::Fence>       m_Fences;
+        mutable std::uint32_t              m_CurrentFrameIdx{},
+                                           m_CurrentImageIdx{};
     public:
-        renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
+        renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight);
 
-        void draw_frame() const;
+        [[nodiscard]]
+        vk::Result draw_frame() const;
     };
 
     class rendering_system {
+
+        struct full_renderer {
+            full_renderer(const presentable& p, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
+
+            vk::raii::ShaderModule vertex, fragment;
+            frames_in_flight       max_frames_in_flight;
+            renderer r;
+        };
+
         presentable m_Presentable;
-        std::vector<renderer> m_Renderers;
+        std::vector<full_renderer> m_Renderers;
+
+        [[nodiscard]]
+        vk::Result do_draw_all() const;
 
         void rebuild_swapchain();
     public:
@@ -240,9 +255,8 @@ namespace avocet::vulkan {
         [[nodiscard]]
         const vk::raii::Instance& instance() const noexcept { return m_Presentable.instance(); }
 
-        [[nodiscard]]
-        std::span<const renderer> renderers() const noexcept { return m_Renderers; }
-
         void wait_idle() const { m_Presentable.wait_idle(); }
+
+        void draw_all();
     };
 }
