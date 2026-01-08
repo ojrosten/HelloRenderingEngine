@@ -93,7 +93,7 @@ int main()
         // unless the window is due to close, in which case it returns, ending the life
         // of the window
 
-        auto make_extensions{
+        auto make_device_extensions{
             []() {
                 std::vector<const char*> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
                 if constexpr(avocet::is_apple()) {
@@ -114,12 +114,12 @@ int main()
                      },
                     .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
                     .extensions{
-                      curlew::vulkan::build_vulkan_extensions(
-                                                              std::array{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME})
-                     },
+                        curlew::vulkan::build_vulkan_extensions(
+                            std::array{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME})
+                        },
                     .device_config{
                         .selector{curlew::vulkan::device_selector{}},
-                        .extensions{make_extensions()},
+                        .extensions{make_device_extensions()},
                         .swap_chain{
                             .format_selector{curlew::vulkan::swap_chain_format_selector{}},
                             .present_mode_selector{curlew::vulkan::swap_chain_present_mode_selector{}},
