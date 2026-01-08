@@ -330,7 +330,7 @@ int main()
         discShaderProgram2D.set_uniform("radius", cutoutRadius);
         discShaderProgram2D.set_uniform("centre", cutoutCentre.values());
 
-        auto vulkanRenderer{vulkanWindow.make_renderer(get_vertex_shader_dir() / "2D" / "FixedColouredTri.vs", get_fragment_shader_dir() / "General" / "PropagatedColour.fs", 2)};
+        vulkanWindow.make_renderer(get_vertex_shader_dir() / "2D" / "FixedColouredTri.vs", get_fragment_shader_dir() / "General" / "PropagatedColour.fs", avocet::vulkan::frames_in_flight{2});
 
         while(!glfwWindowShouldClose(&w.get()) || !glfwWindowShouldClose(&vulkanWindow.get())) {
             if(!glfwWindowShouldClose(&w.get())) {
@@ -454,7 +454,7 @@ int main()
             }
 
             if(!glfwWindowShouldClose(&vulkanWindow.get())) {
-                vulkanRenderer.draw_frame();
+                vulkanWindow.draw_all();
             }
 
             glfwPollEvents();

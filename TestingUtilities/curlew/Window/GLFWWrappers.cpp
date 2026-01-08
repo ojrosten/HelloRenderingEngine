@@ -161,19 +161,24 @@ namespace curlew {
 
     vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
         : m_Window{config}
-        , m_Presentable{
+        , m_System{
               config,
               vulkanContext,
               [&window = m_Window](vk::raii::Instance& instance) -> vk::raii::SurfaceKHR { return make_surface(instance, window); },
               get_framebuffer_extent()
          }
     {
-        volkLoadInstance(*m_Presentable.instance());
-        VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_Presentable.instance());
+        volkLoadInstance(*m_System.instance());
+        VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_System.instance());
     }
 
     [[nodiscard]]
-    avocet::vulkan::renderer vulkan_window::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight) {
-        return {m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), m_Presentable.extent(), vertShaderPath, fragShaderPath, maxFramesInFlight};
+    void vulkan_window::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, avocet::vulkan::frames_in_flight maxFramesInFlight) {
+        m_System.make_renderer(vertShaderPath, fragShaderPath, maxFramesInFlight);
+    }
+
+    void vulkan_window::draw_all() {
+        for(const auto& r : m_System.renderers())
+            r.draw_frame();
     }
 }

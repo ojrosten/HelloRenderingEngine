@@ -65,13 +65,19 @@ namespace avocet::vulkan {
         swap_chain_config swap_chain{};
     };
 
+    struct frames_in_flight {
+        std::uint32_t value{};
+
+        friend constexpr auto operator<=>(const frames_in_flight&, const frames_in_flight&) noexcept = default;
+    };
+
     struct presentation_config {
         std::size_t width{800}, height{600};
         instance_info create_info{};
         std::vector<const char*> validation_layers{};
         std::vector<const char*> extensions{};
         device_config device_config{};
-        std::uint32_t max_frames_in_flight{2};
+        frames_in_flight max_frames_in_flight{2};
     };
 
     class logical_device {
@@ -101,6 +107,7 @@ namespace avocet::vulkan {
     };
 
     class swap_chain {
+        swap_chain_config                m_Config;
         swap_chain_and_format            m_Chain;
         std::vector<vk::Image>           m_Images;
         std::vector<vk::raii::ImageView> m_ImageViews;
@@ -108,13 +115,16 @@ namespace avocet::vulkan {
         swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails);
 
         [[nodiscard]]
-        std::span<const vk::raii::ImageView> image_views() const noexcept { return m_ImageViews; }
+        const swap_chain_config& config() const noexcept { return m_Config; }
+
+        [[nodiscard]]
+        const vk::raii::SwapchainKHR& chain() const noexcept { return m_Chain.chain; }
 
         [[nodiscard]]
         vk::Format format() const noexcept { return m_Chain.format; }
 
         [[nodiscard]]
-        const vk::raii::SwapchainKHR& chain() const noexcept { return m_Chain.chain; }
+        std::span<const vk::raii::ImageView> image_views() const noexcept { return m_ImageViews; }
     };
 
     struct surface {
@@ -132,6 +142,8 @@ namespace avocet::vulkan {
         swap_chain                           m_SwapChain;
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent);
+
+        void rebuild_swapchain();
 
         [[nodiscard]]
         std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_ExtensionProperties; }
@@ -202,9 +214,35 @@ namespace avocet::vulkan {
         std::vector<vk::raii::Fence>         m_Fences;
         mutable std::uint32_t                m_CurrentFrameIdx{}, m_CurrentImageIdx{};
     public:
-        renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight);
+        renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
+
+        void draw_frame() const;
+    };
+
+    class rendering_system {
+        presentable m_Presentable;
+        std::vector<renderer> m_Renderers;
+
+        void rebuild_swapchain();
+    public:
+        rendering_system(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent)
+            : m_Presentable{presentationConfig, context, surfaceCreator, framebufferExtent}
+        {}
+
+        void make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
 
         [[nodiscard]]
-        vk::Result draw_frame() const;
+        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_Presentable.extension_properties(); }
+
+        [[nodiscard]]
+        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_Presentable.layer_properties(); }
+
+        [[nodiscard]]
+        const vk::raii::Instance& instance() const noexcept { return m_Presentable.instance(); }
+
+        [[nodiscard]]
+        std::span<const renderer> renderers() const noexcept { return m_Renderers; }
+
+        void wait_idle() const { m_Presentable.wait_idle(); }
     };
 }

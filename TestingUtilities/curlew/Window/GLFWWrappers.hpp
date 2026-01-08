@@ -146,8 +146,8 @@ namespace curlew {
     class [[nodiscard]] vulkan_window {
         friend glfw_manager;
 
-        window_resource             m_Window;
-        avocet::vulkan::presentable m_Presentable;
+        window_resource                  m_Window;
+        avocet::vulkan::rendering_system m_System;
 
         // TO DO: sort out last two arguments
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
@@ -163,16 +163,17 @@ namespace curlew {
         ~vulkan_window() = default;
 
         [[nodiscard]]
-        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_Presentable.extension_properties(); }
+        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_System.extension_properties(); }
 
         [[nodiscard]]
-        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_Presentable.layer_properties(); }
+        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_System.layer_properties(); }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
-        [[nodiscard]]
-        avocet::vulkan::renderer make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight);
+        void make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, avocet::vulkan::frames_in_flight maxFramesInFlight);
 
-        void wait_idle() { m_Presentable.wait_idle(); }
+        void wait_idle() { m_System.wait_idle(); }
+
+        void draw_all();
     };
 }

@@ -327,9 +327,9 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        std::vector<vk::raii::Fence> make_fences(const vk::raii::Device& device, const std::uint32_t num) {
+        std::vector<vk::raii::Fence> make_fences(const vk::raii::Device& device, const frames_in_flight num) {
             return
-                std::views::iota(std::uint32_t{}, num)
+                std::views::iota(std::uint32_t{}, num.value)
               | std::views::transform([&device](auto) -> vk::raii::Fence { return {device, vk::FenceCreateInfo{.flags{vk::FenceCreateFlagBits::eSignaled}}} ; })
               | std::ranges::to<std::vector>();
         }
@@ -378,7 +378,8 @@ namespace avocet::vulkan {
     }
 
     swap_chain::swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails)
-        : m_Chain{make_swap_chain(logicalDevice, surfaceInfo, swapChainConfig, swapChainDetails)}
+        : m_Config{swapChainConfig}
+        , m_Chain{make_swap_chain(logicalDevice, surfaceInfo, m_Config, swapChainDetails)}
         , m_Images{m_Chain.chain.getImages()}
         , m_ImageViews{make_swap_chain_image_views(logicalDevice.device(), m_Chain.format, m_Images)}
     {
@@ -396,6 +397,11 @@ namespace avocet::vulkan {
           }
         , m_SwapChain{m_LogicalDevice, m_Surface.info, presentationConfig.device_config.swap_chain, m_LogicalDevice.swap_chain_support()}
     {
+    }
+
+    void presentable::rebuild_swapchain() {
+        wait_idle();
+        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, m_SwapChain.config(), m_LogicalDevice.swap_chain_support()};
     }
 
     void presentable::wait_idle() const {
@@ -506,7 +512,7 @@ namespace avocet::vulkan {
     }
 
 
-    renderer::renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight)
+    renderer::renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
         , m_Extent{extent}
@@ -539,13 +545,18 @@ namespace avocet::vulkan {
         , m_Fences{make_fences(logicalDevice.device(), maxFramesInFlight)}
     { }
 
-    [[nodiscard]]
-    vk::Result renderer::draw_frame() const {
+    void renderer::draw_frame() const {
         auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor)};
 
         m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_SwapChain->image_views().size();
         m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_Fences.size();
+    }
 
-        return ec;
+    void rendering_system::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight) {
+        m_Renderers.emplace_back(m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), m_Presentable.extent(), vertShaderPath, fragShaderPath, maxFramesInFlight);
+    }
+
+    void rendering_system::rebuild_swapchain() {
+        m_Presentable.rebuild_swapchain();
     }
 }
