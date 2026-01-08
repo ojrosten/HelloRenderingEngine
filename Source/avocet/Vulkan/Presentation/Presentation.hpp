@@ -65,6 +65,15 @@ namespace avocet::vulkan {
         swap_chain_config swap_chain{};
     };
 
+    struct presentation_config {
+        std::size_t width{800}, height{600};
+        instance_info create_info{};
+        std::vector<const char*> validation_layers{};
+        std::vector<const char*> extensions{};
+        device_config device_config{};
+        std::uint32_t max_frames_in_flight{2};
+    };
+
     class logical_device {
         physical_device  m_PhysicalDevice;
         vk::raii::Device m_Device;
@@ -108,45 +117,6 @@ namespace avocet::vulkan {
         const vk::raii::SwapchainKHR& chain() const noexcept { return m_Chain.chain; }
     };
 
-    struct presentation_config {
-        std::size_t width{800}, height{600};
-        instance_info create_info{};
-        std::vector<const char*> validation_layers{};
-        std::vector<const char*> extensions{};
-        device_config device_config{};
-        std::uint32_t max_frames_in_flight{2};
-    };
-
-    class command_buffer {
-        vk::raii::CommandBuffer m_CommandBuffer;
-
-        vk::raii::Semaphore m_ImageAvailable,
-                            m_RenderFinished;
-
-        void record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const;
-
-        void submit_cmd_buffer(const vk::raii::Fence& fence, const logical_device& logicalDevice) const;
-
-        void present(const logical_device& logicalDevice, const swap_chain& swapChain, std::uint32_t imageIndex) const;
-    public:
-        command_buffer(const vk::raii::Device& device, vk::raii::CommandBuffer cmdBuffer)
-            : m_CommandBuffer{std::move(cmdBuffer)}
-            , m_ImageAvailable{device, vk::SemaphoreCreateInfo{}}
-            , m_RenderFinished{device, vk::SemaphoreCreateInfo{}}
-        { }
-
-        [[nodiscard]]
-        vk::Result draw_frame(const vk::raii::Fence& fence,
-                              const logical_device& logicalDevice,
-                              const swap_chain& swapChain,
-                              const vk::raii::RenderPass& renderPass,
-                              std::span<const vk::raii::Framebuffer> framebuffers,
-                              const vk::raii::Pipeline& pipeline,
-                              vk::Extent2D extent,
-                              const vk::Viewport& viewport,
-                              const vk::Rect2D& scissor) const;
-    };
-
     struct surface {
         vk::raii::SurfaceKHR surfaceKHR;
         vk::PhysicalDeviceSurfaceInfo2KHR info{.surface{surfaceKHR}};
@@ -182,6 +152,37 @@ namespace avocet::vulkan {
         vk::Extent2D extent() const noexcept { return m_Extent; }
 
         void wait_idle() const;
+    };
+
+    class command_buffer {
+        vk::raii::CommandBuffer m_CommandBuffer;
+
+        vk::raii::Semaphore m_ImageAvailable,
+            m_RenderFinished;
+
+        void record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const;
+
+        void submit_cmd_buffer(const vk::raii::Fence& fence, const logical_device& logicalDevice) const;
+
+        void present(const logical_device& logicalDevice, const swap_chain& swapChain, std::uint32_t imageIndex) const;
+    public:
+        command_buffer(const vk::raii::Device& device, vk::raii::CommandBuffer cmdBuffer)
+            : m_CommandBuffer{std::move(cmdBuffer)}
+            , m_ImageAvailable{device, vk::SemaphoreCreateInfo{}}
+            , m_RenderFinished{device, vk::SemaphoreCreateInfo{}}
+        {
+        }
+
+        [[nodiscard]]
+        vk::Result draw_frame(const vk::raii::Fence& fence,
+            const logical_device& logicalDevice,
+            const swap_chain& swapChain,
+            const vk::raii::RenderPass& renderPass,
+            std::span<const vk::raii::Framebuffer> framebuffers,
+            const vk::raii::Pipeline& pipeline,
+            vk::Extent2D extent,
+            const vk::Viewport& viewport,
+            const vk::Rect2D& scissor) const;
     };
 
     class renderer {
