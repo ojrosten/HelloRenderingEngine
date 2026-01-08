@@ -365,10 +365,10 @@ namespace avocet::vulkan {
         , m_Surface{surfaceCreator(m_Instance)}
         , m_Extent{framebufferExtent}
         , m_LogicalDevice{
-            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}, m_Extent),
+            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, m_Surface.info, m_Extent),
             presentationConfig.device_config
           }
-        , m_SwapChain{m_LogicalDevice, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface}}, presentationConfig.device_config.swap_chain, m_LogicalDevice.swap_chain_support()}
+        , m_SwapChain{m_LogicalDevice, m_Surface.info, presentationConfig.device_config.swap_chain, m_LogicalDevice.swap_chain_support()}
     {
     }
 

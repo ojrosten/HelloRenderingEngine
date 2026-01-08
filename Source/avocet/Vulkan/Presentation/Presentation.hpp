@@ -147,11 +147,16 @@ namespace avocet::vulkan {
                               const vk::Rect2D& scissor) const;
     };
 
+    struct surface {
+        vk::raii::SurfaceKHR surfaceKHR;
+        vk::PhysicalDeviceSurfaceInfo2KHR info{.surface{surfaceKHR}};
+    };
+
     class presentable {
         std::vector<vk::LayerProperties>     m_LayerProperties;
         std::vector<vk::ExtensionProperties> m_ExtensionProperties;
         vk::raii::Instance                   m_Instance;
-        vk::raii::SurfaceKHR                 m_Surface;
+        surface                              m_Surface;
         vk::Extent2D                         m_Extent;
         logical_device                       m_LogicalDevice;
         swap_chain                           m_SwapChain;
