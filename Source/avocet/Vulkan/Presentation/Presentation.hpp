@@ -98,6 +98,8 @@ namespace avocet::vulkan {
 
         [[nodiscard]]
         const swap_chain_support_details& swap_chain_support() const noexcept { return m_PhysicalDevice.swap_chain_details; }
+
+        const physical_device& get_physical_device() const noexcept { return m_PhysicalDevice; }
     };
 
     struct swap_chain_and_format {
@@ -228,7 +230,9 @@ namespace avocet::vulkan {
         };
 
         presentable m_Presentable;
+        vk::Extent2D m_Extent;
         std::vector<full_renderer> m_Renderers;
+        bool m_ScheduleSwpaChainRebuild{};
 
         [[nodiscard]]
         vk::Result do_draw_all() const;
@@ -237,6 +241,7 @@ namespace avocet::vulkan {
     public:
         rendering_system(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent)
             : m_Presentable{presentationConfig, context, surfaceCreator, extent}
+            , m_Extent{extent}
         {}
 
         void make_renderer(vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);

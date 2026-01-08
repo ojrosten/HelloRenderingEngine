@@ -399,7 +399,12 @@ namespace avocet::vulkan {
 
     void presentable::rebuild_swapchain(vk::Extent2D extent) {
         wait_idle();
-        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, m_SwapChain.config(), m_LogicalDevice.swap_chain_support(), extent};
+
+        // TO DO: sort this out!
+        vk::PhysicalDeviceSurfaceInfo2KHR surfaceInfo{.surface{m_Surface.surfaceKHR}};
+        swap_chain_support_details deets{m_LogicalDevice.get_physical_device().device, surfaceInfo};
+
+        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, m_SwapChain.config(), deets/*m_LogicalDevice.swap_chain_support()*/, extent};
     }
 
     void presentable::wait_idle() const {
@@ -573,8 +578,15 @@ namespace avocet::vulkan {
     }
 
     void rendering_system::draw_all(vk::Extent2D extent) {
-        if(auto ec{do_draw_all()}; (ec == vk::Result::eErrorOutOfDateKHR) || (ec == vk::Result::eSuboptimalKHR)) {
+        if(m_ScheduleSwpaChainRebuild || (m_Extent != extent)) {
             rebuild_swapchain(extent);
+            m_ScheduleSwpaChainRebuild = false;
+            m_Extent = extent;
+        }
+
+        if(auto ec{do_draw_all()}; (ec == vk::Result::eErrorOutOfDateKHR) || (ec == vk::Result::eSuboptimalKHR)) {
+            m_ScheduleSwpaChainRebuild = true;
+
         }
         else if(ec != vk::Result::eSuccess) {
             throw std::runtime_error{std::format("Unable to continue rendering due to failure to acquire next swap chain image, error code {}", static_cast<int>(ec))};
