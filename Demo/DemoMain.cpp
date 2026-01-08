@@ -93,6 +93,17 @@ int main()
         // unless the window is due to close, in which case it returns, ending the life
         // of the window
 
+        auto make_extensions{
+            []() {
+                std::vector<const char*> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+                if constexpr(avocet::is_apple()) {
+                    extensions.push_back("VK_KHR_portability_subset");
+                }
+
+                return extensions;
+            }
+        };
+
         auto vulkanWindow{
             manager.create_window(
                 curlew::vulkan_window_config{
@@ -108,7 +119,7 @@ int main()
                      },
                     .device_config{
                         .selector{curlew::vulkan::device_selector{}},
-                        .extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME, "VK_KHR_portability_subset"},
+                        .extensions{make_extensions()},
                         .swap_chain{
                             .format_selector{curlew::vulkan::swap_chain_format_selector{}},
                             .present_mode_selector{curlew::vulkan::swap_chain_present_mode_selector{}},
