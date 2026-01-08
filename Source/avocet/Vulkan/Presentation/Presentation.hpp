@@ -103,7 +103,7 @@ namespace avocet::vulkan {
     };
 
     struct swap_chain_and_format {
-        vk::raii::SwapchainKHR chain;
+        vk::raii::SwapchainKHR chain{nullptr};
         vk::Format             format;
     };
 
@@ -113,6 +113,8 @@ namespace avocet::vulkan {
         std::vector<vk::Image>           m_Images;
         std::vector<vk::raii::ImageView> m_ImageViews;
     public:
+        swap_chain() = default;
+      
         swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent);
 
         [[nodiscard]]

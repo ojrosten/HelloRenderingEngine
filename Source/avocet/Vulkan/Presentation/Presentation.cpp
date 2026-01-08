@@ -404,7 +404,9 @@ namespace avocet::vulkan {
         vk::PhysicalDeviceSurfaceInfo2KHR surfaceInfo{.surface{m_Surface.surfaceKHR}};
         swap_chain_support_details deets{m_LogicalDevice.get_physical_device().device, surfaceInfo};
 
-        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, m_SwapChain.config(), deets/*m_LogicalDevice.swap_chain_support()*/, extent};
+        auto config{m_SwapChain.config()};
+        m_SwapChain = {};
+        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, config, deets/*m_LogicalDevice.swap_chain_support()*/, extent};
     }
 
     void presentable::wait_idle() const {
