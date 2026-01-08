@@ -44,7 +44,7 @@ namespace curlew::vulkan {
     }
 
     [[nodiscard]]
-    avocet::vulkan::physical_device device_selector::operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent) const {
+    avocet::vulkan::physical_device device_selector::operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) const {
         // For now, print out details of all discovered devices
         for(const auto& d : devices) {
             std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);
@@ -54,7 +54,7 @@ namespace curlew::vulkan {
             if(!has_required_extensions(device, requiredExtensions))
                 continue;
 
-            const avocet::vulkan::swap_chain_support_details swapChainDetails{device, surfaceInfo, framebufferExtent};
+            const avocet::vulkan::swap_chain_support_details swapChainDetails{device, surfaceInfo};
             if(swapChainDetails.formats.empty() || swapChainDetails.present_modes.empty())
                 continue;
 

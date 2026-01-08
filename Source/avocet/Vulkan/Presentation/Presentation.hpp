@@ -37,12 +37,11 @@ namespace avocet::vulkan {
     };
 
     struct swap_chain_support_details {
-        swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent);
+        swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
 
         vk::SurfaceCapabilities2KHR        capabilities{};
         std::vector<vk::SurfaceFormat2KHR> formats{};
         std::vector<vk::PresentModeKHR>    present_modes{};
-        vk::Extent2D                       framebuffer_extent{};
     };
 
     struct physical_device {
@@ -60,7 +59,7 @@ namespace avocet::vulkan {
     };
 
     struct device_config {
-        std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::PhysicalDeviceSurfaceInfo2KHR&, vk::Extent2D)> selector{};
+        std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::PhysicalDeviceSurfaceInfo2KHR&)> selector{};
         std::vector<const char*> extensions{};
         swap_chain_config swap_chain{};
     };
@@ -112,7 +111,7 @@ namespace avocet::vulkan {
         std::vector<vk::Image>           m_Images;
         std::vector<vk::raii::ImageView> m_ImageViews;
     public:
-        swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails);
+        swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent);
 
         [[nodiscard]]
         const swap_chain_config& config() const noexcept { return m_Config; }
@@ -137,13 +136,12 @@ namespace avocet::vulkan {
         std::vector<vk::ExtensionProperties> m_ExtensionProperties;
         vk::raii::Instance                   m_Instance;
         surface                              m_Surface;
-        vk::Extent2D                         m_Extent;
         logical_device                       m_LogicalDevice;
         swap_chain                           m_SwapChain;
     public:
-        presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent);
+        presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent);
 
-        void rebuild_swapchain();
+        void rebuild_swapchain(vk::Extent2D extent);
 
         [[nodiscard]]
         std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_ExtensionProperties; }
@@ -159,9 +157,6 @@ namespace avocet::vulkan {
 
         [[nodiscard]]
         const swap_chain& get_swap_chain() const noexcept { return m_SwapChain; }
-
-        [[nodiscard]]
-        vk::Extent2D extent() const noexcept { return m_Extent; }
 
         void wait_idle() const;
     };
@@ -225,7 +220,7 @@ namespace avocet::vulkan {
     class rendering_system {
 
         struct full_renderer {
-            full_renderer(const presentable& p, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
+            full_renderer(const presentable& p, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
 
             vk::raii::ShaderModule vertex, fragment;
             frames_in_flight       max_frames_in_flight;
@@ -238,13 +233,13 @@ namespace avocet::vulkan {
         [[nodiscard]]
         vk::Result do_draw_all() const;
 
-        void rebuild_swapchain();
+        void rebuild_swapchain(vk::Extent2D extent);
     public:
-        rendering_system(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent)
-            : m_Presentable{presentationConfig, context, surfaceCreator, framebufferExtent}
+        rendering_system(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent)
+            : m_Presentable{presentationConfig, context, surfaceCreator, extent}
         {}
 
-        void make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
+        void make_renderer(vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
 
         [[nodiscard]]
         std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_Presentable.extension_properties(); }
@@ -257,6 +252,6 @@ namespace avocet::vulkan {
 
         void wait_idle() const { m_Presentable.wait_idle(); }
 
-        void draw_all();
+        void draw_all(vk::Extent2D extent);
     };
 }

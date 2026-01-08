@@ -172,10 +172,9 @@ namespace curlew {
         VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_System.instance());
     }
 
-    [[nodiscard]]
     void vulkan_window::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, avocet::vulkan::frames_in_flight maxFramesInFlight) {
-        m_System.make_renderer(vertShaderPath, fragShaderPath, maxFramesInFlight);
+        m_System.make_renderer(get_framebuffer_extent(), vertShaderPath, fragShaderPath, maxFramesInFlight);
     }
 
-    void vulkan_window::draw_all() { m_System.draw_all(); }
+    void vulkan_window::draw_all() { m_System.draw_all(get_framebuffer_extent()); }
 }

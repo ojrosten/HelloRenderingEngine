@@ -89,7 +89,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        swap_chain_and_format make_swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails) {
+        swap_chain_and_format make_swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
             
             const auto requestedMinImageCount{
                 [&swapChainDetails]() {
@@ -106,7 +106,7 @@ namespace avocet::vulkan {
                 .surface{surfaceInfo.surface},
                 .minImageCount{requestedMinImageCount},
                 .imageFormat{format},
-                .imageExtent{swapChainConfig.extent_selector(swapChainDetails.capabilities, swapChainDetails.framebuffer_extent)},
+                .imageExtent{swapChainConfig.extent_selector(swapChainDetails.capabilities, extent)},
                 .imageArrayLayers{1}, // Always 1 unless developing a stereoscopic app
                 .imageUsage{swapChainConfig.image_usage_flags},
                 .preTransform{swapChainDetails.capabilities.surfaceCapabilities.currentTransform},
@@ -361,11 +361,10 @@ namespace avocet::vulkan {
         };
     }
 
-    swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
+    swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo)
         : capabilities{physDevice.getSurfaceCapabilities2KHR(surfaceInfo)}
         , formats{physDevice.getSurfaceFormats2KHR(surfaceInfo)}
         , present_modes{physDevice.getSurfacePresentModesKHR(surfaceInfo.surface)}
-        , framebuffer_extent{framebufferExtent}
     {
     }
 
@@ -377,31 +376,30 @@ namespace avocet::vulkan {
     {
     }
 
-    swap_chain::swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails)
+    swap_chain::swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent)
         : m_Config{swapChainConfig}
-        , m_Chain{make_swap_chain(logicalDevice, surfaceInfo, m_Config, swapChainDetails)}
+        , m_Chain{make_swap_chain(logicalDevice, surfaceInfo, m_Config, swapChainDetails, extent)}
         , m_Images{m_Chain.chain.getImages()}
         , m_ImageViews{make_swap_chain_image_views(logicalDevice.device(), m_Chain.format, m_Images)}
     {
     }
 
-    presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent)
+    presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent)
         : m_LayerProperties{vk::enumerateInstanceLayerProperties()}
         , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
         , m_Instance{make_instance(context, check_validation_layer_support(presentationConfig, m_LayerProperties))}
         , m_Surface{surfaceCreator(m_Instance)}
-        , m_Extent{framebufferExtent}
         , m_LogicalDevice{
-            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, m_Surface.info, m_Extent),
+            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, m_Surface.info),
             presentationConfig.device_config
           }
-        , m_SwapChain{m_LogicalDevice, m_Surface.info, presentationConfig.device_config.swap_chain, m_LogicalDevice.swap_chain_support()}
+        , m_SwapChain{m_LogicalDevice, m_Surface.info, presentationConfig.device_config.swap_chain, m_LogicalDevice.swap_chain_support(), extent}
     {
     }
 
-    void presentable::rebuild_swapchain() {
+    void presentable::rebuild_swapchain(vk::Extent2D extent) {
         wait_idle();
-        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, m_SwapChain.config(), m_LogicalDevice.swap_chain_support()};
+        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, m_SwapChain.config(), m_LogicalDevice.swap_chain_support(), extent};
     }
 
     void presentable::wait_idle() const {
@@ -555,29 +553,28 @@ namespace avocet::vulkan {
         return ec;
     }
 
-    rendering_system::full_renderer::full_renderer(const presentable& p, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight)
+    rendering_system::full_renderer::full_renderer(const presentable& p, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight)
         : vertex  {create_shader_module(p.get_logical_device().device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader  , vertShaderPath.generic_string())}
         , fragment{create_shader_module(p.get_logical_device().device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string())}
         , max_frames_in_flight{maxFramesInFlight}
-        , r{p.get_logical_device(), p.get_swap_chain(), p.extent(), vertex, fragment, max_frames_in_flight}
+        , r{p.get_logical_device(), p.get_swap_chain(), extent, vertex, fragment, max_frames_in_flight}
     {
     }
 
-    void rendering_system::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight) {
-        m_Renderers.emplace_back(m_Presentable, vertShaderPath, fragShaderPath, maxFramesInFlight);
+    void rendering_system::make_renderer(vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight) {
+        m_Renderers.emplace_back(m_Presentable, extent, vertShaderPath, fragShaderPath, maxFramesInFlight);
     }
 
-    void rendering_system::rebuild_swapchain() {
-        // Extent needs to be updated!
-        m_Presentable.rebuild_swapchain();
+    void rendering_system::rebuild_swapchain(vk::Extent2D extent) {
+        m_Presentable.rebuild_swapchain(extent);
         for(auto& fullRenderer : m_Renderers) {
-            fullRenderer.r = renderer{m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), m_Presentable.extent(), fullRenderer.vertex, fullRenderer.fragment, fullRenderer.max_frames_in_flight};
+            fullRenderer.r = renderer{m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), extent, fullRenderer.vertex, fullRenderer.fragment, fullRenderer.max_frames_in_flight};
         }
     }
 
-    void rendering_system::draw_all() {
+    void rendering_system::draw_all(vk::Extent2D extent) {
         if(auto ec{do_draw_all()}; (ec == vk::Result::eErrorOutOfDateKHR) || (ec == vk::Result::eSuboptimalKHR)) {
-            rebuild_swapchain();
+            rebuild_swapchain(extent);
         }
         else if(ec != vk::Result::eSuccess) {
             throw std::runtime_error{std::format("Unable to continue rendering due to failure to acquire next swap chain image, error code {}", static_cast<int>(ec))};

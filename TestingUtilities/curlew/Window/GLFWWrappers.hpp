@@ -149,7 +149,6 @@ namespace curlew {
         window_resource                  m_Window;
         avocet::vulkan::rendering_system m_System;
 
-        // TO DO: sort out last two arguments
         vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
 
         [[nodiscard]]

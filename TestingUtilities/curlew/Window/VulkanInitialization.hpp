@@ -15,7 +15,7 @@ namespace curlew::vulkan {
 
     struct device_selector {
         [[nodiscard]]
-        avocet::vulkan::physical_device operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent) const;
+        avocet::vulkan::physical_device operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) const;
     };
 
     struct swap_chain_format_selector {
