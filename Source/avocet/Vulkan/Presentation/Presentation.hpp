@@ -39,15 +39,15 @@ namespace avocet::vulkan {
     struct swap_chain_support_details {
         swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent);
 
-        vk::SurfaceCapabilities2KHR capabilities{};
+        vk::SurfaceCapabilities2KHR        capabilities{};
         std::vector<vk::SurfaceFormat2KHR> formats{};
-        std::vector<vk::PresentModeKHR> present_modes{};
-        vk::Extent2D framebuffer_extent{};
+        std::vector<vk::PresentModeKHR>    present_modes{};
+        vk::Extent2D                       framebuffer_extent{};
     };
 
     struct physical_device {
-        vk::raii::PhysicalDevice device;
-        queue_family_indices q_family_indices{};
+        vk::raii::PhysicalDevice   device;
+        queue_family_indices       q_family_indices{};
         swap_chain_support_details swap_chain_details;
     };
 
@@ -65,35 +65,47 @@ namespace avocet::vulkan {
         swap_chain_config swap_chain{};
     };
 
-    struct swap_chain {
-        vk::raii::SwapchainKHR chain;
-        vk::Format format;
-    };
-
     class logical_device {
         physical_device  m_PhysicalDevice;
         vk::raii::Device m_Device;
         vk::raii::Queue  m_GraphicsQueue,
                          m_PresentQueue; // TO DO: make these optional?
-        swap_chain m_SwapChain;
-        std::vector<vk::Image> m_SwapChainImages;
-        std::vector<vk::raii::ImageView> m_SwapChainImageViews;
     public:
-        logical_device(physical_device physDevice, const device_config& deviceConfig, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
-
-        [[nodiscard]]
-        const queue_family_indices& q_family_indices() const noexcept { return m_PhysicalDevice.q_family_indices; }
+        logical_device(physical_device physDevice, const device_config& deviceConfig);
 
         [[nodiscard]]
         const vk::raii::Device& device() const noexcept { return m_Device; }
 
         [[nodiscard]]
-        std::span<const vk::raii::ImageView> swapchain_image_views() const noexcept { return m_SwapChainImageViews; }
+        const queue_family_indices& q_family_indices() const noexcept { return m_PhysicalDevice.q_family_indices; }
 
         [[nodiscard]]
-        const swap_chain& get_swap_chain() const noexcept { return m_SwapChain; }
-
         const vk::raii::Queue& get_graphics_queue() const noexcept { return m_GraphicsQueue; }
+
+        [[nodiscard]]
+        const swap_chain_support_details& swap_chain_support() const noexcept { return m_PhysicalDevice.swap_chain_details; }
+    };
+
+    struct swap_chain_and_format {
+        vk::raii::SwapchainKHR chain;
+        vk::Format             format;
+    };
+
+    class swap_chain {
+        swap_chain_and_format            m_Chain;
+        std::vector<vk::Image>           m_Images;
+        std::vector<vk::raii::ImageView> m_ImageViews;
+    public:
+        swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails);
+
+        [[nodiscard]]
+        std::span<const vk::raii::ImageView> image_views() const noexcept { return m_ImageViews; }
+
+        [[nodiscard]]
+        vk::Format format() const noexcept { return m_Chain.format; }
+
+        [[nodiscard]]
+        const vk::raii::SwapchainKHR& chain() const noexcept { return m_Chain.chain; }
     };
 
     struct presentation_config {
@@ -113,9 +125,9 @@ namespace avocet::vulkan {
 
         void record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const;
 
-        void submit_cmd_buffer(const vk::raii::Fence& fence, const avocet::vulkan::logical_device& logicalDevice) const;
+        void submit_cmd_buffer(const vk::raii::Fence& fence, const logical_device& logicalDevice) const;
 
-        void present(const avocet::vulkan::logical_device& logicalDevice, std::uint32_t imageIndex) const;
+        void present(const logical_device& logicalDevice, const swap_chain& swapChain, std::uint32_t imageIndex) const;
     public:
         command_buffer(const vk::raii::Device& device, vk::raii::CommandBuffer cmdBuffer)
             : m_CommandBuffer{std::move(cmdBuffer)}
@@ -123,14 +135,16 @@ namespace avocet::vulkan {
             , m_RenderFinished{device, vk::SemaphoreCreateInfo{}}
         { }
 
-        void draw_frame(const vk::raii::Fence& fence,
-                        const avocet::vulkan::logical_device& logicalDevice,
-                        const vk::raii::RenderPass& renderPass,
-                        std::span<const vk::raii::Framebuffer> framebuffers,
-                        const vk::raii::Pipeline& pipeline,
-                        vk::Extent2D extent,
-                        const vk::Viewport& viewport,
-                        const vk::Rect2D& scissor) const;
+        [[nodiscard]]
+        vk::Result draw_frame(const vk::raii::Fence& fence,
+                              const logical_device& logicalDevice,
+                              const swap_chain& swapChain,
+                              const vk::raii::RenderPass& renderPass,
+                              std::span<const vk::raii::Framebuffer> framebuffers,
+                              const vk::raii::Pipeline& pipeline,
+                              vk::Extent2D extent,
+                              const vk::Viewport& viewport,
+                              const vk::Rect2D& scissor) const;
     };
 
     class presentable {
@@ -139,7 +153,8 @@ namespace avocet::vulkan {
         vk::raii::Instance                   m_Instance;
         vk::raii::SurfaceKHR                 m_Surface;
         vk::Extent2D                         m_Extent;
-        avocet::vulkan::logical_device       m_LogicalDevice;
+        logical_device                       m_LogicalDevice;
+        swap_chain                           m_SwapChain;
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D framebufferExtent);
 
@@ -156,6 +171,9 @@ namespace avocet::vulkan {
         const logical_device& get_logical_device() const noexcept { return m_LogicalDevice; }
 
         [[nodiscard]]
+        const swap_chain& get_swap_chain() const noexcept { return m_SwapChain; }
+
+        [[nodiscard]]
         vk::Extent2D extent() const noexcept { return m_Extent; }
 
         void wait_idle() const;
@@ -163,6 +181,7 @@ namespace avocet::vulkan {
 
     class renderer {
         const logical_device*                m_LogicalDevice{};
+        const swap_chain*                    m_SwapChain{};
         vk::Extent2D                         m_Extent;
         vk::raii::RenderPass                 m_RenderPass;
         std::vector<vk::raii::Framebuffer>   m_Framebuffers;
@@ -177,8 +196,9 @@ namespace avocet::vulkan {
         std::vector<vk::raii::Fence>         m_Fences;
         mutable std::uint32_t                m_CurrentFrameIdx{}, m_CurrentImageIdx{};
     public:
-        renderer(const logical_device& logicalDevice, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight);
+        renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight);
 
-        void draw_frame() const;
+        [[nodiscard]]
+        vk::Result draw_frame() const;
     };
 }

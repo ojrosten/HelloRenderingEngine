@@ -174,6 +174,6 @@ namespace curlew {
 
     [[nodiscard]]
     avocet::vulkan::renderer vulkan_window::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, std::uint32_t maxFramesInFlight) {
-        return {m_Presentable.get_logical_device(), m_Presentable.extent(), vertShaderPath, fragShaderPath, maxFramesInFlight};
+        return {m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), m_Presentable.extent(), vertShaderPath, fragShaderPath, maxFramesInFlight};
     }
 }
