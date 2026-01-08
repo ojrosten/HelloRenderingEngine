@@ -333,6 +333,32 @@ namespace avocet::vulkan {
               | std::views::transform([&device](auto) -> vk::raii::Fence { return {device, vk::FenceCreateInfo{.flags{vk::FenceCreateFlagBits::eSignaled}}} ; })
               | std::ranges::to<std::vector>();
         }
+
+        class [[nodiscard]] command_buffer_sentinel {
+            const vk::raii::CommandBuffer& m_Buffer;
+        public:
+            command_buffer_sentinel(const vk::raii::CommandBuffer& buffer, const vk::CommandBufferBeginInfo& bufferBeginInfo)
+                : m_Buffer{buffer}
+            {
+                m_Buffer.begin(bufferBeginInfo);
+            }
+
+            ~command_buffer_sentinel() { m_Buffer.end(); }
+        };
+
+        class [[nodiscard]] render_pass_sentinel {
+            const vk::raii::CommandBuffer& m_Buffer;
+            vk::SubpassEndInfo m_SubPassEndInfo;
+        public:
+            render_pass_sentinel(const vk::raii::CommandBuffer& buffer, const vk::RenderPassBeginInfo& renderPassBeginInfo, const vk::SubpassBeginInfo& subPassBeginInfo, const vk::SubpassEndInfo& subPassEndInfo)
+                : m_Buffer{buffer}
+                , m_SubPassEndInfo{subPassEndInfo}
+            {
+                m_Buffer.beginRenderPass2(renderPassBeginInfo, subPassBeginInfo);
+            }
+
+            ~render_pass_sentinel() { m_Buffer.endRenderPass2(m_SubPassEndInfo); }
+        };
     }
 
     swap_chain_support_details::swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, vk::Extent2D framebufferExtent)
@@ -412,36 +438,6 @@ namespace avocet::vulkan {
 
         return ec;
     }
-
-    class [[nodiscard]] command_buffer_sentinel {
-        const vk::raii::CommandBuffer& m_Buffer;
-    public:
-        command_buffer_sentinel(const vk::raii::CommandBuffer& buffer, const vk::CommandBufferBeginInfo& bufferBeginInfo)
-            : m_Buffer{buffer}
-        {
-            m_Buffer.begin(bufferBeginInfo);
-        }
-
-        ~command_buffer_sentinel() {
-            m_Buffer.end();
-        }
-    };
-
-    class [[nodiscard]] render_pass_sentinel {
-        const vk::raii::CommandBuffer& m_Buffer;
-        vk::SubpassEndInfo m_SubPassEndInfo;
-    public:
-        render_pass_sentinel(const vk::raii::CommandBuffer& buffer, const vk::RenderPassBeginInfo& renderPassBeginInfo, const vk::SubpassBeginInfo& subPassBeginInfo, const vk::SubpassEndInfo& subPassEndInfo)
-            : m_Buffer{buffer}
-            , m_SubPassEndInfo{subPassEndInfo}
-        {
-            m_Buffer.beginRenderPass2(renderPassBeginInfo, subPassBeginInfo);
-        }
-
-        ~render_pass_sentinel() {
-            m_Buffer.endRenderPass2(m_SubPassEndInfo);
-        }
-    };
 
     void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
         command_buffer_sentinel cmdBufferSentinel{m_CommandBuffer, vk::CommandBufferBeginInfo{}};
