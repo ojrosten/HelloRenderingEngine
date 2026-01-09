@@ -210,7 +210,7 @@ namespace avocet::vulkan {
         vk::raii::CommandBuffer m_CommandBuffer;
 
         vk::raii::Semaphore m_ImageAvailable,
-            m_RenderFinished;
+                            m_RenderFinished;
 
         void record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const pipeline& pipeLine, const render_area& renderArea) const;
 
@@ -234,19 +234,27 @@ namespace avocet::vulkan {
                               const render_area renderArea) const;
     };
 
+    class draw_submitter {
+        vk::raii::CommandPool        m_CommandPool;
+        std::vector<command_buffer>  m_CommandBuffers;
+        std::vector<vk::raii::Fence> m_Fences;
+        mutable std::uint32_t        m_CurrentFrameIdx{},
+                                     m_CurrentImageIdx{};
+    public:
+        draw_submitter(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, frames_in_flight maxFramesInFlight);
+
+        [[nodiscard]]
+        vk::Result draw_frame(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, const render_pass& renderPass, const pipeline& pipe, const render_area& renderArea) const;
+    };
+
     class renderer {
-        const logical_device*              m_LogicalDevice{};
-        const swap_chain_plus_images*      m_SwapChain{};
+        const logical_device*         m_LogicalDevice{};
+        const swap_chain_plus_images* m_SwapChain{};
 
-        render_pass                        m_RenderPass;
-        pipeline                           m_Pipeline;
-        render_area                        m_RenderArea;
-
-        vk::raii::CommandPool              m_CommandPool;
-        std::vector<command_buffer>        m_CommandBuffers;
-        std::vector<vk::raii::Fence>       m_Fences;
-        mutable std::uint32_t              m_CurrentFrameIdx{},
-                                           m_CurrentImageIdx{};
+        render_pass                   m_RenderPass;
+        pipeline                      m_Pipeline;
+        render_area                   m_RenderArea;
+        draw_submitter                m_Submitter;
     public:
         renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight);
 
@@ -259,9 +267,10 @@ namespace avocet::vulkan {
         struct full_renderer {
             full_renderer(const presentable& p, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
 
-            vk::raii::ShaderModule vertex, fragment;
+            vk::raii::ShaderModule vertex,
+                                   fragment;
             frames_in_flight       max_frames_in_flight;
-            renderer r;
+            renderer               renderer;
         };
 
         presentable m_Presentable;

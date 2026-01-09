@@ -547,6 +547,12 @@ namespace avocet::vulkan {
         }
     {}
 
+    draw_submitter::draw_submitter(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, frames_in_flight maxFramesInFlight)
+        : m_CommandPool{make_command_pool(logicalDevice)}
+        , m_CommandBuffers{make_command_buffer(logicalDevice.device(), m_CommandPool, to_uint32(swapChain.image_views().size()))}
+        , m_Fences{make_fences(logicalDevice.device(), maxFramesInFlight)}
+    { }
+
     renderer::renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
@@ -567,26 +573,27 @@ namespace avocet::vulkan {
                 .extent{extent}
              }
           }
-        , m_CommandPool{make_command_pool(logicalDevice)}
-        , m_CommandBuffers{make_command_buffer(logicalDevice.device(), m_CommandPool, to_uint32(swapChain.image_views().size()))}
-        , m_Fences{make_fences(logicalDevice.device(), maxFramesInFlight)}
+        , m_Submitter{*m_LogicalDevice, *m_SwapChain, maxFramesInFlight}
     { }
 
     [[nodiscard]]
-    vk::Result renderer::draw_frame() const {
-        auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Pipeline, m_RenderArea)};
+    vk::Result draw_submitter::draw_frame(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, const render_pass& renderPass, const pipeline& pipe, const render_area& renderArea) const {
+        auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], logicalDevice, swapChain, renderPass, pipe, renderArea)};
 
-        m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_SwapChain->image_views().size();
+        m_CurrentImageIdx = (m_CurrentImageIdx + 1) % swapChain.image_views().size();
         m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_Fences.size();
 
         return ec;
     }
 
+    [[nodiscard]]
+    vk::Result renderer::draw_frame() const { return m_Submitter.draw_frame(*m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Pipeline, m_RenderArea); }
+
     rendering_system::full_renderer::full_renderer(const presentable& p, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight)
         : vertex  {create_shader_module(p.get_logical_device().device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader  , vertShaderPath.generic_string())}
         , fragment{create_shader_module(p.get_logical_device().device(), fragShaderPath, shaderc_shader_kind::shaderc_glsl_fragment_shader, fragShaderPath.generic_string())}
         , max_frames_in_flight{maxFramesInFlight}
-        , r{p.get_logical_device(), p.get_swap_chain(), extent, vertex, fragment, max_frames_in_flight}
+        , renderer{p.get_logical_device(), p.get_swap_chain(), extent, vertex, fragment, max_frames_in_flight}
     {
     }
 
@@ -597,7 +604,7 @@ namespace avocet::vulkan {
     void rendering_system::rebuild_swapchain(vk::Extent2D extent) {
         m_Presentable.rebuild_swapchain(extent);
         for(auto& fullRenderer : m_Renderers) {
-            fullRenderer.r = renderer{m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), extent, fullRenderer.vertex, fullRenderer.fragment, fullRenderer.max_frames_in_flight};
+            fullRenderer.renderer = renderer{m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), extent, fullRenderer.vertex, fullRenderer.fragment, fullRenderer.max_frames_in_flight};
         }
     }
 
@@ -619,8 +626,8 @@ namespace avocet::vulkan {
 
     [[nodiscard]]
     vk::Result rendering_system::do_draw_all() const {
-        for(const auto& r : m_Renderers) {
-            if(auto ec{r.r.draw_frame()}; ec != vk::Result::eSuccess)
+        for(const auto& fullRenderer : m_Renderers) {
+            if(auto ec{fullRenderer.renderer.draw_frame()}; ec != vk::Result::eSuccess)
                 return ec;
         }
 
