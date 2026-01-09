@@ -193,6 +193,11 @@ namespace avocet::vulkan {
     class pipeline {
         vk::raii::PipelineLayout m_PipelineLayout;
         vk::raii::Pipeline       m_Pipeline;
+    public:
+        pipeline(const logical_device& logicalDevice, const render_pass& renderPass, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule);
+
+        [[nodiscard]]
+        const vk::raii::Pipeline& get() const noexcept { return m_Pipeline; }
     };
 
     struct render_area {
@@ -207,7 +212,7 @@ namespace avocet::vulkan {
         vk::raii::Semaphore m_ImageAvailable,
             m_RenderFinished;
 
-        void record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const;
+        void record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const pipeline& pipeLine, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const;
 
         void submit_cmd_buffer(const vk::raii::Fence& fence, const logical_device& logicalDevice) const;
 
@@ -225,7 +230,7 @@ namespace avocet::vulkan {
             const logical_device& logicalDevice,
             const swap_chain_plus_images& swapChain,
             const render_pass& renderPass,
-            const vk::raii::Pipeline& pipeline,
+            const pipeline& pipeLine,
             vk::Extent2D extent,
             const vk::Viewport& viewport,
             const vk::Rect2D& scissor) const;
@@ -237,11 +242,10 @@ namespace avocet::vulkan {
         vk::Extent2D                       m_Extent;
 
         render_pass                        m_RenderPass;
+        pipeline                           m_Pipeline;
 
         vk::Viewport                       m_ViewPort;
         vk::Rect2D                         m_Scissor;
-        vk::raii::PipelineLayout           m_PipelineLayout;
-        vk::raii::Pipeline                 m_Pipeline;
 
         vk::raii::CommandPool              m_CommandPool;
         std::vector<command_buffer>        m_CommandBuffers;

@@ -434,7 +434,7 @@ namespace avocet::vulkan {
                                           const logical_device& logicalDevice,
                                           const swap_chain_plus_images& swapChain,
                                           const render_pass& renderPass,
-                                          const vk::raii::Pipeline& pipeline,
+                                          const pipeline& pipeLine,
                                           vk::Extent2D extent,
                                           const vk::Viewport& viewport,
                                           const vk::Rect2D& scissor) const {
@@ -457,7 +457,7 @@ namespace avocet::vulkan {
             logicalDevice.device().resetFences(*fence);
 
             m_CommandBuffer.reset();
-            record_cmd_buffer(renderPass.get(), renderPass.framebuffers()[imageIndex], pipeline, extent, viewport, scissor);
+            record_cmd_buffer(renderPass.get(), renderPass.framebuffers()[imageIndex], pipeLine, extent, viewport, scissor);
             submit_cmd_buffer(fence, logicalDevice);
             present(logicalDevice, swapChain, imageIndex);
         }
@@ -465,7 +465,7 @@ namespace avocet::vulkan {
         return ec;
     }
 
-    void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const vk::raii::Pipeline& pipeline, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
+    void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const pipeline& pipeLine, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
         command_buffer_sentinel cmdBufferSentinel{m_CommandBuffer, vk::CommandBufferBeginInfo{}};
 
         vk::ClearValue clearCol{{0.0f, 0.0f, 0.0f, 1.0f}};
@@ -483,7 +483,7 @@ namespace avocet::vulkan {
 
         render_pass_sentinel renderPassSentinel{m_CommandBuffer, renderPassInfo, vk::SubpassBeginInfo{}, vk::SubpassEndInfo{}};
 
-        m_CommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeline);
+        m_CommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeLine.get());
         m_CommandBuffer.setViewport(0, viewport);
         m_CommandBuffer.setScissor(0, scissor);
         m_CommandBuffer.draw(3, 1, 0, 0);
@@ -536,12 +536,26 @@ namespace avocet::vulkan {
         , m_Framebuffers{make_framebuffers(logicalDevice, swapChain, m_RenderPass, extent)}
     {}
 
+    pipeline::pipeline(const logical_device& logicalDevice, const render_pass& renderPass, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule)
+        : m_PipelineLayout{logicalDevice.device(), vk::PipelineLayoutCreateInfo{}}
+        , m_Pipeline{
+              make_pipeline(
+                  logicalDevice.device(),
+                  vertShaderModule,
+                  fragShaderModule,
+                  m_PipelineLayout,
+                  renderPass
+              )
+        }
+    {}
+
 
     renderer::renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
         , m_Extent{extent}
         , m_RenderPass{logicalDevice, swapChain, extent}
+        , m_Pipeline{logicalDevice, m_RenderPass, vertShaderModule, fragShaderModule}
         , m_ViewPort{
             .x{},
             .y{},
@@ -553,16 +567,6 @@ namespace avocet::vulkan {
         , m_Scissor{
             .offset{},
             .extent{m_Extent}
-          }
-        , m_PipelineLayout{logicalDevice.device(), vk::PipelineLayoutCreateInfo{}}
-        , m_Pipeline{
-              make_pipeline(
-                  logicalDevice.device(),
-                  vertShaderModule,
-                  fragShaderModule,
-                  m_PipelineLayout,
-                  m_RenderPass
-              )
           }
         , m_CommandPool{make_command_pool(logicalDevice)}
         , m_CommandBuffers{make_command_buffer(logicalDevice.device(), m_CommandPool, to_uint32(swapChain.image_views().size()))}
