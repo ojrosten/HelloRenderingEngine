@@ -20,8 +20,11 @@ set(SourceList
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/ShaderProgram.cpp
     OpenGL/Resources/Textures.cpp
-    Vulkan/Common/VulkanConfig.cpp
     Vulkan/Presentation/Presentation.cpp
+    Vulkan/Common/Conversions.cpp
+    Vulkan/Common/VulkanConfig.cpp
+    Vulkan/Setup/Devices.cpp
+    Vulkan/Setup/Instance.cpp
     Vulkan/Shaders/Shaders.cpp
 )
 

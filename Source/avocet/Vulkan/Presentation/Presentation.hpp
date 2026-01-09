@@ -7,105 +7,29 @@
 
 #pragma once
 
-#include "avocet/Vulkan/Common/VulkanConfig.hpp"
+#include "avocet/Vulkan/Setup/Devices.hpp"
 
 #include <cstdint>
 #include <filesystem>
-#include <functional>
-#include <span>
-#include <string>
 
 namespace avocet::vulkan {
-    struct product_info {
-        std::string   name{};
-        std::uint32_t version{vk::makeApiVersion(0, 1, 0, 0)};
-    };
-
-    struct application_info {
-        product_info app{}, engine{};
-    };
-
-    struct queue_family_indices {
-        std::optional<std::uint32_t> graphics{},
-                                     present{};
-    };
-
-    struct instance_info {
-        vk::InstanceCreateFlags flags{vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR};
-        application_info app_info{};
-        std::vector<std::string> validation_layers{};
-        std::vector<std::string> extensions{};
-    };
-
-    struct swap_chain_configuration {
-        std::function<vk::SurfaceFormat2KHR (std::span<const vk::SurfaceFormat2KHR>)>  format_selector{};
-        std::function<vk::PresentModeKHR (std::span<const vk::PresentModeKHR>)>        present_mode_selector{};
-        std::function<vk::Extent2D (const vk::SurfaceCapabilities2KHR&, vk::Extent2D)> extent_selector{};
-
-        vk::ImageUsageFlags image_usage_flags{};
-    };
-
     struct frames_in_flight {
         std::uint32_t value{};
 
         friend constexpr auto operator<=>(const frames_in_flight&, const frames_in_flight&) noexcept = default;
     };
 
-    class instance {
-        const vk::raii::Context*             m_Context{};
-        std::vector<vk::LayerProperties>     m_LayerProperties;
-        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
-        vk::raii::Instance                   m_Instance;
-    public:
-        instance(const vk::raii::Context& context, const instance_info& instanceInfo);
-
-        [[nodiscard]]
-        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_ExtensionProperties; }
-
-        [[nodiscard]]
-        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_LayerProperties; }
-
-        [[nodiscard]]
-        const vk::raii::Context& context() const noexcept { return *m_Context; }
-
-        [[nodiscard]]
-        const vk::raii::Instance& get() const noexcept { return m_Instance; }
-    };
-
-    struct physical_device {
-        vk::raii::PhysicalDevice device;
-        queue_family_indices     q_family_indices{};
-    };
-
-    struct device_configuration {
-        std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const std::string>, const vk::PhysicalDeviceSurfaceInfo2KHR&)> selector{};
-        std::vector<std::string> extensions{};
-        swap_chain_configuration swap_chain_config{};
-    };
-
-    class logical_device {
-        physical_device  m_PhysicalDevice;
-        vk::raii::Device m_Device;
-        vk::raii::Queue  m_GraphicsQueue,
-                         m_PresentQueue; // TO DO: make these optional?
-    public:
-        logical_device(physical_device physDevice, const device_configuration& deviceConfig);
-
-        [[nodiscard]]
-        const vk::raii::Device& device() const noexcept { return m_Device; }
-
-        [[nodiscard]]
-        const queue_family_indices& q_family_indices() const noexcept { return m_PhysicalDevice.q_family_indices; }
-
-        [[nodiscard]]
-        const vk::raii::Queue& get_graphics_queue() const noexcept { return m_GraphicsQueue; }
-
-        const physical_device& get_physical_device() const noexcept { return m_PhysicalDevice; }
-    };
-
     struct swap_chain {
         vk::raii::SwapchainKHR chain;
         vk::Format             format;
+    };
+
+    struct swap_chain_configuration {
+        std::function<vk::SurfaceFormat2KHR(std::span<const vk::SurfaceFormat2KHR>)>  format_selector{};
+        std::function<vk::PresentModeKHR(std::span<const vk::PresentModeKHR>)>        present_mode_selector{};
+        std::function<vk::Extent2D(const vk::SurfaceCapabilities2KHR&, vk::Extent2D)> extent_selector{};
+
+        vk::ImageUsageFlags image_usage_flags{};
     };
 
     struct swap_chain_support_details {
@@ -149,6 +73,7 @@ namespace avocet::vulkan {
         std::size_t width{800}, height{600};
         std::string name;
         device_configuration device_config{};
+        swap_chain_configuration swap_chain_config{};
         frames_in_flight max_frames_in_flight{2};
     };
 
