@@ -18,7 +18,7 @@
 namespace avocet::vulkan {
     struct product_info {
         std::string   name{};
-        std::uint32_t version{VK_MAKE_VERSION(1, 0, 0)};
+        std::uint32_t version{vk::makeApiVersion(0, 1, 0, 0)};
     };
 
     struct application_info {
@@ -36,31 +36,23 @@ namespace avocet::vulkan {
         application_info app_info{};
     };
 
-    struct swap_chain_support_details {
-        swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
-
-        vk::SurfaceCapabilities2KHR        capabilities{};
-        std::vector<vk::SurfaceFormat2KHR> formats{};
-        std::vector<vk::PresentModeKHR>    present_modes{};
-    };
-
     struct physical_device {
-        vk::raii::PhysicalDevice   device;
-        queue_family_indices       q_family_indices{};
+        vk::raii::PhysicalDevice device;
+        queue_family_indices     q_family_indices{};
     };
 
-    struct swap_chain_config {
-        std::function<vk::SurfaceFormat2KHR (std::span<const vk::SurfaceFormat2KHR>)> format_selector{};
-        std::function<vk::PresentModeKHR (std::span<const vk::PresentModeKHR>)> present_mode_selector{};
+    struct swap_chain_configuration {
+        std::function<vk::SurfaceFormat2KHR (std::span<const vk::SurfaceFormat2KHR>)>  format_selector{};
+        std::function<vk::PresentModeKHR (std::span<const vk::PresentModeKHR>)>        present_mode_selector{};
         std::function<vk::Extent2D (const vk::SurfaceCapabilities2KHR&, vk::Extent2D)> extent_selector{};
 
         vk::ImageUsageFlags image_usage_flags{};
     };
 
-    struct device_config {
+    struct device_configuration {
         std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::PhysicalDeviceSurfaceInfo2KHR&)> selector{};
         std::vector<const char*> extensions{};
-        swap_chain_config swap_chain{};
+        swap_chain_configuration swap_chain_config{};
     };
 
     struct frames_in_flight {
@@ -74,7 +66,7 @@ namespace avocet::vulkan {
         instance_info create_info{};
         std::vector<const char*> validation_layers{};
         std::vector<const char*> extensions{};
-        device_config device_config{};
+        device_configuration device_config{};
         frames_in_flight max_frames_in_flight{2};
     };
 
@@ -84,7 +76,7 @@ namespace avocet::vulkan {
         vk::raii::Queue  m_GraphicsQueue,
                          m_PresentQueue; // TO DO: make these optional?
     public:
-        logical_device(physical_device physDevice, const device_config& deviceConfig);
+        logical_device(physical_device physDevice, const device_configuration& deviceConfig);
 
         [[nodiscard]]
         const vk::raii::Device& device() const noexcept { return m_Device; }
@@ -103,8 +95,16 @@ namespace avocet::vulkan {
         vk::Format             format;
     };
 
+    struct swap_chain_support_details {
+        swap_chain_support_details(const vk::raii::PhysicalDevice& physDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo);
+
+        vk::SurfaceCapabilities2KHR        capabilities{};
+        std::vector<vk::SurfaceFormat2KHR> formats{};
+        std::vector<vk::PresentModeKHR>    present_modes{};
+    };
+
     class swap_chain_plus_images {
-        swap_chain_config                m_Config;
+        swap_chain_configuration         m_Config;
         swap_chain                       m_Chain;
         std::vector<vk::Image>           m_Images;
         std::vector<vk::raii::ImageView> m_ImageViews;
@@ -113,14 +113,14 @@ namespace avocet::vulkan {
         // However, it's useful for implementing rebuild, so it's made private
         swap_chain_plus_images& operator=(swap_chain_plus_images&&) noexcept = default;
     public:
-        swap_chain_plus_images(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent);
+        swap_chain_plus_images(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_configuration& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent);
 
         swap_chain_plus_images(swap_chain_plus_images&&) noexcept = default;
 
-        swap_chain_plus_images& rebuild(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent);
+        swap_chain_plus_images& rebuild(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_configuration& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent);
 
         [[nodiscard]]
-        const swap_chain_config& config() const noexcept { return m_Config; }
+        const swap_chain_configuration& config() const noexcept { return m_Config; }
 
         [[nodiscard]]
         const vk::raii::SwapchainKHR& chain() const noexcept { return m_Chain.chain; }
@@ -138,7 +138,7 @@ namespace avocet::vulkan {
         vk::raii::Instance                   m_Instance;
         vk::raii::SurfaceKHR                 m_Surface;
         logical_device                       m_LogicalDevice;
-        swap_chain_plus_images                           m_SwapChain;
+        swap_chain_plus_images               m_SwapChain;
 
         [[nodiscard]]
         swap_chain_support_details extract_swap_chain_support() const;

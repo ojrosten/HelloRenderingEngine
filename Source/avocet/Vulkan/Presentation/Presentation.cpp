@@ -36,7 +36,7 @@ namespace avocet::vulkan {
                 .applicationVersion{config.create_info.app_info.app.version},
                 .pEngineName{config.create_info.app_info.engine.name.data()},
                 .engineVersion{config.create_info.app_info.engine.version},
-                .apiVersion{VK_API_VERSION_1_4}
+                .apiVersion{vk::ApiVersion14}
             };
 
             vk::InstanceCreateInfo createInfo{
@@ -89,7 +89,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        swap_chain make_swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
+        swap_chain make_swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_configuration& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
             const auto requestedMinImageCount{
                 [&swapChainDetails]() {
                     const auto minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount},
@@ -367,7 +367,7 @@ namespace avocet::vulkan {
     {
     }
 
-    logical_device::logical_device(physical_device physDevice, const device_config& deviceConfig)
+    logical_device::logical_device(physical_device physDevice, const device_configuration& deviceConfig)
         : m_PhysicalDevice{std::move(physDevice)}
         , m_Device{make_logical_device(m_PhysicalDevice, deviceConfig.extensions)}
         , m_GraphicsQueue{m_Device.getQueue2(vk::DeviceQueueInfo2{.queueFamilyIndex{m_PhysicalDevice.q_family_indices.graphics.value()}})}
@@ -375,7 +375,7 @@ namespace avocet::vulkan {
     {
     }
 
-    swap_chain_plus_images::swap_chain_plus_images(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent)
+    swap_chain_plus_images::swap_chain_plus_images(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_configuration& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent)
         : m_Config{swapChainConfig}
         , m_Chain{make_swap_chain(logicalDevice, surfaceInfo, m_Config, swapChainDetails, extent)}
         , m_Images{m_Chain.chain.getImages()}
@@ -383,7 +383,7 @@ namespace avocet::vulkan {
     {
     }
 
-    swap_chain_plus_images& swap_chain_plus_images::rebuild(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
+    swap_chain_plus_images& swap_chain_plus_images::rebuild(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_configuration& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
         m_Chain.chain = {nullptr};
         return *this = swap_chain_plus_images{logicalDevice, surfaceInfo, swapChainConfig, swapChainDetails, extent};
     }
@@ -397,7 +397,7 @@ namespace avocet::vulkan {
             presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, get_surface_info()),
             presentationConfig.device_config
           }
-        , m_SwapChain{m_LogicalDevice, get_surface_info(), presentationConfig.device_config.swap_chain, extract_swap_chain_support(), extent}
+        , m_SwapChain{m_LogicalDevice, get_surface_info(), presentationConfig.device_config.swap_chain_config, extract_swap_chain_support(), extent}
     {
     }
 

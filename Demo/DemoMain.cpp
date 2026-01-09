@@ -120,7 +120,7 @@ int main()
                     .device_config{
                         .selector{curlew::vulkan::device_selector{}},
                         .extensions{make_device_extensions()},
-                        .swap_chain{
+                        .swap_chain_config{
                             .format_selector{curlew::vulkan::swap_chain_format_selector{}},
                             .present_mode_selector{curlew::vulkan::swap_chain_present_mode_selector{}},
                             .extent_selector{curlew::vulkan::swap_chain_extent_selector{}},
