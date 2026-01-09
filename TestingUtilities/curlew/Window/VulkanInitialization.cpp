@@ -70,7 +70,7 @@ namespace curlew::vulkan {
                     qFamilyIndices.present = i;
 
                 if(qFamilyIndices.graphics && qFamilyIndices.present)
-                    return {device, qFamilyIndices, swapChainDetails};
+                    return {device, qFamilyIndices};
             }
         }
 

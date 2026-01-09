@@ -47,7 +47,6 @@ namespace avocet::vulkan {
     struct physical_device {
         vk::raii::PhysicalDevice   device;
         queue_family_indices       q_family_indices{};
-        swap_chain_support_details swap_chain_details;
     };
 
     struct swap_chain_config {
@@ -96,9 +95,6 @@ namespace avocet::vulkan {
         [[nodiscard]]
         const vk::raii::Queue& get_graphics_queue() const noexcept { return m_GraphicsQueue; }
 
-        [[nodiscard]]
-        const swap_chain_support_details& swap_chain_support() const noexcept { return m_PhysicalDevice.swap_chain_details; }
-
         const physical_device& get_physical_device() const noexcept { return m_PhysicalDevice; }
     };
 
@@ -142,6 +138,9 @@ namespace avocet::vulkan {
         surface                              m_Surface;
         logical_device                       m_LogicalDevice;
         swap_chain                           m_SwapChain;
+
+        [[nodiscard]]
+        swap_chain_support_details extract_swap_chain_support() const;
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent);
 
