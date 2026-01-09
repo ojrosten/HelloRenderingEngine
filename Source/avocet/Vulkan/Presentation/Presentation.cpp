@@ -259,7 +259,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        vk::raii::Pipeline make_pipeline(const vk::raii::Device& device, const vk::raii::ShaderModule& vertModule, const vk::raii::ShaderModule& fragModule, const vk::raii::PipelineLayout& pipelineLayout, const vk::raii::RenderPass& renderPass) {
+        vk::raii::Pipeline make_pipeline(const vk::raii::Device& device, const vk::raii::ShaderModule& vertModule, const vk::raii::ShaderModule& fragModule, const vk::raii::PipelineLayout& pipelineLayout, const render_pass& renderPass) {
             const std::array<vk::PipelineShaderStageCreateInfo, 2> shaderStages{make_pipeline_shader_info(vertModule, fragModule)};
 
             vk::PipelineVertexInputStateCreateInfo vertInfo{};
@@ -270,9 +270,7 @@ namespace avocet::vulkan {
 
             vk::PipelineViewportStateCreateInfo viewportInfo{
                 .viewportCount{1},
-                //.pViewports{&m_ViewPort}, These can now be dynamic and not baked into the pipeline
                 .scissorCount{1},
-                //.pScissors{&m_Scissor}
             };
 
             vk::PipelineRasterizationStateCreateInfo rasterInfo{
@@ -308,7 +306,7 @@ namespace avocet::vulkan {
                .pColorBlendState{&blendInfo},
                .pDynamicState{&dynamicInfo},
                .layout{pipelineLayout},
-               .renderPass{renderPass},
+               .renderPass{renderPass.get()},
                .subpass{}
             };
 
@@ -435,8 +433,7 @@ namespace avocet::vulkan {
     vk::Result command_buffer::draw_frame(const vk::raii::Fence& fence,
                                           const logical_device& logicalDevice,
                                           const swap_chain_plus_images& swapChain,
-                                          const vk::raii::RenderPass& renderPass,
-                                          std::span<const vk::raii::Framebuffer> framebuffers,
+                                          const render_pass& renderPass,
                                           const vk::raii::Pipeline& pipeline,
                                           vk::Extent2D extent,
                                           const vk::Viewport& viewport,
@@ -460,7 +457,7 @@ namespace avocet::vulkan {
             logicalDevice.device().resetFences(*fence);
 
             m_CommandBuffer.reset();
-            record_cmd_buffer(renderPass, framebuffers[imageIndex], pipeline, extent, viewport, scissor);
+            record_cmd_buffer(renderPass.get(), renderPass.framebuffers()[imageIndex], pipeline, extent, viewport, scissor);
             submit_cmd_buffer(fence, logicalDevice);
             present(logicalDevice, swapChain, imageIndex);
         }
@@ -534,13 +531,17 @@ namespace avocet::vulkan {
             std::println("Presenting the graphics queue returrned result {}", static_cast<int>(e));
     }
 
+    render_pass::render_pass(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent)
+        : m_RenderPass{make_render_pass(logicalDevice, swapChain)}
+        , m_Framebuffers{make_framebuffers(logicalDevice, swapChain, m_RenderPass, extent)}
+    {}
+
 
     renderer::renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
         , m_Extent{extent}
-        , m_RenderPass{make_render_pass(logicalDevice, swapChain)}
-        , m_Framebuffers{make_framebuffers(logicalDevice, swapChain, m_RenderPass, m_Extent)}
+        , m_RenderPass{logicalDevice, swapChain, extent}
         , m_ViewPort{
             .x{},
             .y{},
@@ -570,7 +571,7 @@ namespace avocet::vulkan {
 
     [[nodiscard]]
     vk::Result renderer::draw_frame() const {
-        auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Framebuffers, m_Pipeline, m_Extent, m_ViewPort, m_Scissor)};
+        auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Pipeline, m_Extent, m_ViewPort, m_Scissor)};
 
         m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_SwapChain->image_views().size();
         m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_Fences.size();

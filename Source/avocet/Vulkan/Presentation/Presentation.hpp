@@ -177,6 +177,30 @@ namespace avocet::vulkan {
         void wait_idle() const;
     };
 
+    class render_pass {
+        vk::raii::RenderPass               m_RenderPass;
+        std::vector<vk::raii::Framebuffer> m_Framebuffers;
+    public:
+        render_pass(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent);
+
+        [[nodiscard]]
+        const vk::raii::RenderPass& get() const noexcept { return m_RenderPass; }
+
+        [[nodiscard]]
+        std::span<const vk::raii::Framebuffer> framebuffers() const noexcept { return m_Framebuffers; }
+    };
+
+    class pipeline {
+        vk::raii::PipelineLayout m_PipelineLayout;
+        vk::raii::Pipeline       m_Pipeline;
+    };
+
+    struct render_area {
+        vk::Extent2D extent;
+        vk::Viewport viewport;
+        vk::Rect2D   scissors;
+    };
+
     class command_buffer {
         vk::raii::CommandBuffer m_CommandBuffer;
 
@@ -198,30 +222,13 @@ namespace avocet::vulkan {
 
         [[nodiscard]]
         vk::Result draw_frame(const vk::raii::Fence& fence,
-                              const logical_device& logicalDevice,
-                              const swap_chain_plus_images& swapChain,
-                              const vk::raii::RenderPass& renderPass,
-                              std::span<const vk::raii::Framebuffer> framebuffers,
-                              const vk::raii::Pipeline& pipeline,
-                              vk::Extent2D extent,
-                              const vk::Viewport& viewport,
-                              const vk::Rect2D& scissor) const;
-    };
-
-    class render_pass {
-        vk::raii::RenderPass               m_RenderPass;
-        std::vector<vk::raii::Framebuffer> m_Framebuffers;
-    };
-
-    class pipeline {
-        vk::raii::PipelineLayout m_PipelineLayout;
-        vk::raii::Pipeline       m_Pipeline;
-    };
-
-    struct render_area {
-        vk::Extent2D extent;
-        vk::Viewport viewport;
-        vk::Rect2D   scissors;
+            const logical_device& logicalDevice,
+            const swap_chain_plus_images& swapChain,
+            const render_pass& renderPass,
+            const vk::raii::Pipeline& pipeline,
+            vk::Extent2D extent,
+            const vk::Viewport& viewport,
+            const vk::Rect2D& scissor) const;
     };
 
     class renderer {
@@ -229,8 +236,7 @@ namespace avocet::vulkan {
         const swap_chain_plus_images*      m_SwapChain{};
         vk::Extent2D                       m_Extent;
 
-        vk::raii::RenderPass               m_RenderPass;
-        std::vector<vk::raii::Framebuffer> m_Framebuffers;
+        render_pass                        m_RenderPass;
 
         vk::Viewport                       m_ViewPort;
         vk::Rect2D                         m_Scissor;
