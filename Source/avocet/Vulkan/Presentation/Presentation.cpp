@@ -89,8 +89,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        swap_chain_and_format make_swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
-            
+        swap_chain make_swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
             const auto requestedMinImageCount{
                 [&swapChainDetails]() {
                     const auto minImageCount{swapChainDetails.capabilities.surfaceCapabilities.minImageCount},
@@ -163,7 +162,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        vk::raii::RenderPass make_render_pass(const logical_device& logicalDevice, const swap_chain& swapChain) {
+        vk::raii::RenderPass make_render_pass(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain) {
             vk::AttachmentDescription2 colourAttachment{
                 .format{swapChain.format()},
                 .loadOp{vk::AttachmentLoadOp::eClear},
@@ -202,7 +201,7 @@ namespace avocet::vulkan {
         }
 
         [[nodiscard]]
-        std::vector<vk::raii::Framebuffer> make_framebuffers(const logical_device& logicalDevice, const swap_chain& swapChain, const vk::raii::RenderPass& renderPass, vk::Extent2D extent) {
+        std::vector<vk::raii::Framebuffer> make_framebuffers(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, const vk::raii::RenderPass& renderPass, vk::Extent2D extent) {
             return
                 std::views::transform(
                     swapChain.image_views(),
@@ -376,12 +375,17 @@ namespace avocet::vulkan {
     {
     }
 
-    swap_chain::swap_chain(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent)
+    swap_chain_plus_images::swap_chain_plus_images(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent)
         : m_Config{swapChainConfig}
         , m_Chain{make_swap_chain(logicalDevice, surfaceInfo, m_Config, swapChainDetails, extent)}
         , m_Images{m_Chain.chain.getImages()}
         , m_ImageViews{make_swap_chain_image_views(logicalDevice.device(), m_Chain.format, m_Images)}
     {
+    }
+
+    swap_chain_plus_images& swap_chain_plus_images::rebuild(const logical_device& logicalDevice, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo, const swap_chain_config& swapChainConfig, const swap_chain_support_details& swapChainDetails, vk::Extent2D extent) {
+        m_Chain.chain = {nullptr};
+        return *this = swap_chain_plus_images{logicalDevice, surfaceInfo, swapChainConfig, swapChainDetails, extent};
     }
 
     presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent)
@@ -404,20 +408,15 @@ namespace avocet::vulkan {
 
     void presentable::rebuild_swapchain(vk::Extent2D extent) {
         wait_idle();
-
-        auto config{m_SwapChain.config()};
-        m_SwapChain = {};
-        m_SwapChain = swap_chain{m_LogicalDevice, get_surface_info(), config, extract_swap_chain_support(), extent};
+        m_SwapChain.rebuild(m_LogicalDevice, get_surface_info(), m_SwapChain.config(), extract_swap_chain_support(), extent);
     }
 
-    void presentable::wait_idle() const {
-        m_LogicalDevice.device().waitIdle();
-    }
+    void presentable::wait_idle() const { m_LogicalDevice.device().waitIdle(); }
 
     [[nodiscard]]
     vk::Result command_buffer::draw_frame(const vk::raii::Fence& fence,
                                           const logical_device& logicalDevice,
-                                          const swap_chain& swapChain,
+                                          const swap_chain_plus_images& swapChain,
                                           const vk::raii::RenderPass& renderPass,
                                           std::span<const vk::raii::Framebuffer> framebuffers,
                                           const vk::raii::Pipeline& pipeline,
@@ -502,7 +501,7 @@ namespace avocet::vulkan {
         logicalDevice.get_graphics_queue().submit2(info, fence);
     }
 
-    void command_buffer::present(const avocet::vulkan::logical_device& logicalDevice, const swap_chain& swapChain, std::uint32_t imageIndex) const {
+    void command_buffer::present(const avocet::vulkan::logical_device& logicalDevice, const swap_chain_plus_images& swapChain, std::uint32_t imageIndex) const {
         std::array<vk::Semaphore, 1> waitSems{*m_RenderFinished};
         std::array<vk::SwapchainKHR, 1> swapChains{*swapChain.chain()};
         vk::PresentInfoKHR presentInfo{
@@ -518,7 +517,7 @@ namespace avocet::vulkan {
     }
 
 
-    renderer::renderer(const logical_device& logicalDevice, const swap_chain& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
+    renderer::renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
         , m_Extent{extent}
