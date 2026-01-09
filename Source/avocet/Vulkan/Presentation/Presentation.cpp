@@ -435,9 +435,7 @@ namespace avocet::vulkan {
                                           const swap_chain_plus_images& swapChain,
                                           const render_pass& renderPass,
                                           const pipeline& pipeLine,
-                                          vk::Extent2D extent,
-                                          const vk::Viewport& viewport,
-                                          const vk::Rect2D& scissor) const {
+                                          const render_area renderArea) const {
         if(logicalDevice.device().waitForFences(*fence, true, maxTimeout) != vk::Result::eSuccess)
             throw std::runtime_error{"Waiting for fences failed"};
 
@@ -457,7 +455,7 @@ namespace avocet::vulkan {
             logicalDevice.device().resetFences(*fence);
 
             m_CommandBuffer.reset();
-            record_cmd_buffer(renderPass.get(), renderPass.framebuffers()[imageIndex], pipeLine, extent, viewport, scissor);
+            record_cmd_buffer(renderPass.get(), renderPass.framebuffers()[imageIndex], pipeLine, renderArea);
             submit_cmd_buffer(fence, logicalDevice);
             present(logicalDevice, swapChain, imageIndex);
         }
@@ -465,7 +463,7 @@ namespace avocet::vulkan {
         return ec;
     }
 
-    void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const pipeline& pipeLine, vk::Extent2D extent, const vk::Viewport& viewport, const vk::Rect2D& scissor) const {
+    void command_buffer::record_cmd_buffer(const vk::raii::RenderPass& renderPass, const vk::Framebuffer& framebuffer, const pipeline& pipeLine, const render_area& renderArea) const {
         command_buffer_sentinel cmdBufferSentinel{m_CommandBuffer, vk::CommandBufferBeginInfo{}};
 
         vk::ClearValue clearCol{{0.0f, 0.0f, 0.0f, 1.0f}};
@@ -475,7 +473,7 @@ namespace avocet::vulkan {
             .framebuffer{framebuffer},
             .renderArea{
                 .offset{},
-                .extent{extent}
+                .extent{renderArea.extent}
              },
             .clearValueCount{1},
             .pClearValues{&clearCol}
@@ -484,8 +482,8 @@ namespace avocet::vulkan {
         render_pass_sentinel renderPassSentinel{m_CommandBuffer, renderPassInfo, vk::SubpassBeginInfo{}, vk::SubpassEndInfo{}};
 
         m_CommandBuffer.bindPipeline(vk::PipelineBindPoint::eGraphics, pipeLine.get());
-        m_CommandBuffer.setViewport(0, viewport);
-        m_CommandBuffer.setScissor(0, scissor);
+        m_CommandBuffer.setViewport(0, renderArea.viewport);
+        m_CommandBuffer.setScissor (0, renderArea.scissors);
         m_CommandBuffer.draw(3, 1, 0, 0);
     }
 
@@ -549,24 +547,25 @@ namespace avocet::vulkan {
         }
     {}
 
-
     renderer::renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
-        , m_Extent{extent}
         , m_RenderPass{logicalDevice, swapChain, extent}
         , m_Pipeline{logicalDevice, m_RenderPass, vertShaderModule, fragShaderModule}
-        , m_ViewPort{
-            .x{},
-            .y{},
-            .width {static_cast<float>(m_Extent.width)},
-            .height{static_cast<float>(m_Extent.height)},
-            .minDepth{},
-            .maxDepth{1.0f}
-          }
-        , m_Scissor{
-            .offset{},
-            .extent{m_Extent}
+        , m_RenderArea{
+            .extent{extent},
+            .viewport{
+                .x{},
+                .y{},
+                .width {static_cast<float>(extent.width)},
+                .height{static_cast<float>(extent.height)},
+                .minDepth{},
+                .maxDepth{1.0f}
+             },
+            .scissors{
+                .offset{},
+                .extent{extent}
+             }
           }
         , m_CommandPool{make_command_pool(logicalDevice)}
         , m_CommandBuffers{make_command_buffer(logicalDevice.device(), m_CommandPool, to_uint32(swapChain.image_views().size()))}
@@ -575,7 +574,7 @@ namespace avocet::vulkan {
 
     [[nodiscard]]
     vk::Result renderer::draw_frame() const {
-        auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Pipeline, m_Extent, m_ViewPort, m_Scissor)};
+        auto ec{m_CommandBuffers[m_CurrentImageIdx].draw_frame(m_Fences[m_CurrentFrameIdx], *m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Pipeline, m_RenderArea)};
 
         m_CurrentImageIdx = (m_CurrentImageIdx + 1) % m_SwapChain->image_views().size();
         m_CurrentFrameIdx = (m_CurrentFrameIdx + 1) % m_Fences.size();
