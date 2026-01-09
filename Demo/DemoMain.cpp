@@ -74,9 +74,25 @@ int main()
 {
     try
     {
-        curlew::glfw_manager manager{};
+        avocet::vulkan::instance_info vulkankInstanceInfo{
+            .app_info{.app{.name{"Hello Vulkan Rendering Engine Project"}}},
+            .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
+            .extensions{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME}
+        };
+
+        curlew::glfw_manager manager{vulkankInstanceInfo};
         const auto renderingSetup{manager.get_rendering_setup()};
         std::cout << curlew::rendering_setup_summary(renderingSetup);
+
+        std::println("Extension Properites");
+        for(const auto& p : manager.vulkan_extension_properties()) {
+            std::println("{:45}, version {}", p.extensionName.data(), p.specVersion);
+        }
+
+        std::println("Layer Properites");
+        for(const auto& p : manager.vulkan_layer_properties()) {
+            std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
+        }
 
         const std::vector<agl::message_id> acceptableWarnings{
             [&renderingSetup]() -> std::vector<agl::message_id> {
@@ -95,7 +111,7 @@ int main()
 
         auto make_device_extensions{
             []() {
-                std::vector<const char*> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
+                std::vector<std::string> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
                 if constexpr(avocet::is_apple()) {
                     extensions.push_back("VK_KHR_portability_subset");
                 }
@@ -109,14 +125,7 @@ int main()
                 curlew::vulkan_window_config{
                     .width{800},
                     .height{800},
-                    .create_info{
-                        .app_info{.app{.name{"Hello Vulkan Rendering Engine"}}}
-                     },
-                    .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
-                    .extensions{
-                        curlew::vulkan::build_vulkan_extensions(
-                            std::array{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME})
-                        },
+                    .name{"Hello Vulkan Rendering Engine"},
                     .device_config{
                         .selector{curlew::vulkan::device_selector{}},
                         .extensions{make_device_extensions()},
@@ -130,16 +139,6 @@ int main()
                 }
             )
         };
-
-        std::println("Extension Properites");
-        for(const auto& p : vulkanWindow.extension_properties()) {
-            std::println("{:45}, version {}", p.extensionName.data(), p.specVersion);
-        }
-
-        std::println("Layer Properites");
-        for(const auto& p : vulkanWindow.layer_properties()) {
-            std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
-        }
 
         auto w{
             manager.create_window(

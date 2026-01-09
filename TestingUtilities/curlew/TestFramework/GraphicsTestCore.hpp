@@ -20,7 +20,7 @@ namespace curlew {
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
     class test_window_manager {
-        inline static curlew::glfw_manager st_Manager{};
+        inline static curlew::glfw_manager st_Manager{avocet::vulkan::instance_info{}};
     public:
         [[nodiscard]]
         static opengl_rendering_setup find_rendering_setup();

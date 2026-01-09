@@ -11,11 +11,11 @@
 
 namespace curlew::vulkan {
     [[nodiscard]]
-    std::vector<const char*> build_vulkan_extensions(std::span<const char* const> requestedExtensions);
+    std::vector<std::string> build_vulkan_extensions(std::span<const std::string> requestedExtensions);
 
     struct device_selector {
         [[nodiscard]]
-        avocet::vulkan::physical_device operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) const;
+        avocet::vulkan::physical_device operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const std::string> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) const;
     };
 
     struct swap_chain_format_selector {

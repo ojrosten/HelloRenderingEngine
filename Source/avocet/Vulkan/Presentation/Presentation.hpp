@@ -26,19 +26,15 @@ namespace avocet::vulkan {
     };
 
     struct queue_family_indices {
-        std::optional<std::uint32_t>
-            graphics{},
-            present{};
+        std::optional<std::uint32_t> graphics{},
+                                     present{};
     };
 
     struct instance_info {
         vk::InstanceCreateFlags flags{vk::InstanceCreateFlagBits::eEnumeratePortabilityKHR};
         application_info app_info{};
-    };
-
-    struct physical_device {
-        vk::raii::PhysicalDevice device;
-        queue_family_indices     q_family_indices{};
+        std::vector<std::string> validation_layers{};
+        std::vector<std::string> extensions{};
     };
 
     struct swap_chain_configuration {
@@ -49,25 +45,42 @@ namespace avocet::vulkan {
         vk::ImageUsageFlags image_usage_flags{};
     };
 
-    struct device_configuration {
-        std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const char* const>, const vk::PhysicalDeviceSurfaceInfo2KHR&)> selector{};
-        std::vector<const char*> extensions{};
-        swap_chain_configuration swap_chain_config{};
-    };
-
     struct frames_in_flight {
         std::uint32_t value{};
 
         friend constexpr auto operator<=>(const frames_in_flight&, const frames_in_flight&) noexcept = default;
     };
 
-    struct presentation_config {
-        std::size_t width{800}, height{600};
-        instance_info create_info{};
-        std::vector<const char*> validation_layers{};
-        std::vector<const char*> extensions{};
-        device_configuration device_config{};
-        frames_in_flight max_frames_in_flight{2};
+    class instance {
+        const vk::raii::Context*             m_Context{};
+        std::vector<vk::LayerProperties>     m_LayerProperties;
+        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
+        vk::raii::Instance                   m_Instance;
+    public:
+        instance(const vk::raii::Context& context, const instance_info& instanceInfo);
+
+        [[nodiscard]]
+        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_ExtensionProperties; }
+
+        [[nodiscard]]
+        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_LayerProperties; }
+
+        [[nodiscard]]
+        const vk::raii::Context& context() const noexcept { return *m_Context; }
+
+        [[nodiscard]]
+        const vk::raii::Instance& get() const noexcept { return m_Instance; }
+    };
+
+    struct physical_device {
+        vk::raii::PhysicalDevice device;
+        queue_family_indices     q_family_indices{};
+    };
+
+    struct device_configuration {
+        std::function<physical_device(std::span<const vk::raii::PhysicalDevice>, std::span<const std::string>, const vk::PhysicalDeviceSurfaceInfo2KHR&)> selector{};
+        std::vector<std::string> extensions{};
+        swap_chain_configuration swap_chain_config{};
     };
 
     class logical_device {
@@ -132,13 +145,18 @@ namespace avocet::vulkan {
         std::span<const vk::raii::ImageView> image_views() const noexcept { return m_ImageViews; }
     };
 
+    struct presentation_configuration {
+        std::size_t width{800}, height{600};
+        std::string name;
+        device_configuration device_config{};
+        frames_in_flight max_frames_in_flight{2};
+    };
+
+
     class presentable {
-        std::vector<vk::LayerProperties>     m_LayerProperties;
-        std::vector<vk::ExtensionProperties> m_ExtensionProperties;
-        vk::raii::Instance                   m_Instance;
-        vk::raii::SurfaceKHR                 m_Surface;
-        logical_device                       m_LogicalDevice;
-        swap_chain_plus_images               m_SwapChain;
+        vk::raii::SurfaceKHR   m_Surface;
+        logical_device         m_LogicalDevice;
+        swap_chain_plus_images m_SwapChain;
 
         [[nodiscard]]
         swap_chain_support_details extract_swap_chain_support() const;
@@ -146,18 +164,9 @@ namespace avocet::vulkan {
         [[nodiscard]]
         vk::PhysicalDeviceSurfaceInfo2KHR get_surface_info() const { return {.surface{m_Surface}}; }
     public:
-        presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent);
+        presentable(const instance& vkInstance, const presentation_configuration& presentationConfig, std::function<vk::raii::SurfaceKHR(const instance&)> surfaceCreator, vk::Extent2D extent);
 
         void rebuild_swapchain(vk::Extent2D extent);
-
-        [[nodiscard]]
-        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_ExtensionProperties; }
-
-        [[nodiscard]]
-        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_LayerProperties; }
-
-        [[nodiscard]]
-        const vk::raii::Instance& instance() const noexcept { return m_Instance; }
 
         [[nodiscard]]
         const logical_device& get_logical_device() const noexcept { return m_LogicalDevice; }
@@ -189,19 +198,35 @@ namespace avocet::vulkan {
 
         [[nodiscard]]
         vk::Result draw_frame(const vk::raii::Fence& fence,
-            const logical_device& logicalDevice,
-            const swap_chain_plus_images& swapChain,
-            const vk::raii::RenderPass& renderPass,
-            std::span<const vk::raii::Framebuffer> framebuffers,
-            const vk::raii::Pipeline& pipeline,
-            vk::Extent2D extent,
-            const vk::Viewport& viewport,
-            const vk::Rect2D& scissor) const;
+                              const logical_device& logicalDevice,
+                              const swap_chain_plus_images& swapChain,
+                              const vk::raii::RenderPass& renderPass,
+                              std::span<const vk::raii::Framebuffer> framebuffers,
+                              const vk::raii::Pipeline& pipeline,
+                              vk::Extent2D extent,
+                              const vk::Viewport& viewport,
+                              const vk::Rect2D& scissor) const;
+    };
+
+    class render_pass {
+        vk::raii::RenderPass               m_RenderPass;
+        std::vector<vk::raii::Framebuffer> m_Framebuffers;
+    };
+
+    class pipeline {
+        vk::raii::PipelineLayout m_PipelineLayout;
+        vk::raii::Pipeline       m_Pipeline;
+    };
+
+    struct render_area {
+        vk::Extent2D extent;
+        vk::Viewport viewport;
+        vk::Rect2D   scissors;
     };
 
     class renderer {
         const logical_device*              m_LogicalDevice{};
-        const swap_chain_plus_images*                  m_SwapChain{};
+        const swap_chain_plus_images*      m_SwapChain{};
         vk::Extent2D                       m_Extent;
 
         vk::raii::RenderPass               m_RenderPass;
@@ -244,21 +269,15 @@ namespace avocet::vulkan {
 
         void rebuild_swapchain(vk::Extent2D extent);
     public:
-        rendering_system(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent)
-            : m_Presentable{presentationConfig, context, surfaceCreator, extent}
+        rendering_system(const instance& vkInstance, const presentation_configuration& presentationConfig, std::function<vk::raii::SurfaceKHR(const instance&)> surfaceCreator, vk::Extent2D extent)
+            : m_Presentable{vkInstance, presentationConfig, surfaceCreator, extent}
             , m_Extent{extent}
         {}
 
         void make_renderer(vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight);
 
-        [[nodiscard]]
-        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_Presentable.extension_properties(); }
-
-        [[nodiscard]]
-        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_Presentable.layer_properties(); }
-
-        [[nodiscard]]
-        const vk::raii::Instance& instance() const noexcept { return m_Presentable.instance(); }
+        //[[nodiscard]]
+        //const vk::raii::Instance& instance() const noexcept { return m_Presentable.instance(); }
 
         void wait_idle() const { m_Presentable.wait_idle(); }
 

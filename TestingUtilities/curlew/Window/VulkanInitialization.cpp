@@ -16,7 +16,7 @@
 
 namespace {
     [[nodiscard]]
-    bool has_required_extensions(const vk::raii::PhysicalDevice& device, std::span<const char* const> requiredExtensions) {
+    bool has_required_extensions(const vk::raii::PhysicalDevice& device, std::span<const std::string> requiredExtensions) {
         const auto extensions{device.enumerateDeviceExtensionProperties()};
         for(const auto& required : requiredExtensions) {
             if(std::ranges::find_if(extensions, [required](std::string_view actualName) { return std::string_view{required} == actualName; }, [](const vk::ExtensionProperties& prop) { return prop.extensionName.data(); }) == extensions.end())
@@ -29,11 +29,11 @@ namespace {
 
 namespace curlew::vulkan {
     [[nodiscard]]
-    std::vector<const char*> build_vulkan_extensions(std::span<const char* const> requestedExtensions) {
+    std::vector<std::string> build_vulkan_extensions(std::span<const std::string> requestedExtensions) {
         std::uint32_t count{};
         const char** names{glfwGetRequiredInstanceExtensions(&count)};
 
-        std::vector<const char*> extensions{std::from_range, std::span<const char*>(names, count)};
+        std::vector<std::string> extensions{std::from_range, std::span<const char*>(names, count)};
         for(const auto requestedExt : requestedExtensions) {
             auto found{std::ranges::find(extensions, requestedExt)};
             if(found == extensions.end())
@@ -44,7 +44,7 @@ namespace curlew::vulkan {
     }
 
     [[nodiscard]]
-    avocet::vulkan::physical_device device_selector::operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const char* const> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) const {
+    avocet::vulkan::physical_device device_selector::operator()(std::span<const vk::raii::PhysicalDevice> devices, std::span<const std::string> requiredExtensions, const vk::PhysicalDeviceSurfaceInfo2KHR& surfaceInfo) const {
         // For now, print out details of all discovered devices
         for(const auto& d : devices) {
             std::println("--Device--\n{}\n-Features-\n{}\n--------", d.getProperties2().properties, d.getFeatures2().features);

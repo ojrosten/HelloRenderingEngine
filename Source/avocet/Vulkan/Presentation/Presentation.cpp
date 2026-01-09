@@ -19,40 +19,53 @@ namespace avocet::vulkan {
         [[nodiscard]]
         std::uint32_t to_uint32(std::size_t i) { return static_cast<std::uint32_t>(i); }
 
-        const presentation_config& check_validation_layer_support(const presentation_config& config, std::span<const vk::LayerProperties> layerProperties) {
-            for(const auto& requested : config.validation_layers) {
+        const instance_info& check_validation_layer_support(const instance_info& info, std::span<const vk::LayerProperties> layerProperties) {
+            for(const auto& requested : info.validation_layers) {
                 auto found{std::ranges::find_if(layerProperties, [&requested](std::string_view actualName) { return std::string_view{requested} == actualName; }, [](const vk::LayerProperties& prop) { return prop.layerName.data(); })};
                 if(found == layerProperties.end())
                     throw std::runtime_error{std::format("Unable to find requested validation layer {}", requested)};
             }
 
-            return config;
+            return info;
         }
 
         [[nodiscard]]
-        vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const presentation_config& config) {
+        std::vector<const char*> to_cstyle_strings(std::span<const std::string> strs) {
+            return
+                std::views::transform(
+                    strs,
+                    [](const std::string& s) -> const char* { return s.data(); }
+                ) | std::ranges::to<std::vector>();
+        }
+
+        [[nodiscard]]
+        vk::raii::Instance make_instance(const vk::raii::Context& vulkanContext, const instance_info& info) {
             vk::ApplicationInfo appInfo{
-                .pApplicationName{config.create_info.app_info.app.name.data()},
-                .applicationVersion{config.create_info.app_info.app.version},
-                .pEngineName{config.create_info.app_info.engine.name.data()},
-                .engineVersion{config.create_info.app_info.engine.version},
+                .pApplicationName{info.app_info.app.name.data()},
+                .applicationVersion{info.app_info.app.version},
+                .pEngineName{info.app_info.engine.name.data()},
+                .engineVersion{info.app_info.engine.version},
                 .apiVersion{vk::ApiVersion14}
             };
 
+            auto rawValidationLayers{to_cstyle_strings(info.validation_layers)},
+                 rawExtensions      {to_cstyle_strings(info.extensions)};
+
+
             vk::InstanceCreateInfo createInfo{
-                .flags{config.create_info.flags},
+                .flags{info.flags},
                 .pApplicationInfo{&appInfo},
-                .enabledLayerCount{to_uint32(config.validation_layers.size())},
-                .ppEnabledLayerNames{config.validation_layers.data()},
-                .enabledExtensionCount{to_uint32(config.extensions.size())},
-                .ppEnabledExtensionNames{config.extensions.data()}
+                .enabledLayerCount{to_uint32(rawValidationLayers.size())},
+                .ppEnabledLayerNames{rawValidationLayers.data()},
+                .enabledExtensionCount{to_uint32(rawExtensions.size())},
+                .ppEnabledExtensionNames{rawExtensions.data()}
             };
 
             return vk::raii::Instance{vulkanContext, createInfo};
         }
 
         [[nodiscard]]
-        vk::raii::Device make_logical_device(const physical_device& physDevice, std::span<const char* const> extensions) {
+        vk::raii::Device make_logical_device(const physical_device& physDevice, std::span<const std::string> extensions) {
             const float queuePriority{1.0}; // TO DO: allow for customization
 
             std::vector<std::uint32_t> uniqueFamiliesIndices{physDevice.q_family_indices.graphics.value(), physDevice.q_family_indices.present.value()};
@@ -76,12 +89,13 @@ namespace avocet::vulkan {
                 .synchronization2{true}
             };
 
+            auto rawExtensions{to_cstyle_strings(extensions)};
             vk::DeviceCreateInfo createInfo{
                 .pNext{&syncFeatures},
                 .queueCreateInfoCount{to_uint32(qCreateInfos.size())},
                 .pQueueCreateInfos{qCreateInfos.data()},
-                .enabledExtensionCount{to_uint32(extensions.size())},
-                .ppEnabledExtensionNames{extensions.data()},
+                .enabledExtensionCount{to_uint32(rawExtensions.size())},
+                .ppEnabledExtensionNames{rawExtensions.data()},
                 .pEnabledFeatures{&features}
             };
 
@@ -367,6 +381,13 @@ namespace avocet::vulkan {
     {
     }
 
+    instance::instance(const vk::raii::Context& context, const instance_info& instanceInfo)
+        : m_Context{&context}
+        , m_LayerProperties{vk::enumerateInstanceLayerProperties()}
+        , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
+        , m_Instance{make_instance(context, check_validation_layer_support(instanceInfo, m_LayerProperties))}
+    { }
+
     logical_device::logical_device(physical_device physDevice, const device_configuration& deviceConfig)
         : m_PhysicalDevice{std::move(physDevice)}
         , m_Device{make_logical_device(m_PhysicalDevice, deviceConfig.extensions)}
@@ -388,13 +409,10 @@ namespace avocet::vulkan {
         return *this = swap_chain_plus_images{logicalDevice, surfaceInfo, swapChainConfig, swapChainDetails, extent};
     }
 
-    presentable::presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent)
-        : m_LayerProperties{vk::enumerateInstanceLayerProperties()}
-        , m_ExtensionProperties{vk::enumerateInstanceExtensionProperties()}
-        , m_Instance{make_instance(context, check_validation_layer_support(presentationConfig, m_LayerProperties))}
-        , m_Surface{surfaceCreator(m_Instance)}
+    presentable::presentable(const instance& vkInstance, const presentation_configuration& presentationConfig, std::function<vk::raii::SurfaceKHR(const instance&)> surfaceCreator, vk::Extent2D extent)
+        : m_Surface{surfaceCreator(vkInstance)}
         , m_LogicalDevice{
-            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, get_surface_info()),
+            presentationConfig.device_config.selector(vkInstance.get().enumeratePhysicalDevices(), presentationConfig.device_config.extensions, get_surface_info()),
             presentationConfig.device_config
           }
         , m_SwapChain{m_LogicalDevice, get_surface_info(), presentationConfig.device_config.swap_chain_config, extract_swap_chain_support(), extent}

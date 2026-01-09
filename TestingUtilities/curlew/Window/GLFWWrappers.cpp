@@ -8,6 +8,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "curlew/Window/VulkanInitialization.hpp"
 
 #include <iostream>
 #include <format>
@@ -53,7 +54,7 @@ namespace curlew {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
             glfwWindowHint(GLFW_VISIBLE, true);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.create_info.app_info.app.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window suitable for Vulkan"};
         }
 
@@ -79,12 +80,17 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        vk::raii::SurfaceKHR make_surface(vk::raii::Instance& instance, curlew::window_resource& window) {
+        vk::raii::SurfaceKHR make_surface(const avocet::vulkan::instance& instance, curlew::window_resource& window) {
             VkSurfaceKHR rawSurface{};
-            if(glfwCreateWindowSurface(*instance, &window.get(), nullptr, &rawSurface) != VK_SUCCESS)
+            if(glfwCreateWindowSurface(*instance.get(), &window.get(), nullptr, &rawSurface) != VK_SUCCESS)
                 throw std::runtime_error{"Window surface creation failed"};
 
-            return vk::raii::SurfaceKHR{instance, rawSurface};
+            return vk::raii::SurfaceKHR{instance.get(), rawSurface};
+        }
+
+        avocet::vulkan::instance_info& add_required_extensions(avocet::vulkan::instance_info& info) {
+            info.extensions = curlew::vulkan::build_vulkan_extensions(info.extensions);
+            return info;
         }
     }
 
@@ -97,10 +103,13 @@ namespace curlew {
 
     glfw_resource::~glfw_resource() { glfwTerminate(); }
 
-    glfw_manager::glfw_manager()
+    glfw_manager::glfw_manager(avocet::vulkan::instance_info instanceInfo)
         : m_RenderingSetup{do_find_rendering_setup()}
         , m_VulkanContext{make_vulkan_context()}
+        , m_VulkanInstance{m_VulkanContext, add_required_extensions(instanceInfo)}
     {
+        volkLoadInstance(*m_VulkanInstance.get());
+        VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_VulkanInstance.get());
     }
 
     [[nodiscard]]
@@ -132,7 +141,7 @@ namespace curlew {
 
     opengl_window glfw_manager::create_window(const opengl_window_config& config) { return opengl_window{config, m_RenderingSetup.version}; }
 
-    vulkan_window glfw_manager::create_window(const vulkan_window_config& config) { return vulkan_window{config, m_VulkanContext}; }
+    vulkan_window glfw_manager::create_window(const vulkan_window_config& config) { return vulkan_window{config, m_VulkanInstance}; }
 
     window_resource::window_resource(const opengl_window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
 
@@ -159,17 +168,15 @@ namespace curlew {
         return {static_cast<std::uint32_t>(width), static_cast<std::uint32_t>(height)};
     }
 
-    vulkan_window::vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext)
+    vulkan_window::vulkan_window(const vulkan_window_config& config, const avocet::vulkan::instance& instance)
         : m_Window{config}
         , m_System{
+              instance,
               config,
-              vulkanContext,
-              [&window = m_Window](vk::raii::Instance& instance) -> vk::raii::SurfaceKHR { return make_surface(instance, window); },
+              [&window = m_Window](const avocet::vulkan::instance& instance) -> vk::raii::SurfaceKHR { return make_surface(instance, window); },
               get_framebuffer_extent()
          }
     {
-        volkLoadInstance(*m_System.instance());
-        VULKAN_HPP_DEFAULT_DISPATCHER.init(*m_System.instance());
     }
 
     void vulkan_window::make_renderer(const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, avocet::vulkan::frames_in_flight maxFramesInFlight) {

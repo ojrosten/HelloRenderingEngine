@@ -57,7 +57,7 @@ namespace curlew {
     };
 
 
-    using vulkan_window_config = avocet::vulkan::presentation_config;
+    using vulkan_window_config = avocet::vulkan::presentation_configuration;
 
     class glfw_manager;
 
@@ -77,9 +77,10 @@ namespace curlew {
     class vulkan_window;
 
     class [[nodiscard]] glfw_manager {
-        glfw_resource m_Resource{};
-        opengl_rendering_setup m_RenderingSetup{};
-        vk::raii::Context m_VulkanContext;
+        glfw_resource            m_Resource{};
+        opengl_rendering_setup   m_RenderingSetup{};
+        vk::raii::Context        m_VulkanContext;
+        avocet::vulkan::instance m_VulkanInstance;
 
         [[nodiscard]]
         opengl_rendering_setup attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const;
@@ -87,7 +88,7 @@ namespace curlew {
         [[nodiscard]]
         opengl_rendering_setup do_find_rendering_setup() const;
     public:
-        glfw_manager();
+        glfw_manager(avocet::vulkan::instance_info instanceInfo);
 
         glfw_manager(const glfw_manager&) = delete;
 
@@ -101,6 +102,12 @@ namespace curlew {
 
         [[nodiscard]]
         const opengl_rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
+
+        [[nodiscard]]
+        std::span<const vk::ExtensionProperties> vulkan_extension_properties() const noexcept { return m_VulkanInstance.extension_properties(); }
+
+        [[nodiscard]]
+        std::span<const vk::LayerProperties> vulkan_layer_properties() const noexcept { return m_VulkanInstance.layer_properties(); }
     };
 
     class [[nodiscard]] window_resource {
@@ -149,7 +156,7 @@ namespace curlew {
         window_resource                  m_Window;
         avocet::vulkan::rendering_system m_System;
 
-        vulkan_window(const vulkan_window_config& config, const vk::raii::Context& vulkanContext);
+        vulkan_window(const vulkan_window_config& config, const avocet::vulkan::instance& instance);
 
         [[nodiscard]]
         vk::Extent2D get_framebuffer_extent();
@@ -160,12 +167,6 @@ namespace curlew {
         vulkan_window& operator=(const vulkan_window&) = delete;
 
         ~vulkan_window() = default;
-
-        [[nodiscard]]
-        std::span<const vk::ExtensionProperties> extension_properties() const noexcept { return m_System.extension_properties(); }
-
-        [[nodiscard]]
-        std::span<const vk::LayerProperties> layer_properties() const noexcept { return m_System.layer_properties(); }
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
