@@ -34,7 +34,7 @@ namespace curlew::vulkan {
         const char** names{glfwGetRequiredInstanceExtensions(&count)};
 
         std::vector<std::string> extensions{std::from_range, std::span<const char*>(names, count)};
-        for(const auto requestedExt : requestedExtensions) {
+        for(const auto& requestedExt : requestedExtensions) {
             auto found{std::ranges::find(extensions, requestedExt)};
             if(found == extensions.end())
                 extensions.push_back(requestedExt);
