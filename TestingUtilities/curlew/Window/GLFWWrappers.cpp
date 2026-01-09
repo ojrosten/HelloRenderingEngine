@@ -176,5 +176,11 @@ namespace curlew {
         m_System.make_renderer(get_framebuffer_extent(), vertShaderPath, fragShaderPath, maxFramesInFlight);
     }
 
-    void vulkan_window::draw_all() { m_System.draw_all(get_framebuffer_extent()); }
+    void vulkan_window::draw_all() {
+        const auto extent{get_framebuffer_extent()};
+        if(!extent.width || !extent.height)
+            return;
+
+        m_System.draw_all(extent);
+    }
 }
