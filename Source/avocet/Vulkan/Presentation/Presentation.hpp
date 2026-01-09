@@ -126,21 +126,19 @@ namespace avocet::vulkan {
         std::span<const vk::raii::ImageView> image_views() const noexcept { return m_ImageViews; }
     };
 
-    struct surface {
-        vk::raii::SurfaceKHR surfaceKHR;
-        vk::PhysicalDeviceSurfaceInfo2KHR info{.surface{surfaceKHR}};
-    };
-
     class presentable {
         std::vector<vk::LayerProperties>     m_LayerProperties;
         std::vector<vk::ExtensionProperties> m_ExtensionProperties;
         vk::raii::Instance                   m_Instance;
-        surface                              m_Surface;
+        vk::raii::SurfaceKHR                 m_Surface;
         logical_device                       m_LogicalDevice;
         swap_chain                           m_SwapChain;
 
         [[nodiscard]]
         swap_chain_support_details extract_swap_chain_support() const;
+
+        [[nodiscard]]
+        vk::PhysicalDeviceSurfaceInfo2KHR get_surface_info() const { return {.surface{m_Surface}}; }
     public:
         presentable(const presentation_config& presentationConfig, const vk::raii::Context& context, std::function<vk::raii::SurfaceKHR(vk::raii::Instance&)> surfaceCreator, vk::Extent2D extent);
 

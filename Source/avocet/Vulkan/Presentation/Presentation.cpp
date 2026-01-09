@@ -390,16 +390,16 @@ namespace avocet::vulkan {
         , m_Instance{make_instance(context, check_validation_layer_support(presentationConfig, m_LayerProperties))}
         , m_Surface{surfaceCreator(m_Instance)}
         , m_LogicalDevice{
-            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, m_Surface.info),
+            presentationConfig.device_config.selector(m_Instance.enumeratePhysicalDevices(), presentationConfig.device_config.extensions, get_surface_info()),
             presentationConfig.device_config
           }
-        , m_SwapChain{m_LogicalDevice, m_Surface.info, presentationConfig.device_config.swap_chain, extract_swap_chain_support(), extent}
+        , m_SwapChain{m_LogicalDevice, get_surface_info(), presentationConfig.device_config.swap_chain, extract_swap_chain_support(), extent}
     {
     }
 
     [[nodiscard]]
     swap_chain_support_details presentable::extract_swap_chain_support() const {
-        return {m_LogicalDevice.get_physical_device().device, vk::PhysicalDeviceSurfaceInfo2KHR{.surface{m_Surface.surfaceKHR}}};
+        return {m_LogicalDevice.get_physical_device().device, get_surface_info()};
     }
 
     void presentable::rebuild_swapchain(vk::Extent2D extent) {
@@ -407,7 +407,7 @@ namespace avocet::vulkan {
 
         auto config{m_SwapChain.config()};
         m_SwapChain = {};
-        m_SwapChain = swap_chain{m_LogicalDevice, m_Surface.info, config, extract_swap_chain_support(), extent};
+        m_SwapChain = swap_chain{m_LogicalDevice, get_surface_info(), config, extract_swap_chain_support(), extent};
     }
 
     void presentable::wait_idle() const {
