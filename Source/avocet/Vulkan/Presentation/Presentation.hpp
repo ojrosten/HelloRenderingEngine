@@ -172,7 +172,7 @@ namespace avocet::vulkan {
         vk::Result draw_frame(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, const render_pass& renderPass, const pipeline& pipe, const render_area& renderArea) const;
     };
 
-    class renderer {
+    class frame_renderer {
         const logical_device*         m_LogicalDevice{};
         const swap_chain_plus_images* m_SwapChain{};
 
@@ -181,7 +181,7 @@ namespace avocet::vulkan {
         render_area                   m_RenderArea;
         draw_submitter                m_Submitter;
     public:
-        renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight);
+        frame_renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight);
 
         [[nodiscard]]
         vk::Result draw_frame() const;
@@ -195,7 +195,7 @@ namespace avocet::vulkan {
             vk::raii::ShaderModule vertex,
                                    fragment;
             frames_in_flight       max_frames_in_flight;
-            renderer               renderer;
+            frame_renderer         renderer;
         };
 
         presentable m_Presentable;
