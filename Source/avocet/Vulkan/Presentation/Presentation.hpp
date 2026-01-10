@@ -12,12 +12,6 @@
 #include <filesystem>
 
 namespace avocet::vulkan {
-    struct frames_in_flight {
-        std::uint32_t value{};
-
-        friend constexpr auto operator<=>(const frames_in_flight&, const frames_in_flight&) noexcept = default;
-    };
-
     struct swap_chain {
         vk::raii::SwapchainKHR chain;
         vk::Format             format;
@@ -73,7 +67,6 @@ namespace avocet::vulkan {
         std::string name;
         device_configuration device_config{};
         swap_chain_configuration swap_chain_config{};
-        frames_in_flight max_frames_in_flight{2};
     };
 
 

@@ -10,6 +10,12 @@
 #include "avocet/Vulkan/Presentation/Presentation.hpp"
 
 namespace avocet::vulkan {
+    struct frames_in_flight {
+        std::uint32_t value{};
+
+        friend constexpr auto operator<=>(const frames_in_flight&, const frames_in_flight&) noexcept = default;
+    };
+
     class render_pass {
         vk::raii::RenderPass               m_RenderPass;
         std::vector<vk::raii::Framebuffer> m_Framebuffers;
