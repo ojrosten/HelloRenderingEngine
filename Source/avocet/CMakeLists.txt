@@ -60,7 +60,7 @@ set(SHADERC_SKIP_COPYRIGHT_CHECK ON CACHE BOOL "" FORCE)
 set(SPIRV_SKIP_TESTS             ON CACHE BOOL "" FORCE)
 set(SHADERC_ENABLE_SHARED_CRT    ON CACHE BOOL "" FORCE)
 add_subdirectory(${Dependencies}/shaderc shaderc)
-target_link_libraries(avocet PUBLIC shaderc_combined)
+target_link_libraries(avocet PUBLIC shaderc)
 
 function(group_external_targets dir folder_name)
     get_property(targets DIRECTORY ${dir} PROPERTY BUILDSYSTEM_TARGETS)
