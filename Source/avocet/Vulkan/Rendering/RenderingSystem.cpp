@@ -341,7 +341,7 @@ namespace avocet::vulkan {
     {
     }
 
-    renderer::renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
+    frame_renderer::frame_renderer(const logical_device& logicalDevice, const swap_chain_plus_images& swapChain, vk::Extent2D extent, const vk::raii::ShaderModule& vertShaderModule, const vk::raii::ShaderModule& fragShaderModule, frames_in_flight maxFramesInFlight)
         : m_LogicalDevice{&logicalDevice}
         , m_SwapChain{&swapChain}
         , m_RenderPass{logicalDevice, swapChain, extent}
@@ -376,7 +376,7 @@ namespace avocet::vulkan {
     }
 
     [[nodiscard]]
-    vk::Result renderer::draw_frame() const { return m_Submitter.draw_frame(*m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Pipeline, m_RenderArea); }
+    vk::Result frame_renderer::draw_frame() const { return m_Submitter.draw_frame(*m_LogicalDevice, *m_SwapChain, m_RenderPass, m_Pipeline, m_RenderArea); }
 
     rendering_system::full_renderer::full_renderer(const presentable& p, vk::Extent2D extent, const std::filesystem::path& vertShaderPath, const std::filesystem::path& fragShaderPath, frames_in_flight maxFramesInFlight)
         : vertex{create_shader_module(p.get_logical_device().device(), vertShaderPath, shaderc_shader_kind::shaderc_glsl_vertex_shader  , vertShaderPath.generic_string())}
@@ -393,7 +393,7 @@ namespace avocet::vulkan {
     void rendering_system::rebuild_swapchain(vk::Extent2D extent) {
         m_Presentable.rebuild_swapchain(extent);
         for(auto& fullRenderer : m_Renderers) {
-            fullRenderer.renderer = renderer{m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), extent, fullRenderer.vertex, fullRenderer.fragment, fullRenderer.max_frames_in_flight};
+            fullRenderer.renderer = frame_renderer{m_Presentable.get_logical_device(), m_Presentable.get_swap_chain(), extent, fullRenderer.vertex, fullRenderer.fragment, fullRenderer.max_frames_in_flight};
         }
     }
 
