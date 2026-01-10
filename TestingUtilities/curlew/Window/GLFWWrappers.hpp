@@ -12,7 +12,7 @@
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
-#include "avocet/Vulkan/Presentation/Presentation.hpp"
+#include "avocet/Vulkan/Rendering/RenderingSystem.hpp"
 
 #include <functional>
 #include <optional>

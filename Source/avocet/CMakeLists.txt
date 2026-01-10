@@ -23,6 +23,7 @@ set(SourceList
     Vulkan/Presentation/Presentation.cpp
     Vulkan/Common/Conversions.cpp
     Vulkan/Common/VulkanConfig.cpp
+    Vulkan/Rendering/RenderingSystem.cpp
     Vulkan/Setup/Devices.cpp
     Vulkan/Setup/Instance.cpp
     Vulkan/Shaders/Shaders.cpp
