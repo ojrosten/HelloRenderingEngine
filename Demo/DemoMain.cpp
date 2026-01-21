@@ -283,6 +283,8 @@ int main()
 
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+            w.update_viewport();
+
             {
                 set_payload(ctx);
                 discShaderProgram2DTextured.use();

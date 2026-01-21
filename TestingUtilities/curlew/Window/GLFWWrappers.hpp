@@ -126,5 +126,7 @@ namespace curlew {
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
         [[nodiscard]] const agl::capable_context& context() const noexcept { return m_Context; }
+
+        void update_viewport();
     };
 }

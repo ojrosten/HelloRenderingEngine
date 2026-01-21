@@ -114,4 +114,12 @@ namespace curlew {
             config.compensate
           }
     {}
+
+    void window::update_viewport() {
+        int width{-1}, height{-1};
+
+        glfwGetFramebufferSize(&m_Window.get(), &width, &height);
+
+        agl::gl_function{&GladGLContext::Viewport}(m_Context, 0, 0, width, height);
+    }
 }
