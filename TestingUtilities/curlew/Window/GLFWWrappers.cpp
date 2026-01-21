@@ -135,9 +135,22 @@ namespace curlew {
             config.compensate
           }
     {
-        // Don't do this
-        callback::ctx = &m_Context;
-        glfwSetFramebufferSizeCallback(&m_Window.get(), callback{});
+        // Don't do this - it doesn't work with multiple contexts
+        // And don't create a map from GLFWwindow* to decorated_context*:
+        // this is jst the wrong design!
+        // callback::ctx = &m_Context;
+        // glfwSetFramebufferSizeCallback(&m_Window.get(), callback{});
+
+
+        // Don't do this either! The static_cast is highly risky
+        // The right design here is the updated_viewport approach
+        glfwSetWindowUserPointer(&m_Window.get(), &m_Context);
+        glfwSetFramebufferSizeCallback(
+            &m_Window.get(),
+            [](GLFWwindow* win, int width, int height){
+                agl::gl_function{&GladGLContext::Viewport}(*static_cast<agl::decorated_context*>(glfwGetWindowUserPointer(win)), 0, 0, width, height);
+            }
+        );
     }
 
     void window::update_viewport() {
