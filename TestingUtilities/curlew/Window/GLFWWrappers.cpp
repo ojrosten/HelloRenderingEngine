@@ -55,6 +55,27 @@ namespace curlew {
 
             return ctx;
         }
+
+        // Don't do this
+        struct callback {
+            inline static agl::decorated_context* ctx{};
+
+            static void invoke(GLFWwindow*, int width, int height) {
+                if(!ctx)
+                    throw std::runtime_error{"Null context!"};
+
+                agl::gl_function{&GladGLContext::Viewport}(*ctx, 0, 0, width, height);
+            }
+
+            void operator()(GLFWwindow* win, int width, int height) const {
+                invoke(win, width, height);
+            }
+
+            using fptr_t = void (*) (GLFWwindow*, int, int);
+
+            [[nodiscard]]
+            operator fptr_t() const noexcept { return invoke; }
+        };
     }
 
 
@@ -113,7 +134,11 @@ namespace curlew {
             config.epilogue,
             config.compensate
           }
-    {}
+    {
+        // Don't do this
+        callback::ctx = &m_Context;
+        glfwSetFramebufferSizeCallback(&m_Window.get(), callback{});
+    }
 
     void window::update_viewport() {
         int width{-1}, height{-1};
