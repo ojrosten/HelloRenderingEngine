@@ -16,7 +16,7 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    std::optional<viewport> refit(const discrete_extent& framebufferExtent, const discrete_extent& requestedExtent) {
+    std::optional<viewport> refit(const discrete_extent& nominalExtent, const discrete_extent& availableExtent) {
         return null_viewport;
     }
 }

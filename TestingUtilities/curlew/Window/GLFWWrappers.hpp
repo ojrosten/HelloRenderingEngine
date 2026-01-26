@@ -10,6 +10,7 @@
 #include "RenderingSetup.hpp"
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+#include "avocet/Core/RenderArea/Viewport.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
 
@@ -106,6 +107,9 @@ namespace curlew {
         ~window_resource();
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window; }
+
+        [[nodiscard]]
+        avocet::discrete_extent get_framebuffer_extent() const;
     };
 
     class [[nodiscard]] window {
@@ -127,6 +131,11 @@ namespace curlew {
 
         [[nodiscard]] const agl::capable_context& context() const noexcept { return m_Context; }
 
-        void update_viewport();
+        void update_viewport(const avocet::viewport& vp);
+
+        [[nodiscard]]
+        avocet::discrete_extent get_framebuffer_extent() const {
+            return m_Window.get_framebuffer_extent();
+        }
     };
 }

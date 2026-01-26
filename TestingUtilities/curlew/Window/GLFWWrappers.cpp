@@ -55,6 +55,14 @@ namespace curlew {
 
             return ctx;
         }
+
+        [[nodiscard]]
+        std::uint32_t validate(std::string_view tag, int i) {
+            if(i < 0)
+                throw std::runtime_error{std::format("Negative framebuffer {}: {}", tag, i)};
+
+            return static_cast<std::uint32_t>(i);
+        }
     }
 
 
@@ -104,6 +112,16 @@ namespace curlew {
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
+    [[nodiscard]]
+    avocet::discrete_extent window_resource::get_framebuffer_extent() const {
+        int width{-1}, height{-1};
+
+        glfwGetFramebufferSize(&m_Window, &width, &height);
+
+        return avocet::discrete_extent{validate("width", width), validate("height", height)};
+    }
+
+
     window::window(const window_config& config, const agl::opengl_version& version)
         : m_Window{config, version}
         , m_Context{
@@ -115,11 +133,7 @@ namespace curlew {
           }
     {}
 
-    void window::update_viewport() {
-        int width{-1}, height{-1};
-
-        glfwGetFramebufferSize(&m_Window.get(), &width, &height);
-
-        agl::gl_function{&GladGLContext::Viewport}(m_Context, 0, 0, width, height);
+    void window::update_viewport(const avocet::viewport& vp) {
+        agl::gl_function{&GladGLContext::Viewport}(m_Context, vp.offset.x, vp.offset.y, vp.extent.width, vp.extent.height);
     }
 }

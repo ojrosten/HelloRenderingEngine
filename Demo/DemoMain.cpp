@@ -59,7 +59,7 @@ int main()
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-            w.update_viewport();
+            w.update_viewport(avocet::viewport({}, w.get_framebuffer_extent()));
 
             ponyPolygons.draw();
 
