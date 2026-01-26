@@ -21,11 +21,10 @@ namespace avocet {
     /// - Else a viewport is returned such that its extent
     ///     1. Preserves the aspect ratio of the nominal extent
     ///     2. Is as big as possible, subject to the first condition
-    ///     3. Is centralized
+    ///     3. Is centralized to within a pixel
     /// 
     /// In the event that the viewport's extent cannot be exactly centralized it is: 
-    ///   - Guaranteed to be centralized to within a pixel
-    ///   - Unspecified which rounding mode is used
+    ///   -Unspecified which rounding mode is used
     /// </summary>
     [[nodiscard]]
     std::optional<viewport> refit(const discrete_extent& nominalExtent, const discrete_extent& availableExtent) {
