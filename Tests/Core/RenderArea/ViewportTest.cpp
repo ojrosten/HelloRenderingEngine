@@ -42,7 +42,7 @@ namespace avocet::testing
 
         check(equality, "Unable to exactly centralize", refit({1, 1}, {2, 1}), opt_viewport{{{}, {1, 1}}});
         check(equality, "", refit({1, 1}, {3, 1}), opt_viewport{{{1, 0}, {1, 1}}});
-        check(equality, "Computed width of zero", refit({1, 2}, {1, 1}), null_viewport);
+        check(equality, "Computed height of zero", refit({1, 2}, {1, 1}), null_viewport);
         check(equality, "Expanding: unable to exactly centralize", refit({1, 1}, {3, 2}), opt_viewport{{{0, 0}, {2, 2}}});
         check(equality, "", refit({2, 2}, {3, 1}), opt_viewport{{{1, 0}, {1, 1}}});
         check(equality, "Contracting: unable to respect aspect ratio", refit({2, 5}, {3, 4}), opt_viewport{{{1, 0}, {1, 4}}});
