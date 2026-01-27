@@ -13,6 +13,11 @@ namespace avocet::testing
 {
     namespace {
         [[nodiscard]]
+        constexpr bool good_extent(const discrete_extent& extent) noexcept {
+            return (extent.width > 0) && (extent.height > 0);
+        }
+
+        [[nodiscard]]
         std::optional<viewport> refit(const discrete_extent& nominalExtent, const discrete_extent& availableExtent) {
             return null_viewport;
         }

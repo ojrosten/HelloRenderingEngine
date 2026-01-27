@@ -10,7 +10,7 @@
 namespace avocet {
     namespace {
         [[nodiscard]]
-        bool good_extent(const discrete_extent& extent) {
+        constexpr bool good_extent(const discrete_extent& extent) noexcept {
             return (extent.width > 0) && (extent.height > 0);
         }
     }
