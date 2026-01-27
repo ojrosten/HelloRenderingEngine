@@ -43,7 +43,7 @@ namespace curlew {
     struct window_config {
         using decorator_type = std::function<void(const agl::context&, const agl::decorator_data)>;
 
-        std::size_t width{800}, height{600};
+        avocet::discrete_extent dimensions{.width{800}, .height{600}};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
         agl::debugging_mode debug_mode{agl::debugging_mode::dynamic};

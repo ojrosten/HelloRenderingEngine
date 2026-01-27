@@ -37,10 +37,11 @@ int main()
             }()
         };
 
+        constexpr avocet::discrete_extent nominalWindowSize{.width{800}, .height{800}};
+
         auto w{
             manager.create_window(
-                {.width {800},
-                 .height{800},
+                {.dimensions{nominalWindowSize},
                  .name{"Hello Rendering Engine"},
                  .hiding{curlew::window_hiding_mode::off},
                  .debug_mode{agl::debugging_mode::dynamic},

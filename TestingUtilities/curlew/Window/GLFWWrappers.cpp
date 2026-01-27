@@ -42,7 +42,7 @@ namespace curlew {
 
             set_debug_context(config.debug_mode, version);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(static_cast<int>(config.dimensions.width), static_cast<int>(config.dimensions.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
         }
 
