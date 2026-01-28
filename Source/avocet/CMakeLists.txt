@@ -12,6 +12,7 @@ set(SourceList
     Core/AssetManagement/Image.cpp
     Core/Formatting/Formatting.cpp
     Core/ShaderCompilation/ShaderCompiler.cpp
+    Core/RenderArea/Viewport.cpp
     OpenGL/Capabilities/Capabilities.cpp
     OpenGL/Capabilities/CapabilitiesConfiguration.cpp
     OpenGL/Context/Context.cpp

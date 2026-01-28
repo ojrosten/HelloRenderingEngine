@@ -1,0 +1,39 @@
+Tests/Core/RenderArea/ViewportTestingDiagnostics.cpp, Line 23
+
+[avocet::viewport]
+operator== returned false
+
+  Offset
+  [avocet::discrete_offset]
+  operator== returned false
+
+    x
+    [int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 42
+
+    y
+    [int]
+    operator== returned false
+    Obtained : 0
+    Predicted: 1729
+
+  Extent
+  [avocet::discrete_extent]
+  operator== returned false
+
+    Width
+    [unsigned int]
+    operator== returned false
+    Obtained : 800
+    Predicted: 5
+
+    Height
+    [unsigned int]
+    operator== returned false
+    Obtained : 600
+    Predicted: 7
+
+=======================================
+

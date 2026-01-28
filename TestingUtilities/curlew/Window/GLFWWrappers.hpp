@@ -10,6 +10,7 @@
 #include "RenderingSetup.hpp"
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+#include "avocet/Core/RenderArea/Viewport.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
 #include "avocet/Vulkan/Rendering/RenderingSystem.hpp"
@@ -46,7 +47,7 @@ namespace curlew {
     struct opengl_window_config {
         using decorator_type = std::function<void(const agl::context&, const agl::decorator_data)>;
 
-        std::size_t width{800}, height{600};
+        avocet::discrete_extent dimensions{.width{800}, .height{600}};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
         agl::debugging_mode debug_mode{agl::debugging_mode::dynamic};
@@ -128,6 +129,9 @@ namespace curlew {
         ~window_resource();
 
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window; }
+
+        [[nodiscard]]
+        avocet::discrete_extent get_framebuffer_extent() const;
     };
 
     class [[nodiscard]] opengl_window {
@@ -148,6 +152,13 @@ namespace curlew {
         [[nodiscard]] GLFWwindow& get() noexcept { return m_Window.get(); }
 
         [[nodiscard]] const agl::capable_context& context() const noexcept { return m_Context; }
+
+        void update_viewport(const avocet::viewport& vp);
+
+        [[nodiscard]]
+        avocet::discrete_extent get_framebuffer_extent() const {
+            return m_Window.get_framebuffer_extent();
+        }
     };
 
     class [[nodiscard]] vulkan_window {

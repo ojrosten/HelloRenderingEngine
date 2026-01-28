@@ -17,6 +17,8 @@
 #include "Core/AssetManagement/UniqueImageTest.hpp"
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
+#include "Core/RenderArea/ViewportTest.hpp"
+#include "Core/RenderArea/ViewportTestingDiagnostics.hpp"
 #include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
@@ -111,6 +113,12 @@ int main(int argc, char** argv)
             "Capability Manager",
             capabilities_false_negative_test{"False Negative Test"},
             capability_manager_free_test{"Capability Manager Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Viewport",
+            viewport_false_negative_test{"False Negative Test"},
+            viewport_test{"Unit Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

@@ -45,7 +45,7 @@ namespace curlew {
 
             set_debug_context(config.debug_mode, version);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(static_cast<int>(config.dimensions.width), static_cast<int>(config.dimensions.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW OpenGL window"};
         }
 
@@ -56,6 +56,7 @@ namespace curlew {
 
             auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window suitable for Vulkan"};
+
         }
 
         [[nodiscard]]
@@ -66,6 +67,14 @@ namespace curlew {
                 throw std::runtime_error{"Failed to initialize GLAD"};
 
             return ctx;
+        }
+
+        [[nodiscard]]
+        std::uint32_t validate(std::string_view tag, int i) {
+            if(i < 0)
+                throw std::runtime_error{std::format("Negative framebuffer {}: {}", tag, i)};
+
+            return static_cast<std::uint32_t>(i);
         }
 
         [[nodiscard]]
@@ -149,6 +158,16 @@ namespace curlew {
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
 
+    [[nodiscard]]
+    avocet::discrete_extent window_resource::get_framebuffer_extent() const {
+        int width{-1}, height{-1};
+
+        glfwGetFramebufferSize(&m_Window, &width, &height);
+
+        return avocet::discrete_extent{validate("width", width), validate("height", height)};
+    }
+
+
     opengl_window::opengl_window(const opengl_window_config& config, const agl::opengl_version& version)
         : m_Window{config, version}
         , m_Context{
@@ -189,5 +208,9 @@ namespace curlew {
             return;
 
         m_System.draw_all(extent);
+    }
+
+    void opengl_window::update_viewport(const avocet::viewport& vp) {
+        agl::gl_function{&GladGLContext::Viewport}(m_Context, vp.offset.x, vp.offset.y, vp.extent.width, vp.extent.height);
     }
 }

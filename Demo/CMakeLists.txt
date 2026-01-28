@@ -11,7 +11,10 @@ include(${BuildSystem}/Utilities.cmake)
 
 sequoia_init()
 
-add_executable(Demo DemoMain.cpp)
+add_executable(Demo
+               DemoMain.cpp
+               Examples/PonyPolygons.cpp
+)
 
 target_include_directories(Demo PRIVATE ${DemoDir})
 
