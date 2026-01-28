@@ -27,8 +27,8 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/UniqueImageThreadingFreeTest.cpp
                ${TestDir}/Core/RenderArea/ViewportTest.cpp
                ${TestDir}/Core/RenderArea/ViewportTestingDiagnostics.cpp
-               ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
@@ -36,6 +36,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Resources/BufferObjectLabellingTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/Resources/FramebufferFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ResourceHandleTest.cpp
                ${TestDir}/OpenGL/Resources/ResourceHandleTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp

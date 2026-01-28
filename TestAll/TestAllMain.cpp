@@ -19,8 +19,8 @@
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
 #include "Core/RenderArea/ViewportTest.hpp"
 #include "Core/RenderArea/ViewportTestingDiagnostics.hpp"
-#include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
+#include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
@@ -28,6 +28,7 @@
 #include "OpenGL/Resources/BufferObjectLabellingTest.hpp"
 #include "OpenGL/Resources/BufferObjectTest.hpp"
 #include "OpenGL/Resources/BufferObjectTestingDiagnostics.hpp"
+#include "OpenGL/Resources/FramebufferFreeTest.hpp"
 #include "OpenGL/Resources/ResourceHandleTest.hpp"
 #include "OpenGL/Resources/ResourceHandleTestingDiagnostics.hpp"
 #include "OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.hpp"
@@ -119,6 +120,11 @@ int main(int argc, char** argv)
             "Viewport",
             viewport_false_negative_test{"False Negative Test"},
             viewport_test{"Unit Test"}
+        );
+
+        runner.add_test_suite(
+            "Framebuffer",
+            framebuffer_free_test{"Framebuffer Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
