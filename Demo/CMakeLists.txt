@@ -13,6 +13,7 @@ sequoia_init()
 
 add_executable(Demo
                DemoMain.cpp
+               Examples/FileSystem.cpp
                Examples/PonyPolygons.cpp
 )
 
