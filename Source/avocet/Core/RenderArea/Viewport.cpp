@@ -30,12 +30,12 @@ namespace avocet {
         if(!good_extent(nominalExtent) || !good_extent(availableExtent))
             return null_viewport;
 
-        const double  nominalAspectRatio{static_cast<double>(nominalExtent.width) / nominalExtent.height},
-            availableAspectRatio{static_cast<double>(availableExtent.width) / availableExtent.height};
+        const double   nominalAspectRatio{static_cast<double>(  nominalExtent.width) /   nominalExtent.height},
+                     availableAspectRatio{static_cast<double>(availableExtent.width) / availableExtent.height};
 
         if(availableAspectRatio < nominalAspectRatio) {
-            const std::uint32_t width{availableExtent.width};
-            const std::uint32_t height{static_cast<std::uint32_t>(width / nominalAspectRatio)};
+            const std::uint32_t   width{availableExtent.width};
+            const std::uint32_t  height{static_cast<std::uint32_t>(width / nominalAspectRatio)};
             const std::int32_t  delta_y{static_cast<std::int32_t>((availableExtent.height - height) / 2)};
             if(height > 0)
                 return viewport{{0, delta_y}, {width, height}};
