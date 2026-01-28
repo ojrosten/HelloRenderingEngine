@@ -60,11 +60,11 @@ int main()
             agl::gl_function{&GladGLContext::ClearColor}(ctx, 0.2f, 0.3f, 0.3f, 1.0f);
             agl::gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-            w.update_viewport(avocet::viewport({}, w.get_framebuffer_extent()));
-
-            ponyPolygons.draw();
-
-            glfwSwapBuffers(&w.get());
+            if(const auto optViewport{avocet::refit(nominalWindowSize, w.get_framebuffer_extent())}; optViewport) {
+                w.update_viewport(optViewport.value());
+                ponyPolygons.draw();
+                glfwSwapBuffers(&w.get());
+            }
             glfwPollEvents();
         }
     }
