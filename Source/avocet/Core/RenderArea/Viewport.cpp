@@ -15,16 +15,6 @@ namespace avocet {
         }
     }
 
-    /// <summary>
-    /// Given a nominal extent and an available extent
-    /// - If any width or height is zero avocet::null_viewport is returned;
-    /// - Otherwise an attempt is made to construct a viewport that:
-    ///     1. Preserves the aspect ratio of the nominal extent
-    ///     2. Is as big as possible
-    ///     3. Is centralized
-    /// In the event that the constraints cannot be met exactly:
-    ///   - It is unspecified the precision to which each constraint is met
-    /// </summary>
     [[nodiscard]]
     std::optional<viewport> refit(const discrete_extent& nominalExtent, const discrete_extent& availableExtent) {
         return null_viewport;
