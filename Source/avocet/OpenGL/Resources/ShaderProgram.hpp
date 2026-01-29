@@ -8,7 +8,7 @@
 #pragma once
 
 #include "avocet/OpenGL/Resources/ResourceHandle.hpp"
-#include "avocet/OpenGL/EnrichedContext/BindingContext.hpp"
+#include "avocet/OpenGL/EnrichedContext/ActivatingContext.hpp"
 #include "avocet/OpenGL/Resources/Labels.hpp"
 
 #include <filesystem>
@@ -84,7 +84,7 @@ namespace avocet::opengl {
 
     class shader_program {
     public:
-        shader_program(const binding_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
+        shader_program(const activating_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         shader_program(shader_program&&) noexcept = default;
 
@@ -114,7 +114,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
-        const binding_context* m_Context{};
+        const activating_context* m_Context{};
         shader_program_resource m_Resource;
         using map_t = std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to>;
         map_t m_Uniforms;

@@ -40,7 +40,7 @@ namespace avocet::opengl {
         using texture_configurator = framebuffer_texture_2d_configurator;
         using base_type            = generic_resource<num_resources{1}, framebuffer_lifecycle_events>;
 
-        framebuffer_object(const binding_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
+        framebuffer_object(const activating_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
             : base_type{ctx, {{fboConfig.label}}}
             , m_Texture{ctx, texConfig}
         {}

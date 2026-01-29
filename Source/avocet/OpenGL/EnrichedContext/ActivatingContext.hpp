@@ -15,20 +15,6 @@
 #include "avocet/OpenGL/Resources/ResourceHandle.hpp"
 
 namespace avocet::opengl {
-    /*enum class cached_binding {
-        framebuffer
-    };
-
-    template<cached_binding CachedBinding>
-    struct cached_binding_type_map;
-
-    template<cached_binding CachedBinding>
-    using cached_binding_type_map_t = cached_binding_type_map::type;
-
-    template<cached_binding CachedBinding>
-    struct cached_binding_constant : std::integral_constant<cached_binding, CachedBinding> {
-    };*/
-
     template<class T, class Tuple>
     struct contains_element;
 
@@ -45,7 +31,7 @@ namespace avocet::opengl {
         requires (std::same_as<T, Ts> || ...)
     struct contains_element<T, std::tuple<Ts...>> : std::true_type {};
 
-    class binding_context : public decorated_context {
+    class activating_context : public decorated_context {
     public:
         template<class Fn>
         constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const context&, const decorator_data&>};
@@ -54,18 +40,18 @@ namespace avocet::opengl {
             requires is_decorator_v<Prologue>
                   && is_decorator_v<Epilogue>
                   && std::is_invocable_r_v<GladGLContext, Loader, GladGLContext>
-        binding_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
+        activating_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
             : decorated_context{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
         {}
 
         template<class LifeEvents>
-        void bind(this const binding_context& self, const LifeEvents&, contextual_resource_view crv) {
+        void bind(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
             constexpr auto id{LifeEvents::identifier};
-            if constexpr(contains_element_v<binding<object_identifier_constant<id>>, binding_tuple_t>) {
-                auto& cache{std::get<binding<object_identifier_constant<id>>>(self.m_BindingCache)};
-                if(cache.currently_bound != crv.handle().index()) {
+            if constexpr(contains_element_v<activation<object_identifier_constant<id>>, binding_tuple_t>) {
+                auto& cache{std::get<activation<object_identifier_constant<id>>>(self.m_BindingCache)};
+                if(cache.currently_active != crv.handle().index()) {
                     LifeEvents::bind(crv);
-                    cache.currently_bound = crv.handle().index();
+                    cache.currently_active = crv.handle().index();
                 }
             }
             else {
@@ -74,13 +60,13 @@ namespace avocet::opengl {
         }
 
         template<class LifeEvents>
-        void use(this const binding_context& self, const LifeEvents&, contextual_resource_view crv) {
+        void use(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
             constexpr auto id{LifeEvents::identifier};
-            if constexpr(contains_element_v<binding<object_identifier_constant<id>>, binding_tuple_t>) {
-                auto& cache{std::get<binding<object_identifier_constant<id>>>(self.m_UtilizationCache)};
-                if(cache.currently_bound != crv.handle().index()) {
+            if constexpr(contains_element_v<activation<object_identifier_constant<id>>, utilizing_tuple_t>) {
+                auto& cache{std::get<activation<object_identifier_constant<id>>>(self.m_UtilizationCache)};
+                if(cache.currently_active != crv.handle().index()) {
                     LifeEvents::use(crv);
-                    cache.currently_bound = crv.handle().index();
+                    cache.currently_active = crv.handle().index();
                 }
             }
             else {
@@ -88,25 +74,25 @@ namespace avocet::opengl {
             }
         }
     protected:
-        ~binding_context() = default;
+        ~activating_context() = default;
 
-        binding_context(binding_context&&) noexcept = default;
+        activating_context(activating_context&&) noexcept = default;
 
-        binding_context& operator=(binding_context&&) noexcept = default;
+        activating_context& operator=(activating_context&&) noexcept = default;
     private:
         using decorator_type = std::function<void(const context&, const decorator_data&)>;
 
         decorator_type m_Prologue{}, m_Epilogue{};
 
         template<class T>
-        struct binding {
-            GLuint currently_bound{};
+        struct activation {
+            GLuint currently_active{};
         };
 
-        using binding_tuple_t = std::tuple<binding<object_identifier_constant<object_identifier::framebuffer>>>;
+        using binding_tuple_t = std::tuple<activation<object_identifier_constant<object_identifier::framebuffer>>>;
         mutable binding_tuple_t m_BindingCache;
 
-        using utilizing_tuple_t = std::tuple<binding<object_identifier_constant<object_identifier::program>>>;
+        using utilizing_tuple_t = std::tuple<activation<object_identifier_constant<object_identifier::program>>>;
         mutable utilizing_tuple_t m_UtilizationCache;
 
     };

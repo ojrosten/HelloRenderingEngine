@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/EnrichedContext/BindingContext.hpp"
+#include "avocet/OpenGL/EnrichedContext/ActivatingContext.hpp"
 #include "avocet/OpenGL/Resources/ResourceHandle.hpp"
 #include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
 
@@ -92,7 +92,7 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        generic_resource(const binding_context& ctx, const std::array<configurator_type, N>& configs)
+        generic_resource(const activating_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
             , m_BindingCtx{&ctx}
         {
@@ -144,6 +144,6 @@ namespace avocet::opengl {
             requires (I < N)
         contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
 
-        const binding_context* m_BindingCtx{};
+        const activating_context* m_BindingCtx{};
     };
 }
