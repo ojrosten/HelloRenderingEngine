@@ -29,6 +29,11 @@ namespace avocet::testing
         framebuffer_object fbo{w.context(), fbo_configurator{.label{}}, framebuffer_texture_2d_configurator{extent}};
         fbo.bind(texture_unit{1});
 
+        agl::gl_function{&GladGLContext::ClearColor}(w.context(), 0.2f, 0.3f, 0.3f, 1.0f);
+        agl::gl_function{&GladGLContext::Clear}(w.context(), GL_COLOR_BUFFER_BIT);
+
         const auto image{fbo.extract_data(texture_format::rgba, alignment{4})};
+
+        int x{};
     }
 }

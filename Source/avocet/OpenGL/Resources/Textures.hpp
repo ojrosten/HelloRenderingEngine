@@ -172,6 +172,13 @@ namespace avocet::opengl {
             gl_function{&GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());
             base_type::do_bind(self);
         }
+    private:
+        friend class framebuffer_object;
+
+        [[nodiscard]]
+        contextual_resource_view contextual_handle() const noexcept {
+            return base_type::contextual_handle(index<0>{});
+        }
     };
 
     class texture_2d : public generic_texture_2d<texture_2d_lifecycle_events>{

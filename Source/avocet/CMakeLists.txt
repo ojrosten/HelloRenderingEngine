@@ -16,6 +16,7 @@ set(SourceList
     OpenGL/Context/ContextBase.cpp
     OpenGL/Context/Version.cpp
     OpenGL/Debugging/Errors.cpp
+    OpenGL/Resources/Framebuffer.cpp
     OpenGL/Resources/ShaderProgram.cpp
     OpenGL/Resources/Textures.cpp)
 

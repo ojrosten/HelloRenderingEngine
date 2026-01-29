@@ -36,6 +36,8 @@ namespace avocet::opengl {
 
     class framebuffer_object : public generic_resource<num_resources{1}, framebuffer_lifecycle_events> {
         framebuffer_texture_2d m_Texture;
+
+        void check_framebuffer_status();
     public:
         using texture_configurator = framebuffer_texture_2d_configurator;
         using base_type            = generic_resource<num_resources{1}, framebuffer_lifecycle_events>;
@@ -43,7 +45,11 @@ namespace avocet::opengl {
         framebuffer_object(const activating_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
             : base_type{ctx, {{fboConfig.label}}}
             , m_Texture{ctx, texConfig}
-        {}
+        {
+            gl_function{&GladGLContext::FramebufferTexture2D}(ctx, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture.contextual_handle().handle().index(), 0);
+
+            check_framebuffer_status();
+        }
 
         [[nodiscard]]
         unique_image extract_data(this const framebuffer_object& self, texture_format format, alignment rowAlignment) {

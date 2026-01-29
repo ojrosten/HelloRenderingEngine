@@ -136,13 +136,13 @@ namespace avocet::opengl {
         static void do_bind(const generic_resource& gbo, index<I> i) { gbo.m_BindingCtx->bind(LifeEvents{}, gbo.contextual_handle(i)); }
 
         static void do_bind(const generic_resource& gbo) requires (N == 1) { do_bind(gbo, index<0>{}); }
-    private:
-        [[nodiscard]]
-        const contextual_resource_handles<N>& contextual_handles() const noexcept { return m_Resource.contextual_handles(); }
 
         template<std::size_t I>
             requires (I < N)
         contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+    private:
+        [[nodiscard]]
+        const contextual_resource_handles<N>& contextual_handles() const noexcept { return m_Resource.contextual_handles(); }
 
         const activating_context* m_BindingCtx{};
     };
