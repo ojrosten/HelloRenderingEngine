@@ -43,7 +43,7 @@ namespace avocet::opengl {
             );
         }
 
-        void configure(const decorated_context& ctx, const framebuffer_texture_2d_configurator& config) {
+        void do_configure(const decorated_context& ctx, const framebuffer_texture_2d_configurator& config) {
             using value_type = texture_2d_configurator::value_type;
 
             gl_function{&GladGLContext::TexImage2D}(
@@ -58,6 +58,9 @@ namespace avocet::opengl {
                 to_gl_enum(to_gl_type_specifier_v<value_type>),
                 nullptr
             );
+
+            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         }
     }
 
@@ -77,6 +80,7 @@ namespace avocet::opengl {
 
     void framebuffer_texture_2d_lifecycle_events::configure(contextual_resource_view h, const configurator& config) {
         add_label(identifier, h, config.label);
+        do_configure(h.context(), config);
     }
 
 }

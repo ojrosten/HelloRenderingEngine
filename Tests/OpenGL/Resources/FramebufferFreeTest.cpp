@@ -33,7 +33,5 @@ namespace avocet::testing
         agl::gl_function{&GladGLContext::Clear}(w.context(), GL_COLOR_BUFFER_BIT);
 
         const auto image{fbo.extract_data(texture_format::rgba, alignment{4})};
-
-        int x{};
     }
 }
