@@ -9,10 +9,8 @@
 
 #include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
 
-#include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
-
-// TO DO: this needs untangling
-#include "avocet/OpenGL/Resources/ResourceHandle.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 
 namespace avocet::opengl {
     template<class T, class Tuple>

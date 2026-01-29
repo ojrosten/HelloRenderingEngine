@@ -9,8 +9,8 @@
 
 #include "avocet/Core/AssetManagement/Image.hpp"
 
-#include "avocet/OpenGL/Resources/GenericResource.hpp"
-#include "avocet/OpenGL/Resources/Labels.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/GenericResource.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
 #include <array>
