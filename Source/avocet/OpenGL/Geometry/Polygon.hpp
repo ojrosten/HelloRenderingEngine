@@ -89,7 +89,7 @@ namespace avocet::opengl {
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 0)
-        polygon_base(const decorated_context& ctx, Fn transformer, const std::optional<std::string>& label)
+        polygon_base(const binding_context& ctx, Fn transformer, const std::optional<std::string>& label)
             : m_VBO{ctx, transformer(st_Vertices), label}
             , m_VAO{ctx, label, m_VBO}
         {
@@ -97,7 +97,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 1)
-        polygon_base(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+        polygon_base(const binding_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             :      m_VBO{ctx, transformer(st_Vertices), label}
             ,      m_VAO{ctx, label, m_VBO}
             , m_Textures{texture_2d{ctx, texConfig}}
@@ -106,7 +106,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        polygon_base(const decorated_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
+        polygon_base(const binding_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
             : m_VBO{ctx, transformer(st_Vertices), label}
             , m_VAO{ctx, label, m_VBO}
             , m_Textures{to_array(texConfigs, [&ctx](const texture_2d_configurator& config) { return texture_2d{ctx, config}; })}
@@ -174,7 +174,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 0)
-        polygon(const decorated_context& ctx, Fn transformer, const std::optional<std::string>& label)
+        polygon(const binding_context& ctx, Fn transformer, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, label}
             ,             m_EBO{ctx, st_Indices, label}
         {
@@ -182,7 +182,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 1)
-        polygon(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+        polygon(const binding_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, texConfig, label}
             ,             m_EBO{ctx, st_Indices, label}
         {
@@ -190,7 +190,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        polygon(const decorated_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
+        polygon(const binding_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, texConfigs, label}
             , m_EBO{ctx, st_Indices, label}
         {
