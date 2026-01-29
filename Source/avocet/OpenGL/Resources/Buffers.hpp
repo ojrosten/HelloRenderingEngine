@@ -111,7 +111,7 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-        vertex_attribute_object(const decorated_context& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
+        vertex_attribute_object(const binding_context& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{ctx, {{label}}}
         {
             using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
@@ -162,7 +162,7 @@ namespace avocet::opengl {
         using value_type = T;
         using base_type = generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>> ;
 
-        generic_buffer_object(const decorated_context& ctx, std::span<const T> data, const optional_label& label)
+        generic_buffer_object(const binding_context& ctx, std::span<const T> data, const optional_label& label)
             : base_type{ctx, {{data, label}}}
         {}
 

@@ -23,4 +23,8 @@ namespace avocet::opengl {
         render_buffer      = GL_RENDERBUFFER,
         framebuffer        = GL_FRAMEBUFFER
     };
+
+    template<object_identifier Identifier>
+    struct object_identifier_constant : std::integral_constant<object_identifier, Identifier>
+    {};
 }

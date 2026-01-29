@@ -9,7 +9,7 @@
 
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/EnrichedContext/BindingContext.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
@@ -18,7 +18,7 @@
 namespace avocet::opengl {
     enum class attempt_to_compensate_for_driver_bugs : bool { no, yes };
 
-    class capable_context : public decorated_context {
+    class capable_context : public binding_context {
         template<class T>
         struct toggled_capability {
             T state{};
@@ -96,7 +96,7 @@ namespace avocet::opengl {
                   && is_decorator_v<Epilogue>
                   && std::is_invocable_r_v<GladGLContext, Loader, GladGLContext>
         capable_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue, attempt_to_compensate_for_driver_bugs compensate)
-            : decorated_context{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
+            : binding_context{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
         {
              sequoia::meta::for_each(m_Payload, [this](auto& cap) { disable(cap); });
              if(compensate == attempt_to_compensate_for_driver_bugs::yes)

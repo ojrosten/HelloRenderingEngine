@@ -178,7 +178,7 @@ namespace avocet::opengl {
         static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
-    shader_program::shader_program(const decorated_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
+    shader_program::shader_program(const binding_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
         : m_Resource{ctx}
     {
         shader_compiler

@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/OpenGL/Resources/ResourceHandle.hpp"
+#include "avocet/OpenGL/EnrichedContext/BindingContext.hpp"
 #include "avocet/OpenGL/Resources/Labels.hpp"
 
 #include <filesystem>
@@ -78,7 +79,7 @@ namespace avocet::opengl {
 
     class shader_program {
     public:
-        shader_program(const decorated_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
+        shader_program(const binding_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         shader_program(shader_program&&) noexcept = default;
 

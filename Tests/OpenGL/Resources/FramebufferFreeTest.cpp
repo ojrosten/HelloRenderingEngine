@@ -23,9 +23,12 @@ namespace avocet::testing
         using namespace curlew;
         using namespace opengl;
 
-        avocet::discrete_extent extent{.width{800}, .height{600}};
+        avocet::discrete_extent extent{.width{4}, .height{2}};
         auto w{create_window({.dimensions{extent}, .hiding{window_hiding_mode::on}})};
 
         framebuffer_object fbo{w.context(), fbo_configurator{.label{}}, framebuffer_texture_2d_configurator{extent}};
+        fbo.bind(texture_unit{1});
+
+        const auto image{fbo.extract_data(texture_format::rgba, alignment{4})};
     }
 }

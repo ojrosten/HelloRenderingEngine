@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "avocet/OpenGL/EnrichedContext/BindingContext.hpp"
 #include "avocet/OpenGL/Resources/ResourceHandle.hpp"
 #include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
 
@@ -91,14 +92,15 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
+        generic_resource(const binding_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
+            , m_BindingCtx{&ctx}
         {
             for(const auto& [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {
                 if(ctxRsrc.handle() == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
-                lifecycle_type::bind(ctxRsrc);
+                ctx.bind(LifeEvents{}, ctxRsrc);
                 lifecycle_type::configure(ctxRsrc, config);
             }
         }
@@ -131,7 +133,7 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        static void do_bind(const generic_resource& gbo, index<I> i) { lifecycle_type::bind(gbo.contextual_handle(i)); }
+        static void do_bind(const generic_resource& gbo, index<I> i) { gbo.m_BindingCtx->bind(LifeEvents{}, gbo.contextual_handle(i)); }
 
         static void do_bind(const generic_resource& gbo) requires (N == 1) { do_bind(gbo, index<0>{}); }
     private:
@@ -141,5 +143,7 @@ namespace avocet::opengl {
         template<std::size_t I>
             requires (I < N)
         contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+
+        const binding_context* m_BindingCtx{};
     };
 }

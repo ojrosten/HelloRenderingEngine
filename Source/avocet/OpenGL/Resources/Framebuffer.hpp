@@ -23,7 +23,9 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteFramebuffers}(ctx, N, indices.data()); }
 
-        static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindFramebuffer}(h.context(), GL_FRAMEBUFFER, get_index(h)); }
+        static void bind(contextual_resource_view h) {
+            gl_function{&GladGLContext::BindFramebuffer}(h.context(), GL_FRAMEBUFFER, get_index(h));
+        }
 
         static void configure(contextual_resource_view h, const configurator& config) {
             add_label(identifier, h, config.label);
@@ -38,7 +40,7 @@ namespace avocet::opengl {
         using texture_configurator = framebuffer_texture_2d_configurator;
         using base_type            = generic_resource<num_resources{1}, framebuffer_lifecycle_events>;
 
-        framebuffer_object(const decorated_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
+        framebuffer_object(const binding_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
             : base_type{ctx, {{fboConfig.label}}}
             , m_Texture{ctx, texConfig}
         {}
