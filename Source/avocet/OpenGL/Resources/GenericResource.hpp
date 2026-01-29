@@ -24,13 +24,13 @@ namespace avocet::opengl {
 
     template<num_resources NumResources, class T>
     inline constexpr bool has_resource_lifecycle_events_v{
-        requires(raw_indices<NumResources.value>& indices, contextual_resource_view h) {
-            T::generate(h.context(), indices);
-            T::destroy(h.context(), indices);
+        has_bind_event_v<T>
+     && requires(raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
+            T::generate(crv.context(), indices);
+            T::destroy(crv.context(), indices);
             { T::identifier } -> std::convertible_to<object_identifier>;
-            T::bind(h);
             typename T::configurator;
-            T::configure(h, std::declval<typename T::configurator>());
+            T::configure(crv, std::declval<typename T::configurator>());
         }
     };
 

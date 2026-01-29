@@ -31,6 +31,20 @@ namespace avocet::opengl {
         requires (std::same_as<T, Ts> || ...)
     struct contains_element<T, std::tuple<Ts...>> : std::true_type {};
 
+    template<class T>
+    inline constexpr bool has_bind_event_v{
+        requires(contextual_resource_view crv) {
+            T::bind(crv);
+        }
+    };
+
+    template<class T>
+    inline constexpr bool has_use_event_v{
+        requires(contextual_resource_view crv) {
+            T::use(crv);
+        }
+    };
+
     class activating_context : public decorated_context {
     public:
         template<class Fn>
@@ -45,33 +59,15 @@ namespace avocet::opengl {
         {}
 
         template<class LifeEvents>
+            requires has_bind_event_v<LifeEvents>
         void bind(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
-            constexpr auto id{LifeEvents::identifier};
-            if constexpr(contains_element_v<activation<object_identifier_constant<id>>, binding_tuple_t>) {
-                auto& cache{std::get<activation<object_identifier_constant<id>>>(self.m_BindingCache)};
-                if(cache.currently_active != crv.handle().index()) {
-                    LifeEvents::bind(crv);
-                    cache.currently_active = crv.handle().index();
-                }
-            }
-            else {
-                LifeEvents::bind(crv);
-            }
+            self.activate(LifeEvents{}, crv);
         }
 
         template<class LifeEvents>
+            requires has_use_event_v<LifeEvents>
         void use(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
-            constexpr auto id{LifeEvents::identifier};
-            if constexpr(contains_element_v<activation<object_identifier_constant<id>>, utilizing_tuple_t>) {
-                auto& cache{std::get<activation<object_identifier_constant<id>>>(self.m_UtilizationCache)};
-                if(cache.currently_active != crv.handle().index()) {
-                    LifeEvents::use(crv);
-                    cache.currently_active = crv.handle().index();
-                }
-            }
-            else {
-                LifeEvents::use(crv);
-            }
+            self.activate(LifeEvents{}, crv);
         }
     protected:
         ~activating_context() = default;
@@ -89,11 +85,36 @@ namespace avocet::opengl {
             GLuint currently_active{};
         };
 
-        using binding_tuple_t = std::tuple<activation<object_identifier_constant<object_identifier::framebuffer>>>;
-        mutable binding_tuple_t m_BindingCache;
+        using tuple_t
+            = std::tuple<
+                  activation<object_identifier_constant<object_identifier::framebuffer>>,
+                  activation<object_identifier_constant<object_identifier::program>>
+              >;
+        mutable tuple_t m_ActivationCache;
 
-        using utilizing_tuple_t = std::tuple<activation<object_identifier_constant<object_identifier::program>>>;
-        mutable utilizing_tuple_t m_UtilizationCache;
+        template<class LifeEvents>
+        void activate(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
+            constexpr auto id{LifeEvents::identifier};
+            if constexpr(contains_element_v<activation<object_identifier_constant<id>>, tuple_t>) {
+                auto& cache{std::get<activation<object_identifier_constant<id>>>(self.m_ActivationCache)};
+                if(cache.currently_active != crv.handle().index()) {
+                    do_activate(LifeEvents{}, crv);
+                    cache.currently_active = crv.handle().index();
+                }
+            }
+            else {
+                do_activate(LifeEvents{}, crv);
+            }
+        }
 
+        template<class LifeEvents>
+        static void do_activate(const LifeEvents&, contextual_resource_view crv) {
+            if constexpr(has_bind_event_v<LifeEvents>) {
+                LifeEvents::bind(crv);
+            }
+            else {
+                LifeEvents::use(crv);
+            }
+        }
     };
 }
