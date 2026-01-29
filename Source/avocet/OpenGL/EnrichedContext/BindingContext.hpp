@@ -45,8 +45,7 @@ namespace avocet::opengl {
         requires (std::same_as<T, Ts> || ...)
     struct contains_element<T, std::tuple<Ts...>> : std::true_type {};
 
-    template<object_identifier... CachedBindings>
-    class generic_binding_context : public decorated_context {
+    class binding_context : public decorated_context {
     public:
         template<class Fn>
         constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const context&, const decorator_data&>};
@@ -55,14 +54,14 @@ namespace avocet::opengl {
             requires is_decorator_v<Prologue>
                   && is_decorator_v<Epilogue>
                   && std::is_invocable_r_v<GladGLContext, Loader, GladGLContext>
-        generic_binding_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
+        binding_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
             : decorated_context{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
         {}
 
         template<class LifeEvents>
-        void bind(this const generic_binding_context& self, const LifeEvents&, contextual_resource_view crv) {
+        void bind(this const binding_context& self, const LifeEvents&, contextual_resource_view crv) {
             constexpr auto id{LifeEvents::identifier};
-            if constexpr(contains_element_v<binding<object_identifier_constant<id>>, tuple_t>) {
+            if constexpr(contains_element_v<binding<object_identifier_constant<id>>, binding_tuple_t>) {
                 auto& cache{std::get<binding<object_identifier_constant<id>>>(self.m_BindingCache)};
                 if(cache.currently_bound != crv.handle().index()) {
                     LifeEvents::bind(crv);
@@ -73,12 +72,27 @@ namespace avocet::opengl {
                 LifeEvents::bind(crv);
             }
         }
+
+        template<class LifeEvents>
+        void use(this const binding_context& self, const LifeEvents&, contextual_resource_view crv) {
+            constexpr auto id{LifeEvents::identifier};
+            if constexpr(contains_element_v<binding<object_identifier_constant<id>>, binding_tuple_t>) {
+                auto& cache{std::get<binding<object_identifier_constant<id>>>(self.m_UtilizationCache)};
+                if(cache.currently_bound != crv.handle().index()) {
+                    LifeEvents::use(crv);
+                    cache.currently_bound = crv.handle().index();
+                }
+            }
+            else {
+                LifeEvents::use(crv);
+            }
+        }
     protected:
-        ~generic_binding_context() = default;
+        ~binding_context() = default;
 
-        generic_binding_context(generic_binding_context&&) noexcept = default;
+        binding_context(binding_context&&) noexcept = default;
 
-        generic_binding_context& operator=(generic_binding_context&&) noexcept = default;
+        binding_context& operator=(binding_context&&) noexcept = default;
     private:
         using decorator_type = std::function<void(const context&, const decorator_data&)>;
 
@@ -89,18 +103,11 @@ namespace avocet::opengl {
             GLuint currently_bound{};
         };
 
-        using tuple_t = std::tuple<binding<object_identifier_constant<CachedBindings>>...>;
-        mutable tuple_t m_BindingCache;
-    };
+        using binding_tuple_t = std::tuple<binding<object_identifier_constant<object_identifier::framebuffer>>>;
+        mutable binding_tuple_t m_BindingCache;
 
-    class binding_context : public generic_binding_context<object_identifier::framebuffer> {
-    public:
-        using generic_binding_context<object_identifier::framebuffer>::generic_binding_context;
-    protected:
-        ~binding_context() = default;
+        using utilizing_tuple_t = std::tuple<binding<object_identifier_constant<object_identifier::program>>>;
+        mutable utilizing_tuple_t m_UtilizationCache;
 
-        binding_context(binding_context&&) noexcept = default;
-
-        binding_context& operator=(binding_context&&) noexcept = default;
     };
 }

@@ -70,7 +70,7 @@ namespace avocet::opengl {
         explicit resource_wrapper(const decorated_context& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
         ~resource_wrapper() { lifecycle_type::destroy(m_Handles); }
 
-        resource_wrapper(resource_wrapper&&)           noexcept = default;
+        resource_wrapper(resource_wrapper&&)            noexcept = default;
         resource_wrapper& operator=(resource_wrapper&&) noexcept = default;
 
         [[nodiscard]]

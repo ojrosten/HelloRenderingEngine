@@ -27,7 +27,7 @@ Unlinkable Vertex Shader / Fragment Shader Combo
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected following invocation of LinkProgram originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 192:
+OpenGL error detected following invocation of LinkProgram originating from Source/avocet/OpenGL/Resources/ShaderProgram.cpp, line 193:
 Id: 1; Source: Shader Compiler; Type: Error; Severity: High
 SHADER_ID_LINK error has been generated. GLSL link failed for program 1, "": Varying "colour" has different type width across different shaders.
 
