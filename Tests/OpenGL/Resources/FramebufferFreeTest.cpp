@@ -10,6 +10,8 @@
 #include "FramebufferFreeTest.hpp"
 #include "avocet/OpenGL/Resources/Framebuffer.hpp"
 
+#include "Core/AssetManagement/ImageTestingUtilities.hpp"
+
 namespace avocet::testing
 {
     [[nodiscard]]
@@ -23,15 +25,20 @@ namespace avocet::testing
         using namespace curlew;
         using namespace opengl;
 
-        avocet::discrete_extent extent{.width{4}, .height{2}};
+        avocet::discrete_extent extent{.width{1}, .height{2}};
         auto w{create_window({.dimensions{extent}, .hiding{window_hiding_mode::on}})};
 
         framebuffer_object fbo{w.context(), fbo_configurator{.label{}}, framebuffer_texture_2d_configurator{extent}};
         fbo.bind(texture_unit{1});
 
-        agl::gl_function{&GladGLContext::ClearColor}(w.context(), 0.2f, 0.3f, 0.3f, 1.0f);
+        agl::gl_function{&GladGLContext::ClearColor}(w.context(), 1.0f, 0.5f, 0.5f, 1.0f);
         agl::gl_function{&GladGLContext::Clear}(w.context(), GL_COLOR_BUFFER_BIT);
 
-        const auto image{fbo.extract_data(texture_format::rgba, alignment{4})};
+        check(
+            equivalence,
+            "",
+            fbo.extract_data(texture_format::rgba, alignment{4}),
+            image_data{std::vector<unsigned char>{255, 128, 128, 255, 255, 128, 128, 255}, extent.width, extent.height, colour_channels{4}, alignment{4}}
+        );
     }
 }
