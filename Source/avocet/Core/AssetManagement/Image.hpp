@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "sequoia/Core/Meta/Utilities.hpp"
+
 #include <algorithm>
 #include <filesystem>
 #include <format>

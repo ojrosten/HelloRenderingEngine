@@ -10,7 +10,7 @@
 #include "RenderingSetup.hpp"
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
-#include "avocet/Core/RenderArea/Viewport.hpp"
+#include "avocet/Core/Geometry/Viewport.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
 
