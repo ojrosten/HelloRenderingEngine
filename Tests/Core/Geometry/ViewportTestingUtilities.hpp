@@ -10,7 +10,7 @@
 /*! \file */
 
 #include "sequoia/TestFramework/RegularTestCore.hpp"
-#include "avocet/Core/RenderArea/Viewport.hpp"
+#include "avocet/Core/Geometry/Viewport.hpp"
 
 namespace sequoia::testing
 {

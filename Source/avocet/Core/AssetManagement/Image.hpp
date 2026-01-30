@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/Core/RenderArea/Viewport.hpp"
+#include "avocet/Core/Geometry/Viewport.hpp"
 
 #include "sequoia/Core/Meta/Utilities.hpp"
 
