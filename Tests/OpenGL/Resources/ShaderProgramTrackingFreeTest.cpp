@@ -14,6 +14,9 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
+#include <thread>
+#include <future>
+
 namespace avocet::testing
 {
     namespace agl = avocet::opengl;
@@ -39,6 +42,26 @@ namespace avocet::testing
             return get_current_program_index(ctx);
         }
 
+        agl::resource_handle make_and_use_shader_program_threaded(curlew::window& w, const fs::path& shaderDir) {
+            curlew::test_window_manager::detach_current_context();
+
+            std::packaged_task<agl::resource_handle()>
+                task{
+                    [&w, &shaderDir]() {
+                        w.make_context_current();
+                        return make_and_use_shader_program(w, shaderDir);
+                    }
+            };
+
+            auto fut{task.get_future()};
+
+            {
+                std::jthread executor{std::move(task)};
+            }
+
+            return fut.get();
+        }
+
         [[nodiscard]]
         std::string make_description(std::string_view tag, std::string_view description)
         {
@@ -54,11 +77,13 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::run_tests()
     {
-        check_serial_tracking_non_overlapping_lifetimes();
-        check_serial_tracking_overlapping_lifetimes();
+        check_serial_tracking_non_overlapping_shader_prog_lifetimes();
+        check_serial_tracking_overlapping_shader_prog_lifetimes();
+
+        check_parallel_tracking_non_overlapping_shader_prog_lifetimes();
     }
 
-    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_shader_prog_lifetimes()
     {
         const auto shaderDir{working_materials()};
         const auto prog0{make_and_use_shader_program(create_window({.hiding{curlew::window_hiding_mode::on}}), shaderDir)},
@@ -67,20 +92,32 @@ namespace avocet::testing
         check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
     }
 
-    void shader_program_tracking_free_test::check_serial_tracking_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_serial_tracking_overlapping_shader_prog_lifetimes()
     {
         const auto shaderDir{working_materials()};
-        const auto win1{create_window({.hiding{curlew::window_hiding_mode::on}})};
-        agl::shader_program sp1{win1.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+        const auto win0{create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::shader_program sp1{win0.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
         sp1.use();
-        const auto prog0{get_current_program_index(win1.context())};
+        const auto prog0{get_current_program_index(win0.context())};
 
-        const auto win2{create_window({.hiding{curlew::window_hiding_mode::on}})};
-        agl::shader_program sp2{win2.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+        const auto win1{create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::shader_program sp2{win1.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
         sp2.use();
-        const auto prog1{get_current_program_index(win2.context())};
+        const auto prog1{get_current_program_index(win1.context())};
 
         check_program_indices("Serial overlapping lifetimes", prog0, prog1);
+    }
+
+     void shader_program_tracking_free_test::check_parallel_tracking_non_overlapping_shader_prog_lifetimes()
+    {
+        const auto shaderDir{working_materials()};
+        auto win0{create_window({.hiding{curlew::window_hiding_mode::on}})},
+             win1{create_window({.hiding{curlew::window_hiding_mode::on}})};
+
+        const auto prog0{make_and_use_shader_program_threaded(win0, shaderDir)},
+                   prog1{make_and_use_shader_program_threaded(win1, shaderDir)};
+
+        check_program_indices("Parallel non-overlapping lifetimes", prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)

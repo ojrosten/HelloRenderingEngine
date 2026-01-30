@@ -29,6 +29,8 @@ namespace curlew {
         static curlew::window create_window(const curlew::window_config& config) {
             return st_Manager.create_window(config);
         }
+
+        static void detach_current_context() { st_Manager.detach_current_context(); }
     };
 
     template<test_mode Mode, selectivity_flavour Selectivity=selectivity_flavour::none, specificity_flavour Specificity=specificity_flavour::none, class Extender=trivial_extender>
