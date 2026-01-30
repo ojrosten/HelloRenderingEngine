@@ -7,21 +7,20 @@
 
 #pragma once
 
-#include "avocet/Core/Geometry/Extent.hpp"
-
-#include <optional>
+#include <cstdint>
 
 namespace avocet {
-    struct viewport {
-        discrete_offset offset;
-        discrete_extent extent;
+    struct discrete_offset {
+        std::int32_t x{}, y{};
 
         [[nodiscard]]
-        friend constexpr bool operator==(const viewport&, const viewport&) noexcept = default;
+        friend constexpr bool operator==(const discrete_offset&, const discrete_offset&) noexcept = default;
     };
 
-    [[nodiscard]]
-    std::optional<viewport> refit(const discrete_extent& nominalExtent, const discrete_extent& availableExtent);
+    struct discrete_extent {
+        std::uint32_t width{}, height{};
 
-    inline constexpr std::optional<viewport> null_viewport{};
+        [[nodiscard]]
+        friend constexpr bool operator==(const discrete_extent&, const discrete_extent&) noexcept = default;
+    };
 }
