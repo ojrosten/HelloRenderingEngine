@@ -70,10 +70,15 @@ namespace avocet::testing
     void shader_program_tracking_free_test::check_serial_tracking_overlapping_lifetimes()
     {
         const auto shaderDir{working_materials()};
-        const auto win1{create_window({.hiding{curlew::window_hiding_mode::on}})},
-                   win2{create_window({.hiding{curlew::window_hiding_mode::on}})};
-        const auto prog0{make_and_use_shader_program(win1, shaderDir)},
-                   prog1{make_and_use_shader_program(win2, shaderDir)};
+        const auto win1{create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::shader_program sp1{win1.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+        sp1.use();
+        const auto prog0{get_current_program_index(win1.context())};
+
+        const auto win2{create_window({.hiding{curlew::window_hiding_mode::on}})};
+        agl::shader_program sp2{win2.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+        sp2.use();
+        const auto prog1{get_current_program_index(win2.context())};
 
         check_program_indices("Serial overlapping lifetimes", prog0, prog1);
     }

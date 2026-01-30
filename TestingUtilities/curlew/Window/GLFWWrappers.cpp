@@ -108,6 +108,10 @@ namespace curlew {
 
     window glfw_manager::create_window(const window_config& config) { return window{config, m_RenderingSetup.version}; }
 
+    void glfw_manager::detach_current_context() {
+        glfwMakeContextCurrent(nullptr);
+    }
+
     window_resource::window_resource(const window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
 
     window_resource::~window_resource() { glfwDestroyWindow(&m_Window); }
@@ -136,4 +140,6 @@ namespace curlew {
     void window::update_viewport(const avocet::viewport& vp) {
         agl::gl_function{&GladGLContext::Viewport}(m_Context, vp.offset.x, vp.offset.y, vp.extent.width, vp.extent.height);
     }
+
+    void window::make_context_current() { glfwMakeContextCurrent(&get()); }
 }

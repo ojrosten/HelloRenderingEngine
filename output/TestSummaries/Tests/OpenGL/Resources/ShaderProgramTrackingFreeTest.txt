@@ -1,7 +1,18 @@
 Shader Program Tracking Free Test
-Standard Top Level Checks:                 6;  Failures:  1  [Deep checks: 8]
+Standard Top Level Checks:                 6;  Failures:  2  [Deep checks: 8]
 
-Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 86
+Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 89
+Serial overlapping lifetimes
+prog1 should not be null
+
+[bool]
+operator== returned false
+Obtained : false
+Predicted: true
+
+=======================================
+
+Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 91
 Serial overlapping lifetimes
 Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization
 
@@ -12,7 +23,7 @@ operator== returned false
   [unsigned int]
   operator== returned false
   Obtained : 1
-  Predicted: 2
+  Predicted: 0
 
 =======================================
 
