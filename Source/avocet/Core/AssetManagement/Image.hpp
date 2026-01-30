@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "avocet/Core/Geometry/Viewport.hpp"
-
 #include "sequoia/Core/Meta/Utilities.hpp"
 
 #include <algorithm>

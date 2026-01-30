@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Core/AssetManagement/Image.hpp"
+#include "avocet/Core/Geometry/Extent.hpp"
 
 #include "avocet/OpenGL/ResourceInfrastructure/GenericResource.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
