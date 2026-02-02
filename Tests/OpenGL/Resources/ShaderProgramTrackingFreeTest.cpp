@@ -14,8 +14,9 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
-#include <thread>
 #include <future>
+#include <thread>
+#include <latch>
 
 namespace avocet::testing
 {
@@ -42,6 +43,18 @@ namespace avocet::testing
             return get_current_program_index(ctx);
         }
 
+        agl::resource_handle make_and_use_shader_program(const curlew::window& w, const fs::path& shaderDir, std::latch& entryLatch, std::latch& exitLatch) {
+            const auto& ctx{w.context()};
+
+            agl::shader_program sp{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+
+            entryLatch.arrive_and_wait();
+            sp.use();
+            exitLatch.arrive_and_wait();
+
+            return get_current_program_index(ctx);
+        }
+
         agl::resource_handle make_and_use_shader_program_threaded(curlew::window& w, const fs::path& shaderDir) {
             curlew::test_window_manager::detach_current_context();
 
@@ -60,6 +73,18 @@ namespace avocet::testing
             }
 
             return fut.get();
+        }
+
+        std::packaged_task<agl::resource_handle()> make_shader_program_task(curlew::window& w, const fs::path& shaderDir, std::latch& entryLatch, std::latch& exitLatch) {
+            curlew::test_window_manager::detach_current_context();
+
+            return
+                std::packaged_task<agl::resource_handle()>{
+                    [&w, &shaderDir, &entryLatch, &exitLatch]() {
+                        w.make_context_current();
+                        return make_and_use_shader_program(w, shaderDir, entryLatch, exitLatch);
+                    }
+                };
         }
 
         [[nodiscard]]
@@ -81,6 +106,7 @@ namespace avocet::testing
         check_serial_tracking_overlapping_shader_prog_lifetimes();
 
         check_parallel_tracking_non_overlapping_shader_prog_lifetimes();
+        check_parallel_tracking_overlapping_shader_prog_lifetimes();
     }
 
     void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_shader_prog_lifetimes()
@@ -108,7 +134,7 @@ namespace avocet::testing
         check_program_indices(report("Serial overlapping lifetimes"), prog0, prog1);
     }
 
-     void shader_program_tracking_free_test::check_parallel_tracking_non_overlapping_shader_prog_lifetimes()
+    void shader_program_tracking_free_test::check_parallel_tracking_non_overlapping_shader_prog_lifetimes()
     {
         const auto shaderDir{working_materials()};
         auto win0{create_window({.hiding{curlew::window_hiding_mode::on}})},
@@ -119,6 +145,27 @@ namespace avocet::testing
 
         check_program_indices(report("Parallel non-overlapping lifetimes"), prog0, prog1);
     }
+
+     void shader_program_tracking_free_test::check_parallel_tracking_overlapping_shader_prog_lifetimes()
+     {
+         const auto shaderDir{working_materials()};
+         auto win0{create_window({.hiding{curlew::window_hiding_mode::on}})},
+              win1{create_window({.hiding{curlew::window_hiding_mode::on}})};
+
+         std::latch entryLatch{2}, exitLatch{2};
+
+         auto task0{make_shader_program_task(win0, shaderDir, entryLatch, exitLatch)},
+              task1{make_shader_program_task(win1, shaderDir, entryLatch, exitLatch)};
+
+         auto fut0{task0.get_future()},
+              fut1{task1.get_future()};
+
+         {
+             std::array executors{std::jthread{std::move(task0)}, std::jthread{std::move(task1)}};
+         }
+
+         check_program_indices(report("Parallel non-overlapping lifetimes"), fut0.get(), fut1.get());
+     }
 
     void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)
     {
