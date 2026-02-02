@@ -89,7 +89,7 @@ namespace avocet::testing
         const auto prog0{make_and_use_shader_program(create_window({.hiding{curlew::window_hiding_mode::on}}), shaderDir)},
                    prog1{make_and_use_shader_program(create_window({.hiding{curlew::window_hiding_mode::on}}), shaderDir)};
 
-        check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
+        check_program_indices(report("Serial non-overlapping lifetimes"), prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_serial_tracking_overlapping_shader_prog_lifetimes()
@@ -105,7 +105,7 @@ namespace avocet::testing
         sp2.use();
         const auto prog1{get_current_program_index(win1.context())};
 
-        check_program_indices("Serial overlapping lifetimes", prog0, prog1);
+        check_program_indices(report("Serial overlapping lifetimes"), prog0, prog1);
     }
 
      void shader_program_tracking_free_test::check_parallel_tracking_non_overlapping_shader_prog_lifetimes()
@@ -117,7 +117,7 @@ namespace avocet::testing
         const auto prog0{make_and_use_shader_program_threaded(win0, shaderDir)},
                    prog1{make_and_use_shader_program_threaded(win1, shaderDir)};
 
-        check_program_indices("Parallel non-overlapping lifetimes", prog0, prog1);
+        check_program_indices(report("Parallel non-overlapping lifetimes"), prog0, prog1);
     }
 
     void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)
