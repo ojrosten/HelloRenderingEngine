@@ -46,7 +46,7 @@ namespace avocet::opengl {
             : base_type{ctx, {{fboConfig.label}}}
             , m_Texture{ctx, texConfig}
         {
-            gl_function{&GladGLContext::FramebufferTexture2D}(ctx, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_Texture.contextual_handle().handle().index(), 0);
+            gl_function{&GladGLContext::FramebufferTexture}(ctx, GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_Texture.contextual_handle().handle().index(), 0);
 
             check_framebuffer_status();
         }
