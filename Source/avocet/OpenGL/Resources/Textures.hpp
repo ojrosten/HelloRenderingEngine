@@ -55,10 +55,10 @@ namespace avocet::opengl {
     struct texture_2d_configurator {
         using value_type = GLubyte;
 
-        image_view        data_view;
-        sampling_decoding decoding;
+        image_view            data_view;
+        sampling_decoding     decoding;
         std::function<void()> parameter_setter;
-        optional_label    label{};
+        optional_label        label{};
     };
 
     struct texture_2d_lifecycle_events {
