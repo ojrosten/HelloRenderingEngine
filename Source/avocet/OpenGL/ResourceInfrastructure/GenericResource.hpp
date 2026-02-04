@@ -22,9 +22,15 @@ namespace avocet::opengl {
     template<std::size_t I>
     struct index { constexpr static std::size_t value{I}; };
 
+    template<class T>
+    inline constexpr bool has_configurator_type_v{
+        requires { typename T::configurator; }
+    };
+
     template<num_resources NumResources, class T>
     inline constexpr bool has_resource_lifecycle_events_v{
-        has_bind_event_v<T>
+        has_configurator_type_v<T>
+     && has_bind_event_v<T>
      && requires(raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
             T::generate(crv.context(), indices);
             T::destroy(crv.context(), indices);

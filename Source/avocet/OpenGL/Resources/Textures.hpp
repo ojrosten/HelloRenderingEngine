@@ -54,24 +54,35 @@ namespace avocet::opengl {
     }
 
     struct texture_configurator_common {
+        using value_type = GLubyte;
+
         sampling_decoding     decoding;
         std::function<void()> parameter_setter;
         optional_label        label{};
     };
 
     struct texture_2d_configurator {
-        using value_type = GLubyte;
+        using value_type = texture_configurator_common::value_type;
 
         texture_configurator_common common_config;
         image_view                  data_view;
     };
 
     struct framebuffer_texture_2d_configurator {
-        using value_type = GLubyte;
+        using value_type = texture_configurator_common::value_type;
 
         texture_configurator_common common_config;
         avocet::discrete_extent     dimensions;
         texture_format              format;
+    };
+
+    template<class T, class Configurator>
+    inline constexpr bool defines_texture_configuration_v{
+           has_configurator_type_v<T>
+        && std::same_as<Configurator, typename T::configurator>
+        && requires (contextual_resource_view h, const typename T::configurator& config) {
+               T::do_configure(h, config);
+           }
     };
 
     template<class Derived>
@@ -87,6 +98,7 @@ namespace avocet::opengl {
         static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, get_index(h)); }
 
         template<class Configurator>
+            requires defines_texture_configuration_v<Derived, Configurator>
         static void configure(contextual_resource_view h, const Configurator& config) {
             add_label(identifier, h, config.common_config.label);
             Derived::do_configure(h, config);
