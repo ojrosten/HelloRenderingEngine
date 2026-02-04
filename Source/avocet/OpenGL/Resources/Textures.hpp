@@ -53,26 +53,29 @@ namespace avocet::opengl {
         throw std::runtime_error{std::format("to_texture_format: {} colour channels requested but it must be in the range [1,4]", numChannels)};
     }
 
+    struct texture_configurator_common {
+        sampling_decoding     decoding;
+        std::function<void()> parameter_setter;
+        optional_label        label{};
+    };
+
     struct texture_2d_configurator {
         using value_type = GLubyte;
 
-        image_view        data_view;
-        sampling_decoding decoding;
-        std::function<void()> parameter_setter;
-        optional_label    label{};
+        texture_configurator_common common_config;
+        image_view                  data_view;
     };
 
     struct framebuffer_texture_2d_configurator {
         using value_type = GLubyte;
 
-        avocet::discrete_extent dimensions{};
-        texture_format          format{texture_format::rgba};
-        sampling_decoding       decoding{sampling_decoding::none};
-        optional_label          label{};
+        texture_configurator_common common_config;
+        avocet::discrete_extent     dimensions;
+        texture_format              format;
     };
 
+    template<class Derived>
     struct common_texture_2d_lifecycle_events {
-
         constexpr static auto identifier{object_identifier::texture};
 
         template<std::size_t N>
@@ -82,18 +85,26 @@ namespace avocet::opengl {
         static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
 
         static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, get_index(h)); }
+
+        template<class Configurator>
+        static void configure(contextual_resource_view h, const Configurator& config) {
+            add_label(identifier, h, config.common_config.label);
+            Derived::do_configure(h, config);
+            if(config.common_config.parameter_setter)
+                config.common_config.parameter_setter();
+        }
     };
 
-    struct texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
+    struct texture_2d_lifecycle_events : common_texture_2d_lifecycle_events<texture_2d_lifecycle_events> {
         using configurator = texture_2d_configurator;
 
-        static void configure(contextual_resource_view h, const configurator& config);
+        static void do_configure(contextual_resource_view h, const configurator& config);
     };
 
-    struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
+    struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events<framebuffer_texture_2d_lifecycle_events> {
         using configurator = framebuffer_texture_2d_configurator;
 
-        static void configure(contextual_resource_view h, const configurator& config);
+        static void do_configure(contextual_resource_view h, const configurator& config);
     };
 
     struct texture_unit {

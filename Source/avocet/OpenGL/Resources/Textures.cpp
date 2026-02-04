@@ -22,46 +22,6 @@ namespace avocet::opengl {
 
             throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_enum(format))};
         }
-
-        void load_to_gpu(const decorated_context& ctx, const texture_2d_configurator& config) {
-            gl_function{&GladGLContext::PixelStorei}(ctx, GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
-
-            const auto format{to_texture_format(config.data_view.num_channels())};
-            using value_type = texture_2d_configurator::value_type;
-
-            gl_function{&GladGLContext::TexImage2D}(
-                ctx,
-                GL_TEXTURE_2D,
-                0,
-                to_gl_int(to_internal_format(format, config.decoding)),
-                to_gl_sizei(config.data_view.width()),
-                to_gl_sizei(config.data_view.height()),
-                0,
-                to_gl_enum(format),
-                to_gl_enum(to_gl_type_specifier_v<value_type>),
-                config.data_view.span().data()
-            );
-        }
-
-        void do_configure(const decorated_context& ctx, const framebuffer_texture_2d_configurator& config) {
-            using value_type = texture_2d_configurator::value_type;
-
-            gl_function{&GladGLContext::TexImage2D}(
-                ctx,
-                GL_TEXTURE_2D,
-                0,
-                to_gl_int(to_internal_format(config.format, config.decoding)),
-                to_gl_sizei(config.dimensions.width),
-                to_gl_sizei(config.dimensions.height),
-                0,
-                to_gl_enum(config.format),
-                to_gl_enum(to_gl_type_specifier_v<value_type>),
-                nullptr
-            );
-
-            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        }
     }
 
     [[nodiscard]]
@@ -71,16 +31,42 @@ namespace avocet::opengl {
         return param;
     }
 
-    void texture_2d_lifecycle_events::configure(contextual_resource_view h, const configurator& config) {
-        add_label(identifier, h, config.label);
-        load_to_gpu(h.context(), config);
-        if(config.parameter_setter)
-            config.parameter_setter();
+    void texture_2d_lifecycle_events::do_configure(contextual_resource_view h, const texture_2d_configurator& config) {
+        const auto& ctx{h.context()};
+        gl_function{&GladGLContext::PixelStorei}(ctx, GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
+
+        const auto format{to_texture_format(config.data_view.num_channels())};
+        using value_type = texture_2d_configurator::value_type;
+
+        gl_function{&GladGLContext::TexImage2D}(
+            ctx,
+            GL_TEXTURE_2D,
+            0,
+            to_gl_int(to_internal_format(format, config.common_config.decoding)),
+            to_gl_sizei(config.data_view.width()),
+            to_gl_sizei(config.data_view.height()),
+            0,
+            to_gl_enum(format),
+            to_gl_enum(to_gl_type_specifier_v<value_type>),
+            config.data_view.span().data()
+        );
     }
 
-    void framebuffer_texture_2d_lifecycle_events::configure(contextual_resource_view h, const configurator& config) {
-        add_label(identifier, h, config.label);
-        do_configure(h.context(), config);
-    }
+    void framebuffer_texture_2d_lifecycle_events::do_configure(contextual_resource_view h, const framebuffer_texture_2d_configurator& config) {
+        const auto& ctx{h.context()};
+        using value_type = framebuffer_texture_2d_configurator::value_type;
 
+        gl_function{&GladGLContext::TexImage2D}(
+            ctx,
+            GL_TEXTURE_2D,
+            0,
+            to_gl_int(to_internal_format(config.format, config.common_config.decoding)),
+            to_gl_sizei(config.dimensions.width),
+            to_gl_sizei(config.dimensions.height),
+            0,
+            to_gl_enum(config.format),
+            to_gl_enum(to_gl_type_specifier_v<value_type>),
+            nullptr
+        );
+    }
 }

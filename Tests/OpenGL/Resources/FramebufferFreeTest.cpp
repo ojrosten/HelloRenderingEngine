@@ -28,7 +28,7 @@ namespace avocet::testing
         avocet::discrete_extent extent{.width{1}, .height{2}};
         auto w{create_window({.dimensions{extent}, .hiding{window_hiding_mode::on}})};
 
-        framebuffer_object fbo{w.context(), fbo_configurator{.label{}}, framebuffer_texture_2d_configurator{extent}};
+        framebuffer_object fbo{w.context(), fbo_configurator{.label{}}, framebuffer_texture_2d_configurator{.common_config{}, .dimensions{extent}, .format{texture_format::rgba}}};
         fbo.bind(texture_unit{1});
 
         agl::gl_function{&GladGLContext::ClearColor}(w.context(), 1.0f, 0.5f, 0.5f, 1.0f);
