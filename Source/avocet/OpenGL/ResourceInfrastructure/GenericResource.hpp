@@ -31,12 +31,12 @@ namespace avocet::opengl {
     inline constexpr bool has_resource_lifecycle_events_v{
         has_configurator_type_v<T>
      && has_bind_event_v<T>
-     && requires(raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
+     && requires(const T& t, raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
             T::generate(crv.context(), indices);
             T::destroy(crv.context(), indices);
             { T::identifier } -> std::convertible_to<object_identifier>;
             typename T::configurator;
-            T::configure(crv, std::declval<typename T::configurator>());
+            t.configure(crv, std::declval<typename T::configurator>());
         }
     };
 
@@ -61,7 +61,7 @@ namespace avocet::opengl {
         static void bind(contextual_resource_view h) { LifeEvents::bind(h); }
 
         static void configure(contextual_resource_view h, const configurator_type& config) {
-            LifeEvents::configure(h, config);
+            LifeEvents{}.configure(h, config);
         }
     };
 

@@ -85,7 +85,6 @@ namespace avocet::opengl {
            }
     };
 
-    template<class Derived>
     struct common_texture_2d_lifecycle_events {
         constexpr static auto identifier{object_identifier::texture};
 
@@ -97,23 +96,22 @@ namespace avocet::opengl {
 
         static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, get_index(h)); }
 
-        template<class Configurator>
-            requires defines_texture_configuration_v<Derived, Configurator>
-        static void configure(contextual_resource_view h, const Configurator& config) {
+        template<class Self>
+        void configure(this const Self&, contextual_resource_view h, const typename Self::configurator& config) {
             add_label(identifier, h, config.common_config.label);
-            Derived::do_configure(h, config);
+            Self::do_configure(h, config);
             if(config.common_config.parameter_setter)
                 config.common_config.parameter_setter();
         }
     };
 
-    struct texture_2d_lifecycle_events : common_texture_2d_lifecycle_events<texture_2d_lifecycle_events> {
+    struct texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
         using configurator = texture_2d_configurator;
 
         static void do_configure(contextual_resource_view h, const configurator& config);
     };
 
-    struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events<framebuffer_texture_2d_lifecycle_events> {
+    struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
         using configurator = framebuffer_texture_2d_configurator;
 
         static void do_configure(contextual_resource_view h, const configurator& config);
