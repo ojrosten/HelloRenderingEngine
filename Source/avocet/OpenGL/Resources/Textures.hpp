@@ -41,6 +41,20 @@ namespace avocet::opengl {
     };
 
     [[nodiscard]]
+    constexpr texture_internal_format to_internal_format(texture_format format, sampling_decoding colourSpace) {
+        const bool noDecoding{colourSpace == sampling_decoding::none};
+
+        switch(format) {
+        case texture_format::red: return              texture_internal_format::red;
+        case texture_format::rg: return              texture_internal_format::rg;
+        case texture_format::rgb: return noDecoding ? texture_internal_format::rgb : texture_internal_format::srgb;
+        case texture_format::rgba: return noDecoding ? texture_internal_format::rgba : texture_internal_format::srgba;
+        }
+
+        throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_enum(format))};
+    }
+
+    [[nodiscard]]
     constexpr texture_format to_texture_format(colour_channels numChannels) {
         switch(numChannels.raw_value()) {
             using enum texture_format;
@@ -100,13 +114,51 @@ namespace avocet::opengl {
         void configure(this const Self&, contextual_resource_view h, const Self::configurator& config) {
             add_label(identifier, h, config.common_config.label);
             Self::do_configure(h, config);
+
+            const auto rawConfig{Self::to_raw_config(config)};
+
+            using value_type = Self::configurator::value_type;
+            gl_function{&GladGLContext::TexImage2D}(
+                h.context(),
+                GL_TEXTURE_2D,
+                0,
+                to_gl_int(to_internal_format(rawConfig.format, rawConfig.decoding)),
+                to_gl_sizei(rawConfig.extent.width),
+                to_gl_sizei(rawConfig.extent.height),
+                0,
+                to_gl_enum(rawConfig.format),
+                to_gl_enum(to_gl_type_specifier_v<value_type>),
+                rawConfig.data.data()
+             );
+
             if(config.common_config.parameter_setter)
                 config.common_config.parameter_setter();
         }
     };
 
+    template<sequoia::arithmetic T>
+    struct raw_texture_config {
+        texture_format     format;
+        sampling_decoding  decoding;
+        discrete_extent    extent;
+        std::span<const T> data;
+    };
+
     struct texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
         using configurator = texture_2d_configurator;
+
+        [[nodiscard]]
+        static raw_texture_config<configurator::value_type> to_raw_config(const configurator& config) {
+            return {
+                .format{to_texture_format(config.data_view.num_channels())},
+                .decoding{config.common_config.decoding},
+                .extent{
+                    .width {static_cast<std::uint32_t>(config.data_view.width())},
+                    .height{static_cast<std::uint32_t>(config.data_view.height())}
+                },
+                .data{config.data_view.span()}
+            };
+        }
 
         static void do_configure(contextual_resource_view h, const configurator& config);
     };
@@ -114,7 +166,17 @@ namespace avocet::opengl {
     struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
         using configurator = framebuffer_texture_2d_configurator;
 
-        static void do_configure(contextual_resource_view h, const configurator& config);
+        [[nodiscard]]
+        static raw_texture_config<configurator::value_type> to_raw_config(const configurator& config) {
+            return {
+                .format{config.format},
+                .decoding{config.common_config.decoding},
+                .extent{config.dimensions},
+                .data{}
+            };
+        }
+
+        static void do_configure(contextual_resource_view, const configurator&) {}
     };
 
     struct texture_unit {
