@@ -76,11 +76,10 @@ namespace avocet::opengl {
         texture_format              format;
     };
 
-    template<class T, class Configurator>
+    template<class T>
     inline constexpr bool defines_texture_configuration_v{
            has_configurator_type_v<T>
-        && std::same_as<Configurator, typename T::configurator>
-        && requires (contextual_resource_view h, const typename T::configurator& config) {
+        && requires (contextual_resource_view h, const T::configurator& config) {
                T::do_configure(h, config);
            }
     };
@@ -97,7 +96,8 @@ namespace avocet::opengl {
         static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, get_index(h)); }
 
         template<class Self>
-        void configure(this const Self&, contextual_resource_view h, const typename Self::configurator& config) {
+            requires defines_texture_configuration_v<Self>
+        void configure(this const Self&, contextual_resource_view h, const Self::configurator& config) {
             add_label(identifier, h, config.common_config.label);
             Self::do_configure(h, config);
             if(config.common_config.parameter_setter)
