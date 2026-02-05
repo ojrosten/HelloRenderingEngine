@@ -86,7 +86,7 @@ namespace avocet::opengl {
         using value_type = texture_configurator_common::value_type;
 
         texture_configurator_common common_config;
-        avocet::discrete_extent     dimensions;
+        avocet::discrete_extent     extent;
         texture_format              format;
     };
 
@@ -171,7 +171,7 @@ namespace avocet::opengl {
             return {
                 .format{config.format},
                 .decoding{config.common_config.decoding},
-                .extent{config.dimensions},
+                .extent{config.extent},
                 .data{}
             };
         }
