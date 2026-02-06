@@ -93,8 +93,8 @@ namespace avocet::opengl {
     template<class T>
     inline constexpr bool defines_texture_configuration_v{
            has_configurator_type_v<T>
-        && requires (contextual_resource_view h, const T::configurator& config) {
-               T::configure_texture(h, config);
+        && requires (contextual_resource_view crv, const T::configurator& config) {
+               T::preliminary_configuration(crv, config);
            }
     };
 
@@ -107,28 +107,28 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
 
-        static void bind(contextual_resource_view h) { gl_function{&GladGLContext::BindTexture}(h.context(), GL_TEXTURE_2D, get_index(h)); }
+        static void bind(contextual_resource_view crv) { gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv)); }
 
         template<class Self>
             requires defines_texture_configuration_v<Self>
-        void configure(this const Self&, contextual_resource_view h, const Self::configurator& config) {
-            add_label(identifier, h, config.common_config.label);
-            Self::configure_texture(h, config);
+        void configure(this const Self&, contextual_resource_view crv, const Self::configurator& config) {
+            add_label(identifier, crv, config.common_config.label);
+            Self::preliminary_configuration(crv, config);
 
-            const auto rawConfig{Self::to_raw_config(config)};
+            const auto commonConfig{Self::to_common_configurator(config)};
 
             using value_type = Self::configurator::value_type;
             gl_function{&GladGLContext::TexImage2D}(
-                h.context(),
+                crv.context(),
                 GL_TEXTURE_2D,
                 0,
-                to_gl_int(to_internal_format(rawConfig.format, config.common_config.decoding)),
-                to_gl_sizei(rawConfig.extent.width),
-                to_gl_sizei(rawConfig.extent.height),
+                to_gl_int(to_internal_format(commonConfig.format, config.common_config.decoding)),
+                to_gl_sizei(commonConfig.extent.width),
+                to_gl_sizei(commonConfig.extent.height),
                 0,
-                to_gl_enum(rawConfig.format),
+                to_gl_enum(commonConfig.format),
                 to_gl_enum(to_gl_type_specifier_v<value_type>),
-                rawConfig.data.data()
+                commonConfig.data.data()
              );
 
             if(config.common_config.parameter_setter)
@@ -137,7 +137,7 @@ namespace avocet::opengl {
     };
 
     template<sequoia::arithmetic T>
-    struct raw_texture_config {
+    struct common_texture_2d_configurator {
         texture_format     format;
         discrete_extent    extent;
         std::span<const T> data;
@@ -147,7 +147,7 @@ namespace avocet::opengl {
         using configurator = texture_2d_configurator;
 
         [[nodiscard]]
-        static raw_texture_config<configurator::value_type> to_raw_config(const configurator& config) {
+        static common_texture_2d_configurator<configurator::value_type> to_common_configurator(const configurator& config) {
             return {
                 .format{to_texture_format(config.data_view.num_channels())},
                 .extent{
@@ -158,7 +158,7 @@ namespace avocet::opengl {
             };
         }
 
-        static void configure_texture(contextual_resource_view h, const configurator& config);
+        static void preliminary_configuration(contextual_resource_view crv, const configurator& config);
 
         //void configure(contextual_resource_view crv, const configurator& config);
     };
@@ -167,7 +167,7 @@ namespace avocet::opengl {
         using configurator = framebuffer_texture_2d_configurator;
 
         [[nodiscard]]
-        static raw_texture_config<configurator::value_type> to_raw_config(const configurator& config) {
+        static common_texture_2d_configurator<configurator::value_type> to_common_configurator(const configurator& config) {
             return {
                 .format{config.format},
                 .extent{config.extent},
@@ -175,7 +175,7 @@ namespace avocet::opengl {
             };
         }
 
-        static void configure_texture(contextual_resource_view, const configurator&) {}
+        static void preliminary_configuration(contextual_resource_view, const configurator&) {}
 
         //void configure(contextual_resource_view crv, const configurator& config);
     };

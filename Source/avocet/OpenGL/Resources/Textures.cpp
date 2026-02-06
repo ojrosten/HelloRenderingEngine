@@ -18,14 +18,14 @@ namespace avocet::opengl {
         return param;
     }
 
-    void texture_2d_lifecycle_events::configure_texture(contextual_resource_view h, const texture_2d_configurator& config) {
-        const auto& ctx{h.context()};
+    void texture_2d_lifecycle_events::preliminary_configuration(contextual_resource_view crv, const texture_2d_configurator& config) {
+        const auto& ctx{crv.context()};
         gl_function{&GladGLContext::PixelStorei}(ctx, GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
     }
 
     /*void framebuffer_texture_2d_lifecycle_events::configure(contextual_resource_view crv, const configurator& config) {
         add_label(identifier, crv, config.label);
-        configure_texture(crv.context(), config);
+        preliminary_configuration(crv.context(), config);
         if(config.common_config.parameter_setter)
             config.common_config.parameter_setter();
     }
