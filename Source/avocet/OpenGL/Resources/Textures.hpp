@@ -136,7 +136,7 @@ namespace avocet::opengl {
         }
     };
 
-    template<sequoia::arithmetic T>
+    template<gl_arithmetic T>
     struct common_texture_2d_configurator {
         texture_format     format;
         discrete_extent    extent;
