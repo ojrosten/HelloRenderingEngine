@@ -122,7 +122,7 @@ namespace avocet::opengl {
                 h.context(),
                 GL_TEXTURE_2D,
                 0,
-                to_gl_int(to_internal_format(rawConfig.format, rawConfig.decoding)),
+                to_gl_int(to_internal_format(rawConfig.format, config.common_config.decoding)),
                 to_gl_sizei(rawConfig.extent.width),
                 to_gl_sizei(rawConfig.extent.height),
                 0,
@@ -139,7 +139,6 @@ namespace avocet::opengl {
     template<sequoia::arithmetic T>
     struct raw_texture_config {
         texture_format     format;
-        sampling_decoding  decoding;
         discrete_extent    extent;
         std::span<const T> data;
     };
@@ -151,7 +150,6 @@ namespace avocet::opengl {
         static raw_texture_config<configurator::value_type> to_raw_config(const configurator& config) {
             return {
                 .format{to_texture_format(config.data_view.num_channels())},
-                .decoding{config.common_config.decoding},
                 .extent{
                     .width {static_cast<std::uint32_t>(config.data_view.width())},
                     .height{static_cast<std::uint32_t>(config.data_view.height())}
@@ -172,7 +170,6 @@ namespace avocet::opengl {
         static raw_texture_config<configurator::value_type> to_raw_config(const configurator& config) {
             return {
                 .format{config.format},
-                .decoding{config.common_config.decoding},
                 .extent{config.extent},
                 .data{}
             };
