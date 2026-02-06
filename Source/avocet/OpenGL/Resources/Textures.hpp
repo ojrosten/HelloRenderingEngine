@@ -257,6 +257,11 @@ namespace avocet::opengl {
             gl_function{&GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());
             base_type::do_bind(self);
         }
+    protected:
+        ~generic_texture_2d() = default;
+
+        generic_texture_2d(generic_texture_2d&&)            noexcept = default;
+        generic_texture_2d& operator=(generic_texture_2d&&) noexcept = default;
     private:
         friend class framebuffer_object;
 
