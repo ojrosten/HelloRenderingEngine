@@ -86,7 +86,7 @@ namespace avocet::opengl {
         using value_type = texture_configurator_common::value_type;
 
         texture_configurator_common common_config;
-        avocet::discrete_extent     extent;
+        discrete_extent             extent;
         texture_format              format;
     };
 
@@ -94,7 +94,7 @@ namespace avocet::opengl {
     inline constexpr bool defines_texture_configuration_v{
            has_configurator_type_v<T>
         && requires (contextual_resource_view h, const T::configurator& config) {
-               T::do_configure(h, config);
+               T::configure_texture(h, config);
            }
     };
 
@@ -113,7 +113,7 @@ namespace avocet::opengl {
             requires defines_texture_configuration_v<Self>
         void configure(this const Self&, contextual_resource_view h, const Self::configurator& config) {
             add_label(identifier, h, config.common_config.label);
-            Self::do_configure(h, config);
+            Self::configure_texture(h, config);
 
             const auto rawConfig{Self::to_raw_config(config)};
 
@@ -160,7 +160,9 @@ namespace avocet::opengl {
             };
         }
 
-        static void do_configure(contextual_resource_view h, const configurator& config);
+        static void configure_texture(contextual_resource_view h, const configurator& config);
+
+        //void configure(contextual_resource_view crv, const configurator& config);
     };
 
     struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
@@ -176,7 +178,9 @@ namespace avocet::opengl {
             };
         }
 
-        static void do_configure(contextual_resource_view, const configurator&) {}
+        static void configure_texture(contextual_resource_view, const configurator&) {}
+
+        //void configure(contextual_resource_view crv, const configurator& config);
     };
 
     struct texture_unit {
