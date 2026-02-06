@@ -104,15 +104,11 @@ namespace avocet::opengl {
         {}
 
         [[nodiscard]]
-        unique_image extract_data(this const texture_2d& self, texture_format format, alignment rowAlignment) {
-            return do_extract_data(self, format, rowAlignment);
-        }
+        unique_image extract_data(this const texture_2d& self, texture_format format, alignment rowAlignment);
 
         void bind(this const texture_2d& self, texture_unit unit) {
             gl_function{&GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());
             base_type::do_bind(self);
         }
-    private:
-        static unique_image do_extract_data(const texture_2d& tex2d, texture_format format, alignment rowAlignment);
     };
 }
