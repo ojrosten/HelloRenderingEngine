@@ -60,6 +60,19 @@ namespace avocet::opengl {
         optional_label        label{};
     };
 
+
+    struct common_texture_2d_lifecycle_events {
+        constexpr static auto identifier{object_identifier::texture};
+
+        template<std::size_t N>
+        static void generate(const decorated_context& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenTextures}(ctx, N, indices.data()); }
+
+        template<std::size_t N>
+        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
+
+        static void bind(contextual_resource_view crv) { gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv)); }
+    };
+
     struct texture_2d_configurator {
         using value_type = texture_configurator_common::value_type;
 
@@ -67,24 +80,8 @@ namespace avocet::opengl {
         image_view                  data_view;
     };
 
-    struct texture_2d_lifecycle_events {
+    struct texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
         using configurator = texture_2d_configurator;
-
-        constexpr static auto identifier{object_identifier::texture};
-
-        template<std::size_t N>
-        static void generate(const decorated_context& ctx, raw_indices<N>& indices) {
-            gl_function{&GladGLContext::GenTextures}(ctx, N, indices.data());
-        }
-
-        template<std::size_t N>
-        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) {
-            gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data());
-        }
-
-        static void bind(contextual_resource_view crv) {
-            gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv));
-        }
 
         static void configure(contextual_resource_view crv, const configurator& config);
     };
@@ -99,22 +96,32 @@ namespace avocet::opengl {
         friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
     };
 
-    class texture_2d : public generic_resource<num_resources{1}, texture_2d_lifecycle_events> {
+    class generic_texture_2d : public generic_resource<num_resources{1}, texture_2d_lifecycle_events> {
     public:
         using base_type         = generic_resource<num_resources{1}, texture_2d_lifecycle_events> ;
         using configurator_type = base_type::configurator_type;
         using value_type        = configurator_type::value_type;
 
-        texture_2d(const decorated_context& ctx, const configurator_type& textureConfig)
+        generic_texture_2d(const decorated_context& ctx, const configurator_type& textureConfig)
             : base_type{ctx, {textureConfig}}
         {}
 
         [[nodiscard]]
-        unique_image extract_data(this const texture_2d& self, texture_format format, alignment rowAlignment);
+        unique_image extract_data(this const generic_texture_2d& self, texture_format format, alignment rowAlignment);
 
-        void bind(this const texture_2d& self, texture_unit unit) {
+        void bind(this const generic_texture_2d& self, texture_unit unit) {
             gl_function{&GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());
             base_type::do_bind(self);
         }
+    protected:
+        ~generic_texture_2d() = default;
+
+        generic_texture_2d(generic_texture_2d&&)            noexcept = default;
+        generic_texture_2d& operator=(generic_texture_2d&&) noexcept = default;
+    };
+
+    class texture_2d : public generic_texture_2d {
+    public:
+        using generic_texture_2d::generic_texture_2d;
     };
 }

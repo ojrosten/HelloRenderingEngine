@@ -80,7 +80,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    unique_image texture_2d::extract_data(this const texture_2d& self, texture_format format, alignment rowAlignment) {
+    unique_image generic_texture_2d::extract_data(this const generic_texture_2d& self, texture_format format, alignment rowAlignment) {
         do_bind(self);
 
         const auto& ctx{self.context()};
