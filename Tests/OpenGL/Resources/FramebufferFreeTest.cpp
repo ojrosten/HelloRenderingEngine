@@ -25,8 +25,7 @@ namespace avocet::testing
         using namespace curlew;
         using namespace opengl;
 
-        constexpr avocet::discrete_extent extent{.width{1}, .height{2}};
-        auto w{create_window({.extent{extent}, .hiding{window_hiding_mode::on}})};
+        auto w{create_window({.extent{.width{1}, .height{1}}, .hiding{window_hiding_mode::on}})};
 
         framebuffer_object
             fbo{
