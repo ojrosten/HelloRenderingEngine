@@ -41,7 +41,7 @@ int main()
 
         auto w{
             manager.create_window(
-                {.dimensions{nominalWindowSize},
+                {.extent{nominalWindowSize},
                  .name{"Hello Rendering Engine"},
                  .hiding{curlew::window_hiding_mode::off},
                  .debug_mode{agl::debugging_mode::dynamic},
