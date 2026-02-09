@@ -52,13 +52,19 @@ namespace avocet::opengl {
         throw std::runtime_error{std::format("to_texture_format: {} colour channels requested but it must be in the range [1,4]", numChannels)};
     }
 
-    struct texture_2d_configurator {
+    struct texture_configurator_common {
         using value_type = GLubyte;
 
-        image_view            data_view;
         sampling_decoding     decoding;
         std::function<void()> parameter_setter;
         optional_label        label{};
+    };
+
+    struct texture_2d_configurator {
+        using value_type = texture_configurator_common::value_type;
+
+        texture_configurator_common common_config;
+        image_view                  data_view;
     };
 
     struct texture_2d_lifecycle_events {

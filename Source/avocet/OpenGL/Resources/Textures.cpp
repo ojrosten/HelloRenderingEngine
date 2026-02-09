@@ -54,7 +54,7 @@ namespace avocet::opengl {
                 ctx,
                 GL_TEXTURE_2D,
                 0,
-                to_gl_int(to_internal_format(format, config.decoding)),
+                to_gl_int(to_internal_format(format, config.common_config.decoding)),
                 to_gl_sizei(config.data_view.width()),
                 to_gl_sizei(config.data_view.height()),
                 0,
@@ -73,10 +73,10 @@ namespace avocet::opengl {
     }
 
     void texture_2d_lifecycle_events::configure(contextual_resource_view crv, const configurator& config) {
-        add_label(identifier, crv, config.label);
+        add_label(identifier, crv, config.common_config.label);
         load_to_gpu(crv.context(), config);
-        if(config.parameter_setter)
-            config.parameter_setter();
+        if(config.common_config.parameter_setter)
+            config.common_config.parameter_setter();
     }
 
     [[nodiscard]]
