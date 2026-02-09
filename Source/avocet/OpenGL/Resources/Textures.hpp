@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Core/AssetManagement/Image.hpp"
+#include "avocet/Core/Geometry/Extent.hpp"
 
 #include "avocet/OpenGL/Resources/GenericResource.hpp"
 #include "avocet/OpenGL/Resources/Labels.hpp"
@@ -52,14 +53,21 @@ namespace avocet::opengl {
         throw std::runtime_error{std::format("to_texture_format: {} colour channels requested but it must be in the range [1,4]", numChannels)};
     }
 
-    struct texture_configurator_common {
-        using value_type = GLubyte;
-
-        sampling_decoding     decoding;
-        std::function<void()> parameter_setter;
-        optional_label        label{};
+    template<gl_arithmetic T>
+    struct raw_texture_2d_configurator {
+        texture_format     format;
+        discrete_extent    extent;
+        std::span<const T> data;
     };
 
+    template<class T>
+    inline constexpr bool defines_texture_configuration_v{
+           has_configurator_type_v<T>
+        && requires (contextual_resource_view crv, const T::configurator & config) {
+               T::preliminary_configuration(crv, config);
+               { T::to_raw_configurator(config) } -> std::convertible_to<raw_texture_2d_configurator<typename T::configurator::value_type>>;
+           }
+    };
 
     struct common_texture_2d_lifecycle_events {
         constexpr static auto identifier{object_identifier::texture};
@@ -71,6 +79,15 @@ namespace avocet::opengl {
         static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
 
         static void bind(contextual_resource_view crv) { gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv)); }
+    };
+
+
+    struct texture_configurator_common {
+        using value_type = GLubyte;
+
+        sampling_decoding     decoding;
+        std::function<void()> parameter_setter;
+        optional_label        label{};
     };
 
     struct texture_2d_configurator {
