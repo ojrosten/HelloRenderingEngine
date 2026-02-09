@@ -64,9 +64,9 @@ namespace avocet::opengl {
         const decorated_context* m_Context{};
         const resource_handle* m_Handle{};
     public:
-        contextual_resource_view(const decorated_context& ctx, const resource_handle& h)
+        contextual_resource_view(const decorated_context& ctx, const resource_handle& crv)
             : m_Context{&ctx}
-            , m_Handle{&h}
+            , m_Handle{&crv}
         {}
 
         [[nodiscard]]
@@ -80,7 +80,7 @@ namespace avocet::opengl {
     };
 
     [[nodiscard]]
-    inline GLuint get_index(contextual_resource_view h) { return h.handle().index(); }
+    inline GLuint get_index(contextual_resource_view crv) { return crv.handle().index(); }
 
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
@@ -150,7 +150,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         raw_indices<N> get_raw_indices() const {
-            return to_array(m_Handles, [](const resource_handle& h) { return h.index(); });
+            return to_array(m_Handles, [](const resource_handle& crv) { return crv.index(); });
         }
 
         [[nodiscard]]

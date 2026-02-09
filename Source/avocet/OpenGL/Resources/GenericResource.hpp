@@ -23,13 +23,13 @@ namespace avocet::opengl {
 
     template<num_resources NumResources, class T>
     inline constexpr bool has_resource_lifecycle_events_v{
-        requires(raw_indices<NumResources.value>& indices, contextual_resource_view h) {
-            T::generate(h.context(), indices);
-            T::destroy(h.context(), indices);
+        requires(raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
+            T::generate(crv.context(), indices);
+            T::destroy(crv.context(), indices);
             { T::identifier } -> std::convertible_to<object_identifier>;
-            T::bind(h);
+            T::bind(crv);
             typename T::configurator;
-            T::configure(h, std::declval<typename T::configurator>());
+            T::configure(crv, std::declval<typename T::configurator>());
         }
     };
 
@@ -47,14 +47,14 @@ namespace avocet::opengl {
             return {ctx, indices};
         }
 
-        static void destroy(const contextual_resource_handles<N>& h) {
-            LifeEvents::destroy(h.context(), h.get_raw_indices());
+        static void destroy(const contextual_resource_handles<N>& crv) {
+            LifeEvents::destroy(crv.context(), crv.get_raw_indices());
         }
 
-        static void bind(contextual_resource_view h) { LifeEvents::bind(h); }
+        static void bind(contextual_resource_view crv) { LifeEvents::bind(crv); }
 
-        static void configure(contextual_resource_view h, const configurator_type& config) {
-            LifeEvents::configure(h, config);
+        static void configure(contextual_resource_view crv, const configurator_type& config) {
+            LifeEvents::configure(crv, config);
         }
     };
 
@@ -105,7 +105,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         bool is_null() const noexcept {
-            auto isNull{[](contextual_resource_view h) { return h.handle() == resource_handle{}; }};
+            auto isNull{[](contextual_resource_view crv) { return crv.handle() == resource_handle{}; }};
             assert(std::ranges::all_of(contextual_handles(), isNull) or std::ranges::none_of(contextual_handles(), isNull));
             return isNull(contextual_handle(index<0>{}));
         }

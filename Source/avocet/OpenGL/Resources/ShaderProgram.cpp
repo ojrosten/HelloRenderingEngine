@@ -47,8 +47,8 @@ namespace avocet::opengl {
             using gl_param_getter    = gl_function<void(GLuint, GLenum, GLint*)>;
             using gl_info_log_getter = gl_function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
 
-            shader_checker(contextual_resource_view h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
-                : m_Handle{h}
+            shader_checker(contextual_resource_view crv, gl_param_getter paramGetter, gl_info_log_getter logGetter)
+                : m_Handle{crv}
                 , m_ParamGetter{paramGetter}
                 , m_InfoLogGetter{logGetter}
             {}
