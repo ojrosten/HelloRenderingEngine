@@ -64,6 +64,7 @@ namespace avocet::opengl {
     inline constexpr bool defines_texture_configuration_v{
            has_configurator_type_v<T>
         && requires (contextual_resource_view crv, const T::configurator & config) {
+               typename T::configurator::value_type;
                T::preliminary_configuration(crv, config);
                { T::to_raw_configurator(config) } -> std::convertible_to<raw_texture_2d_configurator<typename T::configurator::value_type>>;
            }
