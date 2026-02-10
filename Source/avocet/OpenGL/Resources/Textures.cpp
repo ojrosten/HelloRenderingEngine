@@ -81,10 +81,9 @@ namespace avocet::opengl {
 
     [[nodiscard]]
     unique_image generic_texture_2d::extract_data(this const generic_texture_2d& self, texture_format format, alignment rowAlignment) {
-        do_bind(self);
+        base_type::do_bind(self);
 
         const auto& ctx{self.context()};
-        using value_type = texture_2d::value_type;
         const auto width{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH))},
                   height{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
 
