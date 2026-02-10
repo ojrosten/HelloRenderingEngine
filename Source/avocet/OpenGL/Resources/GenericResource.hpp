@@ -145,6 +145,7 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
+        [[nodiscard]]
         contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
     };
 }
