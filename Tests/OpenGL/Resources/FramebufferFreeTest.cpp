@@ -27,6 +27,7 @@ namespace avocet::testing
 
         auto w{create_window({.extent{.width{1}, .height{1}}, .hiding{window_hiding_mode::on}})};
 
+        constexpr discrete_extent fbExtent{.width{1}, .height{2}};
         framebuffer_object
             fbo{
                 w.context(),
