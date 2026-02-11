@@ -1,14 +1,2 @@
 Framebuffer Free Test
-Standard Top Level Checks:                 1;  Failures:  0  [Deep checks: 0]
-
-******  Critical Failures:  1  ******
-
-
-Error -- Unexpected Exception:
-Frambuffer incomplete: Missing Attachment
-
-Exception thrown before any checks performed in file
-C:/UnitySrc/HelloRenderingEngine/Tests/OpenGL/Resources/FramebufferFreeTest.cpp
-
-=======================================
-
+Standard Top Level Checks:                 1;  Failures:  0  [Deep checks: 15]

@@ -40,21 +40,36 @@ namespace avocet::opengl {
     using fbo_configurator = framebuffer_lifecycle_events::configurator;
 
     class framebuffer_object : public generic_resource<num_resources{1}, framebuffer_lifecycle_events> {
+        framebuffer_texture_2d m_Texture;
+
         void check_framebuffer_status();
     public:
         using base_type            = generic_resource<num_resources{1}, framebuffer_lifecycle_events>;
+        using texture_configurator = framebuffer_texture_2d_configurator;
 
-        framebuffer_object(const decorated_context& ctx, const fbo_configurator& fboConfig)
+        framebuffer_object(const decorated_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
             : base_type{ctx, {{fboConfig.label}}}
+            , m_Texture{ctx, texConfig}
         {
+            gl_function{&GladGLContext::FramebufferTexture}(
+                ctx,
+                GL_FRAMEBUFFER,
+                GL_COLOR_ATTACHMENT0,
+                get_index(m_Texture.contextual_handle()),
+                0
+            );
+
             check_framebuffer_status();
         }
 
         [[nodiscard]]
-        unique_image extract_data(this const framebuffer_object& self, texture_format format, alignment rowAlignment);
+        unique_image extract_data(this const framebuffer_object& self, texture_format format, alignment rowAlignment) {
+            return self.m_Texture.extract_data(format, rowAlignment);
+        }
 
         void bind(this const framebuffer_object& self, texture_unit unit) {
             base_type::do_bind(self);
+            self.m_Texture.bind(unit);
         }
     };
 }

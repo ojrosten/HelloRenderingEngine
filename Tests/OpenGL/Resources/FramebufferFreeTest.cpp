@@ -31,7 +31,33 @@ namespace avocet::testing
         framebuffer_object
             fbo{
                 w.context(),
-                fbo_configurator{.label{}}
+                fbo_configurator{.label{}},
+                framebuffer_texture_2d_configurator{
+                    .common_config{},
+                    .format{texture_format::rgba},
+                    .extent{fbExtent}
+                }
             };
+
+        gl_function{&GladGLContext::ClearColor}(w.context(), 1.0, 0.5, 0.5, 1.0);
+        gl_function{&GladGLContext::Clear}(w.context(), GL_COLOR_BUFFER_BIT);
+
+        check(
+            equivalence,
+            "",
+            fbo.extract_data(texture_format::rgba, alignment{1}),
+            image_data{
+                .data{
+                    std::vector<unsigned char> {
+                        255, 128, 128, 255,
+                        255, 128, 128, 255
+                    }
+                },
+                .width{fbExtent.width},
+                .height{fbExtent.height},
+                .num_channels{4},
+                .row_alignment{1}
+            }
+        );
     }
 }
