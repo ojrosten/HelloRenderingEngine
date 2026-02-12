@@ -17,8 +17,6 @@
 #include <array>
 #include <filesystem>
 #include <functional>
-#include <ranges>
-#include <span>
 #include <vector>
 
 namespace avocet::opengl {
