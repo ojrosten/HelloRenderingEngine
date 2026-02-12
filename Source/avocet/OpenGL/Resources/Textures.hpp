@@ -10,8 +10,8 @@
 #include "avocet/Core/AssetManagement/Image.hpp"
 #include "avocet/Core/Geometry/Extent.hpp"
 
-#include "avocet/OpenGL/Resources/GenericResource.hpp"
-#include "avocet/OpenGL/Resources/Labels.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/GenericResource.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
 #include <array>
@@ -252,7 +252,7 @@ namespace avocet::opengl {
                 to_gl_enum(format),
                 to_gl_enum(to_gl_type_specifier_v<value_type>),
                 texture.data()
-                );
+            );
 
             return {texture, width, height, numChannels, rowAlignment};
         }

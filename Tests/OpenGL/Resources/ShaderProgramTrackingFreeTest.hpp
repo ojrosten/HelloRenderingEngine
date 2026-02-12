@@ -11,7 +11,7 @@
 
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 
-#include "avocet/OpenGL/Resources/ResourceHandle.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 
 namespace avocet::testing
 {

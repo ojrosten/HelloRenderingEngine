@@ -10,7 +10,7 @@
 /*! \file */
 
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
-#include "avocet/OpenGL/Resources/ResourceHandle.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 
 namespace sequoia::testing
 {
