@@ -95,7 +95,7 @@ namespace avocet::opengl {
     struct raw_texture_2d_configurator {
         texture_format     format;
         discrete_extent    extent;
-        std::span<const T> data;
+        std::span<const T> image_span;
     };
 
     template<class T>
@@ -139,7 +139,7 @@ namespace avocet::opengl {
                 0,
                 to_gl_enum(rawConfig.format),
                 to_gl_enum(to_gl_type_specifier_v<value_type>),
-                rawConfig.data.data()
+                rawConfig.image_span.data()
             );
 
             if(config.common_config.parameter_setter)
@@ -187,7 +187,7 @@ namespace avocet::opengl {
                      .width{static_cast<std::uint32_t>(config.data_view.width())},
                     .height{static_cast<std::uint32_t>(config.data_view.height())}
                 },
-                .data{config.data_view.span()}
+                .image_span{config.data_view.span()}
             };
         }
     };
@@ -203,7 +203,7 @@ namespace avocet::opengl {
             return {
                 .format{config.format},
                 .extent{config.extent},
-                .data{}
+                .image_span{}
             };
         }
     };
