@@ -11,7 +11,7 @@
 #include "avocet/Core/Geometry/Extent.hpp"
 
 #include "avocet/OpenGL/Resources/GenericResource.hpp"
-#include "avocet/OpenGL/Resources/Labels.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
 #include <array>
@@ -56,9 +56,9 @@ namespace avocet::opengl {
         const bool noDecoding{colourSpace == sampling_decoding::none};
 
         switch(format) {
-        case texture_format::red: return              texture_internal_format::red;
-        case texture_format::rg: return              texture_internal_format::rg;
-        case texture_format::rgb: return noDecoding ? texture_internal_format::rgb : texture_internal_format::srgb;
+        case texture_format::red : return              texture_internal_format::red;
+        case texture_format::rg  : return              texture_internal_format::rg;
+        case texture_format::rgb : return noDecoding ? texture_internal_format::rgb : texture_internal_format::srgb;
         case texture_format::rgba: return noDecoding ? texture_internal_format::rgba : texture_internal_format::srgba;
         }
 
@@ -69,9 +69,9 @@ namespace avocet::opengl {
     constexpr colour_channels to_num_channels(texture_format format) {
         switch(format) {
             using enum texture_format;
-        case red:  return colour_channels{1};
-        case rg:   return colour_channels{2};
-        case rgb:  return colour_channels{3};
+        case red : return colour_channels{1};
+        case rg  : return colour_channels{2};
+        case rgb : return colour_channels{3};
         case rgba: return colour_channels{4};
         }
 
@@ -250,7 +250,7 @@ namespace avocet::opengl {
                 to_gl_enum(format),
                 to_gl_enum(to_gl_type_specifier_v<value_type>),
                 texture.data()
-                );
+            );
 
             return {texture, width, height, numChannels, rowAlignment};
         }

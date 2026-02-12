@@ -36,13 +36,13 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
                ${TestDir}/OpenGL/Geometry/PolygonFreeTest.cpp
+               ${TestDir}/OpenGL/ResourceInfrastructure/ResourceHandleTest.cpp
+               ${TestDir}/OpenGL/ResourceInfrastructure/ResourceHandleTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Resources/BufferMetaFreeTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectLabellingTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Resources/FramebufferFreeTest.cpp
-               ${TestDir}/OpenGL/Resources/ResourceHandleTest.cpp
-               ${TestDir}/OpenGL/Resources/ResourceHandleTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramFileExistenceFreeTest.cpp
