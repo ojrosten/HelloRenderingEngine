@@ -7,8 +7,8 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Resources/ResourceHandle.hpp"
-#include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
 #include <algorithm>
 #include <cassert>
