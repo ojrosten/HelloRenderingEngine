@@ -324,13 +324,13 @@ namespace avocet::testing
             }
         };
 
-        auto checker{
+        auto checkerFn{
             [&ctx, this](std::string_view description, const payload_type& obtained, const payload_type& predicted) {
                 check(equality, description, obtained, predicted);
                 check(weak_equivalence, description, ctx, predicted);
             }
         };
 
-        transition_checker<payload_type>::check("", graph, checker);
+        transition_checker<payload_type>::check("", graph, checkerFn);
     }
 }
