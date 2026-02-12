@@ -13,7 +13,6 @@
 #include <algorithm>
 #include <cassert>
 #include <ranges>
-#include <span>
 
 namespace avocet::opengl {
     struct num_resources { std::size_t value{}; };
