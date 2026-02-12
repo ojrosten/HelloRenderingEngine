@@ -9,7 +9,7 @@
 
 #include "ShaderProgramTrackingFreeTest.hpp"
 
-#include "ResourceHandleTestingUtilities.hpp"
+#include "OpenGL/ResourceInfrastructure/ResourceHandleTestingUtilities.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
