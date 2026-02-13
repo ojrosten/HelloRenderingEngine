@@ -67,12 +67,16 @@ namespace avocet::testing
         }
 
         [[nodiscard]]
-        std::packaged_task<agl::resource_handle()> make_shader_program_task(curlew::window& w, const fs::path& shaderDir, std::latch* entryLatch, std::latch* exitLatch) {
+        std::packaged_task<agl::resource_handle()> make_shader_program_task(curlew::window& w,
+                                                                            const fs::path& shaderDir,
+                                                                            std::latch* entryLatch,
+                                                                            std::latch* exitLatch)
+        {
             curlew::test_window_manager::detach_current_context();
 
             return
                 std::packaged_task<agl::resource_handle()>{
-                    [&w, &shaderDir, entryLatch, exitLatch]() {
+                    [&, entryLatch, exitLatch]() {
                         w.make_context_current();
                         return make_and_use_shader_program(w, shaderDir, entryLatch, exitLatch);
                     }
@@ -80,7 +84,9 @@ namespace avocet::testing
         }
 
         [[nodiscard]]
-        agl::resource_handle make_and_use_shader_program_threaded(curlew::window& w, const fs::path& shaderDir) {
+        agl::resource_handle make_and_use_shader_program_threaded(curlew::window& w,
+                                                                  const fs::path& shaderDir)
+        {
             auto task{make_shader_program_task(w, shaderDir, no_latch, no_latch)};
             auto fut{task.get_future()};
             std::jthread executor{std::move(task)};
@@ -161,9 +167,7 @@ namespace avocet::testing
          auto fut0{task0.get_future()},
               fut1{task1.get_future()};
 
-         {
-             std::array executors{std::jthread{std::move(task0)}, std::jthread{std::move(task1)}};
-         }
+         std::array workers{std::jthread{std::move(task0)}, std::jthread{std::move(task1)}};
 
          check_program_indices(report("Parallel overlapping lifetimes"), fut0.get(), fut1.get());
      }
