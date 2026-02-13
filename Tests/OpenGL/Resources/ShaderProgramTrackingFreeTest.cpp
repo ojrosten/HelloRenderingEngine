@@ -14,6 +14,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
+#include <future>
 #include <thread>
 #include <latch>
 
