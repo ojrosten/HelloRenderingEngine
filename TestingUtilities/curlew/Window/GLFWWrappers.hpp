@@ -90,6 +90,8 @@ namespace curlew {
 
         [[nodiscard]]
         const rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
+
+        void detach_current_context();
     };
 
     class [[nodiscard]] window_resource {
@@ -137,5 +139,7 @@ namespace curlew {
         avocet::discrete_extent get_framebuffer_extent() const {
             return m_Window.get_framebuffer_extent();
         }
+
+        void make_context_current();
     };
 }
