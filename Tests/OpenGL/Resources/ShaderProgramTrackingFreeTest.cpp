@@ -25,6 +25,7 @@ namespace avocet::testing
 
     namespace
     {
+        [[nodiscard]]
         agl::resource_handle get_current_program_index(const agl::decorated_context& ctx) {
             GLint param{};
             agl::gl_function{&GladGLContext::GetIntegerv}(ctx, GL_CURRENT_PROGRAM, &param);
@@ -36,22 +37,36 @@ namespace avocet::testing
 
         constexpr std::latch* no_latch{};
 
-        agl::resource_handle make_and_use_shader_program(const curlew::window& w, const fs::path& shaderDir, std::latch* entryLatch, std::latch* exitLatch) {
+        [[nodiscard]]
+        agl::resource_handle make_and_use_shader_program(const curlew::window& w,
+                                                         const fs::path& shaderDir,
+                                                         std::latch* entryLatch,
+                                                         std::latch* exitLatch)
+        {
             const auto& ctx{w.context()};
 
-            agl::shader_program sp{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+            agl::shader_program sp{
+                ctx,
+                shaderDir / "Identity.vs",
+                shaderDir / "Monochrome.fs"
+            };
 
             if(entryLatch) entryLatch->arrive_and_wait();
+
             sp.use();
+            auto progIndex{get_current_program_index(ctx)};
+
             if(exitLatch) exitLatch->arrive_and_wait();
 
-            return get_current_program_index(ctx);
+            return progIndex;
         }
 
+        [[nodiscard]]
         agl::resource_handle make_and_use_shader_program(const curlew::window& w, const fs::path& shaderDir) {
             return make_and_use_shader_program(w, shaderDir, no_latch, no_latch);
         }
 
+        [[nodiscard]]
         std::packaged_task<agl::resource_handle()> make_shader_program_task(curlew::window& w, const fs::path& shaderDir, std::latch* entryLatch, std::latch* exitLatch) {
             curlew::test_window_manager::detach_current_context();
 
@@ -64,6 +79,7 @@ namespace avocet::testing
                 };
         }
 
+        [[nodiscard]]
         agl::resource_handle make_and_use_shader_program_threaded(curlew::window& w, const fs::path& shaderDir) {
             auto task{make_shader_program_task(w, shaderDir, no_latch, no_latch)};
             auto fut{task.get_future()};

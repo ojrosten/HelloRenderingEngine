@@ -1,8 +1,8 @@
 Shader Program Tracking Free Test
 Standard Top Level Checks:                12;  Failures:  2  [Deep checks: 16]
 
-Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 158
-Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 119
+Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 174
+Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 135
 Serial overlapping lifetimes
 
 prog1 should not be null
@@ -14,8 +14,8 @@ Predicted: true
 
 =======================================
 
-Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 160
-Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 119
+Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 176
+Tests/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp, Line 135
 Serial overlapping lifetimes
 
 Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization
