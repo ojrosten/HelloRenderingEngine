@@ -93,6 +93,8 @@ namespace avocet::opengl {
     class generic_resource {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
+
+        const activating_context* m_Context{};
         resource_type m_Resource;
     public:
         using configurator_type = lifecycle_type::configurator_type;
@@ -150,7 +152,5 @@ namespace avocet::opengl {
             requires (I < N)
         [[nodiscard]]
         contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
-    private:
-        const activating_context* m_Context{};
     };
 }
