@@ -29,6 +29,13 @@ namespace avocet::opengl {
         }
     };
 
+    template<class T>
+    inline constexpr bool has_tracking_identifier_v{
+        requires(contextual_resource_view crv) {
+            { T::tracking_id } -> std::convertible_to<tracking_identifier>;
+        }
+    };
+
     class activating_context : public decorated_context {
     public:
         template<class Fn>
@@ -43,13 +50,13 @@ namespace avocet::opengl {
         {}
 
         template<class LifeEvents>
-            requires has_bind_event_v<LifeEvents>
+            requires has_tracking_identifier_v<LifeEvents> && has_bind_event_v<LifeEvents>
         void bind(this const activating_context& self, const LifeEvents& lifeEvents, contextual_resource_view crv) {
             self.activate(lifeEvents, crv);
         }
 
         template<class LifeEvents>
-            requires has_use_event_v<LifeEvents>
+            requires has_tracking_identifier_v<LifeEvents> && has_use_event_v<LifeEvents>
         void use(this const activating_context& self, const LifeEvents& lifeEvents, contextual_resource_view crv) {
             self.activate(lifeEvents, crv);
         }
@@ -77,6 +84,7 @@ namespace avocet::opengl {
         mutable tuple_t m_ActivationCache;
 
         template<class LifeEvents>
+            requires has_tracking_identifier_v<LifeEvents> && (has_use_event_v<LifeEvents> || has_bind_event_v<LifeEvents>)
         void activate(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
             constexpr auto id{LifeEvents::tracking_id};
             if constexpr(sequoia::meta::contains_v<activation<tracking_identifier_constant<id>>, tuple_t>) {
@@ -92,12 +100,16 @@ namespace avocet::opengl {
         }
 
         template<class LifeEvents>
+            requires (has_use_event_v<LifeEvents> || has_bind_event_v<LifeEvents>)
         static void do_activate(const LifeEvents&, contextual_resource_view crv) {
             if constexpr(has_bind_event_v<LifeEvents>) {
                 LifeEvents::bind(crv);
             }
-            else {
+            else if constexpr(has_use_event_v<LifeEvents>) {
                 LifeEvents::use(crv);
+            }
+            else {
+                static_assert(false);
             }
         }
     };
