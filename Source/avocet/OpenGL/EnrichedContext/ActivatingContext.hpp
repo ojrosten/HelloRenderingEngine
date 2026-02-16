@@ -82,7 +82,7 @@ namespace avocet::opengl {
         };
 
         template<class LifeEvents>
-            requires (has_use_event_v<LifeEvents> || has_bind_event_v<LifeEvents>)
+            requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
         void activate(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
             if constexpr(use_tracking_cache_v<LifeEvents>) {
                 constexpr auto id{LifeEvents::tracking_id};
@@ -98,16 +98,13 @@ namespace avocet::opengl {
         }
 
         template<class LifeEvents>
-            requires (has_use_event_v<LifeEvents> || has_bind_event_v<LifeEvents>)
+            requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
         static void do_activate(const LifeEvents&, contextual_resource_view crv) {
             if constexpr(has_bind_event_v<LifeEvents>) {
                 LifeEvents::bind(crv);
             }
-            else if constexpr(has_use_event_v<LifeEvents>) {
-                LifeEvents::use(crv);
-            }
             else {
-                static_assert(false);
+                LifeEvents::use(crv);
             }
         }
     };
