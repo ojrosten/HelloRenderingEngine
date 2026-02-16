@@ -17,6 +17,7 @@ namespace avocet::opengl {
         };
 
         constexpr static auto identifier{object_identifier::framebuffer};
+        constexpr static auto tracking_id{tracking_identifier::framebuffer};
 
         template<std::size_t N>
         static void generate(const decorated_context& ctx, raw_indices<N>& indices) {
@@ -47,7 +48,7 @@ namespace avocet::opengl {
         using base_type            = generic_resource<num_resources{1}, framebuffer_lifecycle_events>;
         using texture_configurator = framebuffer_texture_2d_configurator;
 
-        framebuffer_object(const decorated_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
+        framebuffer_object(const activating_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
             : base_type{ctx, {{fboConfig.label}}}
             , m_Texture{ctx, texConfig}
         {
@@ -68,7 +69,7 @@ namespace avocet::opengl {
         }
 
         void bind(this const framebuffer_object& self, texture_unit unit) {
-            base_type::do_bind(self);
+            self.do_bind();
             self.m_Texture.bind(unit);
         }
     };

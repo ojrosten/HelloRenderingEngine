@@ -29,13 +29,6 @@ namespace avocet::opengl {
         }
     };
 
-    template<class T>
-    inline constexpr bool has_tracking_identifier_v{
-        requires(contextual_resource_view crv) {
-            { T::tracking_id } -> std::convertible_to<tracking_identifier>;
-        }
-    };
-
     class activating_context : public decorated_context {
     public:
         template<class Fn>
@@ -50,13 +43,13 @@ namespace avocet::opengl {
         {}
 
         template<class LifeEvents>
-            requires has_tracking_identifier_v<LifeEvents> && has_bind_event_v<LifeEvents>
+            requires has_bind_event_v<LifeEvents>
         void bind(this const activating_context& self, const LifeEvents& lifeEvents, contextual_resource_view crv) {
             self.activate(lifeEvents, crv);
         }
 
         template<class LifeEvents>
-            requires has_tracking_identifier_v<LifeEvents> && has_use_event_v<LifeEvents>
+            requires has_use_event_v<LifeEvents>
         void use(this const activating_context& self, const LifeEvents& lifeEvents, contextual_resource_view crv) {
             self.activate(lifeEvents, crv);
         }
@@ -84,10 +77,18 @@ namespace avocet::opengl {
         mutable tuple_t m_ActivationCache;
 
         template<class LifeEvents>
-            requires has_tracking_identifier_v<LifeEvents> && (has_use_event_v<LifeEvents> || has_bind_event_v<LifeEvents>)
+        constexpr static bool use_tracking_cache_v{
+            requires(contextual_resource_view crv) {
+                { LifeEvents::tracking_id } -> std::convertible_to<tracking_identifier>;
+                requires sequoia::meta::contains_v<tuple_t, activation<tracking_identifier_constant<LifeEvents::tracking_id>>>;
+            }
+        };
+
+        template<class LifeEvents>
+            requires (has_use_event_v<LifeEvents> || has_bind_event_v<LifeEvents>)
         void activate(this const activating_context& self, const LifeEvents&, contextual_resource_view crv) {
-            constexpr auto id{LifeEvents::tracking_id};
-            if constexpr(sequoia::meta::contains_v<activation<tracking_identifier_constant<id>>, tuple_t>) {
+            if constexpr(use_tracking_cache_v<LifeEvents>) {
+                constexpr auto id{LifeEvents::tracking_id};
                 auto& cache{std::get<activation<tracking_identifier_constant<id>>>(self.m_ActivationCache)};
                 if(cache.currently_active != crv.handle().index()) {
                     do_activate(LifeEvents{}, crv);

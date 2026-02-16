@@ -111,20 +111,20 @@ namespace avocet::opengl {
         using base_type = generic_resource<num_resources{1}, vao_lifecycle_events>;
 
         template<class... Attributes>
-        vertex_attribute_object(const decorated_context& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
+        vertex_attribute_object(const activating_context& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{ctx, {{label}}}
         {
             using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
             using fundamental_t = vbo_t::fundamental_type;
 
-            vbo_t::do_bind(vbo);
+            vbo.do_bind();
 
             attrib_ptr_info info{};
             constexpr auto stride{(sizeof(Attributes) + ...)};
             (set_attribute_ptr<fundamental_t>(info, sizeof(Attributes), stride), ...);
         }
 
-        void bind(this const vertex_attribute_object& self) { do_bind(self); }
+        void bind(this const vertex_attribute_object& self) { self.do_bind(); }
     private:
         struct attrib_ptr_info {
             GLint index{};
@@ -162,13 +162,13 @@ namespace avocet::opengl {
         using value_type = T;
         using base_type = generic_resource<num_resources{1}, buffer_lifecycle_events<Species, T>> ;
 
-        generic_buffer_object(const decorated_context& ctx, std::span<const T> data, const optional_label& label)
+        generic_buffer_object(const activating_context& ctx, std::span<const T> data, const optional_label& label)
             : base_type{ctx, {{data, label}}}
         {}
 
         [[nodiscard]]
         std::vector<T> extract_data(this const generic_buffer_object& self) {
-            base_type::do_bind(self);
+            self.do_bind();
             const auto size{get_buffer_size(self.context())};
             std::vector<T> buffer(size / sizeof(T));
             gl_function{&GladGLContext::GetBufferSubData}(self.context(), to_gl_enum(Species), 0, size, buffer.data());
