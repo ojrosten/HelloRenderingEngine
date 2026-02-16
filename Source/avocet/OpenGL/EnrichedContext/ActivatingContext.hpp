@@ -60,10 +60,6 @@ namespace avocet::opengl {
 
         activating_context& operator=(activating_context&&) noexcept = default;
     private:
-        using decorator_type = std::function<void(const context&, const decorator_data&)>;
-
-        decorator_type m_Prologue{}, m_Epilogue{};
-
         template<class T>
         struct activation {
             GLuint currently_active{};
@@ -74,6 +70,7 @@ namespace avocet::opengl {
                   activation<tracking_identifier_constant<tracking_identifier::framebuffer>>,
                   activation<tracking_identifier_constant<tracking_identifier::program>>
               >;
+
         mutable tuple_t m_ActivationCache;
 
         template<class LifeEvents>
