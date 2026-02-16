@@ -67,7 +67,7 @@ namespace avocet::opengl::testing {
             cutoutCentre{-0.5f, -0.5f};
 
         [[nodiscard]]
-        triangle<GLfloat, dimensionality{2}> make_cutout(const decorated_context& ctx) {
+        triangle<GLfloat, dimensionality{2}> make_cutout(const activating_context& ctx) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -83,7 +83,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        triangle<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_disc(const decorated_context& ctx, image_view fluttershy) {
+        triangle<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_disc(const activating_context& ctx, image_view fluttershy) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -108,7 +108,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        quad<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_lower_hearts(const decorated_context& ctx, image_view hearty){
+        quad<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_lower_hearts(const activating_context& ctx, image_view hearty){
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -131,7 +131,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        quad<GLfloat, dimensionality{3}, texture_coordinates<GLfloat>> make_upper_hearts(const decorated_context& ctx, image_view hearty) {
+        quad<GLfloat, dimensionality{3}, texture_coordinates<GLfloat>> make_upper_hearts(const activating_context& ctx, image_view hearty) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -154,7 +154,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        quad<GLdouble, dimensionality{3}> make_upper_quad(const decorated_context& ctx) {
+        quad<GLdouble, dimensionality{3}> make_upper_quad(const activating_context& ctx) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -169,7 +169,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        quad<GLdouble, dimensionality{3}> make_lower_quad(const decorated_context& ctx){
+        quad<GLdouble, dimensionality{3}> make_lower_quad(const activating_context& ctx){
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -184,7 +184,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        polygon<GLfloat, 6, dimensionality{2}, texture_coordinates<GLfloat>> make_hexagon(const decorated_context& ctx, image_view twilight) {
+        polygon<GLfloat, 6, dimensionality{2}, texture_coordinates<GLfloat>> make_hexagon(const activating_context& ctx, image_view twilight) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -207,7 +207,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        polygon<GLfloat, 7, dimensionality{2}, texture_coordinates<GLfloat>, texture_coordinates<GLfloat>> make_septagon(const decorated_context& ctx, image_view twilight, image_view fluttershy){
+        polygon<GLfloat, 7, dimensionality{2}, texture_coordinates<GLfloat>, texture_coordinates<GLfloat>> make_septagon(const activating_context& ctx, image_view twilight, image_view fluttershy){
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
