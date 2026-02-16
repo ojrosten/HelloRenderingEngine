@@ -9,6 +9,8 @@
 
 #include "glad/gl.h"
 
+#include <type_traits>
+
 namespace avocet::opengl {
     enum class object_identifier : GLenum {
         buffer             = GL_BUFFER,
@@ -23,4 +25,12 @@ namespace avocet::opengl {
         render_buffer      = GL_RENDERBUFFER,
         framebuffer        = GL_FRAMEBUFFER
     };
+
+    enum class tracking_identifier {
+        program,
+        framebuffer
+    };
+
+    template<tracking_identifier id>
+    struct tracking_identifier_constant : std::integral_constant<tracking_identifier, id> {};
 }

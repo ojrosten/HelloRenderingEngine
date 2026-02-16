@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "avocet/OpenGL/EnrichedContext/ActivatingContext.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
@@ -30,11 +31,11 @@ namespace avocet::opengl {
            std::is_empty_v<T>
         && std::is_default_constructible_v<T>
         && has_configurator_type_v<T>
+        && has_bind_event_v<T>
         && requires(const T& t, raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
                T::generate(crv.context(), indices);
                T::destroy(crv.context(), indices);
                { T::identifier } -> std::convertible_to<object_identifier>;
-               T::bind(crv);
                t.configure(crv, std::declval<typename T::configurator>());
            }
     };
