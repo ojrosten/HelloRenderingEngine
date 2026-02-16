@@ -11,7 +11,7 @@
 
 #include "avocet/OpenGL/Capabilities/Capabilities.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include "sequoia/Core/Meta/Utilities.hpp"

@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/EnrichedContext/ActivatingContext.hpp"
+#include "avocet/OpenGL/StateManagingContext/ActivatingContext.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 

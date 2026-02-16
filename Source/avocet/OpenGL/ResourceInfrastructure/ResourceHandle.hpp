@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
 #include "sequoia/Core/ContainerUtilities/Iterator.hpp"
 
 #include <array>

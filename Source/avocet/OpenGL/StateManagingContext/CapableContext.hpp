@@ -9,7 +9,7 @@
 
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
-#include "avocet/OpenGL/EnrichedContext/ActivatingContext.hpp"
+#include "avocet/OpenGL/StateManagingContext/ActivatingContext.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"

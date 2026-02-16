@@ -9,7 +9,7 @@
 
 #include "avocet/Core/Formatting/Formatting.hpp"
 
-#include "avocet/OpenGL/Context/Context.hpp"
+#include "avocet/OpenGL/Context/ContextBase.hpp"
 
 #include <bit>
 #include <concepts>

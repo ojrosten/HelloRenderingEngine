@@ -9,7 +9,7 @@
 
 /*! \file */
 
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
 
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 

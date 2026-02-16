@@ -10,11 +10,6 @@
 #include "avocet/OpenGL/Context/ContextBase.hpp"
 
 namespace avocet::opengl {
-    struct decorator_data {
-        std::string_view fn_name;
-        std::source_location loc;
-    };
-
     class context_characteristics {
         std::size_t m_MaxDebugMessageLength{};
     public:

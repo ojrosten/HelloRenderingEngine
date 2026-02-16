@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
 
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"

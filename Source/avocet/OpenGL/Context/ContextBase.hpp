@@ -49,7 +49,10 @@ namespace avocet::opengl {
         }
     };
 
-    struct decorator_data;
+    struct decorator_data {
+        std::string_view fn_name;
+        std::source_location loc;
+    };
 
     class context_base {
     public:
