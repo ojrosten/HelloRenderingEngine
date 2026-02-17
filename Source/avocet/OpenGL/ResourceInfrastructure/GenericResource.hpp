@@ -108,7 +108,7 @@ namespace avocet::opengl {
                 if(ctxRsrc.handle() == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
-                ctx.utilize(LifeEvents{}, ctxRsrc);
+                do_bind(ctxRsrc);
                 lifecycle_type::configure(ctxRsrc, config);
             }
         }
@@ -139,9 +139,13 @@ namespace avocet::opengl {
         generic_resource(generic_resource&&)            noexcept = default;
         generic_resource& operator=(generic_resource&&) noexcept = default;
 
+        void do_bind(this const generic_resource& self, contextual_resource_view crv) {
+            self.m_Context->utilize(LifeEvents{}, crv);
+        }
+
         template<std::size_t I>
             requires (I < N)
-        void do_bind(this const generic_resource& self, index<I> i) { self.m_Context->utilize(LifeEvents{}, self.contextual_handle(i)); }
+        void do_bind(this const generic_resource& self, index<I> i) { self.do_bind(self.contextual_handle(i)); }
 
         void do_bind(this const generic_resource& self) requires (N == 1) { self.do_bind(index<0>{}); }
 
