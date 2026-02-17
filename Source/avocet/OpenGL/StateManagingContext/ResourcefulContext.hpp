@@ -38,13 +38,18 @@ namespace avocet::opengl {
             requires is_decorator_v<Prologue>
                   && is_decorator_v<Epilogue>
                   && std::is_invocable_r_v<GladGLContext, Loader, GladGLContext>
-        resourceful_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)
+        resourceful_context(debugging_mode mode,
+                            Loader loader,
+                            Prologue prologue,
+                            Epilogue epilogue)
             : decorated_context{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
         {}
 
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
-        void utilize(this const resourceful_context& self, const LifeEvents&, contextual_resource_view crv) {
+        void utilize(this const resourceful_context& self,
+                     const LifeEvents&,
+                     contextual_resource_view crv) {
             if constexpr(use_tracking_cache_v<LifeEvents>) {
                 constexpr auto id{LifeEvents::tracking_id};
                 auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
@@ -57,6 +62,7 @@ namespace avocet::opengl {
                 do_utilize(LifeEvents{}, crv);
             }
         }
+
     protected:
         ~resourceful_context() = default;
 
