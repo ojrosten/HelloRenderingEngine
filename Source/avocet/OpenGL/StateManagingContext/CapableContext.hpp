@@ -92,9 +92,7 @@ namespace avocet::opengl {
         constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const context&, const decorator_data&>};
 
         template<class Loader, class Prologue, class Epilogue>
-            requires is_decorator_v<Prologue>
-                  && is_decorator_v<Epilogue>
-                  && std::is_invocable_r_v<GladGLContext, Loader, GladGLContext>
+            requires decorated_context::initializes_decorated_context_v<Loader, Prologue, Epilogue>
         capable_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue, attempt_to_compensate_for_driver_bugs compensate)
             : resourceful_context{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
         {
