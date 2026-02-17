@@ -31,17 +31,7 @@ namespace avocet::opengl {
 
     class resourceful_context : public decorated_context {
     public:
-        template<class Fn>
-        constexpr static bool is_decorator_v{decorated_context::is_decorator_v<Fn>};
-
-        template<class Loader, class Prologue, class Epilogue>
-            requires decorated_context::initializes_decorated_context_v<Loader, Prologue, Epilogue>
-        resourceful_context(debugging_mode mode,
-                            Loader loader,
-                            Prologue prologue,
-                            Epilogue epilogue)
-            : decorated_context{mode, std::move(loader), std::move(prologue), std::move(epilogue)}
-        {}
+        using decorated_context::decorated_context;
 
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
