@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/StateManagingContext/ActivatingContext.hpp"
+#include "avocet/OpenGL/StateManagingContext/ResourcefulContext.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
@@ -94,13 +94,13 @@ namespace avocet::opengl {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
 
-        const activating_context* m_Context{};
+        const resourceful_context* m_Context{};
         resource_type m_Resource;
     public:
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        generic_resource(const activating_context& ctx, const std::array<configurator_type, N>& configs)
+        generic_resource(const resourceful_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Context{&ctx}
             , m_Resource{ctx}
         {
