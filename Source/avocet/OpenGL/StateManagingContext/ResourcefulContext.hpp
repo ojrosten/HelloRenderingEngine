@@ -43,15 +43,19 @@ namespace avocet::opengl {
         {}
 
         template<class LifeEvents>
-            requires has_bind_event_v<LifeEvents>
-        void bind(this const resourceful_context& self, const LifeEvents& lifeEvents, contextual_resource_view crv) {
-            self.utilize(lifeEvents, crv);
-        }
-
-        template<class LifeEvents>
-            requires has_use_event_v<LifeEvents>
-        void use(this const resourceful_context& self, const LifeEvents& lifeEvents, contextual_resource_view crv) {
-            self.utilize(lifeEvents, crv);
+            requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
+        void utilize(this const resourceful_context & self, const LifeEvents&, contextual_resource_view crv) {
+            if constexpr(use_tracking_cache_v<LifeEvents>) {
+                constexpr auto id{LifeEvents::tracking_id};
+                auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
+                if(cache.currently_active != crv.handle().index()) {
+                    do_utilize(LifeEvents{}, crv);
+                    cache.currently_active = crv.handle().index();
+                }
+            }
+            else {
+                do_utilize(LifeEvents{}, crv);
+            }
         }
     protected:
         ~resourceful_context() = default;
@@ -80,22 +84,6 @@ namespace avocet::opengl {
                 requires sequoia::meta::contains_v<tuple_t, utilization<tracking_identifier_constant<LifeEvents::tracking_id>>>;
             }
         };
-
-        template<class LifeEvents>
-            requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
-        void utilize(this const resourceful_context& self, const LifeEvents&, contextual_resource_view crv) {
-            if constexpr(use_tracking_cache_v<LifeEvents>) {
-                constexpr auto id{LifeEvents::tracking_id};
-                auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
-                if(cache.currently_active != crv.handle().index()) {
-                    do_utilize(LifeEvents{}, crv);
-                    cache.currently_active = crv.handle().index();
-                }
-            }
-            else {
-                do_utilize(LifeEvents{}, crv);
-            }
-        }
 
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
