@@ -16,8 +16,6 @@
 #include <ranges>
 
 namespace avocet::opengl {
-    struct num_resources { std::size_t value{}; };
-
     template<std::size_t I>
     struct index { constexpr static std::size_t value{I}; };
 
@@ -89,8 +87,11 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
+    class generic_resource;
+
+    template<num_resources NumResources, class LifeEvents>
         requires (NumResources.value > 0) && has_resource_lifecycle_events_v<NumResources, LifeEvents>
-    class generic_resource {
+    class generic_resource<NumResources, LifeEvents> {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
 

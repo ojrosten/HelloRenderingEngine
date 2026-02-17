@@ -15,6 +15,9 @@
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 
 namespace avocet::opengl {
+
+    struct num_resources { std::size_t value{}; };
+
     template<class T>
     inline constexpr bool has_bind_event_v{
         requires(contextual_resource_view crv) {
@@ -32,24 +35,6 @@ namespace avocet::opengl {
     class resourceful_context : public decorated_context {
     public:
         using decorated_context::decorated_context;
-
-        template<class LifeEvents>
-            requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
-        void utilize(this const resourceful_context& self,
-                     const LifeEvents& lifeEvents,
-                     const resource_handle& h) {
-            if constexpr(use_tracking_cache_v<LifeEvents>) {
-                constexpr auto id{LifeEvents::tracking_id};
-                auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
-                if(cache.currently_active != h.index()) {
-                    self.do_utilize(lifeEvents, h);
-                    cache.currently_active = h.index();
-                }
-            }
-            else {
-                self.do_utilize(lifeEvents, h);
-            }
-        }
 
     protected:
         ~resourceful_context() = default;
@@ -78,6 +63,29 @@ namespace avocet::opengl {
                 requires sequoia::meta::contains_v<tuple_t, utilization<tracking_identifier_constant<LifeEvents::tracking_id>>>;
             }
         };
+
+        friend class shader_program;
+
+        template<num_resources NumResources, class LifeEvents>
+        friend class generic_resource;
+
+        template<class LifeEvents>
+            requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
+        void utilize(this const resourceful_context & self,
+            const LifeEvents & lifeEvents,
+            const resource_handle & h) {
+            if constexpr(use_tracking_cache_v<LifeEvents>) {
+                constexpr auto id{LifeEvents::tracking_id};
+                auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
+                if(cache.currently_active != h.index()) {
+                    self.do_utilize(lifeEvents, h);
+                    cache.currently_active = h.index();
+                }
+            }
+            else {
+                self.do_utilize(lifeEvents, h);
+            }
+        }
 
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
