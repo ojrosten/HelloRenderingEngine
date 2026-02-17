@@ -93,7 +93,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.contextual_handle()); }
 
-        void use() { m_Context->utilize(shader_program_resource_lifecycle{}, m_Resource.contextual_handle()); }
+        void use() { m_Context->utilize(shader_program_resource_lifecycle{}, m_Resource.contextual_handle().handle()); }
 
         void set_uniform(std::string_view name, GLfloat val) {
             do_set_uniform(name, gl_function{&GladGLContext::Uniform1f}, val);

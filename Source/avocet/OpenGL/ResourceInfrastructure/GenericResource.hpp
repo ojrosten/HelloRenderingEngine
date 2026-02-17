@@ -140,7 +140,7 @@ namespace avocet::opengl {
         generic_resource& operator=(generic_resource&&) noexcept = default;
 
         void do_bind(this const generic_resource& self, contextual_resource_view crv) {
-            self.m_Context->utilize(LifeEvents{}, crv);
+            self.m_Context->utilize(LifeEvents{}, crv.handle());
         }
 
         template<std::size_t I>
