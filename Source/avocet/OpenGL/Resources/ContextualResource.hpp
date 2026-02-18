@@ -41,10 +41,6 @@ namespace avocet::opengl {
         friend bool operator==(const context_ref&, const context_ref&) noexcept = default;
     };
 
-    template<std::derived_from<context_base> Context>
-    [[nodiscard]]
-    GLuint get_index(generic_contextual_resource_view<Context> crv) { return crv.handle().index(); }
-
     template<std::size_t N>
     using raw_indices = std::array<GLuint, N>;
 

@@ -7,11 +7,12 @@
 
 #pragma once
 
-#include "avocet/OpenGL/ResourceInfrastructure/ContextualResource.hpp"
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
 #include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
-#include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ContextualResourceView.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
+#include "avocet/OpenGL/Utilities/Casts.hpp"
 
 #include <optional>
 
@@ -19,7 +20,7 @@ namespace avocet::opengl {
     using optional_label = std::optional<std::string>;
     inline constexpr optional_label null_label{std::nullopt};
 
-    inline void add_label(object_identifier identifier, contextual_resource_view h, const optional_label& label) {
+    inline void add_label(object_identifier identifier, generic_contextual_resource_view<decorated_context> h, const optional_label& label) {
         if(label && object_labels_activated(h.context())) {
             const auto& str{label.value()};
             gl_function{&GladGLContext::ObjectLabel}(h.context(), to_gl_enum(identifier), get_index(h), to_gl_sizei(str.size()), str.data());
@@ -40,7 +41,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline std::string get_object_label(avocet::opengl::object_identifier identifier, avocet::opengl::contextual_resource_view handle) {
+    inline std::string get_object_label(avocet::opengl::object_identifier identifier, generic_contextual_resource_view<decorated_context> handle) {
         const auto& ctx{handle.context()};
         std::string label(get_max_label_length(ctx), ' ');
         GLsizei numChars{};

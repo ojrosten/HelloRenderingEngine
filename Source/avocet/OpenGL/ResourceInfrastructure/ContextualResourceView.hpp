@@ -37,4 +37,9 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const generic_contextual_resource_view&, const generic_contextual_resource_view&) noexcept = default;
     };
+
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    GLuint get_index(generic_contextual_resource_view<Context> crv) { return crv.handle().index(); }
 }

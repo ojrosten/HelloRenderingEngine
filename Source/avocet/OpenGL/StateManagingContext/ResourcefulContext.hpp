@@ -10,7 +10,7 @@
 #include "avocet/OpenGL/Context/DecoratedContext.hpp"
 
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
-#include "avocet/OpenGL/ResourceInfrastructure/ContextualResouceView.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ContextualResourceView.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 
