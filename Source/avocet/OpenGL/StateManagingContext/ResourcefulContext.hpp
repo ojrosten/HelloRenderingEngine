@@ -10,11 +10,12 @@
 #include "avocet/OpenGL/Context/DecoratedContext.hpp"
 
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
-#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ContextualResouceView.hpp"
 
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 
 namespace avocet::opengl {
+    using contextual_resource_view = generic_contextual_resource_view<decorated_context>;
 
     struct num_resources { std::size_t value{}; };
 

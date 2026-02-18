@@ -6,8 +6,8 @@
 ////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include "avocet/OpenGL/StateManagingContext/ResourcefulContext.hpp"
-#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
+
+#include "avocet/OpenGL/ResourceInfrastructure/ContextualResource.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
 
 #include <filesystem>
@@ -17,7 +17,7 @@
 namespace avocet::opengl {
     template<class T>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, contextual_resource_view handle) {
+        requires(T& t, generic_contextual_resource_view<resourceful_context> handle) {
             { t.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
             T::destroy(handle);
         }
@@ -30,7 +30,7 @@ namespace avocet::opengl {
     public:
         template<class... Args>
             requires std::is_constructible_v<LifeEvents, Args...>
-        explicit(sizeof...(Args) == 0) generic_shader_resource(const decorated_context& ctx, const Args&... args)
+        explicit(sizeof...(Args) == 0) generic_shader_resource(const resourceful_context& ctx, const Args&... args)
             : m_Handle{LifeEvents{args...}.create(ctx)}
         {}
 
@@ -41,7 +41,7 @@ namespace avocet::opengl {
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        contextual_resource_view contextual_handle() const noexcept { return m_Handle.begin()[0]; }
+        generic_contextual_resource_view<resourceful_context> contextual_handle() const noexcept { return m_Handle.begin()[0]; }
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
@@ -55,7 +55,7 @@ namespace avocet::opengl {
         constexpr static auto tracking_id{tracking_identifier::program};
 
         [[nodiscard]]
-        static contextual_resource_handle create(const decorated_context& ctx) {
+        static contextual_resource_handle create(const resourceful_context& ctx) {
             return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
         }
 
@@ -93,7 +93,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.contextual_handle()); }
 
-        void use() { m_Context->utilize(shader_program_resource_lifecycle{}, m_Resource.contextual_handle().handle()); }
+        void use() { m_Resource.contextual_handle().context().utilize(shader_program_resource_lifecycle{}, m_Resource.contextual_handle().handle()); }
 
         void set_uniform(std::string_view name, GLfloat val) {
             do_set_uniform(name, gl_function{&GladGLContext::Uniform1f}, val);
@@ -114,7 +114,6 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
-        const resourceful_context* m_Context{};
         shader_program_resource m_Resource;
         using map_t = std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to>;
         map_t m_Uniforms;

@@ -7,13 +7,9 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Context/DecoratedContext.hpp"
-#include "sequoia/Core/ContainerUtilities/Iterator.hpp"
+#include "glad/gl.h"
 
-#include <array>
-#include <cassert>
 #include <concepts>
-#include <span>
 #include <utility>
 
 namespace avocet::opengl {
@@ -37,128 +33,4 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const resource_handle&, const resource_handle&) noexcept = default;
     };
-
-    class context_ref {
-        const decorated_context* m_Context{};
-    public:
-        context_ref(const decorated_context& ctx)
-            : m_Context{&ctx}
-        {
-        }
-
-        context_ref(context_ref&&) noexcept = default;
-
-        context_ref& operator=(context_ref&& other) noexcept {
-            std::ranges::swap(m_Context, other.m_Context);
-            return *this;
-        }
-
-        [[nodiscard]]
-        const decorated_context& get() const noexcept { return *m_Context; }
-
-        [[nodiscard]]
-        friend bool operator==(const context_ref&, const context_ref&) noexcept = default;
-    };
-
-    class contextual_resource_view {
-        const decorated_context* m_Context{};
-        const resource_handle* m_Handle{};
-    public:
-        contextual_resource_view(const decorated_context& ctx, const resource_handle& crv)
-            : m_Context{&ctx}
-            , m_Handle{&crv}
-        {}
-
-        [[nodiscard]]
-        const decorated_context& context() const noexcept { return *m_Context; }
-
-        [[nodiscard]]
-        const resource_handle& handle() const noexcept { return *m_Handle; }
-
-        [[nodiscard]]
-        friend bool operator==(const contextual_resource_view&, const contextual_resource_view&) noexcept = default;
-    };
-
-    [[nodiscard]]
-    inline GLuint get_index(contextual_resource_view crv) { return crv.handle().index(); }
-
-    template<std::size_t N>
-    using raw_indices = std::array<GLuint, N>;
-
-    template<class From, std::size_t N, std::invocable<From> Fn, class To = std::invoke_result_t<Fn, From>>
-    [[nodiscard]]
-    std::array<To, N> to_array(std::span<const From, N> from, Fn fn) {
-        return
-            [&] <std::size_t... Is> (std::index_sequence<Is...>) {
-            return std::array<To, N>{fn(from[Is])...};
-        }(std::make_index_sequence<N>{});
-    }
-
-    template<class From, std::size_t N, std::invocable<From> Fn, class To = std::invoke_result_t<Fn, From>>
-    [[nodiscard]]
-    std::array<To, N> to_array(const std::array<From, N>& from, Fn fn) {
-        return to_array(std::span(from), std::move(fn));
-    }
-
-    class contextual_deref_policy {
-        const decorated_context* m_Context{};
-    protected:
-        ~contextual_deref_policy() = default;
-
-        contextual_deref_policy& operator=(const contextual_deref_policy&) = default;
-    public:
-        using value_type = contextual_resource_view;
-        using reference  = contextual_resource_view;
-
-        contextual_deref_policy() = default;
-
-        explicit contextual_deref_policy(const decorated_context& ctx) : m_Context{&ctx} {}
-
-        contextual_deref_policy(const contextual_deref_policy&) = default;
-
-        template<std::input_or_output_iterator Iterator>
-        [[nodiscard]]
-        reference get(Iterator i) const {
-            assert(m_Context);
-            return {*m_Context, *i};
-        }
-
-        [[nodiscard]]
-        friend bool operator==(const contextual_deref_policy&, const contextual_deref_policy&) noexcept = default;
-    };
-
-    template<std::size_t N>
-    class contextual_resource_handles {
-        using array_t = std::array<resource_handle, N>;
-        context_ref m_Context;
-        array_t m_Handles;
-
-        using citer_t = array_t::const_iterator;
-    public:
-        using const_iterator = sequoia::utilities::iterator<citer_t, contextual_deref_policy>;
-
-        contextual_resource_handles(const decorated_context& ctx, const raw_indices<N>& indices)
-            : m_Context{ctx}
-            , m_Handles{to_array(indices, [&ctx](GLuint i) { return resource_handle{i}; })}
-        {}
-
-        [[nodiscard]]
-        const_iterator begin() const noexcept { return {m_Handles.begin(), context()}; }
-
-        [[nodiscard]]
-        const_iterator end() const noexcept { return {m_Handles.end(), context()}; }
-
-        [[nodiscard]]
-        raw_indices<N> get_raw_indices() const {
-            return to_array(m_Handles, [](const resource_handle& crv) { return crv.index(); });
-        }
-
-        [[nodiscard]]
-        const decorated_context& context() const noexcept { return m_Context.get(); }
-
-        [[nodiscard]]
-        friend bool operator==(const contextual_resource_handles&, const contextual_resource_handles&) noexcept = default;
-    };
-
-    using contextual_resource_handle = contextual_resource_handles<1>;
 }

@@ -7,8 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/StateManagingContext/ResourcefulContext.hpp"
-#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ContextualResource.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
 #include <algorithm>
@@ -30,7 +29,7 @@ namespace avocet::opengl {
         && std::is_default_constructible_v<T>
         && has_configurator_type_v<T>
         && has_bind_event_v<T>
-        && requires(const T& t, raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
+        && requires(const T& t, raw_indices<NumResources.value>& indices, generic_contextual_resource_view<resourceful_context> crv) {
                T::generate(crv.context(), indices);
                T::destroy(crv.context(), indices);
                { T::identifier } -> std::convertible_to<object_identifier>;
@@ -46,7 +45,7 @@ namespace avocet::opengl {
         constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
-        static contextual_resource_handles<N> generate(const decorated_context& ctx) {
+        static contextual_resource_handles<N> generate(const resourceful_context& ctx) {
             raw_indices<N> indices{};
             LifeEvents::generate(ctx, indices);
             return {ctx, indices};
@@ -71,7 +70,7 @@ namespace avocet::opengl {
 
         constexpr static std::size_t N{NumResources.value};
 
-        explicit resource_wrapper(const decorated_context& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
+        explicit resource_wrapper(const resourceful_context& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
         ~resource_wrapper() { lifecycle_type::destroy(m_Handles); }
 
         resource_wrapper(resource_wrapper&&)           noexcept = default;
@@ -95,15 +94,13 @@ namespace avocet::opengl {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
 
-        const resourceful_context* m_Context{};
         resource_type m_Resource;
     public:
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
         generic_resource(const resourceful_context& ctx, const std::array<configurator_type, N>& configs)
-            : m_Context{&ctx}
-            , m_Resource{ctx}
+            : m_Resource{ctx}
         {
             for(const auto& [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {
                 if(ctxRsrc.handle() == resource_handle{})
@@ -140,8 +137,8 @@ namespace avocet::opengl {
         generic_resource(generic_resource&&)            noexcept = default;
         generic_resource& operator=(generic_resource&&) noexcept = default;
 
-        void do_bind(this const generic_resource& self, contextual_resource_view crv) {
-            self.m_Context->utilize(LifeEvents{}, crv.handle());
+        static void do_bind(generic_contextual_resource_view<resourceful_context> crv) {
+            crv.context().utilize(LifeEvents{}, crv.handle());
         }
 
         template<std::size_t I>
@@ -156,6 +153,6 @@ namespace avocet::opengl {
         template<std::size_t I>
             requires (I < N)
         [[nodiscard]]
-        contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+        generic_contextual_resource_view<resourceful_context> contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
     };
 }
