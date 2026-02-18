@@ -15,8 +15,6 @@
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 
 namespace avocet::opengl {
-    using contextual_resource_view = generic_contextual_resource_view<decorated_context>;
-
     struct num_resources { std::size_t value{}; };
 
     template<class T>

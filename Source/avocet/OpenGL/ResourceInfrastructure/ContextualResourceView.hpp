@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Context/ContextBase.hpp"
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 
 namespace avocet::opengl {
@@ -38,6 +38,7 @@ namespace avocet::opengl {
         friend bool operator==(const generic_contextual_resource_view&, const generic_contextual_resource_view&) noexcept = default;
     };
 
+    using contextual_resource_view = generic_contextual_resource_view<decorated_context>;
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
