@@ -33,6 +33,6 @@ namespace avocet::testing
 
         void check_parallel_tracking_overlapping_lifetimes();
 
-        void check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1);
+        void check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, const std::vector<std::string>& calls0, const std::vector<std::string>& calls1);
     };
 }
