@@ -146,54 +146,56 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes()
     {
-        std::vector<std::string> calls0{}, calls1{};
+        gpu_data data0{}, data1{};
 
         const auto shaderDir{working_materials()};
-        const auto prog0{make_and_use_shader_program(create_window(make_window_config(calls0)), shaderDir)},
-                   prog1{make_and_use_shader_program(create_window(make_window_config(calls1)), shaderDir)};
+        data0.prog = make_and_use_shader_program(create_window(make_window_config(data0.calls)), shaderDir);
+        data1.prog = make_and_use_shader_program(create_window(make_window_config(data1.calls)), shaderDir);
 
-        check_program_indices(report("Serial non-overlapping lifetimes"), prog0, prog1, calls0, calls1);
+        check_program_indices(report("Serial non-overlapping lifetimes"), data0, data1);
     }
 
     void shader_program_tracking_free_test::check_serial_tracking_overlapping_lifetimes()
     {
-        std::vector<std::string> calls0{}, calls1{};
+        gpu_data data0{};
 
         const auto shaderDir{working_materials()};
-        const auto win0{create_window(make_window_config(calls0))};
+        const auto win0{create_window(make_window_config(data0.calls))};
         agl::shader_program sp1{win0.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
         sp1.use();
-        const auto prog0{get_current_program_index(win0.context())};
+        data0.prog = get_current_program_index(win0.context());
 
-        const auto win1{create_window(make_window_config(calls1))};
+        gpu_data data1{};
+
+        const auto win1{create_window(make_window_config(data1.calls))};
         agl::shader_program sp2{win1.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
         sp2.use();
-        const auto prog1{get_current_program_index(win1.context())};
+        data1.prog = get_current_program_index(win1.context());
 
-        check_program_indices(report("Serial overlapping lifetimes"), prog0, prog1, calls0, calls1);
+        check_program_indices(report("Serial overlapping lifetimes"), data0, data1);
     }
 
     void shader_program_tracking_free_test::check_parallel_tracking_non_overlapping_lifetimes()
     {
-        std::vector<std::string> calls0{}, calls1{};
+        gpu_data data0{}, data1{};
 
         const auto shaderDir{working_materials()};
-        auto win0{create_window(make_window_config(calls0))},
-             win1{create_window(make_window_config(calls1))};
+        auto win0{create_window(make_window_config(data0.calls))},
+             win1{create_window(make_window_config(data1.calls))};
 
-        const auto prog0{make_and_use_shader_program_threaded(win0, shaderDir)},
-                   prog1{make_and_use_shader_program_threaded(win1, shaderDir)};
+        data0.prog = make_and_use_shader_program_threaded(win0, shaderDir),
+        data1.prog = make_and_use_shader_program_threaded(win1, shaderDir);
 
-        check_program_indices(report("Parallel non-overlapping lifetimes"), prog0, prog1, calls0, calls1);
+        check_program_indices(report("Parallel non-overlapping lifetimes"), data0, data1);
     }
 
      void shader_program_tracking_free_test::check_parallel_tracking_overlapping_lifetimes()
      {
-         std::vector<std::string> calls0{}, calls1{};
+         gpu_data data0{}, data1{};
 
          const auto shaderDir{working_materials()};
-         auto win0{create_window(make_window_config(calls0))},
-              win1{create_window(make_window_config(calls1))};
+         auto win0{create_window(make_window_config(data0.calls))},
+              win1{create_window(make_window_config(data1.calls))};
 
          std::latch entryLatch{2}, exitLatch{2};
 
@@ -205,16 +207,19 @@ namespace avocet::testing
 
          std::array workers{std::jthread{std::move(task0)}, std::jthread{std::move(task1)}};
 
-         check_program_indices(report("Parallel overlapping lifetimes"), fut0.get(), fut1.get(), calls0, calls1);
+         data0.prog = fut0.get();
+         data1.prog = fut1.get();
+
+         check_program_indices(report("Parallel overlapping lifetimes"), data0, data1);
      }
 
-    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, const std::vector<std::string>& calls0, const std::vector<std::string>& calls1)
+    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const gpu_data& data0, const gpu_data& data1)
     {
-        check(make_description(tag, "prog0 should not be null"), prog0 != agl::resource_handle{});
-        check(make_description(tag, "prog1 should not be null"), prog1 != agl::resource_handle{});
+        check(make_description(tag, "prog0 should not be null"), data0.prog != agl::resource_handle{});
+        check(make_description(tag, "prog1 should not be null"), data1.prog != agl::resource_handle{});
 
-        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), prog0, prog1);
-        check(equivalence, make_description(tag, "Single dispatch to UseProgram"), calls0, std::initializer_list{"UseProgram"});
-        check(equivalence, make_description(tag, "Single dispatch to UseProgram"), calls1, std::initializer_list{"UseProgram"});
+        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), data0.prog, data1.prog);
+        check(equivalence, make_description(tag, "Single dispatch to UseProgram"), data0.calls, std::initializer_list{"UseProgram"});
+        check(equivalence, make_description(tag, "Single dispatch to UseProgram"), data1.calls, std::initializer_list{"UseProgram"});
     }
 }

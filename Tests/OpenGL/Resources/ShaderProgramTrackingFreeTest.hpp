@@ -25,6 +25,11 @@ namespace avocet::testing
 
         void run_tests();
     private:
+        struct gpu_data {
+            avocet::opengl::resource_handle prog{};
+            std::vector<std::string> calls;
+        };
+
         void check_serial_tracking_non_overlapping_lifetimes();
 
         void check_serial_tracking_overlapping_lifetimes();
@@ -33,6 +38,6 @@ namespace avocet::testing
 
         void check_parallel_tracking_overlapping_lifetimes();
 
-        void check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1, const std::vector<std::string>& calls0, const std::vector<std::string>& calls1);
+        void check_program_indices(std::string_view tag, const gpu_data& data0, const gpu_data& data1);
     };
 }
