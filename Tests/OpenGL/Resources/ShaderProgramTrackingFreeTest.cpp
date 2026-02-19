@@ -21,6 +21,20 @@ namespace avocet::testing
 
     namespace
     {
+        [[nodiscard]]
+        curlew::window_config make_window_config(std::vector<std::string>& loggedCalls) {
+            return {
+                .extent{.width{1}, .height{1}},
+                .name{},
+                .hiding{curlew::window_hiding_mode::on},
+                .debug_mode{agl::debugging_mode::dynamic},
+                .prologue{},
+                .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}},
+                .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
+                .samples{1}
+            };
+        }
+
         agl::resource_handle get_current_program_index(const agl::decorated_context& ctx) {
             GLint param{};
             agl::gl_function{&GladGLContext::GetIntegerv}(ctx, GL_CURRENT_PROGRAM, &param);
@@ -63,11 +77,13 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes()
     {
-        const auto shaderDir{working_materials()};
-        const auto prog0{make_and_use_shader_program(create_window({.hiding{curlew::window_hiding_mode::on}}), shaderDir)},
-                   prog1{make_and_use_shader_program(create_window({.hiding{curlew::window_hiding_mode::on}}), shaderDir)};
+        gpu_data data0{}, data1{};
 
-        check_program_indices("Serial non-overlapping lifetimes", prog0, prog1);
+        const auto shaderDir{working_materials()};
+        data0.prog = make_and_use_shader_program(create_window(make_window_config(data0.calls)), shaderDir),
+        data1.prog = make_and_use_shader_program(create_window(make_window_config(data1.calls)), shaderDir);
+
+        check_program_indices("Serial non-overlapping lifetimes", data0, data1);
     }
 
     void shader_program_tracking_free_test::check_serial_tracking_overlapping_lifetimes()
@@ -85,11 +101,11 @@ namespace avocet::testing
 
     }
 
-    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& prog0, const avocet::opengl::resource_handle& prog1)
+    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const gpu_data& data0, const gpu_data& data1)
     {
-        check(make_description(tag, "prog0 should not be null"), prog0 != agl::resource_handle{});
-        check(make_description(tag, "prog1 should not be null"), prog1 != agl::resource_handle{});
+        check(make_description(tag, "prog0 should not be null"), data0.prog != agl::resource_handle{});
+        check(make_description(tag, "prog1 should not be null"), data1.prog != agl::resource_handle{});
 
-        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), prog0, prog1);
+        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), data0.prog, data1.prog);
     }
 }
