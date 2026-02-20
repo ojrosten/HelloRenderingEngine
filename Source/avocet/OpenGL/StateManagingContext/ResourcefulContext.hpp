@@ -70,9 +70,7 @@ namespace avocet::opengl {
 
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
-        void utilize(this const resourceful_context & self,
-            const LifeEvents & lifeEvents,
-            const resource_handle & h) {
+        void utilize(this const resourceful_context & self, const LifeEvents& lifeEvents, const resource_handle& h) {
             if constexpr(use_tracking_cache_v<LifeEvents>) {
                 constexpr auto id{LifeEvents::tracking_id};
                 auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
@@ -83,6 +81,16 @@ namespace avocet::opengl {
             }
             else {
                 self.do_utilize(lifeEvents, h);
+            }
+        }
+
+        template<class LifeEvents>
+            requires has_bind_event_v<LifeEvents>
+        void reset(this const resourceful_context& self, const LifeEvents&) {
+            if constexpr(use_tracking_cache_v<LifeEvents>) {
+                constexpr auto id{LifeEvents::tracking_id};
+                auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
+                cache.currently_active = {};
             }
         }
 
