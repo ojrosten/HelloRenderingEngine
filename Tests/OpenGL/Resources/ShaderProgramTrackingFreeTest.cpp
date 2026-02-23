@@ -87,7 +87,7 @@ namespace avocet::testing
         data0.prog = make_and_use_shader_program(create_window(make_window_config(data0.calls)), shaderDir),
         data1.prog = make_and_use_shader_program(create_window(make_window_config(data1.calls)), shaderDir);
 
-        check_program_indices("Serial non-overlapping lifetimes", data0, data1);
+        check_program_data("Serial non-overlapping lifetimes", data0, data1);
     }
 
     void shader_program_tracking_free_test::check_serial_tracking_overlapping_lifetimes()
@@ -105,11 +105,16 @@ namespace avocet::testing
 
     }
 
-    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const gpu_data& data0, const gpu_data& data1)
+    void shader_program_tracking_free_test::check_program_data(std::string_view tag, const gpu_data& data0, const gpu_data& data1)
     {
-        check(make_description(tag, "prog0 should not be null"), data0.prog != agl::resource_handle{});
-        check(make_description(tag, "prog1 should not be null"), data1.prog != agl::resource_handle{});
+        check_program_indices(tag, data0.prog, data1.prog);
+    }
 
-        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), data0.prog, data1.prog);
+    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& index0, const avocet::opengl::resource_handle& index1)
+    {
+        check(make_description(tag, "prog0 should not be null"), index0 != agl::resource_handle{});
+        check(make_description(tag, "prog1 should not be null"), index1 != agl::resource_handle{});
+
+        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), index0, index1);
     }
 }
