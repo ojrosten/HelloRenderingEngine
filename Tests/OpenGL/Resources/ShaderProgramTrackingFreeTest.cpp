@@ -17,6 +17,7 @@
 #include <future>
 #include <thread>
 #include <latch>
+#include <ranges>
 
 namespace avocet::testing
 {
