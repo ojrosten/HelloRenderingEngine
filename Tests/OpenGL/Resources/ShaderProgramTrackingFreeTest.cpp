@@ -26,7 +26,7 @@ namespace avocet::testing
     namespace
     {
         [[nodiscard]]
-        curlew::window_config make_window_config(std::vector<std::string>& loggedCalls) {
+        curlew::window_config make_window_config() {
             return {
                 .extent{.width{1}, .height{1}},
                 .name{},
@@ -84,8 +84,8 @@ namespace avocet::testing
         gpu_data data0{}, data1{};
 
         const auto shaderDir{working_materials()};
-        data0.prog = make_and_use_shader_program(create_window(make_window_config(data0.calls)), shaderDir),
-        data1.prog = make_and_use_shader_program(create_window(make_window_config(data1.calls)), shaderDir);
+        data0.prog = make_and_use_shader_program(create_window(make_window_config()), shaderDir),
+        data1.prog = make_and_use_shader_program(create_window(make_window_config()), shaderDir);
 
         check_program_data("Serial non-overlapping lifetimes", data0, data1);
     }

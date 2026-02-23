@@ -11,6 +11,7 @@
 #include "avocet/OpenGL/Resources/Labels.hpp"
 
 #include <filesystem>
+#include <map>
 #include <unordered_map>
 #include <span>
 
