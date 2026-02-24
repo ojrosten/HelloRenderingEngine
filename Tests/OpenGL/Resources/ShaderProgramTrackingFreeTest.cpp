@@ -76,8 +76,8 @@ namespace avocet::testing
         check_serial_tracking_non_overlapping_lifetimes();
         check_serial_tracking_overlapping_lifetimes();
 
-        check_parallel_tracking_non_overlapping_lifetimes();
-        check_parallel_tracking_overlapping_lifetimes();
+        check_threaded_tracking_non_overlapping_lifetimes();
+        check_threaded_tracking_overlapping_lifetimes();
     }
 
     void shader_program_tracking_free_test::check_serial_tracking_non_overlapping_lifetimes()
@@ -96,12 +96,12 @@ namespace avocet::testing
 
     }
 
-    void shader_program_tracking_free_test::check_parallel_tracking_non_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_threaded_tracking_non_overlapping_lifetimes()
     {
 
     }
 
-    void shader_program_tracking_free_test::check_parallel_tracking_overlapping_lifetimes()
+    void shader_program_tracking_free_test::check_threaded_tracking_overlapping_lifetimes()
     {
 
     }

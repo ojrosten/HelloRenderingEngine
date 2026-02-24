@@ -36,9 +36,9 @@ namespace avocet::testing
 
         void check_serial_tracking_overlapping_lifetimes();
 
-        void check_parallel_tracking_non_overlapping_lifetimes();
+        void check_threaded_tracking_non_overlapping_lifetimes();
 
-        void check_parallel_tracking_overlapping_lifetimes();
+        void check_threaded_tracking_overlapping_lifetimes();
 
         void check_program_data(std::string_view tag, const gpu_data& data0, const gpu_data& data1);
 
