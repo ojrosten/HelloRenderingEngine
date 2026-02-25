@@ -184,7 +184,7 @@ namespace avocet::testing
 
         std::array<gpu_data, 4> data{};
 
-        auto windows{agl::to_array(std::span{data}, [this](gpu_data& data) { return create_window(make_window_config(data.calls)); })};
+        auto windows{agl::to_array(std::span{data}, [this](gpu_data& d) { return create_window(make_window_config(d.calls)); })};
 
         std::latch entryLatch{data.size()}, exitLatch{data.size()};
         auto tasks{agl::to_array(std::span{windows}, [&](curlew::window& win) { return make_shader_program_task(win, shaderDir, entryLatch, exitLatch); })};
