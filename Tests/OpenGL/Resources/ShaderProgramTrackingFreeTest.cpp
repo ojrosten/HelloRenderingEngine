@@ -17,6 +17,7 @@
 #include <future>
 #include <thread>
 #include <latch>
+#include <optional>
 #include <ranges>
 
 namespace avocet::testing
@@ -62,19 +63,22 @@ namespace avocet::testing
             return agl::resource_handle{static_cast<GLuint>(param)};
         }
 
-        constexpr std::latch* no_latch{};
+
+        using opt_latch_ref = std::optional<std::reference_wrapper<std::latch>>;
+
+        constexpr opt_latch_ref no_latch{};
 
         [[nodiscard]]
-        agl::resource_handle make_and_use_shader_program(const curlew::window& w, const fs::path& shaderDir, std::latch* entryLatch, std::latch* exitLatch) {
+        agl::resource_handle make_and_use_shader_program(const curlew::window& w, const fs::path& shaderDir, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
             const auto& ctx{w.context()};
 
             agl::shader_program sp{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-            if(entryLatch) entryLatch->arrive_and_wait();
+            if(entryLatch) entryLatch->get().arrive_and_wait();
             sp.use();
             sp.use();
 
             auto handle{get_current_program_index(ctx)};
-            if(exitLatch) exitLatch->arrive_and_wait();
+            if(exitLatch) exitLatch->get().arrive_and_wait();
 
             return handle;
         }
@@ -87,7 +91,7 @@ namespace avocet::testing
         using task_t = std::packaged_task<agl::resource_handle()>;
 
         [[nodiscard]]
-        task_t make_shader_program_task(curlew::window& w, const fs::path& shaderDir, std::latch* entryLatch, std::latch* exitLatch) {
+        task_t make_shader_program_task(curlew::window& w, const fs::path& shaderDir, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
             curlew::test_window_manager::detach_current_context();
 
             return task_t{
@@ -183,7 +187,7 @@ namespace avocet::testing
         auto windows{agl::to_array(std::span{data}, [this](gpu_data& data) { return create_window(make_window_config(data.calls)); })};
 
         std::latch entryLatch{data.size()}, exitLatch{data.size()};
-        auto tasks{agl::to_array(std::span{windows}, [&](curlew::window& win) { return make_shader_program_task(win, shaderDir, &entryLatch, &exitLatch); })};
+        auto tasks{agl::to_array(std::span{windows}, [&](curlew::window& win) { return make_shader_program_task(win, shaderDir, entryLatch, exitLatch); })};
 
         auto futures{agl::to_array(std::span{tasks}, [](task_t& t) { return t.get_future(); })};
 
