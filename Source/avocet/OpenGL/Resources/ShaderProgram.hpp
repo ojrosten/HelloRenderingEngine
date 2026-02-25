@@ -125,18 +125,21 @@ namespace avocet::opengl {
         }
 
         class program_tracker {
-            inline static GLuint st_Current{};
+            inline static thread_local std::map<const decorated_context*, GLuint> st_Current{};
         public:
             static void utilize(const shader_program_resource& spr) {
-                if(const auto index{get_index(spr)}; index != st_Current) {
+                const auto index{get_index(spr)};
+                auto [iter, created] {st_Current.emplace(&spr.view().context(), index)};
+                if(created || (iter->second != index)) {
                     gl_function{&GladGLContext::UseProgram}(spr.view().context(), index);
-                    st_Current = index;
+                    iter->second = index;
                 }
             }
 
             static void reset(const shader_program_resource& spr) {
-                if(get_index(spr) == st_Current)
-                    st_Current = 0;
+                auto found{st_Current.find(&spr.view().context())};
+                if((found != st_Current.end()) && (get_index(spr) == found->second))
+                    found->second = 0;
             }
         };
     };
