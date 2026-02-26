@@ -9,16 +9,16 @@
 
 /*! \file */
 
-#include "sequoia/TestFramework/FreeTestCore.hpp"
+#include "curlew/TestFramework/GraphicsTestCore.hpp"
 
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class polygon_free_test final : public free_test
+    class polygon_free_test final : public curlew::common_graphics_test
     {
     public:
-        using free_test::free_test;
+        using curlew::common_graphics_test::common_graphics_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
