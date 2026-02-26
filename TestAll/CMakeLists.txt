@@ -26,6 +26,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageThreadingFreeTest.cpp
                ${TestDir}/Core/Formatting/FormattingFreeTest.cpp
+               ${TestDir}/Core/Geometry/PolygonCoordinatesFreeTest.cpp
                ${TestDir}/Core/Geometry/ViewportTest.cpp
                ${TestDir}/Core/Geometry/ViewportTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTest.cpp
@@ -34,6 +35,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
+               ${TestDir}/OpenGL/Geometry/PolygonFreeTest.cpp
                ${TestDir}/OpenGL/Resources/BufferMetaFreeTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectLabellingTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTest.cpp

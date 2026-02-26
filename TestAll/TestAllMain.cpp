@@ -18,6 +18,7 @@
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
 #include "Core/Formatting/FormattingFreeTest.hpp"
+#include "Core/Geometry/PolygonCoordinatesFreeTest.hpp"
 #include "Core/Geometry/ViewportTest.hpp"
 #include "Core/Geometry/ViewportTestingDiagnostics.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTest.hpp"
@@ -26,6 +27,7 @@
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
+#include "OpenGL/Geometry/PolygonFreeTest.hpp"
 #include "OpenGL/Resources/BufferMetaFreeTest.hpp"
 #include "OpenGL/Resources/BufferObjectLabellingTest.hpp"
 #include "OpenGL/Resources/BufferObjectTest.hpp"
@@ -137,6 +139,12 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Formatting",
             formatting_free_test{"Formatting Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Polygon",
+            polygon_coordinates_free_test{"Polygon Coordinates Free Test"},
+            polygon_free_test{"Polygon Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
