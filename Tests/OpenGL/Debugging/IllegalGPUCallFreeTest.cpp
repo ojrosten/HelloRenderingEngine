@@ -16,6 +16,8 @@
 
 namespace avocet::testing
 {
+    using namespace curlew;
+
     [[nodiscard]]
     std::filesystem::path illegal_gpu_call_free_test::source_file() const
     {
@@ -24,8 +26,12 @@ namespace avocet::testing
 
     void illegal_gpu_call_free_test::run_tests()
     {
-        using namespace curlew;
+        test_with_best_available_debugging();
+        test_with_basic_debugging();
+    }
 
+    void illegal_gpu_call_free_test::test_with_best_available_debugging()
+    {
         auto w{create_window({.hiding{window_hiding_mode::on}})};
         const auto& ctx{w.context()};
 
@@ -36,7 +42,18 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Illegal call to glCreateShader (non-void return)",
-            [&ctx]() { return agl::gl_function{&GladGLContext::CreateShader}(ctx, GL_ARRAY_BUFFER); }
+            [&ctx](){ return agl::gl_function{&GladGLContext::CreateShader}(ctx, GL_ARRAY_BUFFER); }
+        );
+    }
+
+    void illegal_gpu_call_free_test::test_with_basic_debugging()
+    {
+        auto w{create_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::basic}})};
+        const auto& ctx{w.context()};
+
+        check_exception_thrown<std::runtime_error>(
+            "Illegal call to glBindVertexArray",
+            [&ctx](){ agl::gl_function{&GladGLContext::BindVertexArray}(ctx, 1729); }
         );
     }
 }

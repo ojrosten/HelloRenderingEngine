@@ -38,7 +38,7 @@ namespace avocet::opengl{
 
     [[nodiscard]]
     inline bool debug_output_supported(const context_base& ctx) {
-        return debug_output_supported(get_opengl_version(ctx));
+        return (ctx.debug_mode() == debugging_mode::dynamic) && debug_output_supported(get_opengl_version(ctx));
     }
 
     [[nodiscard]]

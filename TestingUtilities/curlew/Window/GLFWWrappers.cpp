@@ -21,7 +21,7 @@ namespace curlew {
         }
 
         void set_debug_context(const agl::debugging_mode mode, const agl::opengl_version& version) {
-            const bool advancedDebugging{(mode != agl::debugging_mode::off) && agl::debug_output_supported(version)};
+            const bool advancedDebugging{(mode == agl::debugging_mode::dynamic) && agl::debug_output_supported(version)};
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, advancedDebugging);
         }
 

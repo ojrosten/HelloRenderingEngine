@@ -18,7 +18,7 @@
 #include "glad/gl.h"
 
 namespace avocet::opengl {
-    enum class debugging_mode { off = 0, dynamic };
+    enum class debugging_mode { off = 0, basic, dynamic };
 
     class unique_glad_context {
         GladGLContext m_Context{};

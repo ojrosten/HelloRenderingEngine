@@ -18,6 +18,7 @@ namespace avocet::opengl {
         using enum debugging_mode;
         switch(mode) {
         case off:     return "off";
+        case basic:   return "basic";
         case dynamic: return "dynamic";
         }
 
@@ -25,7 +26,7 @@ namespace avocet::opengl {
     }
 
     void context_base::init_debug() {
-        if((debug_mode() == debugging_mode::off) or !debug_output_supported(*this))
+        if((debug_mode() != debugging_mode::dynamic) or !debug_output_supported(*this))
             return;
 
         GLint flags{};
