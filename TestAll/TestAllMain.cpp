@@ -20,6 +20,7 @@
 #include "Core/Formatting/FormattingFreeTest.hpp"
 #include "Core/Geometry/ViewportTest.hpp"
 #include "Core/Geometry/ViewportTestingDiagnostics.hpp"
+#include "OpenGL/Capabilities/CapabilitiesTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
 #include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
@@ -114,6 +115,7 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Capability Manager",
             capabilities_false_negative_test{"False Negative Test"},
+            capabilities_test{"Unit Test"},
             capability_manager_free_test{"Capability Manager Free Test"}
         );
 

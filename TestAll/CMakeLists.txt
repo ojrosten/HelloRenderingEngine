@@ -28,6 +28,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/Formatting/FormattingFreeTest.cpp
                ${TestDir}/Core/Geometry/ViewportTest.cpp
                ${TestDir}/Core/Geometry/ViewportTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/Capabilities/CapabilitiesTest.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
