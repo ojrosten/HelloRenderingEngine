@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntryHi">93.4&nbsp;%</td>
-            <td class="headerCovTableEntry">609</td>
-            <td class="headerCovTableEntry">569</td>
+            <td class="headerCovTableEntryHi">93.6&nbsp;%</td>
+            <td class="headerCovTableEntry">622</td>
+            <td class="headerCovTableEntry">582</td>
           </tr>
                   <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -198,9 +198,9 @@
 <span id="L136"><span class="lineNum">     136</span>              : </span>
 <span id="L137"><span class="lineNum">     137</span>              :   template&lt;class ValueBasedCustomizer&gt;</span>
 <span id="L138"><span class="lineNum">     138</span>              :   [[nodiscard]]</span>
-<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC">          63 :   std::string to_string(general_weak_equivalence_check_t&lt;ValueBasedCustomizer&gt;)</span></span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC">          70 :   std::string to_string(general_weak_equivalence_check_t&lt;ValueBasedCustomizer&gt;)</span></span>
 <span id="L140"><span class="lineNum">     140</span>              :   {</span>
-<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">         126 :     return &quot;weak equivalence&quot;;</span></span>
+<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">         140 :     return &quot;weak equivalence&quot;;</span></span>
 <span id="L142"><span class="lineNum">     142</span>              :   }</span>
 <span id="L143"><span class="lineNum">     143</span>              : </span>
 <span id="L144"><span class="lineNum">     144</span>              :   //=========================== Values defined for convenience ===========================//</span>
@@ -283,7 +283,7 @@
 <span id="L221"><span class="lineNum">     221</span>              :     struct exception_message_extractor&lt;E&gt;</span>
 <span id="L222"><span class="lineNum">     222</span>              :   {</span>
 <span id="L223"><span class="lineNum">     223</span>              :     [[nodiscard]]</span>
-<span id="L224"><span class="lineNum">     224</span> <span class="tlaGNC">          75 :     static std::string get(const E&amp; e) { return e.what(); }</span></span>
+<span id="L224"><span class="lineNum">     224</span> <span class="tlaGNC">          87 :     static std::string get(const E&amp; e) { return e.what(); }</span></span>
 <span id="L225"><span class="lineNum">     225</span>              :   };</span>
 <span id="L226"><span class="lineNum">     226</span>              : </span>
 <span id="L227"><span class="lineNum">     227</span>              :   template&lt;class E&gt;</span>
@@ -296,21 +296,21 @@
 <span id="L234"><span class="lineNum">     234</span>              : </span>
 <span id="L235"><span class="lineNum">     235</span>              :   template&lt;class CheckType, test_mode Mode, class T, class U, class Advisor&gt;</span>
 <span id="L236"><span class="lineNum">     236</span>              :     requires tests_against_with_or_without_tutor&lt;CheckType, Mode, T, U, tutor&lt;Advisor&gt;&gt;</span>
-<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">        1215 :   void select_test(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const T&amp; obtained, const U&amp; prediction, [[maybe_unused]] tutor&lt;Advisor&gt; advisor)</span></span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">        1265 :   void select_test(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const T&amp; obtained, const U&amp; prediction, [[maybe_unused]] tutor&lt;Advisor&gt; advisor)</span></span>
 <span id="L238"><span class="lineNum">     238</span>              :   {</span>
 <span id="L239"><span class="lineNum">     239</span>              :     if constexpr(tests_against&lt;CheckType, Mode, T, U, tutor&lt;Advisor&gt;&gt;)</span>
 <span id="L240"><span class="lineNum">     240</span>              :     {</span>
-<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">         384 :       value_tester&lt;T&gt;::test(flavour, logger, obtained, prediction, advisor);</span></span>
+<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">         424 :       value_tester&lt;T&gt;::test(flavour, logger, obtained, prediction, advisor);</span></span>
 <span id="L242"><span class="lineNum">     242</span>              :     }</span>
 <span id="L243"><span class="lineNum">     243</span>              :     else if constexpr(tests_against&lt;CheckType, Mode, T, U&gt;)</span>
 <span id="L244"><span class="lineNum">     244</span>              :     {</span>
-<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">         831 :       value_tester&lt;T&gt;::test(flavour, logger, obtained, prediction);</span></span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">         841 :       value_tester&lt;T&gt;::test(flavour, logger, obtained, prediction);</span></span>
 <span id="L246"><span class="lineNum">     246</span>              :     }</span>
 <span id="L247"><span class="lineNum">     247</span>              :     else</span>
 <span id="L248"><span class="lineNum">     248</span>              :     {</span>
 <span id="L249"><span class="lineNum">     249</span>              :       static_assert(dependent_false&lt;CheckType&gt;::value, &quot;Should never be triggered; indicates mismatch between requirement and logic&quot;);</span>
 <span id="L250"><span class="lineNum">     250</span>              :     }</span>
-<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">        1215 :   }</span></span>
+<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">        1265 :   }</span></span>
 <span id="L252"><span class="lineNum">     252</span>              : </span>
 <span id="L253"><span class="lineNum">     253</span>              :   /*! \brief generic function that generates a check from any class providing a static check method.</span>
 <span id="L254"><span class="lineNum">     254</span>              : </span>
@@ -319,7 +319,7 @@
 <span id="L257"><span class="lineNum">     257</span>              : </span>
 <span id="L258"><span class="lineNum">     258</span>              :   template&lt;class CheckType, test_mode Mode, class T, class U, class Advisor&gt;</span>
 <span id="L259"><span class="lineNum">     259</span>              :     requires is_general_equivalence_check&lt;CheckType&gt; &amp;&amp; tests_against_with_or_without_tutor&lt;CheckType, Mode, T, U, tutor&lt;Advisor&gt;&gt;</span>
-<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">         350 :   bool general_equivalence_check(CheckType flavour,</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">         357 :   bool general_equivalence_check(CheckType flavour,</span></span>
 <span id="L261"><span class="lineNum">     261</span>              :                                  std::string description,</span>
 <span id="L262"><span class="lineNum">     262</span>              :                                  test_logger&lt;Mode&gt;&amp; logger,</span>
 <span id="L263"><span class="lineNum">     263</span>              :                                  const T&amp; obtained,</span>
@@ -327,50 +327,50 @@
 <span id="L265"><span class="lineNum">     265</span>              :                                  tutor&lt;Advisor&gt; advisor)</span>
 <span id="L266"><span class="lineNum">     266</span>              :   {</span>
 <span id="L267"><span class="lineNum">     267</span>              :     const auto msg{</span>
-<span id="L268"><span class="lineNum">     268</span> <span class="tlaGNC">         350 :       [flavour] (std::string desc) -&gt; std::string {</span></span>
-<span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">         350 :           return append_lines(</span></span>
+<span id="L268"><span class="lineNum">     268</span> <span class="tlaGNC">         357 :       [flavour] (std::string desc) -&gt; std::string {</span></span>
+<span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">         357 :           return append_lines(</span></span>
 <span id="L270"><span class="lineNum">     270</span>              :                    desc,</span>
 <span id="L271"><span class="lineNum">     271</span>              :                    &quot;Comparison performed using:&quot;,</span>
-<span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">         700 :                    make_type_info&lt;value_tester&lt;T&gt;&gt;(),</span></span>
-<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">         700 :                    std::format(&quot;Checking for {} with:&quot;, to_string(flavour)), make_type_info&lt;U&gt;()</span></span>
-<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">         700 :                  ).append(&quot;\n&quot;);</span></span>
+<span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">         714 :                    make_type_info&lt;value_tester&lt;T&gt;&gt;(),</span></span>
+<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">         714 :                    std::format(&quot;Checking for {} with:&quot;, to_string(flavour)), make_type_info&lt;U&gt;()</span></span>
+<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">         714 :                  ).append(&quot;\n&quot;);</span></span>
 <span id="L275"><span class="lineNum">     275</span>              :       }</span>
 <span id="L276"><span class="lineNum">     276</span>              :     };</span>
 <span id="L277"><span class="lineNum">     277</span>              : </span>
-<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">         350 :     sentinel&lt;Mode&gt; sentry{logger, msg(std::move(description))};</span></span>
+<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">         357 :     sentinel&lt;Mode&gt; sentry{logger, msg(std::move(description))};</span></span>
 <span id="L279"><span class="lineNum">     279</span>              : </span>
-<span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">         350 :     select_test(flavour, logger, obtained, predicted, advisor);</span></span>
+<span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">         357 :     select_test(flavour, logger, obtained, predicted, advisor);</span></span>
 <span id="L281"><span class="lineNum">     281</span>              : </span>
-<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">         700 :     return !sentry.failure_detected();</span></span>
-<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">         350 :   }</span></span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">         714 :     return !sentry.failure_detected();</span></span>
+<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">         357 :   }</span></span>
 <span id="L284"><span class="lineNum">     284</span>              : </span>
 <span id="L285"><span class="lineNum">     285</span>              :   template&lt;bool IsFinalMessage, test_mode Mode, class Compare, class T, class Advisor&gt;</span>
 <span id="L286"><span class="lineNum">     286</span>              :     requires std::is_invocable_r_v&lt;bool, Compare, T, T&gt; &amp;&amp; (!IsFinalMessage || reportable&lt;T&gt;)</span>
-<span id="L287"><span class="lineNum">     287</span> <span class="tlaGNC">        4082 :   void binary_comparison(final_message_constant&lt;IsFinalMessage&gt;, sentinel&lt;Mode&gt;&amp; sentry, Compare compare, const T&amp; obtained, const T&amp; prediction, tutor&lt;Advisor&gt; advisor)</span></span>
+<span id="L287"><span class="lineNum">     287</span> <span class="tlaGNC">        4202 :   void binary_comparison(final_message_constant&lt;IsFinalMessage&gt;, sentinel&lt;Mode&gt;&amp; sentry, Compare compare, const T&amp; obtained, const T&amp; prediction, tutor&lt;Advisor&gt; advisor)</span></span>
 <span id="L288"><span class="lineNum">     288</span>              :   {</span>
-<span id="L289"><span class="lineNum">     289</span> <span class="tlaGNC">        4082 :     sentry.log_check();</span></span>
-<span id="L290"><span class="lineNum">     290</span> <span class="tlaGNC">        4082 :     if(!compare(obtained, prediction))</span></span>
+<span id="L289"><span class="lineNum">     289</span> <span class="tlaGNC">        4202 :     sentry.log_check();</span></span>
+<span id="L290"><span class="lineNum">     290</span> <span class="tlaGNC">        4202 :     if(!compare(obtained, prediction))</span></span>
 <span id="L291"><span class="lineNum">     291</span>              :     {</span>
 <span id="L292"><span class="lineNum">     292</span> <span class="tlaGNC">         155 :       std::string message{failure_reporter&lt;Compare&gt;::reporter(final_message_constant&lt;IsFinalMessage&gt;{}, compare, obtained, prediction)};</span></span>
 <span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">         155 :       append_advice(message, {advisor, obtained, prediction});</span></span>
 <span id="L294"><span class="lineNum">     294</span>              : </span>
 <span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">         155 :       sentry.log_failure(message);</span></span>
 <span id="L296"><span class="lineNum">     296</span> <span class="tlaGNC">         155 :     }</span></span>
-<span id="L297"><span class="lineNum">     297</span> <span class="tlaGNC">        4082 :   }</span></span>
+<span id="L297"><span class="lineNum">     297</span> <span class="tlaGNC">        4202 :   }</span></span>
 <span id="L298"><span class="lineNum">     298</span>              : </span>
 <span id="L299"><span class="lineNum">     299</span>              :   struct default_exception_message_postprocessor</span>
 <span id="L300"><span class="lineNum">     300</span>              :   {</span>
 <span id="L301"><span class="lineNum">     301</span>              :     [[nodiscard]]</span>
-<span id="L302"><span class="lineNum">     302</span> <span class="tlaGNC">          25 :     std::string operator()(const project_paths&amp; projPaths, std::string message) const</span></span>
+<span id="L302"><span class="lineNum">     302</span> <span class="tlaGNC">          29 :     std::string operator()(const project_paths&amp; projPaths, std::string message) const</span></span>
 <span id="L303"><span class="lineNum">     303</span>              :     {</span>
-<span id="L304"><span class="lineNum">     304</span> <span class="tlaGNC">          25 :       constexpr auto npos{std::string::npos};</span></span>
-<span id="L305"><span class="lineNum">     305</span> <span class="tlaGNC">          25 :       if(const auto pos{message.find(projPaths.project_root().generic_string())}; pos &lt; npos)</span></span>
+<span id="L304"><span class="lineNum">     304</span> <span class="tlaGNC">          29 :       constexpr auto npos{std::string::npos};</span></span>
+<span id="L305"><span class="lineNum">     305</span> <span class="tlaGNC">          29 :       if(const auto pos{message.find(projPaths.project_root().generic_string())}; pos &lt; npos)</span></span>
 <span id="L306"><span class="lineNum">     306</span>              :       {</span>
-<span id="L307"><span class="lineNum">     307</span> <span class="tlaGNC">          12 :         const auto len{projPaths.project_root().generic_string().size()};</span></span>
-<span id="L308"><span class="lineNum">     308</span> <span class="tlaGNC">          12 :         message.erase(pos, len + 1);</span></span>
+<span id="L307"><span class="lineNum">     307</span> <span class="tlaGNC">          13 :         const auto len{projPaths.project_root().generic_string().size()};</span></span>
+<span id="L308"><span class="lineNum">     308</span> <span class="tlaGNC">          13 :         message.erase(pos, len + 1);</span></span>
 <span id="L309"><span class="lineNum">     309</span>              :       }</span>
 <span id="L310"><span class="lineNum">     310</span>              :       </span>
-<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          25 :       return message;</span></span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          29 :       return message;</span></span>
 <span id="L312"><span class="lineNum">     312</span>              :     }</span>
 <span id="L313"><span class="lineNum">     313</span>              :   };</span>
 <span id="L314"><span class="lineNum">     314</span>              : </span>
@@ -383,26 +383,26 @@
 <span id="L321"><span class="lineNum">     321</span>              :     class Fn,</span>
 <span id="L322"><span class="lineNum">     322</span>              :     invocable_r&lt;std::string, project_paths, std::string&gt; Postprocessor=default_exception_message_postprocessor</span>
 <span id="L323"><span class="lineNum">     323</span>              :   &gt;</span>
-<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">          25 :   bool check_exception_thrown(std::string description, test_logger&lt;Mode&gt;&amp; logger, Fn&amp;&amp; function, const project_paths&amp; projPaths, Postprocessor postprocessor={})</span></span>
+<span id="L324"><span class="lineNum">     324</span> <span class="tlaGNC">          29 :   bool check_exception_thrown(std::string description, test_logger&lt;Mode&gt;&amp; logger, Fn&amp;&amp; function, const project_paths&amp; projPaths, Postprocessor postprocessor={})</span></span>
 <span id="L325"><span class="lineNum">     325</span>              :   {</span>
-<span id="L326"><span class="lineNum">     326</span> <span class="tlaGNC">          25 :     auto message{</span></span>
-<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">          22 :       [&amp;description]() -&gt; std::string&amp;&amp; {</span></span>
-<span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">          50 :         return std::move(append_lines(description, &quot;Expected Exception Type:&quot;, make_type_info&lt;E&gt;()));</span></span>
-<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">          25 :       }()</span></span>
+<span id="L326"><span class="lineNum">     326</span> <span class="tlaGNC">          29 :     auto message{</span></span>
+<span id="L327"><span class="lineNum">     327</span> <span class="tlaGNC">          25 :       [&amp;description]() -&gt; std::string&amp;&amp; {</span></span>
+<span id="L328"><span class="lineNum">     328</span> <span class="tlaGNC">          58 :         return std::move(append_lines(description, &quot;Expected Exception Type:&quot;, make_type_info&lt;E&gt;()));</span></span>
+<span id="L329"><span class="lineNum">     329</span> <span class="tlaGNC">          29 :       }()</span></span>
 <span id="L330"><span class="lineNum">     330</span>              :     };</span>
 <span id="L331"><span class="lineNum">     331</span>              : </span>
-<span id="L332"><span class="lineNum">     332</span> <span class="tlaGNC">          25 :     sentinel&lt;Mode&gt; sentry{logger, message};</span></span>
-<span id="L333"><span class="lineNum">     333</span> <span class="tlaGNC">          25 :     sentry.log_check();</span></span>
+<span id="L332"><span class="lineNum">     332</span> <span class="tlaGNC">          29 :     sentinel&lt;Mode&gt; sentry{logger, message};</span></span>
+<span id="L333"><span class="lineNum">     333</span> <span class="tlaGNC">          29 :     sentry.log_check();</span></span>
 <span id="L334"><span class="lineNum">     334</span>              :     try</span>
 <span id="L335"><span class="lineNum">     335</span>              :     {</span>
-<span id="L336"><span class="lineNum">     336</span> <span class="tlaGNC">          25 :       std::forward&lt;Fn&gt;(function)();</span></span>
+<span id="L336"><span class="lineNum">     336</span> <span class="tlaGNC">          29 :       std::forward&lt;Fn&gt;(function)();</span></span>
 <span id="L337"><span class="lineNum">     337</span> <span class="tlaUNC">           0 :       sentry.log_failure(&quot;No exception thrown&quot;);</span></span>
 <span id="L338"><span class="lineNum">     338</span> <span class="tlaUNC">           0 :       return false;</span></span>
 <span id="L339"><span class="lineNum">     339</span>              :     }</span>
-<span id="L340"><span class="lineNum">     340</span> <span class="tlaGNC">          25 :     catch(const E&amp; e)</span></span>
+<span id="L340"><span class="lineNum">     340</span> <span class="tlaGNC">          29 :     catch(const E&amp; e)</span></span>
 <span id="L341"><span class="lineNum">     341</span>              :     {</span>
-<span id="L342"><span class="lineNum">     342</span> <span class="tlaGNC">          25 :       sentry.log_caught_exception_message(postprocessor(projPaths, exception_message_extractor&lt;E&gt;::get(e)));</span></span>
-<span id="L343"><span class="lineNum">     343</span> <span class="tlaGNC">          25 :       return true;</span></span>
+<span id="L342"><span class="lineNum">     342</span> <span class="tlaGNC">          29 :       sentry.log_caught_exception_message(postprocessor(projPaths, exception_message_extractor&lt;E&gt;::get(e)));</span></span>
+<span id="L343"><span class="lineNum">     343</span> <span class="tlaGNC">          29 :       return true;</span></span>
 <span id="L344"><span class="lineNum">     344</span>              :     }</span>
 <span id="L345"><span class="lineNum">     345</span> <span class="tlaUNC">           0 :     catch(const std::exception&amp; e)</span></span>
 <span id="L346"><span class="lineNum">     346</span>              :     {</span>
@@ -416,7 +416,7 @@
 <span id="L354"><span class="lineNum">     354</span> <span class="tlaUNC">           0 :       sentry.log_failure(&quot;Unknown exception thrown\n&quot;);</span></span>
 <span id="L355"><span class="lineNum">     355</span> <span class="tlaUNC">           0 :       return false;</span></span>
 <span id="L356"><span class="lineNum">     356</span>              :     }</span>
-<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">          25 :   }</span></span>
+<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">          29 :   }</span></span>
 <span id="L358"><span class="lineNum">     358</span>              : </span>
 <span id="L359"><span class="lineNum">     359</span>              :   /*! \brief Condition for applying a check across a range of values */</span>
 <span id="L360"><span class="lineNum">     360</span>              : </span>
@@ -561,32 +561,32 @@
 <span id="L499"><span class="lineNum">     499</span>              : </span>
 <span id="L500"><span class="lineNum">     500</span>              :   template&lt;test_mode Mode, class T, class Advisor=null_advisor&gt;</span>
 <span id="L501"><span class="lineNum">     501</span>              :     requires supports_equality_check&lt;Mode, T, Advisor&gt;</span>
-<span id="L502"><span class="lineNum">     502</span> <span class="tlaGNC">        4117 :   bool check(equality_check_t,</span></span>
+<span id="L502"><span class="lineNum">     502</span> <span class="tlaGNC">        4237 :   bool check(equality_check_t,</span></span>
 <span id="L503"><span class="lineNum">     503</span>              :              std::string description,</span>
 <span id="L504"><span class="lineNum">     504</span>              :              test_logger&lt;Mode&gt;&amp; logger,</span>
 <span id="L505"><span class="lineNum">     505</span>              :              const T&amp; obtained,</span>
 <span id="L506"><span class="lineNum">     506</span>              :              const T&amp; prediction,</span>
 <span id="L507"><span class="lineNum">     507</span>              :              tutor&lt;Advisor&gt; advisor={})</span>
 <span id="L508"><span class="lineNum">     508</span>              :   {</span>
-<span id="L509"><span class="lineNum">     509</span> <span class="tlaGNC">        4117 :     sentinel&lt;Mode&gt; sentry{logger, add_type_info&lt;T&gt;(std::move(description))};</span></span>
+<span id="L509"><span class="lineNum">     509</span> <span class="tlaGNC">        4237 :     sentinel&lt;Mode&gt; sentry{logger, add_type_info&lt;T&gt;(std::move(description))};</span></span>
 <span id="L510"><span class="lineNum">     510</span>              : </span>
 <span id="L511"><span class="lineNum">     511</span>              :     if constexpr(deep_equality_comparable&lt;T&gt;)</span>
 <span id="L512"><span class="lineNum">     512</span>              :     {</span>
 <span id="L513"><span class="lineNum">     513</span>              :       using finality = final_message_constant&lt;!(tests_against_with_or_without_tutor&lt;equality_check_t, Mode, T, T, tutor&lt;Advisor&gt;&gt; || faithful_range&lt;T&gt;)&gt;;</span>
-<span id="L514"><span class="lineNum">     514</span> <span class="tlaGNC">        4082 :       binary_comparison(finality{}, sentry, std::ranges::equal_to{}, obtained, prediction, advisor);</span></span>
+<span id="L514"><span class="lineNum">     514</span> <span class="tlaGNC">        4202 :       binary_comparison(finality{}, sentry, std::ranges::equal_to{}, obtained, prediction, advisor);</span></span>
 <span id="L515"><span class="lineNum">     515</span>              :     }</span>
 <span id="L516"><span class="lineNum">     516</span>              : </span>
 <span id="L517"><span class="lineNum">     517</span>              :     if constexpr(tests_against_with_or_without_tutor&lt;equality_check_t, Mode, T, T, tutor&lt;Advisor&gt;&gt;)</span>
 <span id="L518"><span class="lineNum">     518</span>              :     {</span>
-<span id="L519"><span class="lineNum">     519</span> <span class="tlaGNC">         865 :       select_test(equality_check_t{}, logger, obtained, prediction, advisor);</span></span>
+<span id="L519"><span class="lineNum">     519</span> <span class="tlaGNC">         908 :       select_test(equality_check_t{}, logger, obtained, prediction, advisor);</span></span>
 <span id="L520"><span class="lineNum">     520</span>              :     }</span>
 <span id="L521"><span class="lineNum">     521</span>              :     else if constexpr(supports_range_check_v&lt;equality_check_t, Mode, T, T, Advisor&gt;)</span>
 <span id="L522"><span class="lineNum">     522</span>              :     {</span>
 <span id="L523"><span class="lineNum">     523</span> <span class="tlaGNC">          95 :       check(equality, &quot;&quot;, logger, std::begin(obtained), std::end(obtained), std::begin(prediction), std::end(prediction), advisor);</span></span>
 <span id="L524"><span class="lineNum">     524</span>              :     }</span>
 <span id="L525"><span class="lineNum">     525</span>              : </span>
-<span id="L526"><span class="lineNum">     526</span> <span class="tlaGNC">        8234 :     return !sentry.failure_detected();</span></span>
-<span id="L527"><span class="lineNum">     527</span> <span class="tlaGNC">        4117 :   }</span></span>
+<span id="L526"><span class="lineNum">     526</span> <span class="tlaGNC">        8474 :     return !sentry.failure_detected();</span></span>
+<span id="L527"><span class="lineNum">     527</span> <span class="tlaGNC">        4237 :   }</span></span>
 <span id="L528"><span class="lineNum">     528</span>              : </span>
 <span id="L529"><span class="lineNum">     529</span>              :   /*! \brief Condition for applying an equality check */</span>
 <span id="L530"><span class="lineNum">     530</span>              : </span>
@@ -644,16 +644,16 @@
 <span id="L582"><span class="lineNum">     582</span>              :   </span>
 <span id="L583"><span class="lineNum">     583</span>              :   template&lt;class CheckType, test_mode Mode, class T, class U, class Advisor=null_advisor&gt;</span>
 <span id="L584"><span class="lineNum">     584</span>              :     requires supports_generalized_equivalence_check&lt;CheckType, Mode, T, U, Advisor&gt;</span>
-<span id="L585"><span class="lineNum">     585</span> <span class="tlaGNC">        1452 :   bool check(CheckType flavour, std::string description, test_logger&lt;Mode&gt;&amp; logger, const T&amp; obtained, const U&amp; prediction, tutor&lt;Advisor&gt; advisor={})</span></span>
+<span id="L585"><span class="lineNum">     585</span> <span class="tlaGNC">        1459 :   bool check(CheckType flavour, std::string description, test_logger&lt;Mode&gt;&amp; logger, const T&amp; obtained, const U&amp; prediction, tutor&lt;Advisor&gt; advisor={})</span></span>
 <span id="L586"><span class="lineNum">     586</span>              :   {</span>
 <span id="L587"><span class="lineNum">     587</span>              :     if constexpr(tests_against_with_or_without_tutor&lt;CheckType, Mode, T, U, tutor&lt;Advisor&gt;&gt;)</span>
 <span id="L588"><span class="lineNum">     588</span>              :     {</span>
-<span id="L589"><span class="lineNum">     589</span> <span class="tlaGNC">         700 :       return general_equivalence_check(flavour,</span></span>
-<span id="L590"><span class="lineNum">     590</span> <span class="tlaGNC">         350 :                                        std::move(description),</span></span>
+<span id="L589"><span class="lineNum">     589</span> <span class="tlaGNC">         714 :       return general_equivalence_check(flavour,</span></span>
+<span id="L590"><span class="lineNum">     590</span> <span class="tlaGNC">         357 :                                        std::move(description),</span></span>
 <span id="L591"><span class="lineNum">     591</span>              :                                        logger,</span>
 <span id="L592"><span class="lineNum">     592</span>              :                                        obtained,</span>
 <span id="L593"><span class="lineNum">     593</span>              :                                        prediction,</span>
-<span id="L594"><span class="lineNum">     594</span> <span class="tlaGNC">         700 :                                        advisor);</span></span>
+<span id="L594"><span class="lineNum">     594</span> <span class="tlaGNC">         714 :                                        advisor);</span></span>
 <span id="L595"><span class="lineNum">     595</span>              :     }</span>
 <span id="L596"><span class="lineNum">     596</span>              :     else if constexpr(supports_range_check_v&lt;CheckType, Mode, T, U, Advisor&gt;)</span>
 <span id="L597"><span class="lineNum">     597</span>              :     {</span>
@@ -775,16 +775,16 @@
 <span id="L713"><span class="lineNum">     713</span>              :     constexpr static test_mode mode{Mode};</span>
 <span id="L714"><span class="lineNum">     714</span>              :     using logger_type = test_logger&lt;Mode&gt;;</span>
 <span id="L715"><span class="lineNum">     715</span>              : </span>
-<span id="L716"><span class="lineNum">     716</span> <span class="tlaGNC">          32 :     checker() = default;</span></span>
+<span id="L716"><span class="lineNum">     716</span> <span class="tlaGNC">          34 :     checker() = default;</span></span>
 <span id="L717"><span class="lineNum">     717</span>              : </span>
 <span id="L718"><span class="lineNum">     718</span>              :     checker(const checker&amp;)            = delete;</span>
 <span id="L719"><span class="lineNum">     719</span>              :     checker&amp; operator=(const checker&amp;) = delete;</span>
 <span id="L720"><span class="lineNum">     720</span>              : </span>
 <span id="L721"><span class="lineNum">     721</span>              :     template&lt;class T, class Advisor = null_advisor, class Self&gt;</span>
 <span id="L722"><span class="lineNum">     722</span>              :       requires supports_equality_check&lt;Mode, T, Advisor&gt;</span>
-<span id="L723"><span class="lineNum">     723</span> <span class="tlaGNC">          96 :     bool check(this Self&amp; self, equality_check_t, const reporter&amp; description, const T&amp; obtained, const T&amp; prediction, tutor&lt;Advisor&gt; advisor = {})</span></span>
+<span id="L723"><span class="lineNum">     723</span> <span class="tlaGNC">         100 :     bool check(this Self&amp; self, equality_check_t, const reporter&amp; description, const T&amp; obtained, const T&amp; prediction, tutor&lt;Advisor&gt; advisor = {})</span></span>
 <span id="L724"><span class="lineNum">     724</span>              :     {</span>
-<span id="L725"><span class="lineNum">     725</span> <span class="tlaGNC">          96 :       return testing::check(equality, self.report(description), self.m_Logger, obtained, prediction, std::move(advisor));</span></span>
+<span id="L725"><span class="lineNum">     725</span> <span class="tlaGNC">         100 :       return testing::check(equality, self.report(description), self.m_Logger, obtained, prediction, std::move(advisor));</span></span>
 <span id="L726"><span class="lineNum">     726</span>              :     }</span>
 <span id="L727"><span class="lineNum">     727</span>              : </span>
 <span id="L728"><span class="lineNum">     728</span>              :     template&lt;class T, class Advisor = null_advisor, class Self&gt;</span>
@@ -815,9 +815,9 @@
 <span id="L753"><span class="lineNum">     753</span>              : </span>
 <span id="L754"><span class="lineNum">     754</span>              :     template&lt;class ValueBasedCustomizer, class T, class U, class Advisor = null_advisor, class Self&gt;</span>
 <span id="L755"><span class="lineNum">     755</span>              :       requires supports_generalized_equivalence_check&lt;general_weak_equivalence_check_t&lt;ValueBasedCustomizer&gt;, Mode, T, U, Advisor&gt;</span>
-<span id="L756"><span class="lineNum">     756</span> <span class="tlaGNC">          37 :     bool check(this Self&amp; self, general_weak_equivalence_check_t&lt;ValueBasedCustomizer&gt; checker, const reporter&amp; description, const T&amp; obtained, const U&amp; prediction, tutor&lt;Advisor&gt; advisor = {})</span></span>
+<span id="L756"><span class="lineNum">     756</span> <span class="tlaGNC">          41 :     bool check(this Self&amp; self, general_weak_equivalence_check_t&lt;ValueBasedCustomizer&gt; checker, const reporter&amp; description, const T&amp; obtained, const U&amp; prediction, tutor&lt;Advisor&gt; advisor = {})</span></span>
 <span id="L757"><span class="lineNum">     757</span>              :     {</span>
-<span id="L758"><span class="lineNum">     758</span> <span class="tlaGNC">          37 :       return testing::check(checker, self.report(description), self.m_Logger, obtained, prediction, std::move(advisor));</span></span>
+<span id="L758"><span class="lineNum">     758</span> <span class="tlaGNC">          41 :       return testing::check(checker, self.report(description), self.m_Logger, obtained, prediction, std::move(advisor));</span></span>
 <span id="L759"><span class="lineNum">     759</span>              :     }</span>
 <span id="L760"><span class="lineNum">     760</span>              : </span>
 <span id="L761"><span class="lineNum">     761</span>              :     template&lt;class Compare, class T, class Advisor = null_advisor, class Self&gt;</span>
@@ -863,9 +863,9 @@
 <span id="L801"><span class="lineNum">     801</span>              :       invocable_r&lt;std::string, project_paths, std::string&gt; Postprocessor=default_exception_message_postprocessor,</span>
 <span id="L802"><span class="lineNum">     802</span>              :       class Self</span>
 <span id="L803"><span class="lineNum">     803</span>              :     &gt;</span>
-<span id="L804"><span class="lineNum">     804</span> <span class="tlaGNC">          25 :     bool check_exception_thrown(this Self&amp; self, const reporter&amp; description, Fn&amp;&amp; function, Postprocessor postprocessor={})</span></span>
+<span id="L804"><span class="lineNum">     804</span> <span class="tlaGNC">          29 :     bool check_exception_thrown(this Self&amp; self, const reporter&amp; description, Fn&amp;&amp; function, Postprocessor postprocessor={})</span></span>
 <span id="L805"><span class="lineNum">     805</span>              :     {</span>
-<span id="L806"><span class="lineNum">     806</span> <span class="tlaGNC">          50 :       return testing::check_exception_thrown&lt;E&gt;(self.report(description), self.m_Logger, std::forward&lt;Fn&gt;(function), self.get_project_paths(), std::move(postprocessor));</span></span>
+<span id="L806"><span class="lineNum">     806</span> <span class="tlaGNC">          58 :       return testing::check_exception_thrown&lt;E&gt;(self.report(description), self.m_Logger, std::forward&lt;Fn&gt;(function), self.get_project_paths(), std::move(postprocessor));</span></span>
 <span id="L807"><span class="lineNum">     807</span>              :     }</span>
 <span id="L808"><span class="lineNum">     808</span>              :     </span>
 <span id="L809"><span class="lineNum">     809</span>              : #define STATIC_CHECK(...) (check(&quot;&quot;, [&amp;](){ static_assert(__VA_ARGS__); return true; }()))</span>
@@ -879,27 +879,27 @@
 <span id="L817"><span class="lineNum">     817</span>              :     }</span>
 <span id="L818"><span class="lineNum">     818</span>              : </span>
 <span id="L819"><span class="lineNum">     819</span>              :     [[nodiscard]]</span>
-<span id="L820"><span class="lineNum">     820</span> <span class="tlaGNC">          32 :     log_summary summary(std::string_view prefix, const log_summary::duration delta) const</span></span>
+<span id="L820"><span class="lineNum">     820</span> <span class="tlaGNC">          34 :     log_summary summary(std::string_view prefix, const log_summary::duration delta) const</span></span>
 <span id="L821"><span class="lineNum">     821</span>              :     {</span>
-<span id="L822"><span class="lineNum">     822</span> <span class="tlaGNC">          32 :       return log_summary{prefix, m_Logger, delta};</span></span>
+<span id="L822"><span class="lineNum">     822</span> <span class="tlaGNC">          34 :       return log_summary{prefix, m_Logger, delta};</span></span>
 <span id="L823"><span class="lineNum">     823</span>              :     }</span>
 <span id="L824"><span class="lineNum">     824</span>              : </span>
 <span id="L825"><span class="lineNum">     825</span> <span class="tlaUNC">           0 :     void reset_results() noexcept { m_Logger.reset_results(); }</span></span>
 <span id="L826"><span class="lineNum">     826</span>              : </span>
 <span id="L827"><span class="lineNum">     827</span>              :     [[nodiscard]]</span>
-<span id="L828"><span class="lineNum">     828</span> <span class="tlaGNC">          32 :     bool has_critical_failures() const noexcept</span></span>
+<span id="L828"><span class="lineNum">     828</span> <span class="tlaGNC">          34 :     bool has_critical_failures() const noexcept</span></span>
 <span id="L829"><span class="lineNum">     829</span>              :     {</span>
-<span id="L830"><span class="lineNum">     830</span> <span class="tlaGNC">          32 :       return m_Logger.results().critical_failures &gt; 0;</span></span>
+<span id="L830"><span class="lineNum">     830</span> <span class="tlaGNC">          34 :       return m_Logger.results().critical_failures &gt; 0;</span></span>
 <span id="L831"><span class="lineNum">     831</span>              :     }</span>
 <span id="L832"><span class="lineNum">     832</span>              :   protected:</span>
-<span id="L833"><span class="lineNum">     833</span> <span class="tlaGNC">          32 :     explicit checker(active_recovery_files recovery)</span></span>
-<span id="L834"><span class="lineNum">     834</span> <span class="tlaGNC">          64 :       : m_Logger{std::move(recovery)}</span></span>
-<span id="L835"><span class="lineNum">     835</span> <span class="tlaGNC">          32 :     {}</span></span>
+<span id="L833"><span class="lineNum">     833</span> <span class="tlaGNC">          34 :     explicit checker(active_recovery_files recovery)</span></span>
+<span id="L834"><span class="lineNum">     834</span> <span class="tlaGNC">          68 :       : m_Logger{std::move(recovery)}</span></span>
+<span id="L835"><span class="lineNum">     835</span> <span class="tlaGNC">          34 :     {}</span></span>
 <span id="L836"><span class="lineNum">     836</span>              : </span>
-<span id="L837"><span class="lineNum">     837</span> <span class="tlaGNC">          96 :     checker(checker&amp;&amp;)            noexcept = default;</span></span>
-<span id="L838"><span class="lineNum">     838</span> <span class="tlaGNC">          32 :     checker&amp; operator=(checker&amp;&amp;) noexcept = default;</span></span>
+<span id="L837"><span class="lineNum">     837</span> <span class="tlaGNC">         102 :     checker(checker&amp;&amp;)            noexcept = default;</span></span>
+<span id="L838"><span class="lineNum">     838</span> <span class="tlaGNC">          34 :     checker&amp; operator=(checker&amp;&amp;) noexcept = default;</span></span>
 <span id="L839"><span class="lineNum">     839</span>              : </span>
-<span id="L840"><span class="lineNum">     840</span> <span class="tlaGNC">         160 :     ~checker() = default;</span></span>
+<span id="L840"><span class="lineNum">     840</span> <span class="tlaGNC">         170 :     ~checker() = default;</span></span>
 <span id="L841"><span class="lineNum">     841</span>              : </span>
 <span id="L842"><span class="lineNum">     842</span>              :     [[nodiscard]]</span>
 <span id="L843"><span class="lineNum">     843</span>              :     std::size_t checks() const noexcept { return m_Logger.checks(); }</span>
@@ -926,9 +926,9 @@
 <span id="L864"><span class="lineNum">     864</span>              :     }</span>
 <span id="L865"><span class="lineNum">     865</span>              : </span>
 <span id="L866"><span class="lineNum">     866</span>              :     [[nodiscard]]</span>
-<span id="L867"><span class="lineNum">     867</span> <span class="tlaGNC">          32 :     const failure_output&amp; failure_messages() const noexcept</span></span>
+<span id="L867"><span class="lineNum">     867</span> <span class="tlaGNC">          34 :     const failure_output&amp; failure_messages() const noexcept</span></span>
 <span id="L868"><span class="lineNum">     868</span>              :     {</span>
-<span id="L869"><span class="lineNum">     869</span> <span class="tlaGNC">          32 :       return m_Logger.results().failure_messages;</span></span>
+<span id="L869"><span class="lineNum">     869</span> <span class="tlaGNC">          34 :       return m_Logger.results().failure_messages;</span></span>
 <span id="L870"><span class="lineNum">     870</span>              :     }</span>
 <span id="L871"><span class="lineNum">     871</span>              :   private:</span>
 <span id="L872"><span class="lineNum">     872</span>              :     test_logger&lt;Mode&gt; m_Logger;</span>

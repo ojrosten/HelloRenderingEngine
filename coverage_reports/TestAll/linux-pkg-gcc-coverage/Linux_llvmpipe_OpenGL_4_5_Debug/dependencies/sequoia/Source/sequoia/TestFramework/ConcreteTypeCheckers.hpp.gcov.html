@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">95.0&nbsp;%</td>
@@ -362,23 +362,23 @@
 <span id="L300"><span class="lineNum">     300</span>              :   private:</span>
 <span id="L301"><span class="lineNum">     301</span>              :     template&lt;std::size_t I = 0, class CheckType, test_mode Mode, class... U, class Advisor&gt;</span>
 <span id="L302"><span class="lineNum">     302</span>              :       requires (I &lt; sizeof...(T))</span>
-<span id="L303"><span class="lineNum">     303</span> <span class="tlaGNC">         306 :     static void check_tuple_elements(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const std::tuple&lt;T...&gt;&amp; value, const std::tuple&lt;U...&gt;&amp; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
+<span id="L303"><span class="lineNum">     303</span> <span class="tlaGNC">         342 :     static void check_tuple_elements(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const std::tuple&lt;T...&gt;&amp; value, const std::tuple&lt;U...&gt;&amp; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
 <span id="L304"><span class="lineNum">     304</span>              :     {</span>
-<span id="L305"><span class="lineNum">     305</span> <span class="tlaGNC">         306 :       check(flavour, std::format(&quot;Element {} of tuple incorrect&quot;, I), logger, std::get&lt;I&gt;(value), std::get&lt;I&gt;(prediction), advisor);</span></span>
-<span id="L306"><span class="lineNum">     306</span> <span class="tlaGNC">         306 :       check_tuple_elements&lt;I+1&gt;(flavour, logger, value, prediction, advisor);</span></span>
-<span id="L307"><span class="lineNum">     307</span> <span class="tlaGNC">         306 :     }</span></span>
+<span id="L305"><span class="lineNum">     305</span> <span class="tlaGNC">         342 :       check(flavour, std::format(&quot;Element {} of tuple incorrect&quot;, I), logger, std::get&lt;I&gt;(value), std::get&lt;I&gt;(prediction), advisor);</span></span>
+<span id="L306"><span class="lineNum">     306</span> <span class="tlaGNC">         342 :       check_tuple_elements&lt;I+1&gt;(flavour, logger, value, prediction, advisor);</span></span>
+<span id="L307"><span class="lineNum">     307</span> <span class="tlaGNC">         342 :     }</span></span>
 <span id="L308"><span class="lineNum">     308</span>              : </span>
 <span id="L309"><span class="lineNum">     309</span>              :     template&lt;std::size_t I = 0, class CheckType, test_mode Mode, class... U, class Advisor&gt;</span>
-<span id="L310"><span class="lineNum">     310</span> <span class="tlaGNC">          34 :     static void check_tuple_elements(CheckType, test_logger&lt;Mode&gt;&amp;, const std::tuple&lt;T...&gt;&amp;, const std::tuple&lt;U...&gt;&amp;, const tutor&lt;Advisor&gt;&amp;)</span></span>
-<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          34 :     {}</span></span>
+<span id="L310"><span class="lineNum">     310</span> <span class="tlaGNC">          38 :     static void check_tuple_elements(CheckType, test_logger&lt;Mode&gt;&amp;, const std::tuple&lt;T...&gt;&amp;, const std::tuple&lt;U...&gt;&amp;, const tutor&lt;Advisor&gt;&amp;)</span></span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          38 :     {}</span></span>
 <span id="L312"><span class="lineNum">     312</span>              : </span>
 <span id="L313"><span class="lineNum">     313</span>              :   public:</span>
 <span id="L314"><span class="lineNum">     314</span>              :     template&lt;class CheckType, test_mode Mode, class... U, class Advisor&gt;</span>
 <span id="L315"><span class="lineNum">     315</span>              :       requires ((sizeof...(T) == sizeof...(U)) &amp;&amp; (std::is_same_v&lt;std::remove_cvref_t&lt;T&gt;, std::remove_cvref_t&lt;U&gt;&gt; &amp;&amp; ...))</span>
-<span id="L316"><span class="lineNum">     316</span> <span class="tlaGNC">          34 :     static void test(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const std::tuple&lt;T...&gt;&amp; value, const std::tuple&lt;U...&gt;&amp; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
+<span id="L316"><span class="lineNum">     316</span> <span class="tlaGNC">          38 :     static void test(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const std::tuple&lt;T...&gt;&amp; value, const std::tuple&lt;U...&gt;&amp; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
 <span id="L317"><span class="lineNum">     317</span>              :     {</span>
-<span id="L318"><span class="lineNum">     318</span> <span class="tlaGNC">          34 :       check_tuple_elements(flavour, logger, value, prediction, advisor);</span></span>
-<span id="L319"><span class="lineNum">     319</span> <span class="tlaGNC">          34 :     }</span></span>
+<span id="L318"><span class="lineNum">     318</span> <span class="tlaGNC">          38 :       check_tuple_elements(flavour, logger, value, prediction, advisor);</span></span>
+<span id="L319"><span class="lineNum">     319</span> <span class="tlaGNC">          38 :     }</span></span>
 <span id="L320"><span class="lineNum">     320</span>              : </span>
 <span id="L321"><span class="lineNum">     321</span>              :     template&lt;class CheckType, test_mode Mode, class Advisor&gt;</span>
 <span id="L322"><span class="lineNum">     322</span>              :     static void test(equality_check_t, test_logger&lt;Mode&gt;&amp; logger, const std::tuple&lt;T...&gt;&amp; value, const std::tuple&lt;T...&gt;&amp; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span>
@@ -666,23 +666,23 @@
 <span id="L604"><span class="lineNum">     604</span>              :     using type = std::optional&lt;T&gt;;</span>
 <span id="L605"><span class="lineNum">     605</span>              : </span>
 <span id="L606"><span class="lineNum">     606</span>              :     template&lt;class CheckType, test_mode Mode, class Advisor&gt;</span>
-<span id="L607"><span class="lineNum">     607</span> <span class="tlaGNC">         331 :     static void test(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const type&amp; obtained, const type&amp; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
+<span id="L607"><span class="lineNum">     607</span> <span class="tlaGNC">         367 :     static void test(CheckType flavour, test_logger&lt;Mode&gt;&amp; logger, const type&amp; obtained, const type&amp; prediction, const tutor&lt;Advisor&gt;&amp; advisor)</span></span>
 <span id="L608"><span class="lineNum">     608</span>              :     {</span>
-<span id="L609"><span class="lineNum">     609</span> <span class="tlaGNC">         331 :       if(obtained &amp;&amp; prediction)</span></span>
+<span id="L609"><span class="lineNum">     609</span> <span class="tlaGNC">         367 :       if(obtained &amp;&amp; prediction)</span></span>
 <span id="L610"><span class="lineNum">     610</span>              :       {</span>
-<span id="L611"><span class="lineNum">     611</span> <span class="tlaGNC">         120 :         check(flavour, &quot;Contents of optional&quot;, logger, *obtained, *prediction, advisor);</span></span>
+<span id="L611"><span class="lineNum">     611</span> <span class="tlaGNC">         129 :         check(flavour, &quot;Contents of optional&quot;, logger, *obtained, *prediction, advisor);</span></span>
 <span id="L612"><span class="lineNum">     612</span>              :       }</span>
 <span id="L613"><span class="lineNum">     613</span>              :       else</span>
 <span id="L614"><span class="lineNum">     614</span>              :       {</span>
-<span id="L615"><span class="lineNum">     615</span> <span class="tlaGNC">         291 :         const bool obtainedIsNull{obtained}, predictionIsNull{prediction};</span></span>
+<span id="L615"><span class="lineNum">     615</span> <span class="tlaGNC">         324 :         const bool obtainedIsNull{obtained}, predictionIsNull{prediction};</span></span>
 <span id="L616"><span class="lineNum">     616</span>              : </span>
-<span id="L617"><span class="lineNum">     617</span> <span class="tlaGNC">         291 :         check(equality,</span></span>
-<span id="L618"><span class="lineNum">     618</span> <span class="tlaGNC">         291 :               nullable_type_message(obtainedIsNull, predictionIsNull),</span></span>
+<span id="L617"><span class="lineNum">     617</span> <span class="tlaGNC">         324 :         check(equality,</span></span>
+<span id="L618"><span class="lineNum">     618</span> <span class="tlaGNC">         324 :               nullable_type_message(obtainedIsNull, predictionIsNull),</span></span>
 <span id="L619"><span class="lineNum">     619</span>              :               logger,</span>
-<span id="L620"><span class="lineNum">     620</span> <span class="tlaGNC">         291 :               static_cast&lt;bool&gt;(obtained),</span></span>
-<span id="L621"><span class="lineNum">     621</span> <span class="tlaGNC">         582 :               static_cast&lt;bool&gt;(prediction));</span></span>
+<span id="L620"><span class="lineNum">     620</span> <span class="tlaGNC">         324 :               static_cast&lt;bool&gt;(obtained),</span></span>
+<span id="L621"><span class="lineNum">     621</span> <span class="tlaGNC">         648 :               static_cast&lt;bool&gt;(prediction));</span></span>
 <span id="L622"><span class="lineNum">     622</span>              :       }</span>
-<span id="L623"><span class="lineNum">     623</span> <span class="tlaGNC">         331 :     }</span></span>
+<span id="L623"><span class="lineNum">     623</span> <span class="tlaGNC">         367 :     }</span></span>
 <span id="L624"><span class="lineNum">     624</span>              :   };</span>
 <span id="L625"><span class="lineNum">     625</span>              : </span>
 <span id="L626"><span class="lineNum">     626</span>              :   /*! \brief Compares an instance of `std::any` to the value of the type it purportedly holds</span>

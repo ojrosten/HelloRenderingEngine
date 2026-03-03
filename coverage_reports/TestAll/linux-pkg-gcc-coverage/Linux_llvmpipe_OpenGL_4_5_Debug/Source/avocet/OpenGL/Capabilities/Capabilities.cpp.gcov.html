@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryMed">75.0&nbsp;%</td>
@@ -73,10 +73,10 @@
 <span id="L11"><span class="lineNum">      11</span>              : </span>
 <span id="L12"><span class="lineNum">      12</span>              : namespace avocet::opengl {</span>
 <span id="L13"><span class="lineNum">      13</span>              :     [[nodiscard]]</span>
-<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC">         306 :     std::string to_string(gl_capability cap) {</span></span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC">         342 :     std::string to_string(gl_capability cap) {</span></span>
 <span id="L15"><span class="lineNum">      15</span>              :         using enum gl_capability;</span>
-<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">         306 :         switch(cap) {</span></span>
-<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">         102 :         case blend:                         return &quot;blend&quot;;</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">         342 :         switch(cap) {</span></span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">         114 :         case blend:                         return &quot;blend&quot;;</span></span>
 <span id="L18"><span class="lineNum">      18</span> <span class="tlaUNC">           0 :         case clip_distance_0:               return &quot;clip_distance_0&quot;;</span></span>
 <span id="L19"><span class="lineNum">      19</span> <span class="tlaUNC">           0 :         case clip_distance_1:               return &quot;clip_distance_1&quot;;</span></span>
 <span id="L20"><span class="lineNum">      20</span> <span class="tlaUNC">           0 :         case clip_distance_2:               return &quot;clip_distance_2&quot;;</span></span>
@@ -85,25 +85,25 @@
 <span id="L23"><span class="lineNum">      23</span> <span class="tlaUNC">           0 :         case debug_ouptut:                  return &quot;debug_ouptut&quot;;</span></span>
 <span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC">           0 :         case debug_ouptut_synchronous:      return &quot;debug_ouptut_synchronous&quot;;</span></span>
 <span id="L25"><span class="lineNum">      25</span> <span class="tlaUNC">           0 :         case depth_clamp:                   return &quot;depth_clamp&quot;;</span></span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">         102 :         case depth_test:                    return &quot;depth_test&quot;;</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">         114 :         case depth_test:                    return &quot;depth_test&quot;;</span></span>
 <span id="L27"><span class="lineNum">      27</span> <span class="tlaUNC">           0 :         case dither:                        return &quot;dither&quot;;</span></span>
 <span id="L28"><span class="lineNum">      28</span> <span class="tlaUNC">           0 :         case framebuffer_srgb:              return &quot;framebuffer_srgb&quot;;</span></span>
 <span id="L29"><span class="lineNum">      29</span> <span class="tlaUNC">           0 :         case line_smooth:                   return &quot;line_smooth&quot;;</span></span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">         102 :         case multi_sample:                  return &quot;multi_sample&quot;;</span></span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">         102 :         case polygon_offset_fill:           return &quot;polygon_offset_fill&quot;;</span></span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">         102 :         case polygon_offset_line:           return &quot;polygon_offset_line&quot;;</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">         102 :         case polygon_offset_point:          return &quot;polygon_offset_point&quot;;</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">         114 :         case multi_sample:                  return &quot;multi_sample&quot;;</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">         114 :         case polygon_offset_fill:           return &quot;polygon_offset_fill&quot;;</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">         114 :         case polygon_offset_line:           return &quot;polygon_offset_line&quot;;</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">         114 :         case polygon_offset_point:          return &quot;polygon_offset_point&quot;;</span></span>
 <span id="L34"><span class="lineNum">      34</span> <span class="tlaUNC">           0 :         case polygon_smooth:                return &quot;polygon_smooth&quot;;</span></span>
 <span id="L35"><span class="lineNum">      35</span> <span class="tlaUNC">           0 :         case primitive_restart:             return &quot;primitive_restart&quot;;</span></span>
 <span id="L36"><span class="lineNum">      36</span> <span class="tlaUNC">           0 :         case primitive_restart_fixed_index: return &quot;primitive_restart_fixed_index&quot;;</span></span>
 <span id="L37"><span class="lineNum">      37</span> <span class="tlaUNC">           0 :         case rasterizer_discard:            return &quot;rasterizer_discard&quot;;</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         102 :         case sample_alpha_to_coverage:      return &quot;sample_alpha_to_coverage&quot;;</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         114 :         case sample_alpha_to_coverage:      return &quot;sample_alpha_to_coverage&quot;;</span></span>
 <span id="L39"><span class="lineNum">      39</span> <span class="tlaUNC">           0 :         case sample_alpha_to_one:           return &quot;sample_alpha_to_one&quot;;</span></span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         102 :         case sample_coverage:               return &quot;sample_coverage&quot;;</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         114 :         case sample_coverage:               return &quot;sample_coverage&quot;;</span></span>
 <span id="L41"><span class="lineNum">      41</span> <span class="tlaUNC">           0 :         case sample_shading:                return &quot;sample_shading&quot;;</span></span>
 <span id="L42"><span class="lineNum">      42</span> <span class="tlaUNC">           0 :         case sample_mask:                   return &quot;sample_mask&quot;;</span></span>
 <span id="L43"><span class="lineNum">      43</span> <span class="tlaUNC">           0 :         case scissor_test:                  return &quot;scissor_test&quot;;</span></span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">         102 :         case stencil_test:                  return &quot;stencil_test&quot;;</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">         114 :         case stencil_test:                  return &quot;stencil_test&quot;;</span></span>
 <span id="L45"><span class="lineNum">      45</span> <span class="tlaUNC">           0 :         case texture_cube_map_seamless:     return &quot;texture_cube_map_seamless&quot;;</span></span>
 <span id="L46"><span class="lineNum">      46</span> <span class="tlaUNC">           0 :         case program_point_size:            return &quot;program_point_size&quot;;</span></span>
 <span id="L47"><span class="lineNum">      47</span>              :         }</span>

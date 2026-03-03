@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryLo">60.0&nbsp;%</td>
-            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntryLo">56.2&nbsp;%</td>
+            <td class="headerCovTableEntry">16</td>
             <td class="headerCovTableEntry">9</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
@@ -80,35 +80,36 @@
 <span id="L18"><span class="lineNum">      18</span>              :         using enum debugging_mode;</span>
 <span id="L19"><span class="lineNum">      19</span> <span class="tlaUNC">           0 :         switch(mode) {</span></span>
 <span id="L20"><span class="lineNum">      20</span> <span class="tlaUNC">           0 :         case off:     return &quot;off&quot;;</span></span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaUNC">           0 :         case dynamic: return &quot;dynamic&quot;;</span></span>
-<span id="L22"><span class="lineNum">      22</span>              :         }</span>
-<span id="L23"><span class="lineNum">      23</span>              : </span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaUNC">           0 :         throw std::runtime_error{error_message(&quot;debugging_mode&quot;, mode)};</span></span>
-<span id="L25"><span class="lineNum">      25</span>              :     }</span>
-<span id="L26"><span class="lineNum">      26</span>              : </span>
-<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">          27 :     void context_base::init_debug() {</span></span>
-<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          27 :         if((debug_mode() == debugging_mode::off) or !debug_output_supported(*this))</span></span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           2 :             return;</span></span>
-<span id="L30"><span class="lineNum">      30</span>              : </span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          25 :         GLint flags{};</span></span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          25 :         gl_function{&amp;GladGLContext::GetIntegerv}(*this, GL_CONTEXT_FLAGS, &amp;flags);</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          25 :         if(flags &amp; GL_CONTEXT_FLAG_DEBUG_BIT) {</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT);</span></span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT_SYNCHRONOUS);</span></span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::DebugMessageControl}(</span></span>
-<span id="L37"><span class="lineNum">      37</span>              :                 *this,</span>
-<span id="L38"><span class="lineNum">      38</span>              :                 GL_DONT_CARE,</span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaUNC">           0 :         case basic:   return &quot;basic&quot;;</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaUNC">           0 :         case dynamic: return &quot;dynamic&quot;;</span></span>
+<span id="L23"><span class="lineNum">      23</span>              :         }</span>
+<span id="L24"><span class="lineNum">      24</span>              : </span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaUNC">           0 :         throw std::runtime_error{error_message(&quot;debugging_mode&quot;, mode)};</span></span>
+<span id="L26"><span class="lineNum">      26</span>              :     }</span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          28 :     void context_base::init_debug() {</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          28 :         if((debug_mode() != debugging_mode::dynamic) or !debug_output_supported(*this))</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           3 :             return;</span></span>
+<span id="L31"><span class="lineNum">      31</span>              : </span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          25 :         GLint flags{};</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          25 :         gl_function{&amp;GladGLContext::GetIntegerv}(*this, GL_CONTEXT_FLAGS, &amp;flags);</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          25 :         if(flags &amp; GL_CONTEXT_FLAG_DEBUG_BIT) {</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT);</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT_SYNCHRONOUS);</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::DebugMessageControl}(</span></span>
+<span id="L38"><span class="lineNum">      38</span>              :                 *this,</span>
 <span id="L39"><span class="lineNum">      39</span>              :                 GL_DONT_CARE,</span>
 <span id="L40"><span class="lineNum">      40</span>              :                 GL_DONT_CARE,</span>
-<span id="L41"><span class="lineNum">      41</span>              :                 0,</span>
-<span id="L42"><span class="lineNum">      42</span>              :                 nullptr,</span>
-<span id="L43"><span class="lineNum">      43</span>              :                 GL_TRUE);</span>
-<span id="L44"><span class="lineNum">      44</span>              :         }</span>
-<span id="L45"><span class="lineNum">      45</span>              :         else {</span>
-<span id="L46"><span class="lineNum">      46</span> <span class="tlaUNC">           0 :             throw std::runtime_error{std::format(&quot;init_debug: inconsistency between context flags {} and debug mode {} / OpengGL version {}&quot;, flags, debug_mode(), get_opengl_version(*this))};</span></span>
-<span id="L47"><span class="lineNum">      47</span>              :         }</span>
-<span id="L48"><span class="lineNum">      48</span>              :     }</span>
-<span id="L49"><span class="lineNum">      49</span>              : }</span>
+<span id="L41"><span class="lineNum">      41</span>              :                 GL_DONT_CARE,</span>
+<span id="L42"><span class="lineNum">      42</span>              :                 0,</span>
+<span id="L43"><span class="lineNum">      43</span>              :                 nullptr,</span>
+<span id="L44"><span class="lineNum">      44</span>              :                 GL_TRUE);</span>
+<span id="L45"><span class="lineNum">      45</span>              :         }</span>
+<span id="L46"><span class="lineNum">      46</span>              :         else {</span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaUNC">           0 :             throw std::runtime_error{std::format(&quot;init_debug: inconsistency between context flags {} and debug mode {} / OpengGL version {}&quot;, flags, debug_mode(), get_opengl_version(*this))};</span></span>
+<span id="L48"><span class="lineNum">      48</span>              :         }</span>
+<span id="L49"><span class="lineNum">      49</span>              :     }</span>
+<span id="L50"><span class="lineNum">      50</span>              : }</span>
         </pre>
               </td>
             </tr>

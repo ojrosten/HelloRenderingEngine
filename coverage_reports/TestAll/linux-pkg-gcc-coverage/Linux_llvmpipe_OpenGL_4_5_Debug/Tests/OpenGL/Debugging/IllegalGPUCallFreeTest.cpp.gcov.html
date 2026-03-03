@@ -32,17 +32,17 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">12</td>
-            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">23</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">4</td>
-            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
           </tr>
                   <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -78,30 +78,47 @@
 <span id="L16"><span class="lineNum">      16</span>              : </span>
 <span id="L17"><span class="lineNum">      17</span>              : namespace avocet::testing</span>
 <span id="L18"><span class="lineNum">      18</span>              : {</span>
-<span id="L19"><span class="lineNum">      19</span>              :     [[nodiscard]]</span>
-<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">           5 :     std::filesystem::path illegal_gpu_call_free_test::source_file() const</span></span>
-<span id="L21"><span class="lineNum">      21</span>              :     {</span>
-<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           5 :         return std::source_location::current().file_name();</span></span>
-<span id="L23"><span class="lineNum">      23</span>              :     }</span>
-<span id="L24"><span class="lineNum">      24</span>              : </span>
-<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           1 :     void illegal_gpu_call_free_test::run_tests()</span></span>
-<span id="L26"><span class="lineNum">      26</span>              :     {</span>
-<span id="L27"><span class="lineNum">      27</span>              :         using namespace curlew;</span>
-<span id="L28"><span class="lineNum">      28</span>              : </span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           3 :         auto w{create_window({.hiding{window_hiding_mode::on}})};</span></span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           1 :         const auto&amp; ctx{w.context()};</span></span>
-<span id="L31"><span class="lineNum">      31</span>              : </span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">           1 :         check_exception_thrown&lt;std::runtime_error&gt;(</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           1 :             &quot;Illegal call to glBindBuffer (void return)&quot;,</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           2 :             [&amp;ctx](){ agl::gl_function{&amp;GladGLContext::BindBuffer}(ctx, 42, 42); }</span></span>
-<span id="L35"><span class="lineNum">      35</span>              :         );</span>
-<span id="L36"><span class="lineNum">      36</span>              : </span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           1 :         check_exception_thrown&lt;std::runtime_error&gt;(</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           1 :             &quot;Illegal call to glCreateShader (non-void return)&quot;,</span></span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           2 :             [&amp;ctx]() { return agl::gl_function{&amp;GladGLContext::CreateShader}(ctx, GL_ARRAY_BUFFER); }</span></span>
-<span id="L40"><span class="lineNum">      40</span>              :         );</span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           5 :     }</span></span>
-<span id="L42"><span class="lineNum">      42</span>              : }</span>
+<span id="L19"><span class="lineNum">      19</span>              :     using namespace curlew;</span>
+<span id="L20"><span class="lineNum">      20</span>              : </span>
+<span id="L21"><span class="lineNum">      21</span>              :     [[nodiscard]]</span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           5 :     std::filesystem::path illegal_gpu_call_free_test::source_file() const</span></span>
+<span id="L23"><span class="lineNum">      23</span>              :     {</span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           5 :         return std::source_location::current().file_name();</span></span>
+<span id="L25"><span class="lineNum">      25</span>              :     }</span>
+<span id="L26"><span class="lineNum">      26</span>              : </span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">           1 :     void illegal_gpu_call_free_test::run_tests()</span></span>
+<span id="L28"><span class="lineNum">      28</span>              :     {</span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           1 :         test_with_best_available_debugging();</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           1 :         test_with_basic_debugging();</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">           1 :     }</span></span>
+<span id="L32"><span class="lineNum">      32</span>              : </span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           1 :     void illegal_gpu_call_free_test::test_with_best_available_debugging()</span></span>
+<span id="L34"><span class="lineNum">      34</span>              :     {</span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           3 :         auto w{create_window({.hiding{window_hiding_mode::on}})};</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           1 :         const auto&amp; ctx{w.context()};</span></span>
+<span id="L37"><span class="lineNum">      37</span>              : </span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           1 :         check_exception_thrown&lt;std::runtime_error&gt;(</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           1 :             &quot;Illegal call to glBindBuffer (void return)&quot;,</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           2 :             [&amp;ctx](){ agl::gl_function{&amp;GladGLContext::BindBuffer}(ctx, 42, 42); }</span></span>
+<span id="L41"><span class="lineNum">      41</span>              :         );</span>
+<span id="L42"><span class="lineNum">      42</span>              : </span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           1 :         check_exception_thrown&lt;std::runtime_error&gt;(</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">           1 :             &quot;Illegal call to glCreateShader (non-void return)&quot;,</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">           2 :             [&amp;ctx](){ return agl::gl_function{&amp;GladGLContext::CreateShader}(ctx, GL_ARRAY_BUFFER); }</span></span>
+<span id="L46"><span class="lineNum">      46</span>              :         );</span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           5 :     }</span></span>
+<span id="L48"><span class="lineNum">      48</span>              : </span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">           1 :     void illegal_gpu_call_free_test::test_with_basic_debugging()</span></span>
+<span id="L50"><span class="lineNum">      50</span>              :     {</span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">           3 :         auto w{create_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::basic}})};</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">           1 :         const auto&amp; ctx{w.context()};</span></span>
+<span id="L53"><span class="lineNum">      53</span>              : </span>
+<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           1 :         check_exception_thrown&lt;std::runtime_error&gt;(</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           1 :             &quot;Illegal call to glBindVertexArray&quot;,</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">           2 :             [&amp;ctx](){ agl::gl_function{&amp;GladGLContext::BindVertexArray}(ctx, 1729); }</span></span>
+<span id="L57"><span class="lineNum">      57</span>              :         );</span>
+<span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">           5 :     }</span></span>
+<span id="L59"><span class="lineNum">      59</span>              : }</span>
         </pre>
               </td>
             </tr>

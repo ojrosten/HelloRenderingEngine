@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -94,7 +94,7 @@
 <span id="L32"><span class="lineNum">      32</span>              :         }</span>
 <span id="L33"><span class="lineNum">      33</span>              : </span>
 <span id="L34"><span class="lineNum">      34</span>              :         [[nodiscard]]</span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">         479 :         GLuint index() const noexcept { return m_Index; }</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">         480 :         GLuint index() const noexcept { return m_Index; }</span></span>
 <span id="L36"><span class="lineNum">      36</span>              : </span>
 <span id="L37"><span class="lineNum">      37</span>              :         [[nodiscard]]</span>
 <span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         136 :         friend bool operator==(const resource_handle&amp;, const resource_handle&amp;) noexcept = default;</span></span>
@@ -116,7 +116,7 @@
 <span id="L54"><span class="lineNum">      54</span>              :         }</span>
 <span id="L55"><span class="lineNum">      55</span>              : </span>
 <span id="L56"><span class="lineNum">      56</span>              :         [[nodiscard]]</span>
-<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">         815 :         const decorated_context&amp; get() const noexcept { return *m_Context; }</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">         812 :         const decorated_context&amp; get() const noexcept { return *m_Context; }</span></span>
 <span id="L58"><span class="lineNum">      58</span>              : </span>
 <span id="L59"><span class="lineNum">      59</span>              :         [[nodiscard]]</span>
 <span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">          50 :         friend bool operator==(const context_ref&amp;, const context_ref&amp;) noexcept = default;</span></span>
@@ -126,16 +126,16 @@
 <span id="L64"><span class="lineNum">      64</span>              :         const decorated_context* m_Context{};</span>
 <span id="L65"><span class="lineNum">      65</span>              :         const resource_handle* m_Handle{};</span>
 <span id="L66"><span class="lineNum">      66</span>              :     public:</span>
-<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">         485 :         contextual_resource_view(const decorated_context&amp; ctx, const resource_handle&amp; crv)</span></span>
-<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">         485 :             : m_Context{&amp;ctx}</span></span>
-<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">         485 :             , m_Handle{&amp;crv}</span></span>
-<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">         485 :         {}</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">         484 :         contextual_resource_view(const decorated_context&amp; ctx, const resource_handle&amp; crv)</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">         484 :             : m_Context{&amp;ctx}</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">         484 :             , m_Handle{&amp;crv}</span></span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">         484 :         {}</span></span>
 <span id="L71"><span class="lineNum">      71</span>              : </span>
 <span id="L72"><span class="lineNum">      72</span>              :         [[nodiscard]]</span>
-<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">         385 :         const decorated_context&amp; context() const noexcept { return *m_Context; }</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">         386 :         const decorated_context&amp; context() const noexcept { return *m_Context; }</span></span>
 <span id="L74"><span class="lineNum">      74</span>              : </span>
 <span id="L75"><span class="lineNum">      75</span>              :         [[nodiscard]]</span>
-<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">         444 :         const resource_handle&amp; handle() const noexcept { return *m_Handle; }</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">         445 :         const resource_handle&amp; handle() const noexcept { return *m_Handle; }</span></span>
 <span id="L77"><span class="lineNum">      77</span>              : </span>
 <span id="L78"><span class="lineNum">      78</span>              :         [[nodiscard]]</span>
 <span id="L79"><span class="lineNum">      79</span>              :         friend bool operator==(const contextual_resource_view&amp;, const contextual_resource_view&amp;) noexcept = default;</span>
@@ -183,15 +183,15 @@
 <span id="L121"><span class="lineNum">     121</span>              : </span>
 <span id="L122"><span class="lineNum">     122</span>              :         contextual_deref_policy() = default;</span>
 <span id="L123"><span class="lineNum">     123</span>              : </span>
-<span id="L124"><span class="lineNum">     124</span> <span class="tlaGNC">         603 :         explicit contextual_deref_policy(const decorated_context&amp; ctx) : m_Context{&amp;ctx} {}</span></span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaGNC">         602 :         explicit contextual_deref_policy(const decorated_context&amp; ctx) : m_Context{&amp;ctx} {}</span></span>
 <span id="L125"><span class="lineNum">     125</span>              : </span>
 <span id="L126"><span class="lineNum">     126</span>              :         contextual_deref_policy(const contextual_deref_policy&amp;) = default;</span>
 <span id="L127"><span class="lineNum">     127</span>              : </span>
 <span id="L128"><span class="lineNum">     128</span>              :         template&lt;std::input_or_output_iterator Iterator&gt;</span>
 <span id="L129"><span class="lineNum">     129</span>              :         [[nodiscard]]</span>
-<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">         485 :         reference get(Iterator i) const {</span></span>
-<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">         485 :             assert(m_Context);</span></span>
-<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">         485 :             return {*m_Context, *i};</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">         484 :         reference get(Iterator i) const {</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">         484 :             assert(m_Context);</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">         484 :             return {*m_Context, *i};</span></span>
 <span id="L133"><span class="lineNum">     133</span>              :         }</span>
 <span id="L134"><span class="lineNum">     134</span>              : </span>
 <span id="L135"><span class="lineNum">     135</span>              :         [[nodiscard]]</span>
@@ -214,7 +214,7 @@
 <span id="L152"><span class="lineNum">     152</span> <span class="tlaGNC">          88 :         {}</span></span>
 <span id="L153"><span class="lineNum">     153</span>              : </span>
 <span id="L154"><span class="lineNum">     154</span>              :         [[nodiscard]]</span>
-<span id="L155"><span class="lineNum">     155</span> <span class="tlaGNC">         553 :         const_iterator begin() const noexcept { return {m_Handles.begin(), context()}; }</span></span>
+<span id="L155"><span class="lineNum">     155</span> <span class="tlaGNC">         550 :         const_iterator begin() const noexcept { return {m_Handles.begin(), context()}; }</span></span>
 <span id="L156"><span class="lineNum">     156</span>              : </span>
 <span id="L157"><span class="lineNum">     157</span>              :         [[nodiscard]]</span>
 <span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC">          50 :         const_iterator end() const noexcept { return {m_Handles.end(), context()}; }</span></span>
@@ -225,7 +225,7 @@
 <span id="L163"><span class="lineNum">     163</span>              :         }</span>
 <span id="L164"><span class="lineNum">     164</span>              : </span>
 <span id="L165"><span class="lineNum">     165</span>              :         [[nodiscard]]</span>
-<span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC">         815 :         const decorated_context&amp; context() const noexcept { return m_Context.get(); }</span></span>
+<span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC">         812 :         const decorated_context&amp; context() const noexcept { return m_Context.get(); }</span></span>
 <span id="L167"><span class="lineNum">     167</span>              : </span>
 <span id="L168"><span class="lineNum">     168</span>              :         [[nodiscard]]</span>
 <span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          50 :         friend bool operator==(const contextual_resource_handles&amp;, const contextual_resource_handles&amp;) noexcept = default;</span></span>

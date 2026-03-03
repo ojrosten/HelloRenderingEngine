@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">30.5&nbsp;%</td>
@@ -143,16 +143,16 @@
 <span id="L81"><span class="lineNum">      81</span>              : </span>
 <span id="L82"><span class="lineNum">      82</span>              :     struct test_paths</span>
 <span id="L83"><span class="lineNum">      83</span>              :     {</span>
-<span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">          32 :       test_paths(const std::filesystem::path&amp; sourceFile,</span></span>
+<span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">          34 :       test_paths(const std::filesystem::path&amp; sourceFile,</span></span>
 <span id="L85"><span class="lineNum">      85</span>              :                  const test_summary_path&amp; summaryFile,</span>
 <span id="L86"><span class="lineNum">      86</span>              :                  const std::filesystem::path&amp; workingMaterials,</span>
 <span id="L87"><span class="lineNum">      87</span>              :                  const std::filesystem::path&amp; predictiveMaterials,</span>
 <span id="L88"><span class="lineNum">      88</span>              :                  const project_paths&amp; projPaths)</span>
-<span id="L89"><span class="lineNum">      89</span> <span class="tlaGNC">          32 :         : summary{summaryFile}</span></span>
-<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          32 :         , test_file{rebase_from(sourceFile, projPaths.tests().repo())}</span></span>
-<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          32 :         , working_materials{workingMaterials}</span></span>
-<span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">          32 :         , predictions{predictiveMaterials}</span></span>
-<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          32 :       {}</span></span>
+<span id="L89"><span class="lineNum">      89</span> <span class="tlaGNC">          34 :         : summary{summaryFile}</span></span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          34 :         , test_file{rebase_from(sourceFile, projPaths.tests().repo())}</span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          34 :         , working_materials{workingMaterials}</span></span>
+<span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">          34 :         , predictions{predictiveMaterials}</span></span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          34 :       {}</span></span>
 <span id="L94"><span class="lineNum">      94</span>              : </span>
 <span id="L95"><span class="lineNum">      95</span>              :       test_summary_path summary;</span>
 <span id="L96"><span class="lineNum">      96</span>              : </span>
@@ -246,11 +246,11 @@
 <span id="L184"><span class="lineNum">     184</span> <span class="tlaGNC">           1 :         , m_Filtered{isFiltered}</span></span>
 <span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC">           1 :       {}</span></span>
 <span id="L186"><span class="lineNum">     186</span>              : </span>
-<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC">          43 :       void increment_depth() noexcept { ++m_Depth; }</span></span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC">          46 :       void increment_depth() noexcept { ++m_Depth; }</span></span>
 <span id="L188"><span class="lineNum">     188</span>              : </span>
-<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">          43 :       void decrement_depth() noexcept</span></span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">          46 :       void decrement_depth() noexcept</span></span>
 <span id="L190"><span class="lineNum">     190</span>              :       {</span>
-<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">          43 :         if(--m_Depth == npos)</span></span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">          46 :         if(--m_Depth == npos)</span></span>
 <span id="L192"><span class="lineNum">     192</span>              :         {</span>
 <span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">           1 :           for(const auto&amp; update : m_Updateables)</span></span>
 <span id="L194"><span class="lineNum">     194</span>              :           {</span>
@@ -259,18 +259,18 @@
 <span id="L197"><span class="lineNum">     197</span>              : </span>
 <span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">           1 :           update_prune_info();</span></span>
 <span id="L199"><span class="lineNum">     199</span>              :         }</span>
-<span id="L200"><span class="lineNum">     200</span> <span class="tlaGNC">          43 :       }</span></span>
+<span id="L200"><span class="lineNum">     200</span> <span class="tlaGNC">          46 :       }</span></span>
 <span id="L201"><span class="lineNum">     201</span>              : </span>
-<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          32 :       void process_test(const test_paths&amp; files, const log_summary&amp; summary, update_mode updateMode)</span></span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          34 :       void process_test(const test_paths&amp; files, const log_summary&amp; summary, update_mode updateMode)</span></span>
 <span id="L203"><span class="lineNum">     203</span>              :       {</span>
-<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">          32 :         m_ExecutedTests.push_back(files.test_file);</span></span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">          34 :         m_ExecutedTests.push_back(files.test_file);</span></span>
 <span id="L205"><span class="lineNum">     205</span>              : </span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          32 :         if(summary.soft_failures() || summary.critical_failures())</span></span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          34 :         if(summary.soft_failures() || summary.critical_failures())</span></span>
 <span id="L207"><span class="lineNum">     207</span> <span class="tlaUNC">           0 :           m_FailedTests.push_back(files.test_file);</span></span>
 <span id="L208"><span class="lineNum">     208</span>              : </span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">          32 :         to_file(files.summary, summary);</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">          34 :         to_file(files.summary, summary);</span></span>
 <span id="L210"><span class="lineNum">     210</span>              : </span>
-<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">          32 :         if(updateMode != update_mode::none)</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">          34 :         if(updateMode != update_mode::none)</span></span>
 <span id="L212"><span class="lineNum">     212</span>              :         {</span>
 <span id="L213"><span class="lineNum">     213</span> <span class="tlaUNC">           0 :           if(summary.soft_failures())</span></span>
 <span id="L214"><span class="lineNum">     214</span>              :           {</span>
@@ -280,7 +280,7 @@
 <span id="L218"><span class="lineNum">     218</span>              :             }</span>
 <span id="L219"><span class="lineNum">     219</span>              :           }</span>
 <span id="L220"><span class="lineNum">     220</span>              :         }</span>
-<span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC">          32 :       }</span></span>
+<span id="L221"><span class="lineNum">     221</span> <span class="tlaGNC">          34 :       }</span></span>
 <span id="L222"><span class="lineNum">     222</span>              :     private:</span>
 <span id="L223"><span class="lineNum">     223</span>              :       constexpr static int npos{-1};</span>
 <span id="L224"><span class="lineNum">     224</span>              : </span>
@@ -293,31 +293,31 @@
 <span id="L231"><span class="lineNum">     231</span>              :       std::set&lt;test_paths, paths_comparator&gt; m_Updateables{};</span>
 <span id="L232"><span class="lineNum">     232</span>              :       std::set&lt;std::filesystem::path&gt; m_FilesWrittenTo{};</span>
 <span id="L233"><span class="lineNum">     233</span>              : </span>
-<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          32 :       void to_file(const test_summary_path&amp; summaryFile, const log_summary&amp; summary)</span></span>
+<span id="L234"><span class="lineNum">     234</span> <span class="tlaGNC">          34 :       void to_file(const test_summary_path&amp; summaryFile, const log_summary&amp; summary)</span></span>
 <span id="L235"><span class="lineNum">     235</span>              :       {</span>
-<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">          32 :         const auto&amp; filename{summaryFile.file_path()};</span></span>
-<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">          32 :         if(filename.empty()) return;</span></span>
+<span id="L236"><span class="lineNum">     236</span> <span class="tlaGNC">          34 :         const auto&amp; filename{summaryFile.file_path()};</span></span>
+<span id="L237"><span class="lineNum">     237</span> <span class="tlaGNC">          34 :         if(filename.empty()) return;</span></span>
 <span id="L238"><span class="lineNum">     238</span>              : </span>
-<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">          32 :         auto mode{std::ios_base::out};</span></span>
-<span id="L240"><span class="lineNum">     240</span> <span class="tlaGNC">          32 :         if(auto found{m_FilesWrittenTo.find(filename)}; found != m_FilesWrittenTo.end())</span></span>
+<span id="L239"><span class="lineNum">     239</span> <span class="tlaGNC">          34 :         auto mode{std::ios_base::out};</span></span>
+<span id="L240"><span class="lineNum">     240</span> <span class="tlaGNC">          34 :         if(auto found{m_FilesWrittenTo.find(filename)}; found != m_FilesWrittenTo.end())</span></span>
 <span id="L241"><span class="lineNum">     241</span>              :         {</span>
 <span id="L242"><span class="lineNum">     242</span> <span class="tlaUNC">           0 :           mode = std::ios_base::app;</span></span>
 <span id="L243"><span class="lineNum">     243</span>              :         }</span>
 <span id="L244"><span class="lineNum">     244</span>              :         else</span>
 <span id="L245"><span class="lineNum">     245</span>              :         {</span>
-<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">          32 :           m_FilesWrittenTo.insert(filename);</span></span>
+<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">          34 :           m_FilesWrittenTo.insert(filename);</span></span>
 <span id="L247"><span class="lineNum">     247</span>              :         }</span>
 <span id="L248"><span class="lineNum">     248</span>              : </span>
-<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">          32 :         std::filesystem::create_directories(filename.parent_path());</span></span>
+<span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">          34 :         std::filesystem::create_directories(filename.parent_path());</span></span>
 <span id="L250"><span class="lineNum">     250</span>              : </span>
-<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">          32 :         if(std::ofstream file{filename, mode})</span></span>
+<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">          34 :         if(std::ofstream file{filename, mode})</span></span>
 <span id="L252"><span class="lineNum">     252</span>              :         {</span>
-<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">          32 :           file &lt;&lt; summarize(summary, &quot;&quot;, summary_detail::failure_messages, no_indent, no_indent);</span></span>
+<span id="L253"><span class="lineNum">     253</span> <span class="tlaGNC">          34 :           file &lt;&lt; summarize(summary, &quot;&quot;, summary_detail::failure_messages, no_indent, no_indent);</span></span>
 <span id="L254"><span class="lineNum">     254</span>              :         }</span>
 <span id="L255"><span class="lineNum">     255</span>              :         else</span>
 <span id="L256"><span class="lineNum">     256</span>              :         {</span>
 <span id="L257"><span class="lineNum">     257</span> <span class="tlaUNC">           0 :           throw std::runtime_error{report_failed_write(filename)};</span></span>
-<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC">          32 :         }</span></span>
+<span id="L258"><span class="lineNum">     258</span> <span class="tlaGNC">          34 :         }</span></span>
 <span id="L259"><span class="lineNum">     259</span>              :       }</span>
 <span id="L260"><span class="lineNum">     260</span>              : </span>
 <span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">           1 :       void update_prune_info() const</span></span>
@@ -334,10 +334,10 @@
 <span id="L272"><span class="lineNum">     272</span>              :     };</span>
 <span id="L273"><span class="lineNum">     273</span>              :   }</span>
 <span id="L274"><span class="lineNum">     274</span>              : </span>
-<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          32 :   individual_materials_paths set_materials(const std::filesystem::path&amp; sourceFile, const project_paths&amp; projPaths, std::vector&lt;std::filesystem::path&gt;&amp; materialsPaths)</span></span>
+<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          34 :   individual_materials_paths set_materials(const std::filesystem::path&amp; sourceFile, const project_paths&amp; projPaths, std::vector&lt;std::filesystem::path&gt;&amp; materialsPaths)</span></span>
 <span id="L276"><span class="lineNum">     276</span>              :   {</span>
-<span id="L277"><span class="lineNum">     277</span> <span class="tlaGNC">          32 :     individual_materials_paths materials{sourceFile, projPaths};</span></span>
-<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">          32 :     if(!fs::exists(materials.original_materials())) return {};</span></span>
+<span id="L277"><span class="lineNum">     277</span> <span class="tlaGNC">          34 :     individual_materials_paths materials{sourceFile, projPaths};</span></span>
+<span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">          34 :     if(!fs::exists(materials.original_materials())) return {};</span></span>
 <span id="L279"><span class="lineNum">     279</span>              : </span>
 <span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">           8 :     const auto workingCopy{materials.working()};</span></span>
 <span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">          16 :     if(std::ranges::find(materialsPaths, workingCopy) == materialsPaths.cend())</span></span>
@@ -363,16 +363,16 @@
 <span id="L301"><span class="lineNum">     301</span>              :     }</span>
 <span id="L302"><span class="lineNum">     302</span>              : </span>
 <span id="L303"><span class="lineNum">     303</span> <span class="tlaGNC">           8 :     return materials;</span></span>
-<span id="L304"><span class="lineNum">     304</span> <span class="tlaGNC">          32 :   }</span></span>
+<span id="L304"><span class="lineNum">     304</span> <span class="tlaGNC">          34 :   }</span></span>
 <span id="L305"><span class="lineNum">     305</span>              : </span>
 <span id="L306"><span class="lineNum">     306</span>              : </span>
-<span id="L307"><span class="lineNum">     307</span> <span class="tlaGNC">          64 :   void test_vessel::versioned_write(const std::filesystem::path&amp; file, std::string_view text)</span></span>
+<span id="L307"><span class="lineNum">     307</span> <span class="tlaGNC">          68 :   void test_vessel::versioned_write(const std::filesystem::path&amp; file, std::string_view text)</span></span>
 <span id="L308"><span class="lineNum">     308</span>              :   {</span>
-<span id="L309"><span class="lineNum">     309</span> <span class="tlaGNC">          64 :     if(!text.empty() || std::filesystem::exists(file))</span></span>
+<span id="L309"><span class="lineNum">     309</span> <span class="tlaGNC">          68 :     if(!text.empty() || std::filesystem::exists(file))</span></span>
 <span id="L310"><span class="lineNum">     310</span>              :     {</span>
-<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          19 :       write_to_file(file, text);</span></span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">          21 :       write_to_file(file, text);</span></span>
 <span id="L312"><span class="lineNum">     312</span>              :     }</span>
-<span id="L313"><span class="lineNum">     313</span> <span class="tlaGNC">          64 :   }</span></span>
+<span id="L313"><span class="lineNum">     313</span> <span class="tlaGNC">          68 :   }</span></span>
 <span id="L314"><span class="lineNum">     314</span>              : </span>
 <span id="L315"><span class="lineNum">     315</span> <span class="tlaUNC">           0 :   void test_vessel::versioned_write(const std::filesystem::path&amp; file, const failure_output&amp; output)</span></span>
 <span id="L316"><span class="lineNum">     316</span>              :   {</span>
@@ -921,43 +921,43 @@
 <span id="L859"><span class="lineNum">     859</span>              : </span>
 <span id="L860"><span class="lineNum">     860</span>              :     using namespace maths;</span>
 <span id="L861"><span class="lineNum">     861</span>              :     auto nodeEarly{</span>
-<span id="L862"><span class="lineNum">     862</span> <span class="tlaGNC">          45 :       [&amp;s = m_Suites,&amp;tracker,id,serial{!concurrent_execution()}](auto n) {</span></span>
-<span id="L863"><span class="lineNum">     863</span> <span class="tlaGNC">          43 :         tracker.increment_depth();</span></span>
-<span id="L864"><span class="lineNum">     864</span> <span class="tlaGNC">          43 :         if(serial)</span></span>
+<span id="L862"><span class="lineNum">     862</span> <span class="tlaGNC">          48 :       [&amp;s = m_Suites,&amp;tracker,id,serial{!concurrent_execution()}](auto n) {</span></span>
+<span id="L863"><span class="lineNum">     863</span> <span class="tlaGNC">          46 :         tracker.increment_depth();</span></span>
+<span id="L864"><span class="lineNum">     864</span> <span class="tlaGNC">          46 :         if(serial)</span></span>
 <span id="L865"><span class="lineNum">     865</span>              :         {</span>
-<span id="L866"><span class="lineNum">     866</span> <span class="tlaGNC">          43 :           auto&amp; wt{s.begin_node_weights()[n]};</span></span>
-<span id="L867"><span class="lineNum">     867</span> <span class="tlaGNC">          43 :           if(wt.optTest) { wt.summary = wt.optTest-&gt;execute(id); }</span></span>
+<span id="L866"><span class="lineNum">     866</span> <span class="tlaGNC">          46 :           auto&amp; wt{s.begin_node_weights()[n]};</span></span>
+<span id="L867"><span class="lineNum">     867</span> <span class="tlaGNC">          46 :           if(wt.optTest) { wt.summary = wt.optTest-&gt;execute(id); }</span></span>
 <span id="L868"><span class="lineNum">     868</span>              :         }</span>
-<span id="L869"><span class="lineNum">     869</span> <span class="tlaGNC">          43 :       }</span></span>
+<span id="L869"><span class="lineNum">     869</span> <span class="tlaGNC">          46 :       }</span></span>
 <span id="L870"><span class="lineNum">     870</span> <span class="tlaGNC">           1 :     };</span></span>
 <span id="L871"><span class="lineNum">     871</span>              : </span>
 <span id="L872"><span class="lineNum">     872</span>              :     auto nodeLate{</span>
-<span id="L873"><span class="lineNum">     873</span> <span class="tlaGNC">          43 :       [this,&amp;tracker](auto n) {</span></span>
-<span id="L874"><span class="lineNum">     874</span> <span class="tlaGNC">          43 :         m_Suites.mutate_node_weight(</span></span>
+<span id="L873"><span class="lineNum">     873</span> <span class="tlaGNC">          46 :       [this,&amp;tracker](auto n) {</span></span>
+<span id="L874"><span class="lineNum">     874</span> <span class="tlaGNC">          46 :         m_Suites.mutate_node_weight(</span></span>
 <span id="L875"><span class="lineNum">     875</span>              :           std::ranges::next(m_Suites.cbegin_node_weights(), n),</span>
-<span id="L876"><span class="lineNum">     876</span> <span class="tlaGNC">          43 :           [this, &amp;tracker,n](suite_node&amp; wt) {</span></span>
-<span id="L877"><span class="lineNum">     877</span> <span class="tlaGNC">          85 :             for(const auto&amp; edge : m_Suites.cedges(n))</span></span>
-<span id="L878"><span class="lineNum">     878</span> <span class="tlaGNC">          84 :               wt.summary += std::ranges::next(m_Suites.cbegin_node_weights(), edge.target_node())-&gt;summary;</span></span>
+<span id="L876"><span class="lineNum">     876</span> <span class="tlaGNC">          46 :           [this, &amp;tracker,n](suite_node&amp; wt) {</span></span>
+<span id="L877"><span class="lineNum">     877</span> <span class="tlaGNC">          91 :             for(const auto&amp; edge : m_Suites.cedges(n))</span></span>
+<span id="L878"><span class="lineNum">     878</span> <span class="tlaGNC">          90 :               wt.summary += std::ranges::next(m_Suites.cbegin_node_weights(), edge.target_node())-&gt;summary;</span></span>
 <span id="L879"><span class="lineNum">     879</span>              : </span>
-<span id="L880"><span class="lineNum">     880</span> <span class="tlaGNC">          43 :             if(wt.optTest)</span></span>
+<span id="L880"><span class="lineNum">     880</span> <span class="tlaGNC">          46 :             if(wt.optTest)</span></span>
 <span id="L881"><span class="lineNum">     881</span>              :             {</span>
-<span id="L882"><span class="lineNum">     882</span> <span class="tlaGNC">          32 :               auto pathsMaker{</span></span>
-<span id="L883"><span class="lineNum">     883</span> <span class="tlaGNC">          32 :                   [this](auto&amp; test) -&gt; test_paths {</span></span>
-<span id="L884"><span class="lineNum">     884</span> <span class="tlaGNC">          64 :                     return {test.source_file(),</span></span>
+<span id="L882"><span class="lineNum">     882</span> <span class="tlaGNC">          34 :               auto pathsMaker{</span></span>
+<span id="L883"><span class="lineNum">     883</span> <span class="tlaGNC">          34 :                   [this](auto&amp; test) -&gt; test_paths {</span></span>
+<span id="L884"><span class="lineNum">     884</span> <span class="tlaGNC">          68 :                     return {test.source_file(),</span></span>
 <span id="L885"><span class="lineNum">     885</span>              :                             test.summary_file_path(),</span>
-<span id="L886"><span class="lineNum">     886</span> <span class="tlaGNC">          64 :                             test.working_materials(),</span></span>
-<span id="L887"><span class="lineNum">     887</span> <span class="tlaGNC">          64 :                             test.predictive_materials(),</span></span>
-<span id="L888"><span class="lineNum">     888</span> <span class="tlaGNC">          96 :                             proj_paths()};</span></span>
+<span id="L886"><span class="lineNum">     886</span> <span class="tlaGNC">          68 :                             test.working_materials(),</span></span>
+<span id="L887"><span class="lineNum">     887</span> <span class="tlaGNC">          68 :                             test.predictive_materials(),</span></span>
+<span id="L888"><span class="lineNum">     888</span> <span class="tlaGNC">         102 :                             proj_paths()};</span></span>
 <span id="L889"><span class="lineNum">     889</span>              :                   }</span>
 <span id="L890"><span class="lineNum">     890</span>              :               };</span>
 <span id="L891"><span class="lineNum">     891</span>              : </span>
-<span id="L892"><span class="lineNum">     892</span> <span class="tlaGNC">          32 :               tracker.process_test(pathsMaker(wt.optTest.value()), wt.summary, m_UpdateMode);</span></span>
+<span id="L892"><span class="lineNum">     892</span> <span class="tlaGNC">          34 :               tracker.process_test(pathsMaker(wt.optTest.value()), wt.summary, m_UpdateMode);</span></span>
 <span id="L893"><span class="lineNum">     893</span>              :             }</span>
 <span id="L894"><span class="lineNum">     894</span>              :           }</span>
 <span id="L895"><span class="lineNum">     895</span>              :         );</span>
 <span id="L896"><span class="lineNum">     896</span>              : </span>
-<span id="L897"><span class="lineNum">     897</span> <span class="tlaGNC">          43 :         tracker.decrement_depth();</span></span>
-<span id="L898"><span class="lineNum">     898</span> <span class="tlaGNC">          43 :       }</span></span>
+<span id="L897"><span class="lineNum">     897</span> <span class="tlaGNC">          46 :         tracker.decrement_depth();</span></span>
+<span id="L898"><span class="lineNum">     898</span> <span class="tlaGNC">          46 :       }</span></span>
 <span id="L899"><span class="lineNum">     899</span> <span class="tlaGNC">           1 :     };</span></span>
 <span id="L900"><span class="lineNum">     900</span>              : </span>
 <span id="L901"><span class="lineNum">     901</span> <span class="tlaGNC">           1 :     traverse(depth_first, m_Suites, find_disconnected_t{}, nodeEarly, nodeLate, null_func_obj{});</span></span>
@@ -998,11 +998,11 @@
 <span id="L936"><span class="lineNum">     936</span> <span class="tlaUNC">           0 :     }</span></span>
 <span id="L937"><span class="lineNum">     937</span>              :     else</span>
 <span id="L938"><span class="lineNum">     938</span>              :     {</span>
-<span id="L939"><span class="lineNum">     939</span> <span class="tlaGNC">          11 :       for(const auto&amp; edge : m_Suites.cedges(0))</span></span>
+<span id="L939"><span class="lineNum">     939</span> <span class="tlaGNC">          12 :       for(const auto&amp; edge : m_Suites.cedges(0))</span></span>
 <span id="L940"><span class="lineNum">     940</span>              :       {</span>
-<span id="L941"><span class="lineNum">     941</span> <span class="tlaGNC">          10 :         const auto detail{!concurrent_execution() ? summary_detail::failure_messages | summary_detail::timings : summary_detail::failure_messages};</span></span>
-<span id="L942"><span class="lineNum">     942</span> <span class="tlaGNC">          10 :         auto targetNodeIter{std::ranges::next(m_Suites.cbegin_node_weights(), edge.target_node())};</span></span>
-<span id="L943"><span class="lineNum">     943</span> <span class="tlaGNC">          20 :         stream() &lt;&lt; summarize(targetNodeIter-&gt;summary, &quot;:&quot;, detail, no_indent, tab);</span></span>
+<span id="L941"><span class="lineNum">     941</span> <span class="tlaGNC">          11 :         const auto detail{!concurrent_execution() ? summary_detail::failure_messages | summary_detail::timings : summary_detail::failure_messages};</span></span>
+<span id="L942"><span class="lineNum">     942</span> <span class="tlaGNC">          11 :         auto targetNodeIter{std::ranges::next(m_Suites.cbegin_node_weights(), edge.target_node())};</span></span>
+<span id="L943"><span class="lineNum">     943</span> <span class="tlaGNC">          22 :         stream() &lt;&lt; summarize(targetNodeIter-&gt;summary, &quot;:&quot;, detail, no_indent, tab);</span></span>
 <span id="L944"><span class="lineNum">     944</span>              :       }</span>
 <span id="L945"><span class="lineNum">     945</span>              :     }</span>
 <span id="L946"><span class="lineNum">     946</span>              : </span>
@@ -1130,16 +1130,16 @@
 <span id="L1068"><span class="lineNum">    1068</span>              :   }</span>
 <span id="L1069"><span class="lineNum">    1069</span>              : </span>
 <span id="L1070"><span class="lineNum">    1070</span>              :   [[nodiscard]]</span>
-<span id="L1071"><span class="lineNum">    1071</span> <span class="tlaGNC">          32 :   active_recovery_files test_runner::make_active_recovery_paths(recovery_mode mode, const project_paths&amp; projPaths)</span></span>
+<span id="L1071"><span class="lineNum">    1071</span> <span class="tlaGNC">          34 :   active_recovery_files test_runner::make_active_recovery_paths(recovery_mode mode, const project_paths&amp; projPaths)</span></span>
 <span id="L1072"><span class="lineNum">    1072</span>              :   {</span>
-<span id="L1073"><span class="lineNum">    1073</span> <span class="tlaGNC">          32 :     active_recovery_files paths{};</span></span>
-<span id="L1074"><span class="lineNum">    1074</span> <span class="tlaGNC">          32 :     if((mode &amp; recovery_mode::recovery) == recovery_mode::recovery)</span></span>
+<span id="L1073"><span class="lineNum">    1073</span> <span class="tlaGNC">          34 :     active_recovery_files paths{};</span></span>
+<span id="L1074"><span class="lineNum">    1074</span> <span class="tlaGNC">          34 :     if((mode &amp; recovery_mode::recovery) == recovery_mode::recovery)</span></span>
 <span id="L1075"><span class="lineNum">    1075</span> <span class="tlaUNC">           0 :       paths.recovery_file = projPaths.output().recovery().recovery_file();</span></span>
 <span id="L1076"><span class="lineNum">    1076</span>              : </span>
-<span id="L1077"><span class="lineNum">    1077</span> <span class="tlaGNC">          32 :     if((mode &amp; recovery_mode::dump) == recovery_mode::dump)</span></span>
+<span id="L1077"><span class="lineNum">    1077</span> <span class="tlaGNC">          34 :     if((mode &amp; recovery_mode::dump) == recovery_mode::dump)</span></span>
 <span id="L1078"><span class="lineNum">    1078</span> <span class="tlaUNC">           0 :       paths.dump_file = projPaths.output().recovery().dump_file();</span></span>
 <span id="L1079"><span class="lineNum">    1079</span>              : </span>
-<span id="L1080"><span class="lineNum">    1080</span> <span class="tlaGNC">          32 :     return paths;</span></span>
+<span id="L1080"><span class="lineNum">    1080</span> <span class="tlaGNC">          34 :     return paths;</span></span>
 <span id="L1081"><span class="lineNum">    1081</span> <span class="tlaUNC">           0 :   }</span></span>
 <span id="L1082"><span class="lineNum">    1082</span>              : }</span>
         </pre>

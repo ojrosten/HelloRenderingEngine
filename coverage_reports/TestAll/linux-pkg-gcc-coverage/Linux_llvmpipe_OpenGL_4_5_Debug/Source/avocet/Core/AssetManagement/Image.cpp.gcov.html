@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -98,10 +98,10 @@
 <span id="L36"><span class="lineNum">      36</span> <span class="tlaUNC">           0 :                 throw std::runtime_error{std::format(&quot;unique_image: {} channels requested, but only 1--4 supported by stbi_load&quot;, requestedChannels.value().raw_value())};</span></span>
 <span id="L37"><span class="lineNum">      37</span>              :         }</span>
 <span id="L38"><span class="lineNum">      38</span>              : </span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          15 :         stbi_set_flip_vertically_on_load_thread(static_cast&lt;bool&gt;(flip));</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          17 :         stbi_set_flip_vertically_on_load_thread(static_cast&lt;bool&gt;(flip));</span></span>
 <span id="L40"><span class="lineNum">      40</span>              : </span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          14 :         int width{}, height{}, channels{}, channelsSelection{requestedChannels ? static_cast&lt;int&gt;(requestedChannels.value().raw_value()) : 0};</span></span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">          14 :         auto pData{stbi_load(texturePath.generic_string().c_str(), &amp;width, &amp;height, &amp;channels, channelsSelection)};</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          17 :         int width{}, height{}, channels{}, channelsSelection{requestedChannels ? static_cast&lt;int&gt;(requestedChannels.value().raw_value()) : 0};</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">          17 :         auto pData{stbi_load(texturePath.generic_string().c_str(), &amp;width, &amp;height, &amp;channels, channelsSelection)};</span></span>
 <span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">          17 :         if(!pData)</span></span>
 <span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">           1 :             throw std::runtime_error{std::format(&quot;unique_image: texture {} did not load&quot;, texturePath.generic_string())};</span></span>
 <span id="L45"><span class="lineNum">      45</span>              : </span>

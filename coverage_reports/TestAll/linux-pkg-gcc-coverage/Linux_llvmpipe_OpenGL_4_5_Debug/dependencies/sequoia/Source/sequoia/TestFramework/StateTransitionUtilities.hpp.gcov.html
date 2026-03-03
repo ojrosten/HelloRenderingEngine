@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -108,10 +108,10 @@
 <span id="L46"><span class="lineNum">      46</span>              :     object_generator(Fn f) : m_Fn{std::move(f)}</span>
 <span id="L47"><span class="lineNum">      47</span>              :     {}</span>
 <span id="L48"><span class="lineNum">      48</span>              : </span>
-<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">          13 :     object_generator(T t)</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">          14 :     object_generator(T t)</span></span>
 <span id="L50"><span class="lineNum">      50</span>              :       requires std::movable&lt;T&gt;</span>
-<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">          94 :       : m_Fn{[t{std::move(t)}]() -&gt; const T&amp; { return t; }}</span></span>
-<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">          13 :     {}</span></span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">         104 :       : m_Fn{[t{std::move(t)}]() -&gt; const T&amp; { return t; }}</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">          14 :     {}</span></span>
 <span id="L53"><span class="lineNum">      53</span>              : </span>
 <span id="L54"><span class="lineNum">      54</span>              :     template&lt;class... Args&gt;</span>
 <span id="L55"><span class="lineNum">      55</span>              :       requires (initializable_from&lt;T, Args...&gt; &amp;&amp;</span>
@@ -129,7 +129,7 @@
 <span id="L67"><span class="lineNum">      67</span>              :     }</span>
 <span id="L68"><span class="lineNum">      68</span>              : </span>
 <span id="L69"><span class="lineNum">      69</span>              :     [[nodiscard]]</span>
-<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">          68 :     decltype(auto) operator()() const { return m_Fn(); }</span></span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">          76 :     decltype(auto) operator()() const { return m_Fn(); }</span></span>
 <span id="L71"><span class="lineNum">      71</span>              :   private:</span>
 <span id="L72"><span class="lineNum">      72</span>              :     std::function&lt;T()&gt; m_Fn;</span>
 <span id="L73"><span class="lineNum">      73</span>              :   };</span>
@@ -147,14 +147,14 @@
 <span id="L85"><span class="lineNum">      85</span>              :     using edge_iterator = typename transition_graph::const_edge_iterator;</span>
 <span id="L86"><span class="lineNum">      86</span>              : </span>
 <span id="L87"><span class="lineNum">      87</span>              :     template&lt;class CheckFn, class... Args&gt;</span>
-<span id="L88"><span class="lineNum">      88</span> <span class="tlaGNC">          34 :     static void invoke_check_fn(const transition_graph&amp; g, edge_iterator i, CheckFn fn, const std::string&amp; message, object_generator&lt;T&gt; parentGenerator, size_type target, Args... args)</span></span>
+<span id="L88"><span class="lineNum">      88</span> <span class="tlaGNC">          38 :     static void invoke_check_fn(const transition_graph&amp; g, edge_iterator i, CheckFn fn, const std::string&amp; message, object_generator&lt;T&gt; parentGenerator, size_type target, Args... args)</span></span>
 <span id="L89"><span class="lineNum">      89</span>              :     {</span>
-<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          34 :       const auto&amp; w{i-&gt;weight()};</span></span>
-<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          34 :       fn(message,</span></span>
-<span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">          34 :          w.fn(parentGenerator()),</span></span>
-<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          68 :          g.cbegin_node_weights()[target](),</span></span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          38 :       const auto&amp; w{i-&gt;weight()};</span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          38 :       fn(message,</span></span>
+<span id="L92"><span class="lineNum">      92</span> <span class="tlaGNC">          38 :          w.fn(parentGenerator()),</span></span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          76 :          g.cbegin_node_weights()[target](),</span></span>
 <span id="L94"><span class="lineNum">      94</span>              :          std::move(args)...);</span>
-<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          34 :     }</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          38 :     }</span></span>
 <span id="L96"><span class="lineNum">      96</span>              : </span>
 <span id="L97"><span class="lineNum">      97</span>              :     template&lt;class CheckFn, class... Args&gt;</span>
 <span id="L98"><span class="lineNum">      98</span>              :     static void invoke_check_fn(std::string_view description, const transition_graph&amp; g, edge_iterator i, CheckFn fn, Args... args)</span>
@@ -174,10 +174,10 @@
 <span id="L112"><span class="lineNum">     112</span> <span class="tlaGNC">           1 :     static void check(std::string_view description, const transition_graph&amp; g, CheckFn checkFn)</span></span>
 <span id="L113"><span class="lineNum">     113</span>              :     {</span>
 <span id="L114"><span class="lineNum">     114</span> <span class="tlaGNC">           1 :       auto edgeFn{</span></span>
-<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">          34 :         [description,&amp;g,checkFn](edge_iterator i) {</span></span>
-<span id="L116"><span class="lineNum">     116</span> <span class="tlaGNC">          34 :           const auto [message, parentGenerator, target] {make(description, g, i)};</span></span>
-<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">          34 :           invoke_check_fn(g, i, checkFn, message, parentGenerator, target);</span></span>
-<span id="L118"><span class="lineNum">     118</span> <span class="tlaGNC">          34 :         }</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">          38 :         [description,&amp;g,checkFn](edge_iterator i) {</span></span>
+<span id="L116"><span class="lineNum">     116</span> <span class="tlaGNC">          38 :           const auto [message, parentGenerator, target] {make(description, g, i)};</span></span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">          38 :           invoke_check_fn(g, i, checkFn, message, parentGenerator, target);</span></span>
+<span id="L118"><span class="lineNum">     118</span> <span class="tlaGNC">          38 :         }</span></span>
 <span id="L119"><span class="lineNum">     119</span>              :       };</span>
 <span id="L120"><span class="lineNum">     120</span>              : </span>
 <span id="L121"><span class="lineNum">     121</span> <span class="tlaGNC">           1 :       check(g, edgeFn);</span></span>
@@ -261,16 +261,16 @@
 <span id="L199"><span class="lineNum">     199</span>              :     };</span>
 <span id="L200"><span class="lineNum">     200</span>              : </span>
 <span id="L201"><span class="lineNum">     201</span>              :     [[nodiscard]]</span>
-<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          34 :     static edge_fn_info make(std::string_view description, const transition_graph&amp; g, edge_iterator i)</span></span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          38 :     static edge_fn_info make(std::string_view description, const transition_graph&amp; g, edge_iterator i)</span></span>
 <span id="L203"><span class="lineNum">     203</span>              :     {</span>
-<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">          34 :       const auto&amp; w{i-&gt;weight()};</span></span>
-<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          34 :       const auto parent{i.partition_index()}, target{i-&gt;target_node()};</span></span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">          38 :       const auto&amp; w{i-&gt;weight()};</span></span>
+<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          38 :       const auto parent{i.partition_index()}, target{i-&gt;target_node()};</span></span>
 <span id="L206"><span class="lineNum">     206</span>              :       return {append_lines(description,</span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">         102 :                            std::string{&quot;Transition from node &quot;}.append(std::to_string(parent)).append(&quot; to &quot;).append(std::to_string(target)),</span></span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          34 :                            w.description),</span></span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">          34 :               g.cbegin_node_weights()[parent],</span></span>
-<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">          34 :               target};</span></span>
-<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">          68 :     }</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">         114 :                            std::string{&quot;Transition from node &quot;}.append(std::to_string(parent)).append(&quot; to &quot;).append(std::to_string(target)),</span></span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          38 :                            w.description),</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">          38 :               g.cbegin_node_weights()[parent],</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">          38 :               target};</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">          76 :     }</span></span>
 <span id="L212"><span class="lineNum">     212</span>              :   };</span>
 <span id="L213"><span class="lineNum">     213</span>              : }</span>
         </pre>

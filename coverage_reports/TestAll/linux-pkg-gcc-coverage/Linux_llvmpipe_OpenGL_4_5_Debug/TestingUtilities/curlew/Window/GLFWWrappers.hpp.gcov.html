@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-02 12:51:21</td>
+            <td class="headerValue">2026-03-03 17:57:28</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -88,15 +88,15 @@
 <span id="L26"><span class="lineNum">      26</span>              :     class num_samples {</span>
 <span id="L27"><span class="lineNum">      27</span>              :         std::size_t m_Num{1};</span>
 <span id="L28"><span class="lineNum">      28</span>              :     public:</span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          16 :         constexpr explicit num_samples(std::size_t num)</span></span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          16 :             : m_Num{num}</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          17 :         constexpr explicit num_samples(std::size_t num)</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          17 :             : m_Num{num}</span></span>
 <span id="L31"><span class="lineNum">      31</span>              :         {</span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          16 :             if(!num)</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          17 :             if(!num)</span></span>
 <span id="L33"><span class="lineNum">      33</span> <span class="tlaUNC">           0 :                 throw std::runtime_error{&quot;Number of samples must be &gt; 0&quot;};</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          16 :         }</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          17 :         }</span></span>
 <span id="L35"><span class="lineNum">      35</span>              : </span>
 <span id="L36"><span class="lineNum">      36</span>              :         [[nodiscard]]</span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          26 :         constexpr std::size_t value() const noexcept { return m_Num; }</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          27 :         constexpr std::size_t value() const noexcept { return m_Num; }</span></span>
 <span id="L38"><span class="lineNum">      38</span>              : </span>
 <span id="L39"><span class="lineNum">      39</span>              :         [[nodiscard]]</span>
 <span id="L40"><span class="lineNum">      40</span>              :         friend constexpr auto operator&lt;=&gt;(const num_samples&amp;, const num_samples&amp;) noexcept = default;</span>
@@ -170,7 +170,7 @@
 <span id="L108"><span class="lineNum">     108</span>              : </span>
 <span id="L109"><span class="lineNum">     109</span>              :         ~window_resource();</span>
 <span id="L110"><span class="lineNum">     110</span>              : </span>
-<span id="L111"><span class="lineNum">     111</span> <span class="tlaGNC">          32 :         [[nodiscard]] GLFWwindow&amp; get() noexcept { return m_Window; }</span></span>
+<span id="L111"><span class="lineNum">     111</span> <span class="tlaGNC">          33 :         [[nodiscard]] GLFWwindow&amp; get() noexcept { return m_Window; }</span></span>
 <span id="L112"><span class="lineNum">     112</span>              : </span>
 <span id="L113"><span class="lineNum">     113</span>              :         [[nodiscard]]</span>
 <span id="L114"><span class="lineNum">     114</span>              :         avocet::discrete_extent get_framebuffer_extent() const;</span>
@@ -189,11 +189,11 @@
 <span id="L127"><span class="lineNum">     127</span>              : </span>
 <span id="L128"><span class="lineNum">     128</span>              :         window&amp; operator=(const window&amp;) = delete;</span>
 <span id="L129"><span class="lineNum">     129</span>              : </span>
-<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">          26 :         ~window() = default;</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">          27 :         ~window() = default;</span></span>
 <span id="L131"><span class="lineNum">     131</span>              : </span>
 <span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">           6 :         [[nodiscard]] GLFWwindow&amp; get() noexcept { return m_Window.get(); }</span></span>
 <span id="L133"><span class="lineNum">     133</span>              : </span>
-<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">          67 :         [[nodiscard]] const agl::capable_context&amp; context() const noexcept { return m_Context; }</span></span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">          68 :         [[nodiscard]] const agl::capable_context&amp; context() const noexcept { return m_Context; }</span></span>
 <span id="L135"><span class="lineNum">     135</span>              : </span>
 <span id="L136"><span class="lineNum">     136</span>              :         void update_viewport(const avocet::viewport&amp; vp);</span>
 <span id="L137"><span class="lineNum">     137</span>              : </span>
