@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-03 17:57:28</td>
+            <td class="headerValue">2026-03-03 19:07:42</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -96,10 +96,10 @@
 <span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          10 :                 : m_Calls{&amp;calls}</span></span>
 <span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          10 :             {}</span></span>
 <span id="L36"><span class="lineNum">      36</span>              : </span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         215 :             void operator()(const agl::context&amp;, const agl::decorator_data&amp; data) {</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         215 :                 if(data.fn_name == &quot;UseProgram&quot;)</span></span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          29 :                     m_Calls-&gt;push_back(std::string{data.fn_name});</span></span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         214 :             }</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         217 :             void operator()(const agl::context&amp;, const agl::decorator_data&amp; data) {</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         217 :                 if(data.fn_name == &quot;UseProgram&quot;)</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          30 :                     m_Calls-&gt;push_back(std::string{data.fn_name});</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         217 :             }</span></span>
 <span id="L41"><span class="lineNum">      41</span>              :         };</span>
 <span id="L42"><span class="lineNum">      42</span>              : </span>
 <span id="L43"><span class="lineNum">      43</span>              :         [[nodiscard]]</span>
@@ -135,7 +135,7 @@
 <span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">           8 :             const auto&amp; ctx{w.context()};</span></span>
 <span id="L74"><span class="lineNum">      74</span>              : </span>
 <span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">           8 :             agl::shader_program sp{ctx, shaderDir / &quot;Identity.vs&quot;, shaderDir / &quot;Monochrome.fs&quot;};</span></span>
-<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           8 :             if(entryLatch) entryLatch-&gt;get().arrive_and_wait();</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">           7 :             if(entryLatch) entryLatch-&gt;get().arrive_and_wait();</span></span>
 <span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">           8 :             sp.use();</span></span>
 <span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">           8 :             sp.use();</span></span>
 <span id="L79"><span class="lineNum">      79</span>              : </span>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-03 17:57:28</td>
+            <td class="headerValue">2026-03-03 19:07:42</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -103,7 +103,7 @@
 <span id="L41"><span class="lineNum">      41</span>              :         }</span>
 <span id="L42"><span class="lineNum">      42</span>              : </span>
 <span id="L43"><span class="lineNum">      43</span>              :         [[nodiscard]]</span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">       13741 :         constexpr const GladGLContext&amp; get() const noexcept { return m_Context; }</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">       13808 :         constexpr const GladGLContext&amp; get() const noexcept { return m_Context; }</span></span>
 <span id="L45"><span class="lineNum">      45</span>              : </span>
 <span id="L46"><span class="lineNum">      46</span>              :         [[nodiscard]]</span>
 <span id="L47"><span class="lineNum">      47</span>              :         friend constexpr bool operator==(const unique_glad_context&amp; lhs, const unique_glad_context&amp; rhs) noexcept {</span>
@@ -125,15 +125,15 @@
 <span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">          28 :         }</span></span>
 <span id="L64"><span class="lineNum">      64</span>              : </span>
 <span id="L65"><span class="lineNum">      65</span>              :         template&lt;class Fn, class... Args&gt;</span>
-<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">        1801 :         std::invoke_result_t&lt;Fn, Args...&gt; invoke(this const context_base&amp;, const decorator_data&amp;, Fn fn, Args... args) {</span></span>
-<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">        1801 :             return fn(args...);</span></span>
+<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">        1807 :         std::invoke_result_t&lt;Fn, Args...&gt; invoke(this const context_base&amp;, const decorator_data&amp;, Fn fn, Args... args) {</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">        1807 :             return fn(args...);</span></span>
 <span id="L68"><span class="lineNum">      68</span>              :         }</span>
 <span id="L69"><span class="lineNum">      69</span>              : </span>
 <span id="L70"><span class="lineNum">      70</span>              :         [[nodiscard]]</span>
-<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">        3393 :         debugging_mode debug_mode() const noexcept { return m_Mode; }</span></span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">        3395 :         debugging_mode debug_mode() const noexcept { return m_Mode; }</span></span>
 <span id="L72"><span class="lineNum">      72</span>              : </span>
 <span id="L73"><span class="lineNum">      73</span>              :         [[nodiscard]]</span>
-<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">       13741 :         const GladGLContext&amp; glad_context() const noexcept { return m_Context.get(); }</span></span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">       13808 :         const GladGLContext&amp; glad_context() const noexcept { return m_Context.get(); }</span></span>
 <span id="L75"><span class="lineNum">      75</span>              : </span>
 <span id="L76"><span class="lineNum">      76</span>              :         [[nodiscard]]</span>
 <span id="L77"><span class="lineNum">      77</span>              :         friend constexpr bool operator==(const context_base&amp;, const context_base&amp;) noexcept = default;</span>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-03 17:57:28</td>
+            <td class="headerValue">2026-03-03 19:07:42</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">61.0&nbsp;%</td>
@@ -307,10 +307,10 @@
 <span id="L245"><span class="lineNum">     245</span>              : </span>
 <span id="L246"><span class="lineNum">     246</span>              :     template&lt;class Arg, class... Args&gt;</span>
 <span id="L247"><span class="lineNum">     247</span>              :       requires (!resolve_to_copy_v&lt;iterator, Arg, Args...&gt;)</span>
-<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">        3580 :     constexpr explicit(sizeof...(Args) == 0) iterator(Arg&amp;&amp; baseIterArg, Args&amp;&amp;... args)</span></span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">        3584 :     constexpr explicit(sizeof...(Args) == 0) iterator(Arg&amp;&amp; baseIterArg, Args&amp;&amp;... args)</span></span>
 <span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">           2 :       : DereferencePolicy{std::forward&lt;Args&gt;(args)...}</span></span>
-<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">        7158 :       , m_BaseIterator{std::forward&lt;Arg&gt;(baseIterArg)}</span></span>
-<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">        3580 :     {}</span></span>
+<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">        7166 :       , m_BaseIterator{std::forward&lt;Arg&gt;(baseIterArg)}</span></span>
+<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">        3584 :     {}</span></span>
 <span id="L252"><span class="lineNum">     252</span>              : </span>
 <span id="L253"><span class="lineNum">     253</span>              :     template&lt;class Iter, class DerefPol&gt;</span>
 <span id="L254"><span class="lineNum">     254</span>              :       requires (   !std::is_same_v&lt;Iter, Iterator&gt;</span>
@@ -338,10 +338,10 @@
 <span id="L276"><span class="lineNum">     276</span>              :     }</span>
 <span id="L277"><span class="lineNum">     277</span>              : </span>
 <span id="L278"><span class="lineNum">     278</span>              :     [[nodiscard]]</span>
-<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">         434 :     constexpr reference operator[](const difference_type n) const</span></span>
+<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">         438 :     constexpr reference operator[](const difference_type n) const</span></span>
 <span id="L280"><span class="lineNum">     280</span>              :       requires steppable&lt;Iterator&gt;</span>
 <span id="L281"><span class="lineNum">     281</span>              :     {</span>
-<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">         434 :       return DereferencePolicy::get(m_BaseIterator + n);</span></span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">         438 :       return DereferencePolicy::get(m_BaseIterator + n);</span></span>
 <span id="L283"><span class="lineNum">     283</span>              :     }</span>
 <span id="L284"><span class="lineNum">     284</span>              : </span>
 <span id="L285"><span class="lineNum">     285</span> <span class="tlaGNC">         197 :     constexpr pointer operator-&gt;() const</span></span>
