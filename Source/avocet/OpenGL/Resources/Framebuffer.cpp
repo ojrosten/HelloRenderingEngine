@@ -27,7 +27,7 @@ namespace avocet::opengl {
             case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
                 return "Incomplete Multisample";
             case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
-                return "ncomplete Layer Target";
+                return "Incomplete Layer Target";
             }
 
             return {};
