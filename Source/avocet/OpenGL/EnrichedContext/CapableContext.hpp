@@ -71,7 +71,9 @@ namespace avocet::opengl {
             }
             else {
                 self.enable(current);
-                self.update_config(current, requested.value());
+
+                if constexpr(!std::is_empty_v<Cap>)
+                    self.update_config(current, requested.value());
             }
         }
     public:
