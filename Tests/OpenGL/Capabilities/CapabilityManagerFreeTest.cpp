@@ -70,6 +70,11 @@ namespace {
         .mask{agl::depth_buffer_write_mode::disabled},
         .poly_offset{0.4f, 1.2f}
     };
+
+    constexpr gl_sample_coverage configuredSampleCoverage{
+        .coverage_val{0.5},
+        .invert{agl::invert_sample_mask::yes}
+    };
 }
 
 namespace avocet::testing
@@ -91,19 +96,20 @@ namespace avocet::testing
         using namespace agl::capabilities;
 
         enum node_name {
-            none                     = 0,
-            blend                    = 1,
-            depth_test               = 2,
-            multi_sample             = 3,
-            polygon_offset_fill      = 4,
-            polygon_offset_line      = 5,
-            polygon_offset_point     = 6,
-            sample_alpha_to_coverage = 7,
-            sample_coverage          = 8,
-            stencil_test             = 9,
-            configured_blend         = 10,
-            configured_depth_test    = 11,
-            configured_stencil_test  = 12
+            none                       = 0,
+            blend                      = 1,
+            depth_test                 = 2,
+            multi_sample               = 3,
+            polygon_offset_fill        = 4,
+            polygon_offset_line        = 5,
+            polygon_offset_point       = 6,
+            sample_alpha_to_coverage   = 7,
+            sample_coverage            = 8,
+            stencil_test               = 9,
+            configured_blend           = 10,
+            configured_depth_test      = 11,
+            configured_sample_coverage = 12,
+            configured_stencil_test    = 13,
         };
 
         using graph_type = transition_checker<payload_type>::transition_graph;
@@ -175,6 +181,11 @@ namespace avocet::testing
                         node_name::configured_stencil_test,
                         report(""),
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, configuredStencilTest); }
+                    },
+                    {
+                        node_name::configured_sample_coverage,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, configuredSampleCoverage); }
                     },
                 }, // End   Edges: none
                 {  // Begin Edges: blend
@@ -249,6 +260,11 @@ namespace avocet::testing
                         node_name::none,
                         report(""),
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    },
+                    {
+                        node_name::sample_alpha_to_coverage,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_sample_alpha_to_coverage{}); }
                     }
                 }, // End   Edges: sample_alpha_to_coverage
                 {  // Begin Edges: sample_coverage
@@ -294,6 +310,18 @@ namespace avocet::testing
                         [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_depth_test{}); }
                     },
                 }, // End   Edges: configured_depth_test
+                {  // Begin Edges: configured_sample_coverage
+                    {
+                        node_name::none,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload); }
+                    },
+                    {
+                        node_name::sample_coverage,
+                        report(""),
+                        [&ctx](const payload_type& hostPayload) { return set_payload(ctx, hostPayload, gl_sample_coverage{}); }
+                    },
+                }, // End   Edges: configured_sample_coverage
                 {  // Begin Edges: configured_stencil_test
                     {
                         node_name::none,
@@ -320,6 +348,7 @@ namespace avocet::testing
                 make_payload(gl_stencil_test{}),
                 make_payload(configuredBlend),
                 make_payload(configuredDepthTest),
+                make_payload(configuredSampleCoverage),
                 make_payload(configuredStencilTest)
             }
         };
