@@ -17,6 +17,7 @@
 #include "Core/AssetManagement/UniqueImageTest.hpp"
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
+#include "Core/Formatting/FormattingFreeTest.hpp"
 #include "Core/Geometry/ViewportTest.hpp"
 #include "Core/Geometry/ViewportTestingDiagnostics.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
@@ -125,6 +126,11 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Framebuffer",
             framebuffer_free_test{"Framebuffer Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Formatting",
+            formatting_free_test{"Formatting Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

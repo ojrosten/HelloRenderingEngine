@@ -25,6 +25,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/UniqueImageTest.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageThreadingFreeTest.cpp
+               ${TestDir}/Core/Formatting/FormattingFreeTest.cpp
                ${TestDir}/Core/Geometry/ViewportTest.cpp
                ${TestDir}/Core/Geometry/ViewportTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp

@@ -21,7 +21,7 @@ namespace avocet {
 
     template<std::integral T>
     std::string make_error_message(std::string_view enumName, T val) {
-        return std::format("Unrecognized option {}::{} while stringifying", enumName, val);
+        return std::format("Unrecognized option {}::{} encountered while stringifying", enumName, val);
     }
 
     template<class Enum>

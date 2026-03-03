@@ -1,0 +1,9 @@
+Tests/Core/Formatting/FormattingFreeTest.cpp, Line 29
+Put error_message output under version control through the auto-generated exceptions file
+
+Expected Exception Type:
+[std::runtime_error]
+Unrecognized option whatever::0 encountered while stringifying
+
+=======================================
+
