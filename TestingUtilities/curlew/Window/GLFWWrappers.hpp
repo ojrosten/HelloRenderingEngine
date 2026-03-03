@@ -89,6 +89,9 @@ namespace curlew {
         window create_window(const window_config& config);
 
         [[nodiscard]]
+        window create_window(const window_config& config, avocet::opengl::opengl_version version);
+
+        [[nodiscard]]
         const rendering_setup& get_rendering_setup() const noexcept { return m_RenderingSetup; }
 
         void detach_current_context();

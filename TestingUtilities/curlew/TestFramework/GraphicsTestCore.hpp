@@ -15,19 +15,24 @@
 namespace curlew {
     using namespace sequoia::testing;
 
-    constexpr inline selectivity_flavour os_and_renderer_selective{curlew::selectivity_flavour::os | curlew::selectivity_flavour::renderer};
+    constexpr inline selectivity_flavour os_and_renderer_selective{selectivity_flavour::os | selectivity_flavour::renderer};
     constexpr inline specificity_flavour platform_specific{specificity_flavour::os | specificity_flavour::renderer | specificity_flavour::opengl_version};
-    constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
+    constexpr inline specificity_flavour os_and_renderer_specific{specificity_flavour::os | specificity_flavour::renderer};
 
     class test_window_manager {
-        inline static curlew::glfw_manager st_Manager{};
+        inline static glfw_manager st_Manager{};
     public:
         [[nodiscard]]
         static rendering_setup find_rendering_setup();
 
         [[nodiscard]]
-        static curlew::window create_window(const curlew::window_config& config) {
+        static window create_window(const window_config& config) {
             return st_Manager.create_window(config);
+        }
+
+        [[nodiscard]]
+        static window create_window(const window_config& config, avocet::opengl::opengl_version version) {
+            return st_Manager.create_window(config, version);
         }
 
         static void detach_current_context() {
@@ -64,7 +69,10 @@ namespace curlew {
         basic_graphics_test& operator=(basic_graphics_test&&) noexcept = default;
 
         [[nodiscard]]
-        curlew::window create_window(const curlew::window_config& config) { return test_window_manager::create_window(config); }
+        window create_window(const window_config& config) { return test_window_manager::create_window(config); }
+
+        [[nodiscard]]
+        window create_window(const window_config& config, avocet::opengl::opengl_version version) { return test_window_manager::create_window(config, version); }
     };
 
     template<selectivity_flavour Selectivity, specificity_flavour Specificity>

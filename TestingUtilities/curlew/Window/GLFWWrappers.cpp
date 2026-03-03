@@ -106,6 +106,9 @@ namespace curlew {
         return setup;
     }
 
+    window glfw_manager::create_window(const window_config& config, avocet::opengl::opengl_version version) { return window{config, version}; }
+
+    [[nodiscard]]
     window glfw_manager::create_window(const window_config& config) { return window{config, m_RenderingSetup.version}; }
 
     void glfw_manager::detach_current_context() {
