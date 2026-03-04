@@ -28,5 +28,18 @@ uniform ivec4 foo_i4 = ivec4( 1, -1,  1, -1);
 
 void main()
 {
-   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+   FragColor = vec4(foo_f, bar_f, 0, 0);
+   FragColor += vec4(foo_f2, 0, 0);
+   FragColor += vec4(bar_f2, 0, 0);
+   FragColor += vec4(foo_f3, 0);
+   FragColor += vec4(bar_f3, 0);
+   FragColor += foo_f4;
+   FragColor += bar_f4;
+   FragColor += vec4(foo_i, bar_i, 0, 0);
+   FragColor += vec4(foo_i2, 0, 0);
+   FragColor += vec4(bar_i2, 0, 0);
+   FragColor += vec4(foo_i3, 0);
+   FragColor += vec4(bar_i3, 0);
+   FragColor += foo_i4;
+   FragColor += bar_i4;
 }
