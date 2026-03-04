@@ -210,8 +210,12 @@ namespace avocet::opengl {
             return found->second;
 
         const auto location{gl_function{&GladGLContext::GetUniformLocation}(m_Resource.view().context(), get_index(m_Resource), name.data())};
-        if(location == -1)
-            throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", extract_label(), name)};
+        if(location == -1) {
+            const bool labelled{object_labels_activated(m_Resource.view().context())};
+            const std::string label{labelled ? extract_label() : "[unlabelled]"};
+
+            throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", label, name)};
+        }
 
         m_Uniforms.emplace(name, location);
         return location;
