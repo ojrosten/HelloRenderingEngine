@@ -1,0 +1,36 @@
+Tests/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp, Line 36
+Trying to set a non-existent uniform
+
+Expected Exception Type:
+[std::runtime_error]
+shader_program Identity.vs / Monochrome.fs: uniform "foo" not found
+
+=======================================
+
+Tests/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp, Line 41
+Trying to get a non-existent uniform
+
+Expected Exception Type:
+[std::runtime_error]
+shader_program Identity.vs / Monochrome.fs: uniform "foo" not found
+
+=======================================
+
+Tests/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp, Line 36
+Trying to set a non-existent uniform
+
+Expected Exception Type:
+[std::runtime_error]
+shader_program [unlabelled]: uniform "foo" not found
+
+=======================================
+
+Tests/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp, Line 41
+Trying to get a non-existent uniform
+
+Expected Exception Type:
+[std::runtime_error]
+shader_program [unlabelled]: uniform "foo" not found
+
+=======================================
+
