@@ -29,16 +29,6 @@ namespace avocet::testing
             sp0{win.context(), shaderDir / "Identity.vs", shaderDir / "MixedBag.fs"},
             sp1{win.context(), shaderDir / "Identity.vs", shaderDir / "MixedBag.fs"};
 
-        check_exception_thrown<std::runtime_error>(
-            "Trying to set a non-existent uniform",
-            [&sp0]() { return sp0.set_uniform("goo_f", 1.0f); }
-        );
-
-        check_exception_thrown<std::runtime_error>(
-            "Trying to get a non-existent uniform",
-            [&sp0]() { return sp0.get_uniform<GLfloat>("goo_f"); }
-        );
-
         check(equality, "", sp0.get_uniform<GLfloat>("foo_f"), 1.0f);
         check(equality, "", sp0.get_uniform<GLfloat>("bar_f"), 2.0f);
         check(equality, "", sp1.get_uniform<GLfloat>("foo_f"), 1.0f);

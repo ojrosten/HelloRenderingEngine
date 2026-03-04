@@ -42,6 +42,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Resources/ResourceHandleTest.cpp
                ${TestDir}/OpenGL/Resources/ResourceHandleTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp
+               ${TestDir}/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramFileExistenceFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramLabellingFreeTest.cpp
