@@ -10,6 +10,8 @@
 #include "avocet/OpenGL/Resources/ResourceHandle.hpp"
 #include "avocet/OpenGL/Resources/Labels.hpp"
 
+#include "avocet/OpenGL/Utilities/TypeTraits.hpp"
+
 #include <filesystem>
 #include <map>
 #include <unordered_map>
@@ -96,16 +98,67 @@ namespace avocet::opengl {
             do_set_uniform(name, gl_function{&GladGLContext::Uniform1f}, val);
         }
 
-        void set_uniform(std::string_view name, GLint val) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform1i}, val);
-        }
-
         void set_uniform(std::string_view name, std::span<const GLfloat, 2> vals) {
             do_set_uniform(name, gl_function{&GladGLContext::Uniform2f}, vals[0], vals[1]);
         }
 
+        void set_uniform(std::string_view name, std::span<const GLfloat, 3> vals) {
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform3f}, vals[0], vals[1], vals[2]);
+        }
+
         void set_uniform(std::string_view name, std::span<const GLfloat, 4> vals) {
             do_set_uniform(name, gl_function{&GladGLContext::Uniform4f}, vals[0], vals[1], vals[2], vals[3]);
+        }
+
+        void set_uniform(std::string_view name, GLint val) {
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform1i}, val);
+        }
+
+        void set_uniform(std::string_view name, std::span<const GLint, 2> vals) {
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform2i}, vals[0], vals[1]);
+        }
+
+        void set_uniform(std::string_view name, std::span<const GLint, 3> vals) {
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform3i}, vals[0], vals[1], vals[2]);
+        }
+
+        void set_uniform(std::string_view name, std::span<const GLint, 4> vals) {
+            do_set_uniform(name, gl_function{&GladGLContext::Uniform4i}, vals[0], vals[1], vals[2], vals[3]);
+        }
+
+        template<gl_arithmetic T>
+        [[nodiscard]]
+        T get_uniform(std::string_view name) {
+            T val{};
+            get_uniform(name, val);
+            return val;
+        }
+
+        template<gl_arithmetic T, std::size_t N>
+            requires (N >= 1) && (N <= 4)
+        [[nodiscard]]
+        std::array<T, N> get_uniform(std::string_view name) {
+            std::array<T, N> vals{};
+            get_uniform(name, std::span{vals});
+            return vals;
+        }
+
+        void get_uniform(std::string_view name, GLfloat& val) {
+            do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, val);
+        }
+
+        void get_uniform(std::string_view name, GLint& val) {
+            do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, val);
+        }
+
+        template<std::size_t N>
+        void get_uniform(std::string_view name, std::span<GLfloat, N> vals) {
+            do_get_uniform(name, gl_function{&GladGLContext::GetnUniformfv}, vals);
+        }
+
+        template<std::size_t N>
+        void get_uniform(std::string_view name, std::span<GLint, N> vals) {
+            do_get_uniform(name, gl_function{&GladGLContext::GetnUniformiv}, vals);
         }
 
         [[nodiscard]]
@@ -122,6 +175,18 @@ namespace avocet::opengl {
         void do_set_uniform(std::string_view name, gl_function<void(GLint, Args...)> fn, Args... args) {
             use();
             fn(m_Resource.view().context(), extract_uniform_location(name), args...);
+        }
+
+        template<gl_arithmetic T>
+        void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T& val) {
+            use();
+            fn(m_Resource.view().context(), get_index(m_Resource), extract_uniform_location(name), &val);
+        }
+
+        template<gl_arithmetic T, std::size_t N>
+        void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, GLsizei, T*)> fn, std::span<T, N> vals) {
+            use();
+            fn(m_Resource.view().context(), get_index(m_Resource), extract_uniform_location(name), N*sizeof(GLfloat), vals.data());
         }
 
         class program_tracker {

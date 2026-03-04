@@ -35,6 +35,7 @@
 #include "OpenGL/Resources/ResourceHandleTestingDiagnostics.hpp"
 #include "OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramFileExistenceFreeTest.hpp"
+#include "OpenGL/Resources/ShaderProgramFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramLabellingFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramTrackingFreeTest.hpp"
 #include "OpenGL/Resources/Texture2dLabellingTest.hpp"
@@ -77,6 +78,7 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Shader Program",
+            shader_program_free_test{"Shader Program Free Test"},
             shader_program_file_existence_free_test{"Shader Program File Existence Free Test"},
             shader_program_broken_stages_free_test{"Shader Program Broken Stages Free Test"},
             shader_program_labelling_free_test{"Shader Program Labelling Free Test"},

@@ -1,0 +1,18 @@
+Tests/OpenGL/Resources/ShaderProgramFreeTest.cpp, Line 33
+Trying to set a non-existent uniform
+
+Expected Exception Type:
+[std::runtime_error]
+shader_program Identity.vs / MixedBag.fs: uniform "goo_f" not found
+
+=======================================
+
+Tests/OpenGL/Resources/ShaderProgramFreeTest.cpp, Line 38
+Trying to get a non-existent uniform
+
+Expected Exception Type:
+[std::runtime_error]
+shader_program Identity.vs / MixedBag.fs: uniform "goo_f" not found
+
+=======================================
+
