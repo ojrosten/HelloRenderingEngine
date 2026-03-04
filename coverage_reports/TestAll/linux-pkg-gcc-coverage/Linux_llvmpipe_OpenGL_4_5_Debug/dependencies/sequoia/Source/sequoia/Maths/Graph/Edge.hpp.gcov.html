@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 17:13:18</td>
+            <td class="headerValue">2026-03-04 19:26:08</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">95.6&nbsp;%</td>
@@ -219,10 +219,10 @@
 <span id="L157"><span class="lineNum">     157</span>              : </span>
 <span id="L158"><span class="lineNum">     158</span>              :       template&lt;class... Args&gt;</span>
 <span id="L159"><span class="lineNum">     159</span>              :         requires (!resolve_to_copy_v&lt;partial_edge_base, Args...&gt;)</span>
-<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">         112 :       constexpr explicit(sizeof...(Args) == 0) partial_edge_base(const index_type target, Args&amp;&amp;... args)</span></span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">         113 :       constexpr explicit(sizeof...(Args) == 0) partial_edge_base(const index_type target, Args&amp;&amp;... args)</span></span>
 <span id="L161"><span class="lineNum">     161</span>              :         : weighting&lt;WeightHandler, IndexType&gt;{std::forward&lt;Args&gt;(args)...}</span>
-<span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">         188 :         , m_Target{target}</span></span>
-<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">         112 :       {}</span></span>
+<span id="L162"><span class="lineNum">     162</span> <span class="tlaGNC">         189 :         , m_Target{target}</span></span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">         113 :       {}</span></span>
 <span id="L164"><span class="lineNum">     164</span>              : </span>
 <span id="L165"><span class="lineNum">     165</span>              :       constexpr partial_edge_base(const index_type target, const partial_edge_base&amp; other)</span>
 <span id="L166"><span class="lineNum">     166</span>              :         : weighting&lt;WeightHandler, IndexType&gt;{other}</span>
@@ -233,7 +233,7 @@
 <span id="L171"><span class="lineNum">     171</span> <span class="tlaUNC">           0 :       constexpr partial_edge_base(partial_edge_base&amp;&amp;) noexcept = default;</span></span>
 <span id="L172"><span class="lineNum">     172</span>              : </span>
 <span id="L173"><span class="lineNum">     173</span>              :       [[nodiscard]]</span>
-<span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">        1469 :       constexpr IndexType target_node() const noexcept { return m_Target; }</span></span>
+<span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">        1517 :       constexpr IndexType target_node() const noexcept { return m_Target; }</span></span>
 <span id="L175"><span class="lineNum">     175</span>              : </span>
 <span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC">           0 :       constexpr void target_node(const index_type target) noexcept { m_Target = target; }</span></span>
 <span id="L177"><span class="lineNum">     177</span>              : </span>

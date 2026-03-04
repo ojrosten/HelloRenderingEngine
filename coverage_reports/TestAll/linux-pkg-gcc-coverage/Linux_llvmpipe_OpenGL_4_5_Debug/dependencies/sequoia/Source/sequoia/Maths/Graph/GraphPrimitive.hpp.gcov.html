@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 17:13:18</td>
+            <td class="headerValue">2026-03-04 19:26:08</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">60.3&nbsp;%</td>
@@ -528,12 +528,12 @@
 <span id="L466"><span class="lineNum">     466</span>              :       }</span>
 <span id="L467"><span class="lineNum">     467</span>              : </span>
 <span id="L468"><span class="lineNum">     468</span>              :       template&lt;class... Args&gt;</span>
-<span id="L469"><span class="lineNum">     469</span> <span class="tlaGNC">          88 :       size_type insert_node(const size_type pos, Args&amp;&amp;... args)</span></span>
+<span id="L469"><span class="lineNum">     469</span> <span class="tlaGNC">          89 :       size_type insert_node(const size_type pos, Args&amp;&amp;... args)</span></span>
 <span id="L470"><span class="lineNum">     470</span>              :       {</span>
-<span id="L471"><span class="lineNum">     471</span> <span class="tlaGNC">          88 :         insertion_sentinel sentinel{*this, pos};</span></span>
+<span id="L471"><span class="lineNum">     471</span> <span class="tlaGNC">          89 :         insertion_sentinel sentinel{*this, pos};</span></span>
 <span id="L472"><span class="lineNum">     472</span>              : </span>
-<span id="L473"><span class="lineNum">     473</span> <span class="tlaGNC">         263 :         return Connectivity::insert_node(insert_node_impl(pos, std::forward&lt;Args&gt;(args)...));</span></span>
-<span id="L474"><span class="lineNum">     474</span> <span class="tlaGNC">          88 :       }</span></span>
+<span id="L473"><span class="lineNum">     473</span> <span class="tlaGNC">         266 :         return Connectivity::insert_node(insert_node_impl(pos, std::forward&lt;Args&gt;(args)...));</span></span>
+<span id="L474"><span class="lineNum">     474</span> <span class="tlaGNC">          89 :       }</span></span>
 <span id="L475"><span class="lineNum">     475</span>              : </span>
 <span id="L476"><span class="lineNum">     476</span> <span class="tlaUNC">           0 :       void erase_node(const size_type node)</span></span>
 <span id="L477"><span class="lineNum">     477</span>              :       {</span>
@@ -548,11 +548,11 @@
 <span id="L486"><span class="lineNum">     486</span>              :       }</span>
 <span id="L487"><span class="lineNum">     487</span>              : </span>
 <span id="L488"><span class="lineNum">     488</span>              :       template&lt;tree_link_direction dir, class... Args&gt;</span>
-<span id="L489"><span class="lineNum">     489</span> <span class="tlaGNC">          75 :       size_type insert_node_to_tree(tree_link_direction_constant&lt;dir&gt;, size_type pos, size_type parent, Args&amp;&amp;... args)</span></span>
+<span id="L489"><span class="lineNum">     489</span> <span class="tlaGNC">          76 :       size_type insert_node_to_tree(tree_link_direction_constant&lt;dir&gt;, size_type pos, size_type parent, Args&amp;&amp;... args)</span></span>
 <span id="L490"><span class="lineNum">     490</span>              :       {</span>
-<span id="L491"><span class="lineNum">     491</span> <span class="tlaGNC">          75 :         const auto n{insert_node(pos, std::forward&lt;Args&gt;(args)...)};</span></span>
+<span id="L491"><span class="lineNum">     491</span> <span class="tlaGNC">          76 :         const auto n{insert_node(pos, std::forward&lt;Args&gt;(args)...)};</span></span>
 <span id="L492"><span class="lineNum">     492</span>              : </span>
-<span id="L493"><span class="lineNum">     493</span> <span class="tlaGNC">          75 :         if(this-&gt;order() &gt; 1)</span></span>
+<span id="L493"><span class="lineNum">     493</span> <span class="tlaGNC">          76 :         if(this-&gt;order() &gt; 1)</span></span>
 <span id="L494"><span class="lineNum">     494</span>              :         {</span>
 <span id="L495"><span class="lineNum">     495</span>              :           if constexpr((dir != tree_link_direction::forward) &amp;&amp; is_directed(Connectivity::flavour))</span>
 <span id="L496"><span class="lineNum">     496</span>              :           {</span>
@@ -561,35 +561,35 @@
 <span id="L499"><span class="lineNum">     499</span>              : </span>
 <span id="L500"><span class="lineNum">     500</span>              :           if constexpr(dir != tree_link_direction::backward)</span>
 <span id="L501"><span class="lineNum">     501</span>              :           {</span>
-<span id="L502"><span class="lineNum">     502</span> <span class="tlaGNC">          74 :             Connectivity::join(parent, n);</span></span>
+<span id="L502"><span class="lineNum">     502</span> <span class="tlaGNC">          75 :             Connectivity::join(parent, n);</span></span>
 <span id="L503"><span class="lineNum">     503</span>              :           }</span>
 <span id="L504"><span class="lineNum">     504</span>              :         }</span>
 <span id="L505"><span class="lineNum">     505</span>              : </span>
-<span id="L506"><span class="lineNum">     506</span> <span class="tlaGNC">          75 :         return n;</span></span>
+<span id="L506"><span class="lineNum">     506</span> <span class="tlaGNC">          76 :         return n;</span></span>
 <span id="L507"><span class="lineNum">     507</span>              :       }</span>
 <span id="L508"><span class="lineNum">     508</span>              : </span>
 <span id="L509"><span class="lineNum">     509</span>              :       template&lt;tree_link_direction dir, class... Args&gt;</span>
-<span id="L510"><span class="lineNum">     510</span> <span class="tlaGNC">          75 :       size_type add_node_to_tree(tree_link_direction_constant&lt;dir&gt; tldc, size_type parent, Args&amp;&amp;... args)</span></span>
+<span id="L510"><span class="lineNum">     510</span> <span class="tlaGNC">          76 :       size_type add_node_to_tree(tree_link_direction_constant&lt;dir&gt; tldc, size_type parent, Args&amp;&amp;... args)</span></span>
 <span id="L511"><span class="lineNum">     511</span>              :       {</span>
-<span id="L512"><span class="lineNum">     512</span> <span class="tlaGNC">          75 :         return insert_node_to_tree(tldc, this-&gt;order(), parent, std::forward&lt;Args&gt;(args)...);</span></span>
+<span id="L512"><span class="lineNum">     512</span> <span class="tlaGNC">          76 :         return insert_node_to_tree(tldc, this-&gt;order(), parent, std::forward&lt;Args&gt;(args)...);</span></span>
 <span id="L513"><span class="lineNum">     513</span>              :       }</span>
 <span id="L514"><span class="lineNum">     514</span>              :     private:</span>
 <span id="L515"><span class="lineNum">     515</span>              :       class [[nodiscard]] insertion_sentinel</span>
 <span id="L516"><span class="lineNum">     516</span>              :       {</span>
 <span id="L517"><span class="lineNum">     517</span>              :       public:</span>
-<span id="L518"><span class="lineNum">     518</span> <span class="tlaGNC">          88 :         insertion_sentinel(graph_primitive&amp; g, size_type index)</span></span>
-<span id="L519"><span class="lineNum">     519</span> <span class="tlaGNC">          88 :           : m_Graph{g}</span></span>
-<span id="L520"><span class="lineNum">     520</span> <span class="tlaGNC">          88 :           , m_NodeIndex{index}</span></span>
-<span id="L521"><span class="lineNum">     521</span> <span class="tlaGNC">          88 :         {}</span></span>
+<span id="L518"><span class="lineNum">     518</span> <span class="tlaGNC">          89 :         insertion_sentinel(graph_primitive&amp; g, size_type index)</span></span>
+<span id="L519"><span class="lineNum">     519</span> <span class="tlaGNC">          89 :           : m_Graph{g}</span></span>
+<span id="L520"><span class="lineNum">     520</span> <span class="tlaGNC">          89 :           , m_NodeIndex{index}</span></span>
+<span id="L521"><span class="lineNum">     521</span> <span class="tlaGNC">          89 :         {}</span></span>
 <span id="L522"><span class="lineNum">     522</span>              : </span>
-<span id="L523"><span class="lineNum">     523</span> <span class="tlaGNC">          88 :         ~insertion_sentinel()</span></span>
+<span id="L523"><span class="lineNum">     523</span> <span class="tlaGNC">          89 :         ~insertion_sentinel()</span></span>
 <span id="L524"><span class="lineNum">     524</span>              :         {</span>
 <span id="L525"><span class="lineNum">     525</span>              :           if constexpr(!std::is_empty_v&lt;node_weight_type&gt;)</span>
 <span id="L526"><span class="lineNum">     526</span>              :           {</span>
-<span id="L527"><span class="lineNum">     527</span> <span class="tlaGNC">          88 :             if(static_cast&lt;Nodes&amp;&gt;(m_Graph).size() &gt; static_cast&lt;Connectivity&amp;&gt;(m_Graph).order())</span></span>
+<span id="L527"><span class="lineNum">     527</span> <span class="tlaGNC">          89 :             if(static_cast&lt;Nodes&amp;&gt;(m_Graph).size() &gt; static_cast&lt;Connectivity&amp;&gt;(m_Graph).order())</span></span>
 <span id="L528"><span class="lineNum">     528</span> <span class="tlaUNC">           0 :               m_Graph.remove_excess_node(m_NodeIndex);</span></span>
 <span id="L529"><span class="lineNum">     529</span>              :           }</span>
-<span id="L530"><span class="lineNum">     530</span> <span class="tlaGNC">          88 :         }</span></span>
+<span id="L530"><span class="lineNum">     530</span> <span class="tlaGNC">          89 :         }</span></span>
 <span id="L531"><span class="lineNum">     531</span>              :       private:</span>
 <span id="L532"><span class="lineNum">     532</span>              :         graph_primitive&amp; m_Graph{};</span>
 <span id="L533"><span class="lineNum">     533</span>              :         size_type m_NodeIndex{};</span>
@@ -639,15 +639,15 @@
 <span id="L577"><span class="lineNum">     577</span>              :       pseudo_iterator end() noexcept { return {Connectivity::order(), *this}; }</span>
 <span id="L578"><span class="lineNum">     578</span>              : </span>
 <span id="L579"><span class="lineNum">     579</span>              :       template&lt;class... Args&gt;</span>
-<span id="L580"><span class="lineNum">     580</span> <span class="tlaGNC">          88 :       size_type insert_node_impl(const size_type pos, Args&amp;&amp;... args)</span></span>
+<span id="L580"><span class="lineNum">     580</span> <span class="tlaGNC">          89 :       size_type insert_node_impl(const size_type pos, Args&amp;&amp;... args)</span></span>
 <span id="L581"><span class="lineNum">     581</span>              :       {</span>
-<span id="L582"><span class="lineNum">     582</span> <span class="tlaGNC">          88 :         const auto node{std::ranges::min(pos, this-&gt;order())};</span></span>
+<span id="L582"><span class="lineNum">     582</span> <span class="tlaGNC">          89 :         const auto node{std::ranges::min(pos, this-&gt;order())};</span></span>
 <span id="L583"><span class="lineNum">     583</span>              :         if constexpr (!std::is_empty_v&lt;node_weight_type&gt;)</span>
 <span id="L584"><span class="lineNum">     584</span>              :         {</span>
-<span id="L585"><span class="lineNum">     585</span> <span class="tlaGNC">         263 :           Nodes::insert_node(this-&gt;cbegin_node_weights() + node, std::forward&lt;Args&gt;(args)...);</span></span>
+<span id="L585"><span class="lineNum">     585</span> <span class="tlaGNC">         266 :           Nodes::insert_node(this-&gt;cbegin_node_weights() + node, std::forward&lt;Args&gt;(args)...);</span></span>
 <span id="L586"><span class="lineNum">     586</span>              :         }</span>
 <span id="L587"><span class="lineNum">     587</span>              : </span>
-<span id="L588"><span class="lineNum">     588</span> <span class="tlaGNC">          88 :         return node;</span></span>
+<span id="L588"><span class="lineNum">     588</span> <span class="tlaGNC">          89 :         return node;</span></span>
 <span id="L589"><span class="lineNum">     589</span>              :       }</span>
 <span id="L590"><span class="lineNum">     590</span>              : </span>
 <span id="L591"><span class="lineNum">     591</span> <span class="tlaUNC">           0 :       void remove_excess_node(size_type index)</span></span>

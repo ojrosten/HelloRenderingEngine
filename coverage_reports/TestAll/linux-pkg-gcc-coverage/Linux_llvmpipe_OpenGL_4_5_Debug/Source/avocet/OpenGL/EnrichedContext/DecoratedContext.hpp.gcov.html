@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 17:13:18</td>
+            <td class="headerValue">2026-03-04 19:26:08</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntryHi">97.8&nbsp;%</td>
-            <td class="headerCovTableEntry">46</td>
-            <td class="headerCovTableEntry">45</td>
+            <td class="headerCovTableEntryHi">97.7&nbsp;%</td>
+            <td class="headerCovTableEntry">44</td>
+            <td class="headerCovTableEntry">43</td>
           </tr>
                   <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -81,35 +81,35 @@
 <span id="L19"><span class="lineNum">      19</span>              :             requires is_decorator_v&lt;Prologue&gt;</span>
 <span id="L20"><span class="lineNum">      20</span>              :                   &amp;&amp; is_decorator_v&lt;Epilogue&gt;</span>
 <span id="L21"><span class="lineNum">      21</span>              :                   &amp;&amp; std::is_invocable_r_v&lt;GladGLContext, Loader, GladGLContext&gt;</span>
-<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">          30 :         decorated_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)</span></span>
-<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">          30 :             : context{mode, std::move(loader)}</span></span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          60 :             , m_Prologue{std::move(prologue)}</span></span>
-<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">         120 :             , m_Epilogue{std::move(epilogue)}</span></span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          30 :         {}</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">          32 :         decorated_context(debugging_mode mode, Loader loader, Prologue prologue, Epilogue epilogue)</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">          32 :             : context{mode, std::move(loader)}</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          64 :             , m_Prologue{std::move(prologue)}</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">         128 :             , m_Epilogue{std::move(epilogue)}</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          32 :         {}</span></span>
 <span id="L27"><span class="lineNum">      27</span>              : </span>
 <span id="L28"><span class="lineNum">      28</span>              :         template&lt;class Fn, class... Args&gt;</span>
 <span id="L29"><span class="lineNum">      29</span>              :             requires (!std::is_void_v&lt;std::invoke_result_t&lt;Fn, Args...&gt;&gt;)</span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">         446 :         std::invoke_result_t&lt;Fn, Args...&gt; invoke(this const decorated_context&amp; self, const decorator_data&amp; data, Fn fn, Args... args) {</span></span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">         446 :             if(self.m_Prologue) self.m_Prologue(self, data);</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">         454 :         std::invoke_result_t&lt;Fn, Args...&gt; invoke(this const decorated_context&amp; self, const decorator_data&amp; data, Fn fn, Args... args) {</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">         454 :             if(self.m_Prologue) self.m_Prologue(self, data);</span></span>
 <span id="L32"><span class="lineNum">      32</span>              :         </span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">         446 :             const auto res{fn(args...)};</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">         454 :             const auto res{fn(args...)};</span></span>
 <span id="L34"><span class="lineNum">      34</span>              :         </span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">         446 :             if(self.m_Epilogue) self.m_Epilogue(self, data);</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">         454 :             if(self.m_Epilogue) self.m_Epilogue(self, data);</span></span>
 <span id="L36"><span class="lineNum">      36</span>              :         </span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         445 :             return res;</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         453 :             return res;</span></span>
 <span id="L38"><span class="lineNum">      38</span>              :         }</span>
 <span id="L39"><span class="lineNum">      39</span>              :         </span>
 <span id="L40"><span class="lineNum">      40</span>              :         template&lt;class Fn, class... Args&gt;</span>
 <span id="L41"><span class="lineNum">      41</span>              :             requires std::is_void_v&lt;std::invoke_result_t&lt;Fn, Args...&gt;&gt;</span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">        1423 :         void invoke(this const decorated_context&amp; self, const decorator_data&amp; data, Fn fn, Args... args) {</span></span>
-<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">        1423 :             if(self.m_Prologue) self.m_Prologue(self, data);</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">        1464 :         void invoke(this const decorated_context&amp; self, const decorator_data&amp; data, Fn fn, Args... args) {</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">        1464 :             if(self.m_Prologue) self.m_Prologue(self, data);</span></span>
 <span id="L44"><span class="lineNum">      44</span>              :         </span>
-<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">        1422 :             fn(args...);</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">        1463 :             fn(args...);</span></span>
 <span id="L46"><span class="lineNum">      46</span>              :         </span>
-<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">        1429 :             if(self.m_Epilogue) self.m_Epilogue(self, data);</span></span>
-<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">        1419 :         }</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">        1464 :             if(self.m_Epilogue) self.m_Epilogue(self, data);</span></span>
+<span id="L48"><span class="lineNum">      48</span> <span class="tlaGNC">        1458 :         }</span></span>
 <span id="L49"><span class="lineNum">      49</span>              :     protected:</span>
-<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">          30 :         ~decorated_context() = default;</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">          32 :         ~decorated_context() = default;</span></span>
 <span id="L51"><span class="lineNum">      51</span>              : </span>
 <span id="L52"><span class="lineNum">      52</span>              :         decorated_context(decorated_context&amp;&amp;) noexcept = default;</span>
 <span id="L53"><span class="lineNum">      53</span>              : </span>
