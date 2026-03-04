@@ -22,16 +22,21 @@ namespace avocet::testing
     void shader_program_broken_stages_free_test::run_tests()
     {
         using namespace curlew;
-        ;
-        auto w{create_window({.hiding{window_hiding_mode::on}})};
 
+        test_broken_programs(create_window({.hiding{window_hiding_mode::on}}));
+        test_broken_programs(create_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::basic}}));
+    }
+
+    void shader_program_broken_stages_free_test::test_broken_programs(const curlew::window& win)
+    {
+        using namespace curlew;
         const auto shaderDir{working_materials()};
 
         check_exception_thrown<std::runtime_error>(
             "Broken Vertex Shader",
-            [&](){
+            [&]() {
                 agl::shader_program sp{
-                    w.context(),
+                    win.context(),
                     shaderDir / "Broken_Identity.vs",
                     shaderDir / "Monochrome.fs"
                 };
@@ -40,9 +45,9 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Broken Fragment Shader",
-            [&](){
+            [&]() {
                 agl::shader_program sp{
-                    w.context(),
+                    win.context(),
                     shaderDir / "Identity.vs",
                     shaderDir / "Broken_Monochrome.fs"
                 };
@@ -51,9 +56,9 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Unlinkable Vertex Shader / Fragment Shader Combo",
-            [&](){
+            [&]() {
                 agl::shader_program sp{
-                    w.context(),
+                    win.context(),
                     shaderDir / "Output_vec3.vs",
                     shaderDir / "Input_float.fs"
                 };
