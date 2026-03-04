@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-03 19:07:42</td>
+            <td class="headerValue">2026-03-04 17:13:18</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntryLo">51.2&nbsp;%</td>
-            <td class="headerCovTableEntry">291</td>
-            <td class="headerCovTableEntry">149</td>
+            <td class="headerCovTableEntryLo">51.0&nbsp;%</td>
+            <td class="headerCovTableEntry">296</td>
+            <td class="headerCovTableEntry">151</td>
           </tr>
                   <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -112,7 +112,7 @@
 <span id="L50"><span class="lineNum">      50</span>              : </span>
 <span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">          11 :     suite(std::string name, Ts&amp;&amp;... ts)</span></span>
 <span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">          22 :       : m_Name{std::move(name)}</span></span>
-<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">          45 :       , m_Values{std::forward&lt;Ts&gt;(ts)...} {}</span></span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">          46 :       , m_Values{std::forward&lt;Ts&gt;(ts)...} {}</span></span>
 <span id="L54"><span class="lineNum">      54</span>              : </span>
 <span id="L55"><span class="lineNum">      55</span>              :     [[nodiscard]]</span>
 <span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">          22 :     const std::string&amp; name() const noexcept { return m_Name; }</span></span>
@@ -121,7 +121,7 @@
 <span id="L59"><span class="lineNum">      59</span>              :     const std::tuple&lt;Ts...&gt;&amp; values() const noexcept { return m_Values; }</span>
 <span id="L60"><span class="lineNum">      60</span>              : </span>
 <span id="L61"><span class="lineNum">      61</span>              :     [[nodiscard]]</span>
-<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">          34 :     std::tuple&lt;Ts...&gt;&amp; values() noexcept { return m_Values; }</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">          35 :     std::tuple&lt;Ts...&gt;&amp; values() noexcept { return m_Values; }</span></span>
 <span id="L63"><span class="lineNum">      63</span>              :   };</span>
 <span id="L64"><span class="lineNum">      64</span>              : </span>
 <span id="L65"><span class="lineNum">      65</span>              : </span>
@@ -321,9 +321,9 @@
 <span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">          11 :     Tree&amp;&amp; extract_tree(suite&lt;Ts...&gt;&amp; s, Filter&amp;&amp; filter, Transform transform, Tree&amp;&amp; tree, const SizeType parentNode, const PreviousSuites&amp;... previous)</span></span>
 <span id="L260"><span class="lineNum">     260</span>              :     {</span>
 <span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">          11 :       auto emplacer{</span></span>
-<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">          34 :         [&amp;](SizeType node, auto&amp;&amp; val) {</span></span>
-<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC">          34 :           if(filter(val, previous..., s))</span></span>
-<span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">          68 :             tree.add_node(node, transform(std::move(val)));</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">          35 :         [&amp;](SizeType node, auto&amp;&amp; val) {</span></span>
+<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC">          35 :           if(filter(val, previous..., s))</span></span>
+<span id="L264"><span class="lineNum">     264</span> <span class="tlaGNC">          70 :             tree.add_node(node, transform(std::move(val)));</span></span>
 <span id="L265"><span class="lineNum">     265</span>              :         }</span>
 <span id="L266"><span class="lineNum">     266</span>              :       };</span>
 <span id="L267"><span class="lineNum">     267</span>              : </span>
@@ -442,9 +442,9 @@
 <span id="L380"><span class="lineNum">     380</span>              :     template&lt;class T, class... Suites&gt;</span>
 <span id="L381"><span class="lineNum">     381</span>              :       requires (is_suite_v&lt;Suites&gt; &amp;&amp; ...) &amp;&amp; granular_filter_for&lt;ItemKeyType, ItemCompare, ItemProjector, T&gt;</span>
 <span id="L382"><span class="lineNum">     382</span>              :     [[nodiscard]]</span>
-<span id="L383"><span class="lineNum">     383</span> <span class="tlaGNC">          34 :     bool operator()(const T&amp; val, const Suites&amp;... suites)</span></span>
+<span id="L383"><span class="lineNum">     383</span> <span class="tlaGNC">          35 :     bool operator()(const T&amp; val, const Suites&amp;... suites)</span></span>
 <span id="L384"><span class="lineNum">     384</span>              :     {</span>
-<span id="L385"><span class="lineNum">     385</span> <span class="tlaGNC">          34 :       if(!m_SelectedSuites &amp;&amp; !m_SelectedItems) return true;</span></span>
+<span id="L385"><span class="lineNum">     385</span> <span class="tlaGNC">          35 :       if(!m_SelectedSuites &amp;&amp; !m_SelectedItems) return true;</span></span>
 <span id="L386"><span class="lineNum">     386</span>              : </span>
 <span id="L387"><span class="lineNum">     387</span>              :       // Don't use logical short-circuit, otherwise the maps may not accurately update</span>
 <span id="L388"><span class="lineNum">     388</span> <span class="tlaUNC">           0 :       std::array&lt;bool, sizeof...(Suites) + 1&gt; isFound{ find(m_SelectedItems, val, m_Proj, m_Compare), find(m_SelectedSuites, suites, item_to_name{}, std::ranges::equal_to{}) ... };</span></span>

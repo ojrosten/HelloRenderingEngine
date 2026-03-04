@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-03 19:07:42</td>
+            <td class="headerValue">2026-03-04 17:13:18</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">18.5&nbsp;%</td>
@@ -216,9 +216,9 @@
 <span id="L154"><span class="lineNum">     154</span>              :     template&lt;class Fn, class... Args&gt;</span>
 <span id="L155"><span class="lineNum">     155</span>              :       requires std::invocable&lt;Fn, Args...&gt; &amp;&amp; std::is_convertible_v&lt;R, std::invoke_result_t&lt;Fn, Args...&gt;&gt;</span>
 <span id="L156"><span class="lineNum">     156</span>              :     [[nodiscard]]</span>
-<span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">         132 :     constexpr std::invoke_result_t&lt;Fn, Args...&gt; push(Fn&amp;&amp; fn, Args&amp;&amp;... args)</span></span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">         134 :     constexpr std::invoke_result_t&lt;Fn, Args...&gt; push(Fn&amp;&amp; fn, Args&amp;&amp;... args)</span></span>
 <span id="L158"><span class="lineNum">     158</span>              :     {</span>
-<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">         264 :       return std::forward&lt;Fn&gt;(fn)(std::forward&lt;Args&gt;(args)...);</span></span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">         268 :       return std::forward&lt;Fn&gt;(fn)(std::forward&lt;Args&gt;(args)...);</span></span>
 <span id="L160"><span class="lineNum">     160</span>              :     }</span>
 <span id="L161"><span class="lineNum">     161</span>              :   };</span>
 <span id="L162"><span class="lineNum">     162</span>              : </span>

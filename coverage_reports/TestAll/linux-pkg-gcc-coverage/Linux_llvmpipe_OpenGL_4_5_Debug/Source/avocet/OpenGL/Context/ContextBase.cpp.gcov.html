@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-03 19:07:42</td>
+            <td class="headerValue">2026-03-04 17:13:18</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">50.0&nbsp;%</td>
@@ -87,16 +87,16 @@
 <span id="L25"><span class="lineNum">      25</span> <span class="tlaUNC">           0 :         throw std::runtime_error{error_message(&quot;debugging_mode&quot;, mode)};</span></span>
 <span id="L26"><span class="lineNum">      26</span>              :     }</span>
 <span id="L27"><span class="lineNum">      27</span>              : </span>
-<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          28 :     void context_base::init_debug() {</span></span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          28 :         if((debug_mode() != debugging_mode::dynamic) or !debug_output_supported(*this))</span></span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           3 :             return;</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          30 :     void context_base::init_debug() {</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          30 :         if((debug_mode() != debugging_mode::dynamic) or !debug_output_supported(*this))</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           4 :             return;</span></span>
 <span id="L31"><span class="lineNum">      31</span>              : </span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          25 :         GLint flags{};</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          25 :         gl_function{&amp;GladGLContext::GetIntegerv}(*this, GL_CONTEXT_FLAGS, &amp;flags);</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          25 :         if(flags &amp; GL_CONTEXT_FLAG_DEBUG_BIT) {</span></span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT);</span></span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT_SYNCHRONOUS);</span></span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          25 :             gl_function{&amp;GladGLContext::DebugMessageControl}(</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          26 :         GLint flags{};</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          26 :         gl_function{&amp;GladGLContext::GetIntegerv}(*this, GL_CONTEXT_FLAGS, &amp;flags);</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          26 :         if(flags &amp; GL_CONTEXT_FLAG_DEBUG_BIT) {</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          26 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT);</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          26 :             gl_function{&amp;GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT_SYNCHRONOUS);</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          26 :             gl_function{&amp;GladGLContext::DebugMessageControl}(</span></span>
 <span id="L38"><span class="lineNum">      38</span>              :                 *this,</span>
 <span id="L39"><span class="lineNum">      39</span>              :                 GL_DONT_CARE,</span>
 <span id="L40"><span class="lineNum">      40</span>              :                 GL_DONT_CARE,</span>

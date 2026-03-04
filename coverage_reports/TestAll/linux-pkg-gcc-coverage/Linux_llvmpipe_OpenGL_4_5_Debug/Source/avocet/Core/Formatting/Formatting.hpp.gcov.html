@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-03 19:07:42</td>
+            <td class="headerValue">2026-03-04 17:13:18</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntryLo">33.3&nbsp;%</td>
+            <td class="headerCovTableEntryLo">40.0&nbsp;%</td>
             <td class="headerCovTableEntry">30</td>
-            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">12</td>
           </tr>
                   <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -101,10 +101,10 @@
 <span id="L39"><span class="lineNum">      39</span>              :     template&lt;class Enum&gt;</span>
 <span id="L40"><span class="lineNum">      40</span>              :         requires std::is_scoped_enum_v&lt;Enum&gt; &amp;&amp; avocet::has_to_string&lt;Enum&gt;</span>
 <span id="L41"><span class="lineNum">      41</span>              :     struct formatter&lt;Enum&gt; {</span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">         360 :         constexpr auto parse(auto&amp; ctx) { return ctx.begin(); }</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">         362 :         constexpr auto parse(auto&amp; ctx) { return ctx.begin(); }</span></span>
 <span id="L43"><span class="lineNum">      43</span>              : </span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">         360 :         auto format(Enum val, auto&amp; ctx) const {</span></span>
-<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">         360 :             return format_to(ctx.out(), &quot;{}&quot;, to_string(val));</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">         362 :         auto format(Enum val, auto&amp; ctx) const {</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">         362 :             return format_to(ctx.out(), &quot;{}&quot;, to_string(val));</span></span>
 <span id="L46"><span class="lineNum">      46</span>              :         }</span>
 <span id="L47"><span class="lineNum">      47</span>              :     };</span>
 <span id="L48"><span class="lineNum">      48</span>              : }</span>
