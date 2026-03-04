@@ -144,21 +144,21 @@ namespace avocet::opengl {
         }
 
         void get_uniform(std::string_view name, GLfloat& val) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, val);
+            do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, &val);
         }
 
         void get_uniform(std::string_view name, GLint& val) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, val);
+            do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, &val);
         }
 
         template<std::size_t N>
         void get_uniform(std::string_view name, std::span<GLfloat, N> vals) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetnUniformfv}, vals);
+            do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, vals.data());
         }
 
         template<std::size_t N>
         void get_uniform(std::string_view name, std::span<GLint, N> vals) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetnUniformiv}, vals);
+            do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, vals.data());
         }
 
         [[nodiscard]]
@@ -178,15 +178,9 @@ namespace avocet::opengl {
         }
 
         template<gl_arithmetic T>
-        void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T& val) {
+        void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T* val) {
             use();
-            fn(m_Resource.view().context(), get_index(m_Resource), extract_uniform_location(name), &val);
-        }
-
-        template<gl_arithmetic T, std::size_t N>
-        void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, GLsizei, T*)> fn, std::span<T, N> vals) {
-            use();
-            fn(m_Resource.view().context(), get_index(m_Resource), extract_uniform_location(name), N*sizeof(GLfloat), vals.data());
+            fn(m_Resource.view().context(), get_index(m_Resource), extract_uniform_location(name), val);
         }
 
         class program_tracker {
