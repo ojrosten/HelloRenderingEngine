@@ -20,6 +20,9 @@
 namespace avocet::opengl {
     enum class debugging_mode { off = 0, basic, dynamic };
 
+    [[nodiscard]]
+    std::string to_string(debugging_mode mode);
+
     class unique_glad_context {
         GladGLContext m_Context{};
     public:
