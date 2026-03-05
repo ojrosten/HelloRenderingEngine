@@ -13,6 +13,12 @@
 
 namespace avocet::opengl::capabilities::impl {
     namespace {
+        enum class face_selection_mode : GLenum {
+            front          = GL_FRONT,
+            back           = GL_BACK,
+            front_and_back = GL_FRONT_AND_BACK
+        };
+
         void do_configure(const decorated_context& ctx, face_selection_mode face, const gl_stencil_func& requested) {
             gl_function{&GladGLContext::StencilFuncSeparate}(ctx, to_gl_enum(face), to_gl_enum(requested.comparison), requested.reference_value, requested.mask);
         }

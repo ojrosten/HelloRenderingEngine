@@ -137,15 +137,6 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(comparison_mode mode);
 
-    enum class face_selection_mode : GLenum {
-        front          = GL_FRONT,
-        back           = GL_BACK,
-        front_and_back = GL_FRONT_AND_BACK
-    };
-
-    [[nodiscard]]
-    std::string to_string(face_selection_mode mode);
-
     enum class depth_buffer_write_mode : GLboolean {
         disabled = GL_FALSE,
         enabled  = GL_TRUE

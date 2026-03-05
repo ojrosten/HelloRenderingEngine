@@ -132,18 +132,6 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    std::string to_string(face_selection_mode mode) {
-        using enum face_selection_mode;
-        switch(mode) {
-        case front         : return "front";
-        case back          : return "back";
-        case front_and_back: return "front_and_back";
-        }
-
-        throw std::runtime_error{error_message("face_selection_mode", mode)};
-    }
-
-    [[nodiscard]]
     std::string to_string(depth_buffer_write_mode mode) {
         using enum depth_buffer_write_mode;
         switch(mode) {
