@@ -27,6 +27,7 @@ namespace avocet::testing {
         auto w{ create_window({.hiding{curlew::window_hiding_mode::on}})};
 
         test_blending(w.context());
+        test_depth_test(w.context());
         test_sample_coverage(w.context());
         test_stencil_test(w.context());
     }

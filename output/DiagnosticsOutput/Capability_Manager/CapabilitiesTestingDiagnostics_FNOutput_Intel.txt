@@ -1,4 +1,4 @@
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 42
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 43
 
 [avocet::opengl::capabilities::gl_blend]
 operator== returned false
@@ -85,7 +85,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 43
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 44
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capable_context>]
@@ -158,7 +158,81 @@ Checking for weak equivalence with:
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 62
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 55
+
+[avocet::opengl::capabilities::gl_depth_test]
+operator== returned false
+
+  Func
+  [avocet::opengl::comparison_mode]
+  operator== returned false
+  Obtained : less
+  Predicted: greater_or_equal
+
+  Mask
+  [avocet::opengl::depth_buffer_write_mode]
+  operator== returned false
+  Obtained : enabled
+  Predicted: disabled
+
+  Poly Offset
+  [avocet::opengl::capabilities::gl_polygon_offset]
+  operator== returned false
+
+    Factor
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.4
+
+    Units
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 1.2
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 56
+
+Comparison performed using:
+[sequoia::testing::value_tester<avocet::opengl::capable_context>]
+Checking for weak equivalence with:
+[avocet::opengl::capabilities::gl_depth_test]
+
+  Func
+  [unsigned int]
+  operator== returned false
+  Obtained : 513
+  Predicted: 518
+
+  MasK
+  [unsigned char]
+  operator== returned false
+  Obtained : 1
+  Predicted: 0
+
+  Poly Offset
+  Comparison performed using:
+  [sequoia::testing::value_tester<avocet::opengl::capable_context>]
+  Checking for weak equivalence with:
+  [avocet::opengl::capabilities::gl_polygon_offset]
+
+    Factor
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 0.4
+
+    Units
+    [float]
+    operator== returned false
+    Obtained : 0
+    Predicted: 1.2
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 63
 
 [avocet::opengl::capabilities::gl_sample_coverage]
 operator== returned false
@@ -177,7 +251,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 63
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 64
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capable_context>]
@@ -198,7 +272,7 @@ Checking for weak equivalence with:
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 82
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 83
 
 [avocet::opengl::capabilities::gl_stencil_test]
 operator== returned false
@@ -321,7 +395,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 83
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 84
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capable_context>]
