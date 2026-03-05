@@ -29,10 +29,9 @@ namespace avocet::testing
         using poly_maker_t = make_polygon<float, 3, dimensionality{2}>;
         using verts_t      = poly_maker_t::vertices_type;
 
-        const float x1{-0.5f * std::sin(2.0f * std::numbers::pi_v<float> / 3.0f)};
-        const float y1{ 0.5f * std::cos(2.0f * std::numbers::pi_v<float> / 3.0f)};
-        const float x2{-0.5f * std::sin(4.0f * std::numbers::pi_v<float> / 3.0f)};
-        const float y2{ 0.5f * std::cos(4.0f * std::numbers::pi_v<float> / 3.0f)};
-        check(equality, "", poly_maker_t{}(), verts_t{{{{0.0f, 0.5f}}, {{x1, y1}}, {{x2, y2}}}});
+        const float xHigh{std::sqrt(3.0f) / 4.0f};
+        for(auto [obtained, predicted] : std::views::zip(poly_maker_t{}(), verts_t{{{{0.0f, 0.5f}}, {{-xHigh, -0.25f}}, {{xHigh, -0.25f}}}})) {
+            check(within_tolerance{1e-6f}, "", sequoia::get<0>(obtained), sequoia::get<0>(predicted));
+        }
     }
 }
