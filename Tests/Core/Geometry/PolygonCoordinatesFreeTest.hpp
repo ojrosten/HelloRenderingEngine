@@ -24,5 +24,9 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+    private:
+        void check_triangle();
+
+        void check_textured_triangle();
     };
 }
