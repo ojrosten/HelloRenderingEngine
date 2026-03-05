@@ -47,12 +47,13 @@ namespace avocet::testing {
         };
 
         constexpr gl_blend configuredBlend2{
-            .rgb  {.modes{.source{agl::blend_mode::const_colour}, .destination{agl::blend_mode::one_minus_const_colour}},   .algebraic_op{agl::blend_eqn_mode::add}},
+            .rgb  {.modes{.source{agl::blend_mode::const_colour}, .destination{agl::blend_mode::one_minus_const_colour}}, .algebraic_op{agl::blend_eqn_mode::add}},
             .alpha{.modes{.source{agl::blend_mode::const_alpha},  .destination{agl::blend_mode::one_minus_const_alpha}},  .algebraic_op{agl::blend_eqn_mode::max}},
             .colour{0.3f, 0.4f, 0.1f, 0.2f}
         };
 
-        check(equality        , "", configuredBlend0, configuredBlend1);
+        check(equality        , "", gl_blend{}      , configuredBlend0);
+        check(equality        , "", configuredBlend1, configuredBlend2);
         check(weak_equivalence, "", ctx             , configuredBlend2);
     }
 
@@ -70,8 +71,8 @@ namespace avocet::testing {
             .poly_offset{0.4f, 1.2f}
         };
 
-        check(equality        , "", configuredDepthTest0, configuredDepthTest1);
-        check(weak_equivalence, "", ctx                 , configuredDepthTest1);
+        check(equality        , "", gl_depth_test{}, configuredDepthTest0);
+        check(weak_equivalence, "", ctx            , configuredDepthTest1);
     }
 
     void capabilities_false_negative_test::test_sample_coverage(const opengl::capable_context& ctx)
@@ -124,7 +125,8 @@ namespace avocet::testing {
             }
         };
 
-        check(equality        , "", configuredStencilTest0, configuredStencilTest1);
+        check(equality        , "Exposes a bug with the Intel Arc driver", gl_stencil_test{}, configuredStencilTest0);
+        check(equality        , "", configuredStencilTest1, configuredStencilTest2);
         check(weak_equivalence, "", ctx                   , configuredStencilTest2);
     }
 
