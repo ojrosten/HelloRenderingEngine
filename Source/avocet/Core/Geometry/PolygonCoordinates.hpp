@@ -72,7 +72,8 @@ namespace avocet {
     };
 
     template<std::floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
-    struct make_polygon_vertices {
+        requires (3 <= N) && (dimensionality{2} <= ArenaDimension)
+    struct make_polygon {
         using vertex_attribute_type = sequoia::mem_ordered_tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
         using vertices_type = std::array<vertex_attribute_type, N>;
 

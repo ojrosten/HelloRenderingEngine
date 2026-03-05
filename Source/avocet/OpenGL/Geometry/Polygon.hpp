@@ -88,7 +88,7 @@ namespace avocet::opengl {
         polygon_base(polygon_base&&)            noexcept = default;
         polygon_base& operator=(polygon_base&&) noexcept = default;
     private:
-        const inline static vertices_type st_Vertices{make_polygon_vertices<T, N, ArenaDimension, Attributes...>{}()};
+        const inline static vertices_type st_Vertices{make_polygon<T, N, ArenaDimension, Attributes...>{}()};
 
         vertex_buffer_object<vertex_attribute_type> m_VBO;
         vertex_attribute_object m_VAO;
