@@ -1,2 +1,2 @@
 Polygon Coordinates Free Test
-Standard Top Level Checks:                 9;  Failures:  0  [Deep checks: 27]
+Standard Top Level Checks:                10;  Failures:  0  [Deep checks: 28]

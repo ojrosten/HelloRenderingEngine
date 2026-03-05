@@ -26,8 +26,17 @@ namespace avocet::testing
 
     void polygon_coordinates_free_test::run_tests()
     {
+        check_exceptions();
         check_triangle();
         check_textured_triangle();
+    }
+
+    void polygon_coordinates_free_test::check_exceptions()
+    {
+        check_exception_thrown<std::domain_error>(
+            "",
+            []() { return make_polygon_coordinates<float, dimensionality{2}>(1, 0); }
+        );
     }
 
     void polygon_coordinates_free_test::check_triangle()

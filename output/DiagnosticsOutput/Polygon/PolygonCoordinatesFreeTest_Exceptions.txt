@@ -1,0 +1,8 @@
+Tests/Core/Geometry/PolygonCoordinatesFreeTest.cpp, Line 37
+
+Expected Exception Type:
+[std::domain_error]
+make_polygon_coordinates: The number of polygon vertices must be greater than zero
+
+=======================================
+

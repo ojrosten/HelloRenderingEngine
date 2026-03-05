@@ -25,6 +25,8 @@ namespace avocet::testing
 
         void run_tests();
     private:
+        void check_exceptions();
+
         void check_triangle();
 
         void check_textured_triangle();
