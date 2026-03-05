@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 19:26:08</td>
+            <td class="headerValue">2026-03-05 11:51:02</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntryLo">54.4&nbsp;%</td>
+            <td class="headerCovTableEntryLo">59.6&nbsp;%</td>
             <td class="headerCovTableEntry">57</td>
-            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntry">34</td>
           </tr>
                   <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -156,9 +156,9 @@
 <span id="L94"><span class="lineNum">      94</span>              :     template&lt;bool IsFinalMessage, class T&gt;</span>
 <span id="L95"><span class="lineNum">      95</span>              :       requires (reportable&lt;T&gt; || !IsFinalMessage)</span>
 <span id="L96"><span class="lineNum">      96</span>              :     [[nodiscard]]</span>
-<span id="L97"><span class="lineNum">      97</span> <span class="tlaGNC">         155 :     static std::string reporter(final_message_constant&lt;IsFinalMessage&gt;, const std::ranges::equal_to&amp;, const T&amp; obtained, const T&amp; prediction)</span></span>
+<span id="L97"><span class="lineNum">      97</span> <span class="tlaGNC">         195 :     static std::string reporter(final_message_constant&lt;IsFinalMessage&gt;, const std::ranges::equal_to&amp;, const T&amp; obtained, const T&amp; prediction)</span></span>
 <span id="L98"><span class="lineNum">      98</span>              :     {</span>
-<span id="L99"><span class="lineNum">      99</span> <span class="tlaGNC">         155 :       return failure_message(final_message_constant&lt;IsFinalMessage&gt;{}, obtained, prediction);</span></span>
+<span id="L99"><span class="lineNum">      99</span> <span class="tlaGNC">         195 :       return failure_message(final_message_constant&lt;IsFinalMessage&gt;{}, obtained, prediction);</span></span>
 <span id="L100"><span class="lineNum">     100</span>              :     }</span>
 <span id="L101"><span class="lineNum">     101</span>              :   };</span>
 <span id="L102"><span class="lineNum">     102</span>              : </span>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 19:26:08</td>
+            <td class="headerValue">2026-03-05 11:51:02</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryMed">83.3&nbsp;%</td>
@@ -85,22 +85,22 @@
 <span id="L23"><span class="lineNum">      23</span>              : </span>
 <span id="L24"><span class="lineNum">      24</span>              :     namespace {</span>
 <span id="L25"><span class="lineNum">      25</span>              :         [[nodiscard]]</span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">        1855 :         std::optional&lt;debug_info&gt; get_next_message(const context&amp; ctx) {</span></span>
-<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">        1855 :             const std::size_t maxLen{ctx.characteristics().max_debug_message_length()};</span></span>
-<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">        1855 :             std::string message(maxLen, ' ');</span></span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">        1854 :             GLenum source{}, type{}, severity{};</span></span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">        1854 :             GLuint id{};</span></span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">        1854 :             GLsizei length{};</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">        1857 :         std::optional&lt;debug_info&gt; get_next_message(const context&amp; ctx) {</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">        1857 :             const std::size_t maxLen{ctx.characteristics().max_debug_message_length()};</span></span>
+<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">        1857 :             std::string message(maxLen, ' ');</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">        1859 :             GLenum source{}, type{}, severity{};</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">        1859 :             GLuint id{};</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">        1859 :             GLsizei length{};</span></span>
 <span id="L32"><span class="lineNum">      32</span>              : </span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">        1854 :             const auto numFound{gl_function{&amp;GladGLContext::GetDebugMessageLog}(ctx, 1, to_gl_sizei(message.size()), &amp;source, &amp;type, &amp;id, &amp;severity, &amp;length, message.data())};</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">        1855 :             const auto trimLen{((length &gt; 0) &amp;&amp; message[length - 1] == '\0') ? length - 1 : length};</span></span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">        1855 :             message.resize(trimLen);</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">        1859 :             const auto numFound{gl_function{&amp;GladGLContext::GetDebugMessageLog}(ctx, 1, to_gl_sizei(message.size()), &amp;source, &amp;type, &amp;id, &amp;severity, &amp;length, message.data())};</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">        1859 :             const auto trimLen{((length &gt; 0) &amp;&amp; message[length - 1] == '\0') ? length - 1 : length};</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">        1859 :             message.resize(trimLen);</span></span>
 <span id="L36"><span class="lineNum">      36</span>              : </span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">        1855 :             if(numFound)</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">        1858 :             if(numFound)</span></span>
 <span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           6 :                 return {{id, debug_source{source}, debug_type{type}, debug_severity{severity}, message}};</span></span>
 <span id="L39"><span class="lineNum">      39</span>              :             </span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">        1849 :             return std::nullopt;</span></span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">        1861 :         }</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">        1852 :             return std::nullopt;</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">        1864 :         }</span></span>
 <span id="L42"><span class="lineNum">      42</span>              : </span>
 <span id="L43"><span class="lineNum">      43</span>              :         /// The code below exemplifies how to use std::generator. However, since</span>
 <span id="L44"><span class="lineNum">      44</span>              :         /// this is unavailable on libc++, an alternative approach must be taken.</span>
@@ -257,7 +257,7 @@
 <span id="L195"><span class="lineNum">     195</span>              :     }</span>
 <span id="L196"><span class="lineNum">     196</span>              : </span>
 <span id="L197"><span class="lineNum">     197</span>              :     [[nodiscard]]</span>
-<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">        1848 :     STD_GENERATOR&lt;debug_info&gt; get_messages(const context&amp; ctx, num_messages maxNum) {</span></span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">        1850 :     STD_GENERATOR&lt;debug_info&gt; get_messages(const context&amp; ctx, num_messages maxNum) {</span></span>
 <span id="L199"><span class="lineNum">     199</span>              :         for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {</span>
 <span id="L200"><span class="lineNum">     200</span>              :             const std::optional&lt;debug_info&gt; message{get_next_message(ctx)};</span>
 <span id="L201"><span class="lineNum">     201</span>              :             if(!message) co_return;</span>

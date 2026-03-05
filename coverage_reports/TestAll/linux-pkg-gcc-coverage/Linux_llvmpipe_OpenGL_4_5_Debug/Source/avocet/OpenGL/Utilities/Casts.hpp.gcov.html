@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 19:26:08</td>
+            <td class="headerValue">2026-03-05 11:51:02</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -75,12 +75,12 @@
 <span id="L13"><span class="lineNum">      13</span>              : </span>
 <span id="L14"><span class="lineNum">      14</span>              : namespace avocet::opengl {</span>
 <span id="L15"><span class="lineNum">      15</span>              :     [[nodiscard]]</span>
-<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">        1919 :     constexpr GLsizei to_gl_sizei(std::size_t val) noexcept { return static_cast&lt;GLsizei&gt;(val); }</span></span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">        1923 :     constexpr GLsizei to_gl_sizei(std::size_t val) noexcept { return static_cast&lt;GLsizei&gt;(val); }</span></span>
 <span id="L17"><span class="lineNum">      17</span>              : </span>
 <span id="L18"><span class="lineNum">      18</span>              :     template&lt;class T&gt;</span>
 <span id="L19"><span class="lineNum">      19</span>              :         requires std::is_scoped_enum_v&lt;T&gt; &amp;&amp; std::is_same_v&lt;std::underlying_type_t&lt;T&gt;, GLenum&gt;</span>
 <span id="L20"><span class="lineNum">      20</span>              :     [[nodiscard]]</span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         930 :     constexpr GLenum to_gl_enum(T val) noexcept { return static_cast&lt;GLenum&gt;(val); }</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         931 :     constexpr GLenum to_gl_enum(T val) noexcept { return static_cast&lt;GLenum&gt;(val); }</span></span>
 <span id="L22"><span class="lineNum">      22</span>              : </span>
 <span id="L23"><span class="lineNum">      23</span>              :     template&lt;class T&gt;</span>
 <span id="L24"><span class="lineNum">      24</span>              :         requires (std::is_scoped_enum_v&lt;T&gt; &amp;&amp; std::is_same_v&lt;std::underlying_type_t&lt;T&gt;, GLint&gt;) || std::is_integral_v&lt;T&gt;</span>
@@ -90,7 +90,7 @@
 <span id="L28"><span class="lineNum">      28</span>              :     template&lt;class T&gt;</span>
 <span id="L29"><span class="lineNum">      29</span>              :         requires (std::is_scoped_enum_v&lt;T&gt;&amp;&amp; std::is_same_v&lt;std::underlying_type_t&lt;T&gt;, GLboolean&gt;)</span>
 <span id="L30"><span class="lineNum">      30</span>              :     [[nodiscard]]</span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          17 :     constexpr GLboolean to_gl_boolean(T val) noexcept { return static_cast&lt;GLboolean&gt;(val); }</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          18 :     constexpr GLboolean to_gl_boolean(T val) noexcept { return static_cast&lt;GLboolean&gt;(val); }</span></span>
 <span id="L32"><span class="lineNum">      32</span>              : }</span>
         </pre>
               </td>

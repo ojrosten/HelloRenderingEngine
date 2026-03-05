@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 19:26:08</td>
+            <td class="headerValue">2026-03-05 11:51:02</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -199,190 +199,181 @@
 <span id="L137"><span class="lineNum">     137</span>              :     [[nodiscard]]</span>
 <span id="L138"><span class="lineNum">     138</span>              :     std::string to_string(comparison_mode mode);</span>
 <span id="L139"><span class="lineNum">     139</span>              : </span>
-<span id="L140"><span class="lineNum">     140</span>              :     enum class face_selection_mode : GLenum {</span>
-<span id="L141"><span class="lineNum">     141</span>              :         front          = GL_FRONT,</span>
-<span id="L142"><span class="lineNum">     142</span>              :         back           = GL_BACK,</span>
-<span id="L143"><span class="lineNum">     143</span>              :         front_and_back = GL_FRONT_AND_BACK</span>
-<span id="L144"><span class="lineNum">     144</span>              :     };</span>
-<span id="L145"><span class="lineNum">     145</span>              : </span>
-<span id="L146"><span class="lineNum">     146</span>              :     [[nodiscard]]</span>
-<span id="L147"><span class="lineNum">     147</span>              :     std::string to_string(face_selection_mode mode);</span>
-<span id="L148"><span class="lineNum">     148</span>              : </span>
-<span id="L149"><span class="lineNum">     149</span>              :     enum class depth_buffer_write_mode : GLboolean {</span>
-<span id="L150"><span class="lineNum">     150</span>              :         disabled = GL_FALSE,</span>
-<span id="L151"><span class="lineNum">     151</span>              :         enabled  = GL_TRUE</span>
-<span id="L152"><span class="lineNum">     152</span>              :     };</span>
-<span id="L153"><span class="lineNum">     153</span>              : </span>
-<span id="L154"><span class="lineNum">     154</span>              :     [[nodiscard]]</span>
-<span id="L155"><span class="lineNum">     155</span>              :     std::string to_string(depth_buffer_write_mode mode);</span>
-<span id="L156"><span class="lineNum">     156</span>              : </span>
-<span id="L157"><span class="lineNum">     157</span>              :     template&lt;class T&gt;</span>
-<span id="L158"><span class="lineNum">     158</span>              :     inline constexpr bool is_capability_v{</span>
-<span id="L159"><span class="lineNum">     159</span>              :            std::regular&lt;T&gt;</span>
-<span id="L160"><span class="lineNum">     160</span>              :         &amp;&amp; requires {</span>
-<span id="L161"><span class="lineNum">     161</span>              :               { T::capability } -&gt; std::convertible_to&lt;gl_capability&gt;;</span>
-<span id="L162"><span class="lineNum">     162</span>              :           }</span>
-<span id="L163"><span class="lineNum">     163</span>              :     };</span>
-<span id="L164"><span class="lineNum">     164</span>              : </span>
-<span id="L165"><span class="lineNum">     165</span>              :     namespace capabilities {</span>
-<span id="L166"><span class="lineNum">     166</span>              :         /******************************* Blending *******************************/</span>
-<span id="L167"><span class="lineNum">     167</span>              :         struct gl_blend_modes {</span>
-<span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          77 :             blend_mode      source{blend_mode::one},</span></span>
-<span id="L169"><span class="lineNum">     169</span> <span class="tlaGNC">          64 :                 destination{blend_mode::zero};</span></span>
-<span id="L170"><span class="lineNum">     170</span>              : </span>
-<span id="L171"><span class="lineNum">     171</span>              :             [[nodiscard]]</span>
-<span id="L172"><span class="lineNum">     172</span> <span class="tlaGNC">          77 :             friend constexpr bool operator==(const gl_blend_modes&amp;, const gl_blend_modes&amp;) noexcept = default;</span></span>
-<span id="L173"><span class="lineNum">     173</span>              :         };</span>
-<span id="L174"><span class="lineNum">     174</span>              : </span>
-<span id="L175"><span class="lineNum">     175</span>              :         struct gl_blend_data {</span>
-<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">          61 :             gl_blend_modes modes{};</span></span>
-<span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC">          54 :             blend_eqn_mode algebraic_op{GL_FUNC_ADD};</span></span>
+<span id="L140"><span class="lineNum">     140</span>              :     enum class depth_buffer_write_mode : GLboolean {</span>
+<span id="L141"><span class="lineNum">     141</span>              :         disabled = GL_FALSE,</span>
+<span id="L142"><span class="lineNum">     142</span>              :         enabled  = GL_TRUE</span>
+<span id="L143"><span class="lineNum">     143</span>              :     };</span>
+<span id="L144"><span class="lineNum">     144</span>              : </span>
+<span id="L145"><span class="lineNum">     145</span>              :     [[nodiscard]]</span>
+<span id="L146"><span class="lineNum">     146</span>              :     std::string to_string(depth_buffer_write_mode mode);</span>
+<span id="L147"><span class="lineNum">     147</span>              : </span>
+<span id="L148"><span class="lineNum">     148</span>              :     template&lt;class T&gt;</span>
+<span id="L149"><span class="lineNum">     149</span>              :     inline constexpr bool is_capability_v{</span>
+<span id="L150"><span class="lineNum">     150</span>              :            std::regular&lt;T&gt;</span>
+<span id="L151"><span class="lineNum">     151</span>              :         &amp;&amp; requires {</span>
+<span id="L152"><span class="lineNum">     152</span>              :               { T::capability } -&gt; std::convertible_to&lt;gl_capability&gt;;</span>
+<span id="L153"><span class="lineNum">     153</span>              :           }</span>
+<span id="L154"><span class="lineNum">     154</span>              :     };</span>
+<span id="L155"><span class="lineNum">     155</span>              : </span>
+<span id="L156"><span class="lineNum">     156</span>              :     namespace capabilities {</span>
+<span id="L157"><span class="lineNum">     157</span>              :         /******************************* Blending *******************************/</span>
+<span id="L158"><span class="lineNum">     158</span>              :         struct gl_blend_modes {</span>
+<span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">          82 :             blend_mode      source{blend_mode::one},</span></span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">          64 :                 destination{blend_mode::zero};</span></span>
+<span id="L161"><span class="lineNum">     161</span>              : </span>
+<span id="L162"><span class="lineNum">     162</span>              :             [[nodiscard]]</span>
+<span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">          82 :             friend constexpr bool operator==(const gl_blend_modes&amp;, const gl_blend_modes&amp;) noexcept = default;</span></span>
+<span id="L164"><span class="lineNum">     164</span>              :         };</span>
+<span id="L165"><span class="lineNum">     165</span>              : </span>
+<span id="L166"><span class="lineNum">     166</span>              :         struct gl_blend_data {</span>
+<span id="L167"><span class="lineNum">     167</span> <span class="tlaGNC">          64 :             gl_blend_modes modes{};</span></span>
+<span id="L168"><span class="lineNum">     168</span> <span class="tlaGNC">          54 :             blend_eqn_mode algebraic_op{GL_FUNC_ADD};</span></span>
+<span id="L169"><span class="lineNum">     169</span>              : </span>
+<span id="L170"><span class="lineNum">     170</span>              :             [[nodiscard]]</span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaGNC">          64 :             friend constexpr bool operator==(const gl_blend_data&amp;, const gl_blend_data&amp;) noexcept = default;</span></span>
+<span id="L172"><span class="lineNum">     172</span>              :         };</span>
+<span id="L173"><span class="lineNum">     173</span>              : </span>
+<span id="L174"><span class="lineNum">     174</span>              :         struct gl_blend {</span>
+<span id="L175"><span class="lineNum">     175</span>              :             constexpr static auto capability{gl_capability::blend};</span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">          50 :             gl_blend_data rgb{}, alpha{rgb};</span></span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC">          22 :             std::array&lt;GLfloat, 4&gt; colour{};</span></span>
 <span id="L178"><span class="lineNum">     178</span>              : </span>
 <span id="L179"><span class="lineNum">     179</span>              :             [[nodiscard]]</span>
-<span id="L180"><span class="lineNum">     180</span> <span class="tlaGNC">          61 :             friend constexpr bool operator==(const gl_blend_data&amp;, const gl_blend_data&amp;) noexcept = default;</span></span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaGNC">          28 :             friend constexpr bool operator==(const gl_blend&amp;, const gl_blend&amp;) noexcept = default;</span></span>
 <span id="L181"><span class="lineNum">     181</span>              :         };</span>
 <span id="L182"><span class="lineNum">     182</span>              : </span>
-<span id="L183"><span class="lineNum">     183</span>              :         struct gl_blend {</span>
-<span id="L184"><span class="lineNum">     184</span>              :             constexpr static auto capability{gl_capability::blend};</span>
-<span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC">          49 :             gl_blend_data rgb{}, alpha{rgb};</span></span>
-<span id="L186"><span class="lineNum">     186</span> <span class="tlaGNC">          22 :             std::array&lt;GLfloat, 4&gt; colour{};</span></span>
-<span id="L187"><span class="lineNum">     187</span>              : </span>
-<span id="L188"><span class="lineNum">     188</span>              :             [[nodiscard]]</span>
-<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">          27 :             friend constexpr bool operator==(const gl_blend&amp;, const gl_blend&amp;) noexcept = default;</span></span>
-<span id="L190"><span class="lineNum">     190</span>              :         };</span>
-<span id="L191"><span class="lineNum">     191</span>              : </span>
-<span id="L192"><span class="lineNum">     192</span>              :         /******************************* Depth Testing *******************************/</span>
-<span id="L193"><span class="lineNum">     193</span>              : </span>
-<span id="L194"><span class="lineNum">     194</span>              :         struct gl_polygon_offset {</span>
-<span id="L195"><span class="lineNum">     195</span> <span class="tlaGNC">          30 :             GLfloat factor{};</span></span>
-<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">          26 :             GLfloat units{};</span></span>
-<span id="L197"><span class="lineNum">     197</span>              : </span>
-<span id="L198"><span class="lineNum">     198</span>              :             [[nodiscard]]</span>
-<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">          30 :             friend constexpr bool operator==(const gl_polygon_offset&amp;, const gl_polygon_offset&amp;) noexcept = default;</span></span>
-<span id="L200"><span class="lineNum">     200</span>              :         };</span>
-<span id="L201"><span class="lineNum">     201</span>              : </span>
-<span id="L202"><span class="lineNum">     202</span>              :         struct gl_depth_test {</span>
-<span id="L203"><span class="lineNum">     203</span>              :             constexpr static auto capability{gl_capability::depth_test};</span>
-<span id="L204"><span class="lineNum">     204</span>              : </span>
-<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          25 :             comparison_mode func{comparison_mode::less};</span></span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          21 :             depth_buffer_write_mode mask{depth_buffer_write_mode::enabled};</span></span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          21 :             gl_polygon_offset poly_offset{};</span></span>
+<span id="L183"><span class="lineNum">     183</span>              :         /******************************* Depth Testing *******************************/</span>
+<span id="L184"><span class="lineNum">     184</span>              : </span>
+<span id="L185"><span class="lineNum">     185</span>              :         struct gl_polygon_offset {</span>
+<span id="L186"><span class="lineNum">     186</span> <span class="tlaGNC">          32 :             GLfloat factor{};</span></span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC">          26 :             GLfloat units{};</span></span>
+<span id="L188"><span class="lineNum">     188</span>              : </span>
+<span id="L189"><span class="lineNum">     189</span>              :             [[nodiscard]]</span>
+<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">          32 :             friend constexpr bool operator==(const gl_polygon_offset&amp;, const gl_polygon_offset&amp;) noexcept = default;</span></span>
+<span id="L191"><span class="lineNum">     191</span>              :         };</span>
+<span id="L192"><span class="lineNum">     192</span>              : </span>
+<span id="L193"><span class="lineNum">     193</span>              :         struct gl_depth_test {</span>
+<span id="L194"><span class="lineNum">     194</span>              :             constexpr static auto capability{gl_capability::depth_test};</span>
+<span id="L195"><span class="lineNum">     195</span>              : </span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">          27 :             comparison_mode func{comparison_mode::less};</span></span>
+<span id="L197"><span class="lineNum">     197</span> <span class="tlaGNC">          21 :             depth_buffer_write_mode mask{depth_buffer_write_mode::enabled};</span></span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">          21 :             gl_polygon_offset poly_offset{};</span></span>
+<span id="L199"><span class="lineNum">     199</span>              : </span>
+<span id="L200"><span class="lineNum">     200</span>              :             [[nodiscard]]</span>
+<span id="L201"><span class="lineNum">     201</span> <span class="tlaGNC">          27 :             friend constexpr bool operator==(const gl_depth_test&amp;, const gl_depth_test&amp;) noexcept = default;</span></span>
+<span id="L202"><span class="lineNum">     202</span>              :         };</span>
+<span id="L203"><span class="lineNum">     203</span>              : </span>
+<span id="L204"><span class="lineNum">     204</span>              :         /******************************* Multisampling *******************************/</span>
+<span id="L205"><span class="lineNum">     205</span>              : </span>
+<span id="L206"><span class="lineNum">     206</span>              :         struct gl_multi_sample {</span>
+<span id="L207"><span class="lineNum">     207</span>              :             constexpr static auto capability{gl_capability::multi_sample};</span>
 <span id="L208"><span class="lineNum">     208</span>              : </span>
 <span id="L209"><span class="lineNum">     209</span>              :             [[nodiscard]]</span>
-<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">          25 :             friend constexpr bool operator==(const gl_depth_test&amp;, const gl_depth_test&amp;) noexcept = default;</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">           6 :             friend constexpr bool operator==(const gl_multi_sample&amp;, const gl_multi_sample&amp;) noexcept = default;</span></span>
 <span id="L211"><span class="lineNum">     211</span>              :         };</span>
 <span id="L212"><span class="lineNum">     212</span>              : </span>
-<span id="L213"><span class="lineNum">     213</span>              :         /******************************* Multisampling *******************************/</span>
+<span id="L213"><span class="lineNum">     213</span>              :         /******************************* Polygon Offsetting *******************************/</span>
 <span id="L214"><span class="lineNum">     214</span>              : </span>
-<span id="L215"><span class="lineNum">     215</span>              :         struct gl_multi_sample {</span>
-<span id="L216"><span class="lineNum">     216</span>              :             constexpr static auto capability{gl_capability::multi_sample};</span>
+<span id="L215"><span class="lineNum">     215</span>              :         struct gl_polygon_offset_fill {</span>
+<span id="L216"><span class="lineNum">     216</span>              :             constexpr static auto capability{gl_capability::polygon_offset_fill};</span>
 <span id="L217"><span class="lineNum">     217</span>              : </span>
 <span id="L218"><span class="lineNum">     218</span>              :             [[nodiscard]]</span>
-<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           6 :             friend constexpr bool operator==(const gl_multi_sample&amp;, const gl_multi_sample&amp;) noexcept = default;</span></span>
+<span id="L219"><span class="lineNum">     219</span> <span class="tlaGNC">           3 :             friend constexpr bool operator==(const gl_polygon_offset_fill&amp;, const gl_polygon_offset_fill&amp;) noexcept = default;</span></span>
 <span id="L220"><span class="lineNum">     220</span>              :         };</span>
 <span id="L221"><span class="lineNum">     221</span>              : </span>
-<span id="L222"><span class="lineNum">     222</span>              :         /******************************* Polygon Offsetting *******************************/</span>
-<span id="L223"><span class="lineNum">     223</span>              : </span>
-<span id="L224"><span class="lineNum">     224</span>              :         struct gl_polygon_offset_fill {</span>
-<span id="L225"><span class="lineNum">     225</span>              :             constexpr static auto capability{gl_capability::polygon_offset_fill};</span>
-<span id="L226"><span class="lineNum">     226</span>              : </span>
-<span id="L227"><span class="lineNum">     227</span>              :             [[nodiscard]]</span>
-<span id="L228"><span class="lineNum">     228</span> <span class="tlaGNC">           3 :             friend constexpr bool operator==(const gl_polygon_offset_fill&amp;, const gl_polygon_offset_fill&amp;) noexcept = default;</span></span>
-<span id="L229"><span class="lineNum">     229</span>              :         };</span>
-<span id="L230"><span class="lineNum">     230</span>              : </span>
-<span id="L231"><span class="lineNum">     231</span>              :         struct gl_polygon_offset_line {</span>
-<span id="L232"><span class="lineNum">     232</span>              :             constexpr static auto capability{gl_capability::polygon_offset_line};</span>
-<span id="L233"><span class="lineNum">     233</span>              : </span>
-<span id="L234"><span class="lineNum">     234</span>              :             [[nodiscard]]</span>
-<span id="L235"><span class="lineNum">     235</span> <span class="tlaGNC">           3 :             friend constexpr bool operator==(const gl_polygon_offset_line&amp;, const gl_polygon_offset_line&amp;) noexcept = default;</span></span>
-<span id="L236"><span class="lineNum">     236</span>              :         };</span>
+<span id="L222"><span class="lineNum">     222</span>              :         struct gl_polygon_offset_line {</span>
+<span id="L223"><span class="lineNum">     223</span>              :             constexpr static auto capability{gl_capability::polygon_offset_line};</span>
+<span id="L224"><span class="lineNum">     224</span>              : </span>
+<span id="L225"><span class="lineNum">     225</span>              :             [[nodiscard]]</span>
+<span id="L226"><span class="lineNum">     226</span> <span class="tlaGNC">           3 :             friend constexpr bool operator==(const gl_polygon_offset_line&amp;, const gl_polygon_offset_line&amp;) noexcept = default;</span></span>
+<span id="L227"><span class="lineNum">     227</span>              :         };</span>
+<span id="L228"><span class="lineNum">     228</span>              : </span>
+<span id="L229"><span class="lineNum">     229</span>              :         struct gl_polygon_offset_point {</span>
+<span id="L230"><span class="lineNum">     230</span>              :             constexpr static auto capability{gl_capability::polygon_offset_point};</span>
+<span id="L231"><span class="lineNum">     231</span>              : </span>
+<span id="L232"><span class="lineNum">     232</span>              :             [[nodiscard]]</span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">           3 :             friend constexpr bool operator==(const gl_polygon_offset_point&amp;, const gl_polygon_offset_point&amp;) noexcept = default;</span></span>
+<span id="L234"><span class="lineNum">     234</span>              :         };</span>
+<span id="L235"><span class="lineNum">     235</span>              : </span>
+<span id="L236"><span class="lineNum">     236</span>              :         /******************************* Sample Coverage *******************************/</span>
 <span id="L237"><span class="lineNum">     237</span>              : </span>
-<span id="L238"><span class="lineNum">     238</span>              :         struct gl_polygon_offset_point {</span>
-<span id="L239"><span class="lineNum">     239</span>              :             constexpr static auto capability{gl_capability::polygon_offset_point};</span>
+<span id="L238"><span class="lineNum">     238</span>              :         struct gl_sample_coverage {</span>
+<span id="L239"><span class="lineNum">     239</span>              :             constexpr static auto capability{gl_capability::sample_coverage};</span>
 <span id="L240"><span class="lineNum">     240</span>              : </span>
-<span id="L241"><span class="lineNum">     241</span>              :             [[nodiscard]]</span>
-<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">           3 :             friend constexpr bool operator==(const gl_polygon_offset_point&amp;, const gl_polygon_offset_point&amp;) noexcept = default;</span></span>
-<span id="L243"><span class="lineNum">     243</span>              :         };</span>
-<span id="L244"><span class="lineNum">     244</span>              : </span>
-<span id="L245"><span class="lineNum">     245</span>              :         /******************************* Sample Coverage *******************************/</span>
-<span id="L246"><span class="lineNum">     246</span>              : </span>
-<span id="L247"><span class="lineNum">     247</span>              :         struct gl_sample_coverage {</span>
-<span id="L248"><span class="lineNum">     248</span>              :             constexpr static auto capability{gl_capability::sample_coverage};</span>
+<span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          20 :             sample_coverage_value coverage_val{1.0};</span></span>
+<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          11 :             invert_sample_mask    invert{invert_sample_mask::no};</span></span>
+<span id="L243"><span class="lineNum">     243</span>              : </span>
+<span id="L244"><span class="lineNum">     244</span>              :             [[nodiscard]]</span>
+<span id="L245"><span class="lineNum">     245</span> <span class="tlaGNC">          20 :             friend constexpr bool operator==(const gl_sample_coverage&amp;, const gl_sample_coverage&amp;) noexcept = default;</span></span>
+<span id="L246"><span class="lineNum">     246</span>              :         };</span>
+<span id="L247"><span class="lineNum">     247</span>              : </span>
+<span id="L248"><span class="lineNum">     248</span>              :         /******************************* Sample Alpha to Coverage *******************************/</span>
 <span id="L249"><span class="lineNum">     249</span>              : </span>
-<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">          20 :             sample_coverage_value coverage_val{1.0};</span></span>
-<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">          11 :             invert_sample_mask    invert{invert_sample_mask::no};</span></span>
+<span id="L250"><span class="lineNum">     250</span>              :         struct gl_sample_alpha_to_coverage {</span>
+<span id="L251"><span class="lineNum">     251</span>              :             constexpr static auto capability{gl_capability::sample_alpha_to_coverage};</span>
 <span id="L252"><span class="lineNum">     252</span>              : </span>
 <span id="L253"><span class="lineNum">     253</span>              :             [[nodiscard]]</span>
-<span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC">          20 :             friend constexpr bool operator==(const gl_sample_coverage&amp;, const gl_sample_coverage&amp;) noexcept = default;</span></span>
+<span id="L254"><span class="lineNum">     254</span> <span class="tlaGNC">           6 :             friend constexpr bool operator==(const gl_sample_alpha_to_coverage&amp;, const gl_sample_alpha_to_coverage&amp;) noexcept = default;</span></span>
 <span id="L255"><span class="lineNum">     255</span>              :         };</span>
 <span id="L256"><span class="lineNum">     256</span>              : </span>
-<span id="L257"><span class="lineNum">     257</span>              :         /******************************* Sample Alpha to Coverage *******************************/</span>
+<span id="L257"><span class="lineNum">     257</span>              :         /******************************* Stencil Testing *******************************/</span>
 <span id="L258"><span class="lineNum">     258</span>              : </span>
-<span id="L259"><span class="lineNum">     259</span>              :         struct gl_sample_alpha_to_coverage {</span>
-<span id="L260"><span class="lineNum">     260</span>              :             constexpr static auto capability{gl_capability::sample_alpha_to_coverage};</span>
-<span id="L261"><span class="lineNum">     261</span>              : </span>
-<span id="L262"><span class="lineNum">     262</span>              :             [[nodiscard]]</span>
-<span id="L263"><span class="lineNum">     263</span> <span class="tlaGNC">           6 :             friend constexpr bool operator==(const gl_sample_alpha_to_coverage&amp;, const gl_sample_alpha_to_coverage&amp;) noexcept = default;</span></span>
-<span id="L264"><span class="lineNum">     264</span>              :         };</span>
-<span id="L265"><span class="lineNum">     265</span>              : </span>
-<span id="L266"><span class="lineNum">     266</span>              :         /******************************* Stencil Testing *******************************/</span>
+<span id="L259"><span class="lineNum">     259</span>              :         struct gl_stencil_func {</span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">          74 :             comparison_mode comparison{comparison_mode::always};</span></span>
+<span id="L261"><span class="lineNum">     261</span> <span class="tlaGNC">          50 :             GLint reference_value{};</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">          50 :             GLuint mask{std::numeric_limits&lt;GLuint&gt;::max()};</span></span>
+<span id="L263"><span class="lineNum">     263</span>              : </span>
+<span id="L264"><span class="lineNum">     264</span>              :             [[nodiscard]]</span>
+<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">          74 :             friend constexpr bool operator==(const gl_stencil_func&amp;, const gl_stencil_func&amp;) noexcept = default;</span></span>
+<span id="L266"><span class="lineNum">     266</span>              :         };</span>
 <span id="L267"><span class="lineNum">     267</span>              : </span>
-<span id="L268"><span class="lineNum">     268</span>              :         struct gl_stencil_func {</span>
-<span id="L269"><span class="lineNum">     269</span> <span class="tlaGNC">          69 :             comparison_mode comparison{comparison_mode::always};</span></span>
-<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          50 :             GLint reference_value{};</span></span>
-<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">          50 :             GLuint mask{std::numeric_limits&lt;GLuint&gt;::max()};</span></span>
-<span id="L272"><span class="lineNum">     272</span>              : </span>
-<span id="L273"><span class="lineNum">     273</span>              :             [[nodiscard]]</span>
-<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">          69 :             friend constexpr bool operator==(const gl_stencil_func&amp;, const gl_stencil_func&amp;) noexcept = default;</span></span>
-<span id="L275"><span class="lineNum">     275</span>              :         };</span>
-<span id="L276"><span class="lineNum">     276</span>              : </span>
-<span id="L277"><span class="lineNum">     277</span>              :         struct gl_stencil_op {</span>
-<span id="L278"><span class="lineNum">     278</span>              :             stencil_failure_mode</span>
-<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">          62 :                 on_failure                   {stencil_failure_mode::keep},</span></span>
-<span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">          50 :                 on_pass_with_depth_failure   {stencil_failure_mode::keep},</span></span>
-<span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">          50 :                 on_pass_without_depth_failure{stencil_failure_mode::keep};</span></span>
-<span id="L282"><span class="lineNum">     282</span>              : </span>
-<span id="L283"><span class="lineNum">     283</span>              :             [[nodiscard]]</span>
-<span id="L284"><span class="lineNum">     284</span> <span class="tlaGNC">          62 :             friend constexpr bool operator==(const gl_stencil_op&amp;, const gl_stencil_op&amp;) noexcept = default;</span></span>
-<span id="L285"><span class="lineNum">     285</span>              :         };</span>
-<span id="L286"><span class="lineNum">     286</span>              : </span>
-<span id="L287"><span class="lineNum">     287</span>              :         struct gl_stencil_write_mask {</span>
-<span id="L288"><span class="lineNum">     288</span> <span class="tlaGNC">          62 :             GLuint mask{std::numeric_limits&lt;GLuint&gt;::max()};</span></span>
+<span id="L268"><span class="lineNum">     268</span>              :         struct gl_stencil_op {</span>
+<span id="L269"><span class="lineNum">     269</span>              :             stencil_failure_mode</span>
+<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          64 :                 on_failure                   {stencil_failure_mode::keep},</span></span>
+<span id="L271"><span class="lineNum">     271</span> <span class="tlaGNC">          53 :                 on_pass_with_depth_failure   {stencil_failure_mode::keep},</span></span>
+<span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">          53 :                 on_pass_without_depth_failure{stencil_failure_mode::keep};</span></span>
+<span id="L273"><span class="lineNum">     273</span>              : </span>
+<span id="L274"><span class="lineNum">     274</span>              :             [[nodiscard]]</span>
+<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          64 :             friend constexpr bool operator==(const gl_stencil_op&amp;, const gl_stencil_op&amp;) noexcept = default;</span></span>
+<span id="L276"><span class="lineNum">     276</span>              :         };</span>
+<span id="L277"><span class="lineNum">     277</span>              : </span>
+<span id="L278"><span class="lineNum">     278</span>              :         struct gl_stencil_write_mask {</span>
+<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">          64 :             GLuint mask{std::numeric_limits&lt;GLuint&gt;::max()};</span></span>
+<span id="L280"><span class="lineNum">     280</span>              : </span>
+<span id="L281"><span class="lineNum">     281</span>              :             [[nodiscard]]</span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">          64 :             friend constexpr bool operator==(const gl_stencil_write_mask&amp;, const gl_stencil_write_mask&amp;) noexcept = default;</span></span>
+<span id="L283"><span class="lineNum">     283</span>              :         };</span>
+<span id="L284"><span class="lineNum">     284</span>              : </span>
+<span id="L285"><span class="lineNum">     285</span>              :         struct gl_stencil_test_separate {</span>
+<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">          50 :             gl_stencil_func       func{};</span></span>
+<span id="L287"><span class="lineNum">     287</span> <span class="tlaGNC">          40 :             gl_stencil_op         op{};</span></span>
+<span id="L288"><span class="lineNum">     288</span> <span class="tlaGNC">          40 :             gl_stencil_write_mask write_mask{};</span></span>
 <span id="L289"><span class="lineNum">     289</span>              : </span>
 <span id="L290"><span class="lineNum">     290</span>              :             [[nodiscard]]</span>
-<span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">          62 :             friend constexpr bool operator==(const gl_stencil_write_mask&amp;, const gl_stencil_write_mask&amp;) noexcept = default;</span></span>
+<span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">          50 :             friend constexpr bool operator==(const gl_stencil_test_separate&amp;, const gl_stencil_test_separate&amp;) noexcept = default;</span></span>
 <span id="L292"><span class="lineNum">     292</span>              :         };</span>
 <span id="L293"><span class="lineNum">     293</span>              : </span>
-<span id="L294"><span class="lineNum">     294</span>              :         struct gl_stencil_test_separate {</span>
-<span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">          47 :             gl_stencil_func       func{};</span></span>
-<span id="L296"><span class="lineNum">     296</span> <span class="tlaGNC">          40 :             gl_stencil_op         op{};</span></span>
-<span id="L297"><span class="lineNum">     297</span> <span class="tlaGNC">          40 :             gl_stencil_write_mask write_mask{};</span></span>
+<span id="L294"><span class="lineNum">     294</span>              :         struct gl_stencil_test {</span>
+<span id="L295"><span class="lineNum">     295</span>              :             constexpr static auto capability{gl_capability::stencil_test};</span>
+<span id="L296"><span class="lineNum">     296</span>              : </span>
+<span id="L297"><span class="lineNum">     297</span> <span class="tlaGNC">          38 :             gl_stencil_test_separate front{}, back{};</span></span>
 <span id="L298"><span class="lineNum">     298</span>              : </span>
 <span id="L299"><span class="lineNum">     299</span>              :             [[nodiscard]]</span>
-<span id="L300"><span class="lineNum">     300</span> <span class="tlaGNC">          47 :             friend constexpr bool operator==(const gl_stencil_test_separate&amp;, const gl_stencil_test_separate&amp;) noexcept = default;</span></span>
+<span id="L300"><span class="lineNum">     300</span> <span class="tlaGNC">          22 :             friend constexpr bool operator==(const gl_stencil_test&amp;, const gl_stencil_test&amp;) noexcept = default;</span></span>
 <span id="L301"><span class="lineNum">     301</span>              :         };</span>
-<span id="L302"><span class="lineNum">     302</span>              : </span>
-<span id="L303"><span class="lineNum">     303</span>              :         struct gl_stencil_test {</span>
-<span id="L304"><span class="lineNum">     304</span>              :             constexpr static auto capability{gl_capability::stencil_test};</span>
-<span id="L305"><span class="lineNum">     305</span>              : </span>
-<span id="L306"><span class="lineNum">     306</span> <span class="tlaGNC">          37 :             gl_stencil_test_separate front{}, back{};</span></span>
-<span id="L307"><span class="lineNum">     307</span>              : </span>
-<span id="L308"><span class="lineNum">     308</span>              :             [[nodiscard]]</span>
-<span id="L309"><span class="lineNum">     309</span> <span class="tlaGNC">          21 :             friend constexpr bool operator==(const gl_stencil_test&amp;, const gl_stencil_test&amp;) noexcept = default;</span></span>
-<span id="L310"><span class="lineNum">     310</span>              :         };</span>
-<span id="L311"><span class="lineNum">     311</span>              :     }</span>
-<span id="L312"><span class="lineNum">     312</span>              : }</span>
-<span id="L313"><span class="lineNum">     313</span>              : </span>
-<span id="L314"><span class="lineNum">     314</span>              : namespace std {</span>
-<span id="L315"><span class="lineNum">     315</span>              :     template&lt;&gt;</span>
-<span id="L316"><span class="lineNum">     316</span>              :     struct formatter&lt;avocet::opengl::sample_coverage_value&gt; {</span>
-<span id="L317"><span class="lineNum">     317</span> <span class="tlaGNC">           2 :         constexpr auto parse(auto&amp; ctx) { return ctx.begin(); }</span></span>
-<span id="L318"><span class="lineNum">     318</span>              : </span>
-<span id="L319"><span class="lineNum">     319</span> <span class="tlaGNC">           2 :         auto format(avocet::opengl::sample_coverage_value coverage, auto&amp; ctx) const {</span></span>
-<span id="L320"><span class="lineNum">     320</span> <span class="tlaGNC">           2 :             return format_to(ctx.out(), &quot;{}&quot;, coverage.raw_value());</span></span>
-<span id="L321"><span class="lineNum">     321</span>              :         }</span>
-<span id="L322"><span class="lineNum">     322</span>              :     };</span>
-<span id="L323"><span class="lineNum">     323</span>              : }</span>
+<span id="L302"><span class="lineNum">     302</span>              :     }</span>
+<span id="L303"><span class="lineNum">     303</span>              : }</span>
+<span id="L304"><span class="lineNum">     304</span>              : </span>
+<span id="L305"><span class="lineNum">     305</span>              : namespace std {</span>
+<span id="L306"><span class="lineNum">     306</span>              :     template&lt;&gt;</span>
+<span id="L307"><span class="lineNum">     307</span>              :     struct formatter&lt;avocet::opengl::sample_coverage_value&gt; {</span>
+<span id="L308"><span class="lineNum">     308</span> <span class="tlaGNC">           2 :         constexpr auto parse(auto&amp; ctx) { return ctx.begin(); }</span></span>
+<span id="L309"><span class="lineNum">     309</span>              : </span>
+<span id="L310"><span class="lineNum">     310</span> <span class="tlaGNC">           2 :         auto format(avocet::opengl::sample_coverage_value coverage, auto&amp; ctx) const {</span></span>
+<span id="L311"><span class="lineNum">     311</span> <span class="tlaGNC">           2 :             return format_to(ctx.out(), &quot;{}&quot;, coverage.raw_value());</span></span>
+<span id="L312"><span class="lineNum">     312</span>              :         }</span>
+<span id="L313"><span class="lineNum">     313</span>              :     };</span>
+<span id="L314"><span class="lineNum">     314</span>              : }</span>
         </pre>
               </td>
             </tr>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 19:26:08</td>
+            <td class="headerValue">2026-03-05 11:51:02</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">64.7&nbsp;%</td>
@@ -97,25 +97,25 @@
 <span id="L35"><span class="lineNum">      35</span>              :     constexpr auto npos{std::string::npos};</span>
 <span id="L36"><span class="lineNum">      36</span>              :     using size_type = std::string::size_type;</span>
 <span id="L37"><span class="lineNum">      37</span>              :     </span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">        5403 :     std::string&amp; remove_enum_spec(std::string&amp; name)</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">        5463 :     std::string&amp; remove_enum_spec(std::string&amp; name)</span></span>
 <span id="L39"><span class="lineNum">      39</span>              :     {</span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">        5403 :       std::string::size_type pos{};</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">        5463 :       std::string::size_type pos{};</span></span>
 <span id="L41"><span class="lineNum">      41</span>              : </span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">        5403 :       while(pos != npos)</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">        5463 :       while(pos != npos)</span></span>
 <span id="L43"><span class="lineNum">      43</span>              :       {</span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">        5403 :         const auto[open, close]{find_matched_delimiters(name, '(', ')', pos)};</span></span>
-<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">        5403 :         if((open != close) &amp;&amp; (close &lt; name.size()) &amp;&amp; std::isdigit(name[close]))</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">        5463 :         const auto[open, close]{find_matched_delimiters(name, '(', ')', pos)};</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">        5463 :         if((open != close) &amp;&amp; (close &lt; name.size()) &amp;&amp; std::isdigit(name[close]))</span></span>
 <span id="L46"><span class="lineNum">      46</span>              :         {</span>
 <span id="L47"><span class="lineNum">      47</span> <span class="tlaUNC">           0 :           name.erase(open, close - open);</span></span>
 <span id="L48"><span class="lineNum">      48</span> <span class="tlaUNC">           0 :           pos = close;</span></span>
 <span id="L49"><span class="lineNum">      49</span>              :         }</span>
 <span id="L50"><span class="lineNum">      50</span>              :         else</span>
 <span id="L51"><span class="lineNum">      51</span>              :         {</span>
-<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">        5403 :           break;</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">        5463 :           break;</span></span>
 <span id="L53"><span class="lineNum">      53</span>              :         }</span>
 <span id="L54"><span class="lineNum">      54</span>              :       }</span>
 <span id="L55"><span class="lineNum">      55</span>              : </span>
-<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">        5403 :       return name;</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">        5463 :       return name;</span></span>
 <span id="L57"><span class="lineNum">      57</span>              :     }</span>
 <span id="L58"><span class="lineNum">      58</span>              : </span>
 <span id="L59"><span class="lineNum">      59</span>              :     template&lt;std::floating_point To, std::integral From=std::conditional_t&lt;std::is_same_v&lt;To,float&gt;, int, std::conditional_t&lt;sizeof(double) == sizeof(long), long, long long&gt;&gt;&gt;</span>
@@ -127,26 +127,26 @@
 <span id="L65"><span class="lineNum">      65</span> <span class="tlaUNC">           0 :        return start + str.size();</span></span>
 <span id="L66"><span class="lineNum">      66</span> <span class="tlaUNC">           0 :     }</span></span>
 <span id="L67"><span class="lineNum">      67</span>              :   </span>
-<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">        5403 :     std::string&amp; process_literals(std::string&amp; name)</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">        5463 :     std::string&amp; process_literals(std::string&amp; name)</span></span>
 <span id="L69"><span class="lineNum">      69</span>              :     {</span>
-<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">        5403 :       std::string::size_type pos{};</span></span>
-<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">       14204 :       while(pos &lt; name.size())</span></span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">        5463 :       std::string::size_type pos{};</span></span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">       14334 :       while(pos &lt; name.size())</span></span>
 <span id="L72"><span class="lineNum">      72</span>              :       {</span>
-<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">        8576 :         const auto open{name.find_first_of(&quot;&lt; &quot;, pos)};</span></span>
-<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">        8576 :         if(open &gt;= name.size())</span></span>
-<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">        5178 :           break;</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">        8645 :         const auto open{name.find_first_of(&quot;&lt; &quot;, pos)};</span></span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">        8645 :         if(open &gt;= name.size())</span></span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">        5237 :           break;</span></span>
 <span id="L76"><span class="lineNum">      76</span>              : </span>
-<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">        3398 :         pos = open+1;</span></span>
-<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">       90419 :         while((pos &lt; name.size() - 1) &amp;&amp; !std::isdigit(name[pos])) { ++pos; }</span></span>
-<span id="L79"><span class="lineNum">      79</span> <span class="tlaGNC">        3398 :         if(pos &lt; name.size() - 1)</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">        3408 :         pos = open+1;</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">       90514 :         while((pos &lt; name.size() - 1) &amp;&amp; !std::isdigit(name[pos])) { ++pos; }</span></span>
+<span id="L79"><span class="lineNum">      79</span> <span class="tlaGNC">        3408 :         if(pos &lt; name.size() - 1)</span></span>
 <span id="L80"><span class="lineNum">      80</span>              :         {</span>
-<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">         352 :           if((name[pos - 1] == '_') || std::isalpha(name[pos - 1]))</span></span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">         353 :           if((name[pos - 1] == '_') || std::isalpha(name[pos - 1]))</span></span>
 <span id="L82"><span class="lineNum">      82</span>              :           {</span>
 <span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">          93 :             pos = name.find_first_of(&quot;,&gt;&quot;, pos);</span></span>
 <span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">          93 :             continue;</span></span>
 <span id="L85"><span class="lineNum">      85</span>              :           }</span>
 <span id="L86"><span class="lineNum">      86</span>              : </span>
-<span id="L87"><span class="lineNum">      87</span> <span class="tlaGNC">         259 :           if(name[pos - 1] == '[')</span></span>
+<span id="L87"><span class="lineNum">      87</span> <span class="tlaGNC">         260 :           if(name[pos - 1] == '[')</span></span>
 <span id="L88"><span class="lineNum">      88</span>              :           {</span>
 <span id="L89"><span class="lineNum">      89</span>              :             // GCC seems to represent floating-point NTTPs as</span>
 <span id="L90"><span class="lineNum">      90</span>              :             // a reinterpretation of a implicit hex number</span>
@@ -179,7 +179,7 @@
 <span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">           4 :             }</span></span>
 <span id="L118"><span class="lineNum">     118</span>              :           }</span>
 <span id="L119"><span class="lineNum">     119</span>              : </span>
-<span id="L120"><span class="lineNum">     120</span> <span class="tlaGNC">         259 :           if(name[pos + 1] == 'x')</span></span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaGNC">         260 :           if(name[pos + 1] == 'x')</span></span>
 <span id="L121"><span class="lineNum">     121</span>              :           {</span>
 <span id="L122"><span class="lineNum">     122</span> <span class="tlaUNC">           0 :             char* end{};</span></span>
 <span id="L123"><span class="lineNum">     123</span> <span class="tlaUNC">           0 :             const auto start{name.data() + pos};</span></span>
@@ -192,26 +192,26 @@
 <span id="L130"><span class="lineNum">     130</span> <span class="tlaUNC">           0 :             }</span></span>
 <span id="L131"><span class="lineNum">     131</span>              :           }</span>
 <span id="L132"><span class="lineNum">     132</span>              : </span>
-<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">        3968 :           while((pos &lt; name.size() - 1) &amp;&amp; std::isdigit(name[++pos])) {}</span></span>
+<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">        3969 :           while((pos &lt; name.size() - 1) &amp;&amp; std::isdigit(name[++pos])) {}</span></span>
 <span id="L134"><span class="lineNum">     134</span>              :         </span>
-<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">         259 :           if((pos &lt; name.size()) &amp;&amp; (pos-1 &gt; open) &amp;&amp; std::isalpha(name[pos]))</span></span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">         260 :           if((pos &lt; name.size()) &amp;&amp; (pos-1 &gt; open) &amp;&amp; std::isalpha(name[pos]))</span></span>
 <span id="L136"><span class="lineNum">     136</span>              :           {</span>
-<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">         255 :             if(const auto close{name.find_first_of(&quot;,&gt;&quot;, pos)}; close &lt; name.size())</span></span>
+<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">         256 :             if(const auto close{name.find_first_of(&quot;,&gt;&quot;, pos)}; close &lt; name.size())</span></span>
 <span id="L138"><span class="lineNum">     138</span>              :             {</span>
-<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC">         255 :               name.erase(pos, close - pos);</span></span>
-<span id="L140"><span class="lineNum">     140</span> <span class="tlaGNC">         255 :               pos++;</span></span>
+<span id="L139"><span class="lineNum">     139</span> <span class="tlaGNC">         256 :               name.erase(pos, close - pos);</span></span>
+<span id="L140"><span class="lineNum">     140</span> <span class="tlaGNC">         256 :               pos++;</span></span>
 <span id="L141"><span class="lineNum">     141</span>              :             }</span>
 <span id="L142"><span class="lineNum">     142</span>              :           }</span>
 <span id="L143"><span class="lineNum">     143</span>              :             </span>
 <span id="L144"><span class="lineNum">     144</span>              :         }</span>
 <span id="L145"><span class="lineNum">     145</span>              :       }</span>
 <span id="L146"><span class="lineNum">     146</span>              :       </span>
-<span id="L147"><span class="lineNum">     147</span> <span class="tlaGNC">        5403 :       return name;</span></span>
+<span id="L147"><span class="lineNum">     147</span> <span class="tlaGNC">        5463 :       return name;</span></span>
 <span id="L148"><span class="lineNum">     148</span>              :     }</span>
 <span id="L149"><span class="lineNum">     149</span>              : </span>
-<span id="L150"><span class="lineNum">     150</span> <span class="tlaGNC">        5403 :     std::string&amp; process_spans(std::string&amp; name)</span></span>
+<span id="L150"><span class="lineNum">     150</span> <span class="tlaGNC">        5463 :     std::string&amp; process_spans(std::string&amp; name)</span></span>
 <span id="L151"><span class="lineNum">     151</span>              :     {</span>
-<span id="L152"><span class="lineNum">     152</span> <span class="tlaGNC">        5403 :       if(auto[start, end]{find_sandwiched_text(name, &quot;::span&lt;&quot;, &quot;&gt;&quot;)}; start != end)</span></span>
+<span id="L152"><span class="lineNum">     152</span> <span class="tlaGNC">        5463 :       if(auto[start, end]{find_sandwiched_text(name, &quot;::span&lt;&quot;, &quot;&gt;&quot;)}; start != end)</span></span>
 <span id="L153"><span class="lineNum">     153</span>              :       {</span>
 <span id="L154"><span class="lineNum">     154</span> <span class="tlaGNC">         195 :         start = name.find(',', start);</span></span>
 <span id="L155"><span class="lineNum">     155</span> <span class="tlaGNC">         195 :         if(start &lt; end - 1)</span></span>
@@ -230,7 +230,7 @@
 <span id="L168"><span class="lineNum">     168</span>              :         }</span>
 <span id="L169"><span class="lineNum">     169</span>              :       }</span>
 <span id="L170"><span class="lineNum">     170</span>              :       </span>
-<span id="L171"><span class="lineNum">     171</span> <span class="tlaGNC">        5403 :       return name;</span></span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaGNC">        5463 :       return name;</span></span>
 <span id="L172"><span class="lineNum">     172</span>              :     }</span>
 <span id="L173"><span class="lineNum">     173</span>              : </span>
 <span id="L174"><span class="lineNum">     174</span> <span class="tlaUNC">           0 :     void process_array_iterators(std::string&amp; name)</span></span>
@@ -255,27 +255,27 @@
 <span id="L193"><span class="lineNum">     193</span>              :       }</span>
 <span id="L194"><span class="lineNum">     194</span> <span class="tlaUNC">           0 :     }</span></span>
 <span id="L195"><span class="lineNum">     195</span>              : </span>
-<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">        5403 :     std::string&amp; tidy_name(std::string&amp; name)</span></span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">        5463 :     std::string&amp; tidy_name(std::string&amp; name)</span></span>
 <span id="L197"><span class="lineNum">     197</span>              :     {</span>
 <span id="L198"><span class="lineNum">     198</span>              :       if constexpr(sizeof(unsigned long) == sizeof(unsigned long long))</span>
 <span id="L199"><span class="lineNum">     199</span>              :       {</span>
 <span id="L200"><span class="lineNum">     200</span>              :         // Do this first, to avoid the second replace_all potentially </span>
 <span id="L201"><span class="lineNum">     201</span>              :         // leading to unsigned long long long long (!)</span>
-<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">        5403 :         replace_all(name, &quot;long long&quot;, &quot;long&quot;);</span></span>
-<span id="L203"><span class="lineNum">     203</span> <span class="tlaGNC">        5403 :         replace_all(name, &quot;long&quot;, &quot;long long&quot;);</span></span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">        5463 :         replace_all(name, &quot;long long&quot;, &quot;long&quot;);</span></span>
+<span id="L203"><span class="lineNum">     203</span> <span class="tlaGNC">        5463 :         replace_all(name, &quot;long&quot;, &quot;long long&quot;);</span></span>
 <span id="L204"><span class="lineNum">     204</span>              :       }</span>
 <span id="L205"><span class="lineNum">     205</span>              : </span>
 <span id="L206"><span class="lineNum">     206</span>              :       // It is a pity to have to make the following substitutions, but it appears</span>
 <span id="L207"><span class="lineNum">     207</span>              :       // to be by far the easiest way to ensure compiler-independent de-mangling.</span>
 <span id="L208"><span class="lineNum">     208</span>              : </span>
-<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        5403 :       replace_all(name, &quot; &lt;&quot;, &quot;true&quot;, &quot;,&gt;&quot;, &quot;1&quot;);</span></span>
-<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">        5403 :       replace_all(name, &quot; &lt;&quot;, &quot;false&quot;, &quot;,&gt;&quot;, &quot;0&quot;);</span></span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">        5463 :       replace_all(name, &quot; &lt;&quot;, &quot;true&quot;, &quot;,&gt;&quot;, &quot;1&quot;);</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">        5463 :       replace_all(name, &quot; &lt;&quot;, &quot;false&quot;, &quot;,&gt;&quot;, &quot;0&quot;);</span></span>
 <span id="L211"><span class="lineNum">     211</span>              : </span>
-<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">        5403 :       remove_enum_spec(name);</span></span>
-<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">        5403 :       auto openPos{name.find('(')};</span></span>
-<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">        5403 :       auto pos{openPos};</span></span>
-<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">        5403 :       int64_t open{};</span></span>
-<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">        5403 :       while(pos != npos)</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">        5463 :       remove_enum_spec(name);</span></span>
+<span id="L213"><span class="lineNum">     213</span> <span class="tlaGNC">        5463 :       auto openPos{name.find('(')};</span></span>
+<span id="L214"><span class="lineNum">     214</span> <span class="tlaGNC">        5463 :       auto pos{openPos};</span></span>
+<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">        5463 :       int64_t open{};</span></span>
+<span id="L216"><span class="lineNum">     216</span> <span class="tlaGNC">        5463 :       while(pos != npos)</span></span>
 <span id="L217"><span class="lineNum">     217</span>              :       {</span>
 <span id="L218"><span class="lineNum">     218</span> <span class="tlaUNC">           0 :         if(name[pos] == '(')      ++open;</span></span>
 <span id="L219"><span class="lineNum">     219</span> <span class="tlaUNC">           0 :         else if(name[pos] == ')') --open;</span></span>
@@ -292,7 +292,7 @@
 <span id="L230"><span class="lineNum">     230</span>              :         }</span>
 <span id="L231"><span class="lineNum">     231</span>              :       }</span>
 <span id="L232"><span class="lineNum">     232</span>              : </span>
-<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">        5403 :       return name;</span></span>
+<span id="L233"><span class="lineNum">     233</span> <span class="tlaGNC">        5463 :       return name;</span></span>
 <span id="L234"><span class="lineNum">     234</span>              :     }</span>
 <span id="L235"><span class="lineNum">     235</span>              : </span>
 <span id="L236"><span class="lineNum">     236</span>              :     [[nodiscard]]</span>
@@ -303,9 +303,9 @@
 <span id="L241"><span class="lineNum">     241</span>              :   }</span>
 <span id="L242"><span class="lineNum">     242</span>              : </span>
 <span id="L243"><span class="lineNum">     243</span>              :   [[nodiscard]]</span>
-<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">          73 :   std::string footer()</span></span>
+<span id="L244"><span class="lineNum">     244</span> <span class="tlaGNC">          78 :   std::string footer()</span></span>
 <span id="L245"><span class="lineNum">     245</span>              :   {</span>
-<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">         146 :     return &quot;=======================================\n&quot;;</span></span>
+<span id="L246"><span class="lineNum">     246</span> <span class="tlaGNC">         156 :     return &quot;=======================================\n&quot;;</span></span>
 <span id="L247"><span class="lineNum">     247</span>              :   }</span>
 <span id="L248"><span class="lineNum">     248</span>              : </span>
 <span id="L249"><span class="lineNum">     249</span>              :   [[nodiscard]]</span>
@@ -314,24 +314,24 @@
 <span id="L252"><span class="lineNum">     252</span> <span class="tlaUNC">           0 :     return &quot;$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\n&quot;;</span></span>
 <span id="L253"><span class="lineNum">     253</span>              :   }</span>
 <span id="L254"><span class="lineNum">     254</span>              : </span>
-<span id="L255"><span class="lineNum">     255</span> <span class="tlaGNC">         228 :   void end_block(std::string&amp; s, const line_breaks newlines, std::string_view footer)</span></span>
+<span id="L255"><span class="lineNum">     255</span> <span class="tlaGNC">         273 :   void end_block(std::string&amp; s, const line_breaks newlines, std::string_view footer)</span></span>
 <span id="L256"><span class="lineNum">     256</span>              :   {</span>
-<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">         228 :     if(!s.empty())</span></span>
+<span id="L257"><span class="lineNum">     257</span> <span class="tlaGNC">         273 :     if(!s.empty())</span></span>
 <span id="L258"><span class="lineNum">     258</span>              :     {</span>
-<span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">         228 :       std::size_t n{};</span></span>
-<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">         275 :       for(; n &lt; std::ranges::min(s.size(), newlines.value()); ++n)</span></span>
+<span id="L259"><span class="lineNum">     259</span> <span class="tlaGNC">         273 :       std::size_t n{};</span></span>
+<span id="L260"><span class="lineNum">     260</span> <span class="tlaGNC">         325 :       for(; n &lt; std::ranges::min(s.size(), newlines.value()); ++n)</span></span>
 <span id="L261"><span class="lineNum">     261</span>              :       {</span>
-<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">         275 :         if(s[s.size() - 1 - n] != '\n') break;</span></span>
+<span id="L262"><span class="lineNum">     262</span> <span class="tlaGNC">         325 :         if(s[s.size() - 1 - n] != '\n') break;</span></span>
 <span id="L263"><span class="lineNum">     263</span>              :       }</span>
 <span id="L264"><span class="lineNum">     264</span>              : </span>
-<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">         482 :       for(; n&lt;newlines.value(); ++n)</span></span>
+<span id="L265"><span class="lineNum">     265</span> <span class="tlaGNC">         572 :       for(; n&lt;newlines.value(); ++n)</span></span>
 <span id="L266"><span class="lineNum">     266</span>              :       {</span>
-<span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">         254 :         s.append(&quot;\n&quot;);</span></span>
+<span id="L267"><span class="lineNum">     267</span> <span class="tlaGNC">         299 :         s.append(&quot;\n&quot;);</span></span>
 <span id="L268"><span class="lineNum">     268</span>              :       }</span>
 <span id="L269"><span class="lineNum">     269</span>              : </span>
-<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">         228 :       s.append(footer);</span></span>
+<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">         273 :       s.append(footer);</span></span>
 <span id="L271"><span class="lineNum">     271</span>              :     }</span>
-<span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">         228 :   }</span></span>
+<span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">         273 :   }</span></span>
 <span id="L273"><span class="lineNum">     273</span>              : </span>
 <span id="L274"><span class="lineNum">     274</span>              :   [[nodiscard]]</span>
 <span id="L275"><span class="lineNum">     275</span> <span class="tlaUNC">           0 :   std::string end_block(std::string_view s, const line_breaks newlines, std::string_view footer)</span></span>
@@ -374,15 +374,15 @@
 <span id="L312"><span class="lineNum">     312</span> <span class="tlaUNC">           0 :   }</span></span>
 <span id="L313"><span class="lineNum">     313</span>              : </span>
 <span id="L314"><span class="lineNum">     314</span>              :   [[nodiscard]]</span>
-<span id="L315"><span class="lineNum">     315</span> <span class="tlaGNC">         155 :   std::string operator_message(std::string_view op, std::string_view opRetVal)</span></span>
+<span id="L315"><span class="lineNum">     315</span> <span class="tlaGNC">         195 :   std::string operator_message(std::string_view op, std::string_view opRetVal)</span></span>
 <span id="L316"><span class="lineNum">     316</span>              :   {</span>
-<span id="L317"><span class="lineNum">     317</span> <span class="tlaGNC">         310 :     return std::string{&quot;operator&quot;}.append(op).append(&quot; returned &quot;).append(opRetVal);</span></span>
+<span id="L317"><span class="lineNum">     317</span> <span class="tlaGNC">         390 :     return std::string{&quot;operator&quot;}.append(op).append(&quot; returned &quot;).append(opRetVal);</span></span>
 <span id="L318"><span class="lineNum">     318</span>              :   }</span>
 <span id="L319"><span class="lineNum">     319</span>              : </span>
 <span id="L320"><span class="lineNum">     320</span>              :   [[nodiscard]]</span>
-<span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC">         155 :   std::string equality_operator_failure_message()</span></span>
+<span id="L321"><span class="lineNum">     321</span> <span class="tlaGNC">         195 :   std::string equality_operator_failure_message()</span></span>
 <span id="L322"><span class="lineNum">     322</span>              :   {</span>
-<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">         155 :     return operator_message(&quot;==&quot;, &quot;false&quot;);</span></span>
+<span id="L323"><span class="lineNum">     323</span> <span class="tlaGNC">         195 :     return operator_message(&quot;==&quot;, &quot;false&quot;);</span></span>
 <span id="L324"><span class="lineNum">     324</span>              :   }</span>
 <span id="L325"><span class="lineNum">     325</span>              : </span>
 <span id="L326"><span class="lineNum">     326</span>              :   [[nodiscard]]</span>
@@ -392,9 +392,9 @@
 <span id="L330"><span class="lineNum">     330</span>              :   }</span>
 <span id="L331"><span class="lineNum">     331</span>              : </span>
 <span id="L332"><span class="lineNum">     332</span>              :   [[nodiscard]]</span>
-<span id="L333"><span class="lineNum">     333</span> <span class="tlaGNC">         122 :   std::string default_prediction_message(std::string_view obtained, std::string_view prediction)</span></span>
+<span id="L333"><span class="lineNum">     333</span> <span class="tlaGNC">         145 :   std::string default_prediction_message(std::string_view obtained, std::string_view prediction)</span></span>
 <span id="L334"><span class="lineNum">     334</span>              :   {</span>
-<span id="L335"><span class="lineNum">     335</span> <span class="tlaGNC">         488 :     return append_lines(std::string{&quot;Obtained : &quot;}.append(obtained), std::string{&quot;Predicted: &quot;}.append(prediction));</span></span>
+<span id="L335"><span class="lineNum">     335</span> <span class="tlaGNC">         580 :     return append_lines(std::string{&quot;Obtained : &quot;}.append(obtained), std::string{&quot;Predicted: &quot;}.append(prediction));</span></span>
 <span id="L336"><span class="lineNum">     336</span>              :   }</span>
 <span id="L337"><span class="lineNum">     337</span>              : </span>
 <span id="L338"><span class="lineNum">     338</span>              :   [[nodiscard]]</span>
@@ -411,26 +411,26 @@
 <span id="L349"><span class="lineNum">     349</span>              :   }</span>
 <span id="L350"><span class="lineNum">     350</span>              : </span>
 <span id="L351"><span class="lineNum">     351</span>              :   [[nodiscard]]</span>
-<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC">         363 :   fs::path path_for_reporting(const fs::path&amp; file, const fs::path&amp; repository)</span></span>
+<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC">         368 :   fs::path path_for_reporting(const fs::path&amp; file, const fs::path&amp; repository)</span></span>
 <span id="L353"><span class="lineNum">     353</span>              :   {</span>
-<span id="L354"><span class="lineNum">     354</span> <span class="tlaGNC">         363 :     if(file.is_relative())</span></span>
+<span id="L354"><span class="lineNum">     354</span> <span class="tlaGNC">         368 :     if(file.is_relative())</span></span>
 <span id="L355"><span class="lineNum">     355</span>              :     {</span>
 <span id="L356"><span class="lineNum">     356</span> <span class="tlaUNC">           0 :       auto it{std::ranges::find_if_not(file, [](const fs::path&amp; p) { return p == &quot;..&quot;; })};</span></span>
 <span id="L357"><span class="lineNum">     357</span> <span class="tlaUNC">           0 :       return std::accumulate(it, file.end(), fs::path{}, [](fs::path lhs, const fs::path&amp; rhs){ return lhs /= rhs; });</span></span>
 <span id="L358"><span class="lineNum">     358</span>              :     }</span>
-<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">         363 :     else if(!repository.empty())</span></span>
+<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">         368 :     else if(!repository.empty())</span></span>
 <span id="L360"><span class="lineNum">     360</span>              :     {</span>
-<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">         363 :       auto [filepathIter, repoIter]{std::ranges::mismatch(file, repository)};</span></span>
-<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">        1452 :       return std::accumulate(filepathIter, file.end(), back(repository), [](fs::path lhs, const fs::path&amp; rhs){ return lhs /= rhs; });</span></span>
+<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">         368 :       auto [filepathIter, repoIter]{std::ranges::mismatch(file, repository)};</span></span>
+<span id="L362"><span class="lineNum">     362</span> <span class="tlaGNC">        1472 :       return std::accumulate(filepathIter, file.end(), back(repository), [](fs::path lhs, const fs::path&amp; rhs){ return lhs /= rhs; });</span></span>
 <span id="L363"><span class="lineNum">     363</span>              :     }</span>
 <span id="L364"><span class="lineNum">     364</span>              : </span>
 <span id="L365"><span class="lineNum">     365</span> <span class="tlaUNC">           0 :     return file;</span></span>
 <span id="L366"><span class="lineNum">     366</span>              :   }</span>
 <span id="L367"><span class="lineNum">     367</span>              : </span>
 <span id="L368"><span class="lineNum">     368</span>              :   [[nodiscard]]</span>
-<span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC">         363 :   std::string report_line(std::string_view message, const fs::path&amp; repository, const std::source_location loc)</span></span>
+<span id="L369"><span class="lineNum">     369</span> <span class="tlaGNC">         368 :   std::string report_line(std::string_view message, const fs::path&amp; repository, const std::source_location loc)</span></span>
 <span id="L370"><span class="lineNum">     370</span>              :   {</span>
-<span id="L371"><span class="lineNum">     371</span> <span class="tlaGNC">         363 :     return append_lines(path_for_reporting(loc.file_name(), repository).generic_string().append(&quot;, Line &quot;).append(std::to_string(loc.line())), message).append(&quot;\n&quot;);</span></span>
+<span id="L371"><span class="lineNum">     371</span> <span class="tlaGNC">         368 :     return append_lines(path_for_reporting(loc.file_name(), repository).generic_string().append(&quot;, Line &quot;).append(std::to_string(loc.line())), message).append(&quot;\n&quot;);</span></span>
 <span id="L372"><span class="lineNum">     372</span>              :   }</span>
 <span id="L373"><span class="lineNum">     373</span>              : </span>
 <span id="L374"><span class="lineNum">     374</span>              :   [[nodiscard]]</span>
@@ -446,15 +446,15 @@
 <span id="L384"><span class="lineNum">     384</span>              :   }</span>
 <span id="L385"><span class="lineNum">     385</span>              : </span>
 <span id="L386"><span class="lineNum">     386</span>              :   [[nodiscard]]</span>
-<span id="L387"><span class="lineNum">     387</span> <span class="tlaGNC">        5403 :   std::string tidy_name(std::string name, gcc_type)</span></span>
+<span id="L387"><span class="lineNum">     387</span> <span class="tlaGNC">        5463 :   std::string tidy_name(std::string name, gcc_type)</span></span>
 <span id="L388"><span class="lineNum">     388</span>              :   {</span>
-<span id="L389"><span class="lineNum">     389</span> <span class="tlaGNC">        5403 :     replace_all(name, &quot;__cxx11::&quot;, &quot;&quot;);</span></span>
-<span id="L390"><span class="lineNum">     390</span> <span class="tlaGNC">        5403 :     replace_all(name, &quot;_V2::&quot;, &quot;&quot;);  </span></span>
-<span id="L391"><span class="lineNum">     391</span> <span class="tlaGNC">        5403 :     replace_all_recursive(name, &quot;&gt;&gt;&quot;, &quot;&gt; &gt;&quot;);</span></span>
-<span id="L392"><span class="lineNum">     392</span> <span class="tlaGNC">        5403 :     process_literals(name);</span></span>
-<span id="L393"><span class="lineNum">     393</span> <span class="tlaGNC">        5403 :     process_spans(name);</span></span>
+<span id="L389"><span class="lineNum">     389</span> <span class="tlaGNC">        5463 :     replace_all(name, &quot;__cxx11::&quot;, &quot;&quot;);</span></span>
+<span id="L390"><span class="lineNum">     390</span> <span class="tlaGNC">        5463 :     replace_all(name, &quot;_V2::&quot;, &quot;&quot;);  </span></span>
+<span id="L391"><span class="lineNum">     391</span> <span class="tlaGNC">        5463 :     replace_all_recursive(name, &quot;&gt;&gt;&quot;, &quot;&gt; &gt;&quot;);</span></span>
+<span id="L392"><span class="lineNum">     392</span> <span class="tlaGNC">        5463 :     process_literals(name);</span></span>
+<span id="L393"><span class="lineNum">     393</span> <span class="tlaGNC">        5463 :     process_spans(name);</span></span>
 <span id="L394"><span class="lineNum">     394</span>              : </span>
-<span id="L395"><span class="lineNum">     395</span> <span class="tlaGNC">        5403 :     return tidy_name(name);</span></span>
+<span id="L395"><span class="lineNum">     395</span> <span class="tlaGNC">        5463 :     return tidy_name(name);</span></span>
 <span id="L396"><span class="lineNum">     396</span>              :   }</span>
 <span id="L397"><span class="lineNum">     397</span>              : </span>
 <span id="L398"><span class="lineNum">     398</span>              :   [[nodiscard]]</span>
@@ -514,22 +514,22 @@
 <span id="L452"><span class="lineNum">     452</span>              :   }</span>
 <span id="L453"><span class="lineNum">     453</span>              : </span>
 <span id="L454"><span class="lineNum">     454</span>              :   [[nodiscard]]</span>
-<span id="L455"><span class="lineNum">     455</span> <span class="tlaGNC">        5403 :   std::string demangle(std::string mangled)</span></span>
+<span id="L455"><span class="lineNum">     455</span> <span class="tlaGNC">        5463 :   std::string demangle(std::string mangled)</span></span>
 <span id="L456"><span class="lineNum">     456</span>              :   {</span>
 <span id="L457"><span class="lineNum">     457</span>              :     if constexpr(with_clang_v || with_gcc_v)</span>
 <span id="L458"><span class="lineNum">     458</span>              :     {</span>
 <span id="L459"><span class="lineNum">     459</span>              :       struct cxa_demangler</span>
 <span id="L460"><span class="lineNum">     460</span>              :       {</span>
-<span id="L461"><span class="lineNum">     461</span> <span class="tlaGNC">        5403 :         cxa_demangler(const std::string&amp; name)</span></span>
-<span id="L462"><span class="lineNum">     462</span> <span class="tlaGNC">        5403 :           : data{demangle(name)}</span></span>
-<span id="L463"><span class="lineNum">     463</span> <span class="tlaGNC">        5403 :         {}</span></span>
+<span id="L461"><span class="lineNum">     461</span> <span class="tlaGNC">        5463 :         cxa_demangler(const std::string&amp; name)</span></span>
+<span id="L462"><span class="lineNum">     462</span> <span class="tlaGNC">        5463 :           : data{demangle(name)}</span></span>
+<span id="L463"><span class="lineNum">     463</span> <span class="tlaGNC">        5463 :         {}</span></span>
 <span id="L464"><span class="lineNum">     464</span>              : </span>
-<span id="L465"><span class="lineNum">     465</span> <span class="tlaGNC">        5403 :         ~cxa_demangler() { std::free(data); }</span></span>
+<span id="L465"><span class="lineNum">     465</span> <span class="tlaGNC">        5463 :         ~cxa_demangler() { std::free(data); }</span></span>
 <span id="L466"><span class="lineNum">     466</span>              : </span>
 <span id="L467"><span class="lineNum">     467</span>              : #ifndef _MSC_VER</span>
-<span id="L468"><span class="lineNum">     468</span> <span class="tlaGNC">        5403 :         char* demangle(const std::string&amp; name)</span></span>
+<span id="L468"><span class="lineNum">     468</span> <span class="tlaGNC">        5463 :         char* demangle(const std::string&amp; name)</span></span>
 <span id="L469"><span class="lineNum">     469</span>              :         {</span>
-<span id="L470"><span class="lineNum">     470</span> <span class="tlaGNC">        5403 :           return abi::__cxa_demangle(name.data(), 0, 0, &amp;status);</span></span>
+<span id="L470"><span class="lineNum">     470</span> <span class="tlaGNC">        5463 :           return abi::__cxa_demangle(name.data(), 0, 0, &amp;status);</span></span>
 <span id="L471"><span class="lineNum">     471</span>              :         }</span>
 <span id="L472"><span class="lineNum">     472</span>              : #else</span>
 <span id="L473"><span class="lineNum">     473</span>              :         char* demangle(const std::string&amp;) { return nullptr; }</span>
@@ -539,12 +539,12 @@
 <span id="L477"><span class="lineNum">     477</span>              :         char* data;</span>
 <span id="L478"><span class="lineNum">     478</span>              :       };</span>
 <span id="L479"><span class="lineNum">     479</span>              : </span>
-<span id="L480"><span class="lineNum">     480</span> <span class="tlaGNC">        5403 :       cxa_demangler c{mangled};</span></span>
+<span id="L480"><span class="lineNum">     480</span> <span class="tlaGNC">        5463 :       cxa_demangler c{mangled};</span></span>
 <span id="L481"><span class="lineNum">     481</span>              : </span>
-<span id="L482"><span class="lineNum">     482</span> <span class="tlaGNC">        5403 :       if(!c.status) mangled = c.data;</span></span>
-<span id="L483"><span class="lineNum">     483</span> <span class="tlaGNC">        5403 :     }</span></span>
+<span id="L482"><span class="lineNum">     482</span> <span class="tlaGNC">        5463 :       if(!c.status) mangled = c.data;</span></span>
+<span id="L483"><span class="lineNum">     483</span> <span class="tlaGNC">        5463 :     }</span></span>
 <span id="L484"><span class="lineNum">     484</span>              : </span>
-<span id="L485"><span class="lineNum">     485</span> <span class="tlaGNC">        5403 :     return mangled;</span></span>
+<span id="L485"><span class="lineNum">     485</span> <span class="tlaGNC">        5463 :     return mangled;</span></span>
 <span id="L486"><span class="lineNum">     486</span>              :   }</span>
 <span id="L487"><span class="lineNum">     487</span>              : }</span>
         </pre>

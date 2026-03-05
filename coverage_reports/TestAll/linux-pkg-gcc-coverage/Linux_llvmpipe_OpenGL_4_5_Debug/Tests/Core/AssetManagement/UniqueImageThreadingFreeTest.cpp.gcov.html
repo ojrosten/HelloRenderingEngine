@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 19:26:08</td>
+            <td class="headerValue">2026-03-05 11:51:02</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -100,9 +100,9 @@
 <span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           8 :                 [&amp;holdYourHorses, &amp;imagePath](std::size_t i) {</span></span>
 <span id="L39"><span class="lineNum">      39</span>              :                     return task_t{</span>
 <span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           8 :                         [&amp;, i]() {</span></span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           8 :                             const auto flip{i % 2 ? flip_vertically::yes : flip_vertically::no};</span></span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           8 :                             holdYourHorses.arrive_and_wait();</span></span>
-<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           7 :                             return unique_image{imagePath, flip, all_channels_in_image};</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           7 :                             const auto flip{i % 2 ? flip_vertically::yes : flip_vertically::no};</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           7 :                             holdYourHorses.arrive_and_wait();</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           8 :                             return unique_image{imagePath, flip, all_channels_in_image};</span></span>
 <span id="L44"><span class="lineNum">      44</span>              :                         }</span>
 <span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          16 :                     };</span></span>
 <span id="L46"><span class="lineNum">      46</span>              :                 }</span>

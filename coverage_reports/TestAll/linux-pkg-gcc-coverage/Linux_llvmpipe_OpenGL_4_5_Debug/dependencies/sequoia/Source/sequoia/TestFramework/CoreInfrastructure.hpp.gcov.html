@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-04 19:26:08</td>
+            <td class="headerValue">2026-03-05 11:51:02</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -93,9 +93,9 @@
 <span id="L31"><span class="lineNum">      31</span>              :   struct serializer&lt;T&gt;</span>
 <span id="L32"><span class="lineNum">      32</span>              :   {</span>
 <span id="L33"><span class="lineNum">      33</span>              :     [[nodiscard]]</span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">         190 :     static std::string make(const T&amp; val)</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">         220 :     static std::string make(const T&amp; val)</span></span>
 <span id="L35"><span class="lineNum">      35</span>              :     {</span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">         190 :       return std::format(&quot;{}&quot;, val);</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">         220 :       return std::format(&quot;{}&quot;, val);</span></span>
 <span id="L37"><span class="lineNum">      37</span>              :     }</span>
 <span id="L38"><span class="lineNum">      38</span>              :   };</span>
 <span id="L39"><span class="lineNum">      39</span>              : </span>
@@ -119,9 +119,9 @@
 <span id="L57"><span class="lineNum">      57</span>              : </span>
 <span id="L58"><span class="lineNum">      58</span>              :   template&lt;serializable T&gt;</span>
 <span id="L59"><span class="lineNum">      59</span>              :   [[nodiscard]]</span>
-<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">         190 :   std::string to_string(const T&amp; value)</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">         220 :   std::string to_string(const T&amp; value)</span></span>
 <span id="L61"><span class="lineNum">      61</span>              :   {</span>
-<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">         190 :     return serializer&lt;T&gt;::make(value);</span></span>
+<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">         220 :     return serializer&lt;T&gt;::make(value);</span></span>
 <span id="L63"><span class="lineNum">      63</span>              :   }</span>
 <span id="L64"><span class="lineNum">      64</span>              : </span>
 <span id="L65"><span class="lineNum">      65</span>              :   /*! \brief Primary class template for converting unsigned types of implementation-defined size into fixed-width types. */</span>
@@ -150,11 +150,11 @@
 <span id="L88"><span class="lineNum">      88</span>              : </span>
 <span id="L89"><span class="lineNum">      89</span>              :   template&lt;std::integral T&gt;</span>
 <span id="L90"><span class="lineNum">      90</span>              :   [[nodiscard]]</span>
-<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">         474 :   auto fixed_width_unsigned_cast(T x) noexcept</span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">         476 :   auto fixed_width_unsigned_cast(T x) noexcept</span></span>
 <span id="L92"><span class="lineNum">      92</span>              :   {</span>
 <span id="L93"><span class="lineNum">      93</span>              :     using U = std::make_unsigned_t&lt;T&gt;;</span>
 <span id="L94"><span class="lineNum">      94</span>              : </span>
-<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">         474 :     return static_cast&lt;type_normalizer_t&lt;U&gt;&gt;(x);</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">         476 :     return static_cast&lt;type_normalizer_t&lt;U&gt;&gt;(x);</span></span>
 <span id="L96"><span class="lineNum">      96</span>              :   }</span>
 <span id="L97"><span class="lineNum">      97</span>              : </span>
 <span id="L98"><span class="lineNum">      98</span>              :   struct uncaught_exception_info</span>
