@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
+#include "sequoia/Core/DataStructures/MemOrderedTuple.hpp"
 #include "sequoia/Maths/Geometry/Spaces.hpp"
 
 #include <cmath>
@@ -33,6 +35,9 @@ namespace avocet {
     template<std::floating_point T, dimensionality D>
     [[nodiscard]]
     constexpr local_coordinates<T, D> make_polygon_coordinates(std::size_t i, std::size_t N) {
+        if(N == 0)
+            throw std::domain_error{"make_polygon_coordinates: The number of polygon vertices must be greater than zero"};
+
         constexpr T pi{std::numbers::pi_v<T>};
         const auto offset{N % 2 ? 0 : pi / N};
 
@@ -44,7 +49,7 @@ namespace avocet {
     template<std::floating_point T>
     [[nodiscard]]
     constexpr texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
-        return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{make_polygon_coordinates < T, dimensionality{2} > (i, N).values()};
+        return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{make_polygon_coordinates<T, dimensionality{2}> (i, N).values()};
     }
 
     template<class T>
@@ -65,4 +70,21 @@ namespace avocet {
             return make_polygon_tex_coordinates<T>(i, N);
         }
     };
+
+    template<std::floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
+    struct make_polygon_vertices {
+        using vertex_attribute_type = sequoia::mem_ordered_tuple<local_coordinates<T, ArenaDimension>, Attributes...>;
+        using vertices_type = std::array<vertex_attribute_type, N>;
+
+        [[nodiscard]]
+        constexpr std::array<vertex_attribute_type, N> operator()() const {
+            return sequoia::utilities::make_array<vertex_attribute_type, N>(
+                [](std::size_t i) -> vertex_attribute_type {
+                    return {make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
+                }
+            );
+        }
+    };
+
+    
 }

@@ -11,7 +11,6 @@
 
 #include "avocet/OpenGL/Resources/Buffers.hpp"
 #include "avocet/OpenGL/Resources/Textures.hpp"
-#include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"
 
 #include <limits>
@@ -89,16 +88,7 @@ namespace avocet::opengl {
         polygon_base(polygon_base&&)            noexcept = default;
         polygon_base& operator=(polygon_base&&) noexcept = default;
     private:
-        [[nodiscard]]
-        constexpr static vertices_type vertices() {
-            return sequoia::utilities::make_array<vertex_attribute_type, N>(
-                [](std::size_t i) -> vertex_attribute_type {
-                    return {make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
-                }
-            );
-        }
-
-        const inline static vertices_type st_Vertices{vertices()};
+        const inline static vertices_type st_Vertices{make_polygon_vertices<T, N, ArenaDimension, Attributes...>{}()};
 
         vertex_buffer_object<vertex_attribute_type> m_VBO;
         vertex_attribute_object m_VAO;
