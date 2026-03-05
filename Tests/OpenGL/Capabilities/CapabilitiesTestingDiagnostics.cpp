@@ -71,8 +71,9 @@ namespace avocet::testing {
             .poly_offset{0.4f, 1.2f}
         };
 
-        check(equality        , "", gl_depth_test{}, configuredDepthTest0);
-        check(weak_equivalence, "", ctx            , configuredDepthTest1);
+        check(equality        , "", gl_depth_test{}     , configuredDepthTest0);
+        check(equality        , "", configuredDepthTest0, configuredDepthTest1);
+        check(weak_equivalence, "", ctx                 , configuredDepthTest1);
     }
 
     void capabilities_false_negative_test::test_sample_coverage(const opengl::capable_context& ctx)

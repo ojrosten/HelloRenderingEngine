@@ -270,6 +270,41 @@ operator== returned false
 
 Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 75
 
+[avocet::opengl::capabilities::gl_depth_test]
+operator== returned false
+
+  Func
+  [avocet::opengl::comparison_mode]
+  operator== returned false
+  Obtained : never
+  Predicted: less
+
+  Mask
+  [avocet::opengl::depth_buffer_write_mode]
+  operator== returned false
+  Obtained : enabled
+  Predicted: disabled
+
+  Poly Offset
+  [avocet::opengl::capabilities::gl_polygon_offset]
+  operator== returned false
+
+    Factor
+    [float]
+    operator== returned false
+    Obtained : 0.6
+    Predicted: 0.4
+
+    Units
+    [float]
+    operator== returned false
+    Obtained : 1.3
+    Predicted: 1.2
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 76
+
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capable_context>]
 Checking for weak equivalence with:
@@ -301,7 +336,7 @@ Checking for weak equivalence with:
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 82
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 83
 
 [avocet::opengl::capabilities::gl_sample_coverage]
 operator== returned false
@@ -320,7 +355,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 83
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 84
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capable_context>]
@@ -341,7 +376,7 @@ Checking for weak equivalence with:
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 128
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 129
 Exposes a bug with the Intel Arc driver
 
 [avocet::opengl::capabilities::gl_stencil_test]
@@ -453,7 +488,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 129
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 130
 
 [avocet::opengl::capabilities::gl_stencil_test]
 operator== returned false
@@ -532,7 +567,7 @@ operator== returned false
 
 =======================================
 
-Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 130
+Tests/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp, Line 131
 
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::opengl::capable_context>]
