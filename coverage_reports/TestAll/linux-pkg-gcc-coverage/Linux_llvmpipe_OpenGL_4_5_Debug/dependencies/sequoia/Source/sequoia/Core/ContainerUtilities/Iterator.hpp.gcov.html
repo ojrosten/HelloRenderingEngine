@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 11:51:02</td>
+            <td class="headerValue">2026-03-05 17:59:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">61.0&nbsp;%</td>
@@ -250,17 +250,17 @@
 <span id="L188"><span class="lineNum">     188</span>              : </span>
 <span id="L189"><span class="lineNum">     189</span>              :     template&lt;class... Args&gt;</span>
 <span id="L190"><span class="lineNum">     190</span>              :       requires (!resolve_to_copy_v&lt;identity_dereference_policy, Args...&gt;)</span>
-<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">        3172 :     constexpr explicit(sizeof...(Args) == 1) identity_dereference_policy(Args&amp;&amp;... args)</span></span>
-<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">        6344 :       : AuxiliaryDataPolicy{std::forward&lt;Args&gt;(args)...}</span></span>
-<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">        3172 :     {}</span></span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">        3486 :     constexpr explicit(sizeof...(Args) == 1) identity_dereference_policy(Args&amp;&amp;... args)</span></span>
+<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">        6972 :       : AuxiliaryDataPolicy{std::forward&lt;Args&gt;(args)...}</span></span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">        3486 :     {}</span></span>
 <span id="L194"><span class="lineNum">     194</span>              : </span>
 <span id="L195"><span class="lineNum">     195</span>              :     constexpr identity_dereference_policy(const identity_dereference_policy&amp;) = default;</span>
 <span id="L196"><span class="lineNum">     196</span>              : </span>
 <span id="L197"><span class="lineNum">     197</span>              :     [[nodiscard]]</span>
-<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">        2712 :     constexpr static reference get(Iterator i) { return *i; }</span></span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">        3008 :     constexpr static reference get(Iterator i) { return *i; }</span></span>
 <span id="L199"><span class="lineNum">     199</span>              : </span>
 <span id="L200"><span class="lineNum">     200</span>              :     [[nodiscard]]</span>
-<span id="L201"><span class="lineNum">     201</span> <span class="tlaGNC">         398 :     constexpr static pointer get_ptr(Iterator i) { return &amp;*i; }</span></span>
+<span id="L201"><span class="lineNum">     201</span> <span class="tlaGNC">         404 :     constexpr static pointer get_ptr(Iterator i) { return &amp;*i; }</span></span>
 <span id="L202"><span class="lineNum">     202</span>              : </span>
 <span id="L203"><span class="lineNum">     203</span>              :     [[nodiscard]]</span>
 <span id="L204"><span class="lineNum">     204</span>              :     friend constexpr bool operator==(const identity_dereference_policy&amp;, const identity_dereference_policy&amp;) noexcept = default;</span>
@@ -307,10 +307,10 @@
 <span id="L245"><span class="lineNum">     245</span>              : </span>
 <span id="L246"><span class="lineNum">     246</span>              :     template&lt;class Arg, class... Args&gt;</span>
 <span id="L247"><span class="lineNum">     247</span>              :       requires (!resolve_to_copy_v&lt;iterator, Arg, Args...&gt;)</span>
-<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">        4276 :     constexpr explicit(sizeof...(Args) == 0) iterator(Arg&amp;&amp; baseIterArg, Args&amp;&amp;... args)</span></span>
+<span id="L248"><span class="lineNum">     248</span> <span class="tlaGNC">        4589 :     constexpr explicit(sizeof...(Args) == 0) iterator(Arg&amp;&amp; baseIterArg, Args&amp;&amp;... args)</span></span>
 <span id="L249"><span class="lineNum">     249</span> <span class="tlaGNC">           2 :       : DereferencePolicy{std::forward&lt;Args&gt;(args)...}</span></span>
-<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">        8550 :       , m_BaseIterator{std::forward&lt;Arg&gt;(baseIterArg)}</span></span>
-<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">        4276 :     {}</span></span>
+<span id="L250"><span class="lineNum">     250</span> <span class="tlaGNC">        9176 :       , m_BaseIterator{std::forward&lt;Arg&gt;(baseIterArg)}</span></span>
+<span id="L251"><span class="lineNum">     251</span> <span class="tlaGNC">        4590 :     {}</span></span>
 <span id="L252"><span class="lineNum">     252</span>              : </span>
 <span id="L253"><span class="lineNum">     253</span>              :     template&lt;class Iter, class DerefPol&gt;</span>
 <span id="L254"><span class="lineNum">     254</span>              :       requires (   !std::is_same_v&lt;Iter, Iterator&gt;</span>
@@ -329,32 +329,32 @@
 <span id="L267"><span class="lineNum">     267</span>              :     constexpr iterator&amp; operator=(iterator&amp;&amp;) noexcept = default;</span>
 <span id="L268"><span class="lineNum">     268</span>              : </span>
 <span id="L269"><span class="lineNum">     269</span>              :     [[nodiscard]]</span>
-<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          90 :     constexpr base_iterator_type base_iterator() const noexcept { return m_BaseIterator; }</span></span>
+<span id="L270"><span class="lineNum">     270</span> <span class="tlaGNC">          92 :     constexpr base_iterator_type base_iterator() const noexcept { return m_BaseIterator; }</span></span>
 <span id="L271"><span class="lineNum">     271</span>              : </span>
 <span id="L272"><span class="lineNum">     272</span>              :     [[nodiscard]]</span>
-<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">        1417 :     constexpr reference operator*() const</span></span>
+<span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">        1565 :     constexpr reference operator*() const</span></span>
 <span id="L274"><span class="lineNum">     274</span>              :     {</span>
-<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">        1417 :       return DereferencePolicy::get(m_BaseIterator);</span></span>
+<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">        1565 :       return DereferencePolicy::get(m_BaseIterator);</span></span>
 <span id="L276"><span class="lineNum">     276</span>              :     }</span>
 <span id="L277"><span class="lineNum">     277</span>              : </span>
 <span id="L278"><span class="lineNum">     278</span>              :     [[nodiscard]]</span>
-<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">         935 :     constexpr reference operator[](const difference_type n) const</span></span>
+<span id="L279"><span class="lineNum">     279</span> <span class="tlaGNC">         929 :     constexpr reference operator[](const difference_type n) const</span></span>
 <span id="L280"><span class="lineNum">     280</span>              :       requires steppable&lt;Iterator&gt;</span>
 <span id="L281"><span class="lineNum">     281</span>              :     {</span>
-<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">         935 :       return DereferencePolicy::get(m_BaseIterator + n);</span></span>
+<span id="L282"><span class="lineNum">     282</span> <span class="tlaGNC">         929 :       return DereferencePolicy::get(m_BaseIterator + n);</span></span>
 <span id="L283"><span class="lineNum">     283</span>              :     }</span>
 <span id="L284"><span class="lineNum">     284</span>              : </span>
-<span id="L285"><span class="lineNum">     285</span> <span class="tlaGNC">         199 :     constexpr pointer operator-&gt;() const</span></span>
+<span id="L285"><span class="lineNum">     285</span> <span class="tlaGNC">         202 :     constexpr pointer operator-&gt;() const</span></span>
 <span id="L286"><span class="lineNum">     286</span>              :       requires requires (Iterator i){ DereferencePolicy::get_ptr(i); }</span>
 <span id="L287"><span class="lineNum">     287</span>              :     {</span>
-<span id="L288"><span class="lineNum">     288</span> <span class="tlaGNC">         199 :       return DereferencePolicy::get_ptr(m_BaseIterator);</span></span>
+<span id="L288"><span class="lineNum">     288</span> <span class="tlaGNC">         202 :       return DereferencePolicy::get_ptr(m_BaseIterator);</span></span>
 <span id="L289"><span class="lineNum">     289</span>              :     }</span>
 <span id="L290"><span class="lineNum">     290</span>              : </span>
-<span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">        1497 :     constexpr iterator&amp; operator++()</span></span>
+<span id="L291"><span class="lineNum">     291</span> <span class="tlaGNC">        1648 :     constexpr iterator&amp; operator++()</span></span>
 <span id="L292"><span class="lineNum">     292</span>              :       requires std::weakly_incrementable&lt;Iterator&gt;</span>
 <span id="L293"><span class="lineNum">     293</span>              :     {</span>
-<span id="L294"><span class="lineNum">     294</span> <span class="tlaGNC">        1497 :       ++m_BaseIterator;</span></span>
-<span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">        1497 :       return *this;</span></span>
+<span id="L294"><span class="lineNum">     294</span> <span class="tlaGNC">        1648 :       ++m_BaseIterator;</span></span>
+<span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">        1648 :       return *this;</span></span>
 <span id="L296"><span class="lineNum">     296</span>              :     }</span>
 <span id="L297"><span class="lineNum">     297</span>              : </span>
 <span id="L298"><span class="lineNum">     298</span>              :     constexpr iterator operator++(int)</span>
@@ -417,16 +417,16 @@
 <span id="L355"><span class="lineNum">     355</span>              :     }</span>
 <span id="L356"><span class="lineNum">     356</span>              : </span>
 <span id="L357"><span class="lineNum">     357</span>              :     [[nodiscard]]</span>
-<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">          45 :     friend constexpr difference_type operator-(const iterator&amp; lhs, const iterator&amp; rhs)</span></span>
+<span id="L358"><span class="lineNum">     358</span> <span class="tlaGNC">          46 :     friend constexpr difference_type operator-(const iterator&amp; lhs, const iterator&amp; rhs)</span></span>
 <span id="L359"><span class="lineNum">     359</span>              :       requires steppable&lt;Iterator&gt;</span>
 <span id="L360"><span class="lineNum">     360</span>              :     {</span>
-<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">          56 :       return lhs.base_iterator() - rhs.base_iterator();</span></span>
+<span id="L361"><span class="lineNum">     361</span> <span class="tlaGNC">          58 :       return lhs.base_iterator() - rhs.base_iterator();</span></span>
 <span id="L362"><span class="lineNum">     362</span>              :     }</span>
 <span id="L363"><span class="lineNum">     363</span>              : </span>
 <span id="L364"><span class="lineNum">     364</span>              :     [[nodiscard]]</span>
-<span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">        3126 :     friend constexpr bool operator==(const iterator&amp; lhs, const iterator&amp; rhs) noexcept</span></span>
+<span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">        3433 :     friend constexpr bool operator==(const iterator&amp; lhs, const iterator&amp; rhs) noexcept</span></span>
 <span id="L366"><span class="lineNum">     366</span>              :     {</span>
-<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">        6154 :       return lhs.m_BaseIterator == rhs.m_BaseIterator;</span></span>
+<span id="L367"><span class="lineNum">     367</span> <span class="tlaGNC">        6768 :       return lhs.m_BaseIterator == rhs.m_BaseIterator;</span></span>
 <span id="L368"><span class="lineNum">     368</span>              :     }</span>
 <span id="L369"><span class="lineNum">     369</span>              : </span>
 <span id="L370"><span class="lineNum">     370</span>              :     [[nodiscard]]</span>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 11:51:02</td>
+            <td class="headerValue">2026-03-05 17:59:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -99,14 +99,14 @@
 <span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          74 :             : m_Handle{LifeEvents{args...}.create(ctx)}</span></span>
 <span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          74 :         {}</span></span>
 <span id="L39"><span class="lineNum">      39</span>              : </span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          74 :         ~generic_shader_resource() { LifeEvents::destroy(view()); }</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          73 :         ~generic_shader_resource() { LifeEvents::destroy(view()); }</span></span>
 <span id="L41"><span class="lineNum">      41</span>              : </span>
 <span id="L42"><span class="lineNum">      42</span>              :         generic_shader_resource(generic_shader_resource&amp;&amp;) noexcept = default;</span>
 <span id="L43"><span class="lineNum">      43</span>              : </span>
 <span id="L44"><span class="lineNum">      44</span>              :         generic_shader_resource&amp; operator=(generic_shader_resource&amp;&amp;) noexcept = default;</span>
 <span id="L45"><span class="lineNum">      45</span>              : </span>
 <span id="L46"><span class="lineNum">      46</span>              :         [[nodiscard]]</span>
-<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">         806 :         contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">         809 :         contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }</span></span>
 <span id="L48"><span class="lineNum">      48</span>              : </span>
 <span id="L49"><span class="lineNum">      49</span>              :         [[nodiscard]]</span>
 <span id="L50"><span class="lineNum">      50</span>              :         friend bool operator==(const generic_shader_resource&amp;, const generic_shader_resource&amp;) noexcept = default;</span>
@@ -114,7 +114,7 @@
 <span id="L52"><span class="lineNum">      52</span>              : </span>
 <span id="L53"><span class="lineNum">      53</span>              :     template&lt;class LifeEvents&gt;</span>
 <span id="L54"><span class="lineNum">      54</span>              :     [[nodiscard]]</span>
-<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">         347 :     GLuint get_index(const generic_shader_resource&lt;LifeEvents&gt;&amp; gsr) noexcept { return get_index(gsr.view()); }</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">         349 :     GLuint get_index(const generic_shader_resource&lt;LifeEvents&gt;&amp; gsr) noexcept { return get_index(gsr.view()); }</span></span>
 <span id="L56"><span class="lineNum">      56</span>              : </span>
 <span id="L57"><span class="lineNum">      57</span>              :     struct shader_program_resource_lifecycle {</span>
 <span id="L58"><span class="lineNum">      58</span>              :         [[nodiscard]]</span>

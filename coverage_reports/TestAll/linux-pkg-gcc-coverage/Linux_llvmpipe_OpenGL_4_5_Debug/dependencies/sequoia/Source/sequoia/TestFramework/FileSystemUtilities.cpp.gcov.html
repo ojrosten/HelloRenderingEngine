@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 11:51:02</td>
+            <td class="headerValue">2026-03-05 17:59:13</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryMed">80.0&nbsp;%</td>
@@ -188,19 +188,19 @@
 <span id="L126"><span class="lineNum">     126</span>              :   }</span>
 <span id="L127"><span class="lineNum">     127</span>              : </span>
 <span id="L128"><span class="lineNum">     128</span>              :   [[nodiscard]]</span>
-<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">          77 :   fs::path rebase_from(const fs::path&amp; p, const fs::path&amp; dir)</span></span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">          81 :   fs::path rebase_from(const fs::path&amp; p, const fs::path&amp; dir)</span></span>
 <span id="L130"><span class="lineNum">     130</span>              :   {</span>
-<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">          77 :     if(p.empty())</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">          81 :     if(p.empty())</span></span>
 <span id="L132"><span class="lineNum">     132</span> <span class="tlaUNC">           0 :       return p;</span></span>
 <span id="L133"><span class="lineNum">     133</span>              : </span>
-<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">          77 :     if(dir.empty())</span></span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">          81 :     if(dir.empty())</span></span>
 <span id="L135"><span class="lineNum">     135</span> <span class="tlaUNC">           0 :       throw std::runtime_error{&quot;Tring to rebase from an empty path&quot;};</span></span>
 <span id="L136"><span class="lineNum">     136</span>              : </span>
-<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">          77 :     if(fs::exists(dir) &amp;&amp; !fs::is_directory(dir))</span></span>
+<span id="L137"><span class="lineNum">     137</span> <span class="tlaGNC">          81 :     if(fs::exists(dir) &amp;&amp; !fs::is_directory(dir))</span></span>
 <span id="L138"><span class="lineNum">     138</span> <span class="tlaUNC">           0 :       throw std::runtime_error{&quot;Trying to rebase from something other than a directory&quot;};</span></span>
 <span id="L139"><span class="lineNum">     139</span>              : </span>
-<span id="L140"><span class="lineNum">     140</span> <span class="tlaGNC">          77 :     if(p.is_absolute() &amp;&amp; dir.is_absolute())</span></span>
-<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">          72 :       return fs::relative(p, dir);</span></span>
+<span id="L140"><span class="lineNum">     140</span> <span class="tlaGNC">          81 :     if(p.is_absolute() &amp;&amp; dir.is_absolute())</span></span>
+<span id="L141"><span class="lineNum">     141</span> <span class="tlaGNC">          76 :       return fs::relative(p, dir);</span></span>
 <span id="L142"><span class="lineNum">     142</span>              : </span>
 <span id="L143"><span class="lineNum">     143</span> <span class="tlaGNC">          10 :     auto i{std::ranges::find_if_not(p, [](const fs::path&amp; pth) { return pth == &quot;..&quot;; })};</span></span>
 <span id="L144"><span class="lineNum">     144</span> <span class="tlaGNC">           5 :     if((i == p.end()) || (i-&gt;empty()))</span></span>
