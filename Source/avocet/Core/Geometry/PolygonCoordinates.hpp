@@ -34,9 +34,9 @@ namespace avocet {
 
     template<std::floating_point T, dimensionality D>
     [[nodiscard]]
-    constexpr local_coordinates<T, D> make_polygon_coordinates(std::size_t i, std::size_t N) {
+    constexpr local_coordinates<T, D> polygon_coordinates(std::size_t i, std::size_t N) {
         if(N == 0)
-            throw std::domain_error{"make_polygon_coordinates: The number of polygon vertices must be greater than zero"};
+            throw std::domain_error{"polygon_coordinates: The number of polygon vertices must be greater than zero"};
 
         constexpr T pi{std::numbers::pi_v<T>};
         const auto offset{N % 2 ? 0 : pi / N};
@@ -48,8 +48,8 @@ namespace avocet {
 
     template<std::floating_point T>
     [[nodiscard]]
-    constexpr texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
-        return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{make_polygon_coordinates<T, dimensionality{2}> (i, N).values()};
+    constexpr texture_coordinates<T> polygon_tex_coordinates(std::size_t i, std::size_t N) {
+        return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{polygon_coordinates<T, dimensionality{2}> (i, N).values()};
     }
 
     template<class T>
@@ -59,7 +59,7 @@ namespace avocet {
     struct make_polygon_attribute<sequoia::maths::vec_coords<T, D, local_geometry_arena>>{
         [[nodiscard]]
         constexpr local_coordinates<T, dimensionality{D}> operator()(std::size_t i, std::size_t N) const {
-            return make_polygon_coordinates<T, dimensionality{D}>(i, N);
+            return polygon_coordinates<T, dimensionality{D}>(i, N);
         }
     };
 
@@ -67,7 +67,7 @@ namespace avocet {
     struct make_polygon_attribute<texture_coordinates<T>> {
         [[nodiscard]]
         constexpr texture_coordinates<T> operator()(std::size_t i, std::size_t N) const {
-            return make_polygon_tex_coordinates<T>(i, N);
+            return polygon_tex_coordinates<T>(i, N);
         }
     };
 

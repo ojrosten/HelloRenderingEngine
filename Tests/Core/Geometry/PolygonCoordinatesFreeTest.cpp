@@ -35,7 +35,7 @@ namespace avocet::testing
     {
         check_exception_thrown<std::domain_error>(
             "",
-            []() { return make_polygon_coordinates<float, dimensionality{2}>(1, 0); }
+            []() { return polygon_coordinates<float, dimensionality{2}>(1, 0); }
         );
     }
 
