@@ -41,8 +41,8 @@ namespace avocet::testing
 
     void polygon_coordinates_free_test::check_triangle()
     {
-        using poly_maker_t = make_polygon<float, 3, dimensionality{2} > ;
-        using verts_t = poly_maker_t::vertices_type;
+        using poly_maker_t = make_polygon<float, 3, dimensionality{2}> ;
+        using verts_t      = poly_maker_t::vertices_type;
 
         const float xHigh{std::sqrt(3.0f) / 4.0f};
         for(auto [obtained, predicted] : std::views::zip(poly_maker_t{}(), verts_t{{{{0.0f, 0.5f}}, {{-xHigh, -0.25f}}, {{xHigh, -0.25f}}}})) {
@@ -53,11 +53,11 @@ namespace avocet::testing
     void polygon_coordinates_free_test::check_textured_triangle()
     {
         using poly_maker_t = make_polygon<float, 3, dimensionality{2}, texture_coordinates<float>>;
-        using verts_t = poly_maker_t::vertices_type;
+        using verts_t      = poly_maker_t::vertices_type;
 
         const float xHigh{std::sqrt(3.0f) / 4.0f};
         for(auto [obtained, predicted] : std::views::zip(poly_maker_t{}(), verts_t{{{{0.0f, 0.5f}, {0.5f, 1.0f}}, {{-xHigh, -0.25f}, {0.5f - xHigh, 0.25f}}, {{xHigh, -0.25f}, {0.5f + xHigh, 0.25f}}}})) {
-            check(within_tolerance{1e-6f}, "Vertex Coordinates" , sequoia::get<1>(obtained), sequoia::get<1>(predicted));
+            check(within_tolerance{1e-6f}, "Vertex Coordinates" , sequoia::get<0>(obtained), sequoia::get<0>(predicted));
             check(within_tolerance{1e-6f}, "Texture Coordinates", sequoia::get<1>(obtained), sequoia::get<1>(predicted));
         }
     }
