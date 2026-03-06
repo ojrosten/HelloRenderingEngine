@@ -1,4 +1,4 @@
-Tests/Core/Geometry/PolygonCoordinatesFreeTest.cpp, Line 37
+Tests/Core/Geometry/PolygonCoordinatesFreeTest.cpp, Line 33
 
 Expected Exception Type:
 [std::domain_error]

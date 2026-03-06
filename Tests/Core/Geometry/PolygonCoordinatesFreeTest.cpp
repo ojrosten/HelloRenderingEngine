@@ -10,10 +10,6 @@
 #include "PolygonCoordinatesFreeTest.hpp"
 #include "avocet/Core/Geometry/PolygonCoordinates.hpp"
 
-// TO DO: These need to be made more naturally available from sequoia
-#include "sequoia/../../Tests/Maths/Geometry/GeometryTestingUtilities.hpp"
-#include "sequoia/../../Tests/Core/DataStructures/MemOrderedTupleTestingUtilities.hpp"
-
 #include <ranges>
 
 namespace avocet::testing
