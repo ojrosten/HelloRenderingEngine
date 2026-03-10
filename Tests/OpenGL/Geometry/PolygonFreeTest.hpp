@@ -28,6 +28,7 @@ namespace avocet::testing
 
         void run_tests();
     private:
+
         [[nodiscard]]
         std::filesystem::path get_shader_dir() const { return working_materials() / "Shaders"; }
 
@@ -35,6 +36,6 @@ namespace avocet::testing
         std::filesystem::path get_vertex_shader_dir() const { return get_shader_dir() / "Vertex"; }
 
         [[nodiscard]]
-        std::filesystem::path get_fragment_shader_dir() const { return get_shader_dir() / "Fragment"; }
+        std::filesystem::path get_frag_shader_dir() const { return get_shader_dir() / "Fragment"; }
     };
 }
