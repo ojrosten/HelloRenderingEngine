@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <format>
 #include <memory>
+#include <ranges>
 #include <span>
 #include <utility>
 #include <variant>
@@ -111,6 +112,10 @@ namespace avocet {
         {
             m_Spec.value.validate(std::get<vec_t>(m_Data).size());
         }
+
+        unique_image(std::span<const value_type> data, std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment)
+            : unique_image{std::ranges::to<std::vector>(data), width, height, channels, rowAlignment}
+        {}
 
         [[nodiscard]]
         std::size_t width() const noexcept { return m_Spec.value.width; }

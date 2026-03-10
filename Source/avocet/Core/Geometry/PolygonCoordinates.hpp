@@ -86,6 +86,15 @@ namespace avocet {
             );
         }
     };
+}
 
-    
+namespace std {
+    template<>
+    struct formatter<avocet::dimensionality> {
+        constexpr auto parse(auto& ctx) { return ctx.begin(); }
+
+        auto format(avocet::dimensionality d, auto& ctx) const {
+            return format_to(ctx.out(), "{}", d.value);
+        }
+    };
 }
