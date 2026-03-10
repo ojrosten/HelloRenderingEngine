@@ -28,23 +28,6 @@ namespace avocet::testing
 
         }
 
-        [[nodiscard]]
-        texture_2d_configurator make_texture2d_configurator(const decorated_context& ctx, image_view picture) {
-            return {
-                .common_config{
-                    .decoding{sampling_decoding::none},
-                    .parameter_setter{
-                        [&ctx]() {
-                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                        }
-                    },
-                    .label{}
-                 },
-                .data_view{picture},
-            };
-        }
-
         template<gl_floating_point T>
         [[nodiscard]]
         T away_from_zero(T t) { return t > 0 ? std::ceil(t) : std::floor(t); };
@@ -63,6 +46,46 @@ namespace avocet::testing
         [[nodiscard]]
         std::string to_uniform_name(std::size_t i) {
             return std::format("image{}", i);
+        }
+
+        template<gl_floating_point T>
+        [[nodiscard]]
+        std::string describe_poly(std::size_t numVerts, dimensionality dim, std::size_t numTextures) {
+            return std::format("{}-gon embedded in D = {} with {} textures ({})", numVerts, dim, numTextures, to_precision_name<T>());
+        }
+
+        [[nodiscard]]
+        texture_2d_configurator make_texture2d_configurator(const decorated_context& ctx, image_view picture) {
+            return {
+                .common_config{
+                    .decoding{sampling_decoding::none},
+                    .parameter_setter{
+                        [&ctx]() {
+                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                        }
+                    },
+                    .label{}
+                 },
+                .data_view{picture},
+            };
+        }
+
+        template<gl_floating_point T, std::size_t NumVertices, dimensionality Dim, class... Images>
+            requires (std::convertible_to<Images, image_view> && ...)
+        polygon<T, NumVertices, Dim> make_poly(const decorated_context& ctx, const Images&... images) {
+            return {
+                ctx,
+                [](auto verts) {
+                    for(auto& vert : verts) {
+                        auto& coords{sequoia::get<0>(vert)};
+                        coords = {away_from_zero(coords[0]), away_from_zero(coords[1])};
+                    }
+
+                    return verts;
+                },
+                make_label(describe_poly<T>(NumVertices, Dim, sizeof...(Images)))
+            };
         }
 
         template<std::size_t NumVerts, discrete_extent Extent>
