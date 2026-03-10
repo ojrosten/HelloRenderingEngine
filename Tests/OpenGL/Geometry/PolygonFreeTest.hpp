@@ -9,6 +9,9 @@
 
 /*! \file */
 
+#include "avocet/Core/Geometry/PolygonCoordinates.hpp"
+#include "avocet/OpenGL/Resources/Framebuffer.hpp"
+
 #include "curlew/TestFramework/GraphicsTestCore.hpp"
 
 namespace avocet::testing
@@ -24,5 +27,14 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+    private:
+        [[nodiscard]]
+        std::filesystem::path get_shader_dir() const { return working_materials() / "Shaders"; }
+
+        [[nodiscard]]
+        std::filesystem::path get_vertex_shader_dir() const { return get_shader_dir() / "Vertex"; }
+
+        [[nodiscard]]
+        std::filesystem::path get_fragment_shader_dir() const { return get_shader_dir() / "Fragment"; }
     };
 }
