@@ -23,7 +23,7 @@ namespace avocet::testing
     void texture_2d_labelling_free_test::labelling_tests(const curlew::window& w)
     {
         std::string label{"This is a nice label!"};
-        unique_image image{{1}, 1, 1, colour_channels{1}, alignment{1}};
+        unique_image image{std::vector<unsigned char>{1}, 1, 1, colour_channels{1}, alignment{1}};
         agl::texture_2d tex2d{w.context(), agl::texture_2d_configurator{.common_config{.decoding{}, .parameter_setter{}, .label{label}}, .data_view{image}}};
         check(equality, "", tex2d.extract_label(), label);
     }
