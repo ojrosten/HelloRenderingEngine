@@ -64,6 +64,19 @@ namespace avocet::testing
         std::string to_uniform_name(std::size_t i) {
             return std::format("image{}", i);
         }
+
+        template<std::size_t NumVerts, discrete_extent Extent>
+            requires (3 <= NumVerts) && (NumVerts <= 4)
+        [[nodiscard]]
+        constexpr std::array<unsigned char, Extent.width * Extent.height> build_prediction(const std::array<unsigned char, Extent.width>& bottomPrediction) {
+            std::array<unsigned char, Extent.width * Extent.height> prediction{};
+            std::ranges::copy(bottomPrediction, prediction.begin());
+            if constexpr(NumVerts == 4) {
+                std::ranges::copy(bottomPrediction, std::ranges::next(prediction.begin(), Extent.width));
+            }
+
+            return prediction;
+        }
     }
 
     [[nodiscard]]

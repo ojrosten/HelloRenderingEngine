@@ -83,6 +83,13 @@ namespace sequoia::testing
             check(equality, "Data Size",   logger, actual.span().size(), prediction.span().size());
         }
 
+        template<test_mode Mode>
+        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::unique_image& actual, const avocet::unique_image& prediction)
+        {
+            image_value_tester<avocet::unique_image>::do_test(equality, logger, actual, prediction);
+            check(equality, "Data", logger, actual.span(), prediction.span());
+        }
+
         using image_value_tester<avocet::unique_image>::test;
     };
 
