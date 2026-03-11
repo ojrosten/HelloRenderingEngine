@@ -73,6 +73,7 @@ namespace avocet::testing
 
         template<gl_floating_point T, std::size_t NumVertices, dimensionality Dim, class... Images>
             requires (std::convertible_to<Images, image_view> && ...)
+        [[nodiscard]]
         polygon<T, NumVertices, Dim> make_poly(const decorated_context& ctx, const Images&... images) {
             return {
                 ctx,
