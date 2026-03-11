@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">6</td>
-            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntry">31</td>
           </tr>
                   <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -103,10 +103,10 @@
 <span id="L41"><span class="lineNum">      41</span>              :         : indexed_element&lt;Ts, Is&gt;{Ts{}}...</span>
 <span id="L42"><span class="lineNum">      42</span>              :       {}</span>
 <span id="L43"><span class="lineNum">      43</span>              : </span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">           7 :       constexpr explicit(sizeof...(Ts) == 1) mem_ordered_tuple(const Ts&amp;... ts)</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">          63 :       constexpr explicit(sizeof...(Ts) == 1) mem_ordered_tuple(const Ts&amp;... ts)</span></span>
 <span id="L45"><span class="lineNum">      45</span>              :         requires (sizeof...(Ts) &gt;= 1) &amp;&amp; (std::is_copy_constructible_v&lt;Ts&gt; &amp;&amp; ...)</span>
-<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">           7 :         : indexed_element&lt;Ts, Is&gt;{ts}...</span></span>
-<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">           7 :       {}</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">          63 :         : indexed_element&lt;Ts, Is&gt;{ts}...</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">          63 :       {}</span></span>
 <span id="L48"><span class="lineNum">      48</span>              : </span>
 <span id="L49"><span class="lineNum">      49</span>              :       [[nodiscard]]</span>
 <span id="L50"><span class="lineNum">      50</span>              :       friend auto constexpr operator&lt;=&gt;(const mem_ordered_tuple&amp;, const mem_ordered_tuple&amp;) noexcept = default;</span>
@@ -124,10 +124,10 @@
 <span id="L62"><span class="lineNum">      62</span>              :   {</span>
 <span id="L63"><span class="lineNum">      63</span>              :     constexpr mem_ordered_tuple() requires (std::is_default_constructible_v&lt;Ts&gt; &amp;&amp; ...) = default;</span>
 <span id="L64"><span class="lineNum">      64</span>              : </span>
-<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">           7 :     constexpr explicit(!(std::convertible_to&lt;const Ts&amp;, Ts&gt; &amp;&amp; ...)) mem_ordered_tuple(const Ts&amp;... ts)</span></span>
+<span id="L65"><span class="lineNum">      65</span> <span class="tlaGNC">          63 :     constexpr explicit(!(std::convertible_to&lt;const Ts&amp;, Ts&gt; &amp;&amp; ...)) mem_ordered_tuple(const Ts&amp;... ts)</span></span>
 <span id="L66"><span class="lineNum">      66</span>              :         requires (sizeof...(Ts) &gt;= 1) &amp;&amp; (std::is_copy_constructible_v&lt;Ts&gt; &amp;&amp; ...)</span>
-<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">           7 :       : impl::mem_ordered_tuple&lt;std::make_index_sequence&lt;sizeof...(Ts)&gt;, Ts...&gt;{ts...}</span></span>
-<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">           7 :     {}</span></span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">          63 :       : impl::mem_ordered_tuple&lt;std::make_index_sequence&lt;sizeof...(Ts)&gt;, Ts...&gt;{ts...}</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">          63 :     {}</span></span>
 <span id="L69"><span class="lineNum">      69</span>              : </span>
 <span id="L70"><span class="lineNum">      70</span>              :     [[nodiscard]]</span>
 <span id="L71"><span class="lineNum">      71</span>              :     friend auto constexpr operator&lt;=&gt;(const mem_ordered_tuple&amp;, const mem_ordered_tuple&amp;) noexcept = default;</span>
@@ -158,8 +158,8 @@
 <span id="L96"><span class="lineNum">      96</span>              :   // TO DO: restore direct use of pack-indexing, once MSVC supports it</span>
 <span id="L97"><span class="lineNum">      97</span>              :   template&lt;std::size_t I, class... Ts&gt;</span>
 <span id="L98"><span class="lineNum">      98</span>              :   [[nodiscard]]</span>
-<span id="L99"><span class="lineNum">      99</span> <span class="tlaGNC">          18 :   constexpr mem_ordered_tuple_element_t&lt;I, mem_ordered_tuple&lt;Ts...&gt;&gt;&amp; get(mem_ordered_tuple&lt;Ts...&gt;&amp; t) noexcept {</span></span>
-<span id="L100"><span class="lineNum">     100</span> <span class="tlaGNC">          18 :     return static_cast&lt;impl::indexed_element&lt;mem_ordered_tuple_element_t&lt;I, mem_ordered_tuple&lt;Ts...&gt;&gt;, I&gt;&amp;&gt;(t).value;</span></span>
+<span id="L99"><span class="lineNum">      99</span> <span class="tlaGNC">         102 :   constexpr mem_ordered_tuple_element_t&lt;I, mem_ordered_tuple&lt;Ts...&gt;&gt;&amp; get(mem_ordered_tuple&lt;Ts...&gt;&amp; t) noexcept {</span></span>
+<span id="L100"><span class="lineNum">     100</span> <span class="tlaGNC">         102 :     return static_cast&lt;impl::indexed_element&lt;mem_ordered_tuple_element_t&lt;I, mem_ordered_tuple&lt;Ts...&gt;&gt;, I&gt;&amp;&gt;(t).value;</span></span>
 <span id="L101"><span class="lineNum">     101</span>              :   }</span>
 <span id="L102"><span class="lineNum">     102</span>              : </span>
 <span id="L103"><span class="lineNum">     103</span>              :   template&lt;std::size_t I, class... Ts&gt;</span>

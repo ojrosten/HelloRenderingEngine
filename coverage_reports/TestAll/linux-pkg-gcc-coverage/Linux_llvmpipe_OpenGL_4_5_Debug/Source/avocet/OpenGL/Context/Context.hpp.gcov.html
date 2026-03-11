@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -83,20 +83,20 @@
 <span id="L21"><span class="lineNum">      21</span>              :         explicit context_characteristics(const context_base&amp; ctx);</span>
 <span id="L22"><span class="lineNum">      22</span>              : </span>
 <span id="L23"><span class="lineNum">      23</span>              :         [[nodiscard]]</span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">        1855 :         std::size_t max_debug_message_length() const noexcept { return m_MaxDebugMessageLength; }</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">        3250 :         std::size_t max_debug_message_length() const noexcept { return m_MaxDebugMessageLength; }</span></span>
 <span id="L25"><span class="lineNum">      25</span>              :     };</span>
 <span id="L26"><span class="lineNum">      26</span>              : </span>
 <span id="L27"><span class="lineNum">      27</span>              :     class context : public context_base {</span>
 <span id="L28"><span class="lineNum">      28</span>              :     public:</span>
 <span id="L29"><span class="lineNum">      29</span>              :         template&lt;class Loader&gt;</span>
 <span id="L30"><span class="lineNum">      30</span>              :             requires std::is_invocable_r_v&lt;GladGLContext, Loader, GladGLContext&gt;</span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          32 :         context(debugging_mode mode, Loader loader)</span></span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          32 :             : context_base{mode, std::move(loader)}</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          64 :             , m_Characteristics{static_cast&lt;const context_base&amp;&gt;(*this)}</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          32 :         {}</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          33 :         context(debugging_mode mode, Loader loader)</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          33 :             : context_base{mode, std::move(loader)}</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          66 :             , m_Characteristics{static_cast&lt;const context_base&amp;&gt;(*this)}</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          33 :         {}</span></span>
 <span id="L35"><span class="lineNum">      35</span>              : </span>
 <span id="L36"><span class="lineNum">      36</span>              :         [[nodiscard]]</span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">        1853 :         const context_characteristics&amp; characteristics() const noexcept { return m_Characteristics; }</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">        3250 :         const context_characteristics&amp; characteristics() const noexcept { return m_Characteristics; }</span></span>
 <span id="L38"><span class="lineNum">      38</span>              :     protected:</span>
 <span id="L39"><span class="lineNum">      39</span>              :         ~context() = default;</span>
 <span id="L40"><span class="lineNum">      40</span>              : </span>

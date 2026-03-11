@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryLo">6.1&nbsp;%</td>
+            <td class="headerCovTableEntryLo">6.4&nbsp;%</td>
             <td class="headerCovTableEntry">312</td>
-            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">20</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">12.1&nbsp;%</td>
@@ -606,9 +606,9 @@
 <span id="L544"><span class="lineNum">     544</span>              :   {</span>
 <span id="L545"><span class="lineNum">     545</span> <span class="tlaGNC">           1 :     if(std::ofstream ostream{file})</span></span>
 <span id="L546"><span class="lineNum">     546</span>              :     {</span>
-<span id="L547"><span class="lineNum">     547</span> <span class="tlaGNC">           2 :       for(const auto&amp; test : tests)</span></span>
+<span id="L547"><span class="lineNum">     547</span> <span class="tlaGNC">           3 :       for(const auto&amp; test : tests)</span></span>
 <span id="L548"><span class="lineNum">     548</span>              :       {</span>
-<span id="L549"><span class="lineNum">     549</span> <span class="tlaUNC">           0 :         ostream &lt;&lt; rebase_from(test, projPaths.tests().repo()).generic_string() &lt;&lt; &quot;\n&quot;;</span></span>
+<span id="L549"><span class="lineNum">     549</span> <span class="tlaGNC">           1 :         ostream &lt;&lt; rebase_from(test, projPaths.tests().repo()).generic_string() &lt;&lt; &quot;\n&quot;;</span></span>
 <span id="L550"><span class="lineNum">     550</span>              :       }</span>
 <span id="L551"><span class="lineNum">     551</span> <span class="tlaGNC">           1 :     }</span></span>
 <span id="L552"><span class="lineNum">     552</span> <span class="tlaGNC">           1 :   }</span></span>

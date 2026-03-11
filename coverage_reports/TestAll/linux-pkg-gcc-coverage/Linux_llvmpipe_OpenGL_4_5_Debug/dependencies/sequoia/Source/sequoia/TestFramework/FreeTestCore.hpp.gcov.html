@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">90.0&nbsp;%</td>
@@ -132,9 +132,9 @@
 <span id="L70"><span class="lineNum">      70</span>              :     }</span>
 <span id="L71"><span class="lineNum">      71</span>              : </span>
 <span id="L72"><span class="lineNum">      72</span>              :     [[nodiscard]]</span>
-<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">          61 :     std::filesystem::path working_materials() const</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">         109 :     std::filesystem::path working_materials() const</span></span>
 <span id="L74"><span class="lineNum">      74</span>              :     {</span>
-<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">          61 :       return m_Materials.working();</span></span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">         109 :       return m_Materials.working();</span></span>
 <span id="L76"><span class="lineNum">      76</span>              :     }</span>
 <span id="L77"><span class="lineNum">      77</span>              : </span>
 <span id="L78"><span class="lineNum">      78</span>              :     [[nodiscard]]</span>
@@ -168,9 +168,9 @@
 <span id="L106"><span class="lineNum">     106</span>              :     }</span>
 <span id="L107"><span class="lineNum">     107</span>              : </span>
 <span id="L108"><span class="lineNum">     108</span>              :     [[nodiscard]]</span>
-<span id="L109"><span class="lineNum">     109</span> <span class="tlaGNC">         378 :     std::string report(const reporter&amp; rep) const</span></span>
+<span id="L109"><span class="lineNum">     109</span> <span class="tlaGNC">         402 :     std::string report(const reporter&amp; rep) const</span></span>
 <span id="L110"><span class="lineNum">     110</span>              :     {</span>
-<span id="L111"><span class="lineNum">     111</span> <span class="tlaGNC">         378 :         return rep.location() ? testing::report_line(rep.message(), m_ProjectPaths.tests().repo(), rep.location().value()) : rep.message();</span></span>
+<span id="L111"><span class="lineNum">     111</span> <span class="tlaGNC">         402 :         return rep.location() ? testing::report_line(rep.message(), m_ProjectPaths.tests().repo(), rep.location().value()) : rep.message();</span></span>
 <span id="L112"><span class="lineNum">     112</span>              :     }</span>
 <span id="L113"><span class="lineNum">     113</span>              :   protected:</span>
 <span id="L114"><span class="lineNum">     114</span> <span class="tlaGNC">         190 :     ~test_base() = default;</span></span>

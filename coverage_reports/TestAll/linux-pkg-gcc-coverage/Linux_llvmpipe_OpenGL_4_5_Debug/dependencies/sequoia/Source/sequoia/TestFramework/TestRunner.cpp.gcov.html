@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryLo">36.1&nbsp;%</td>
+            <td class="headerCovTableEntryLo">36.3&nbsp;%</td>
             <td class="headerCovTableEntry">532</td>
-            <td class="headerCovTableEntry">192</td>
+            <td class="headerCovTableEntry">193</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">30.5&nbsp;%</td>
@@ -266,7 +266,7 @@
 <span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">          38 :         m_ExecutedTests.push_back(files.test_file);</span></span>
 <span id="L205"><span class="lineNum">     205</span>              : </span>
 <span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          38 :         if(summary.soft_failures() || summary.critical_failures())</span></span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaUNC">           0 :           m_FailedTests.push_back(files.test_file);</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">           1 :           m_FailedTests.push_back(files.test_file);</span></span>
 <span id="L208"><span class="lineNum">     208</span>              : </span>
 <span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">          38 :         to_file(files.summary, summary);</span></span>
 <span id="L210"><span class="lineNum">     210</span>              : </span>
@@ -339,30 +339,30 @@
 <span id="L277"><span class="lineNum">     277</span> <span class="tlaGNC">          38 :     individual_materials_paths materials{sourceFile, projPaths};</span></span>
 <span id="L278"><span class="lineNum">     278</span> <span class="tlaGNC">          38 :     if(!fs::exists(materials.original_materials())) return {};</span></span>
 <span id="L279"><span class="lineNum">     279</span>              : </span>
-<span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">          10 :     const auto workingCopy{materials.working()};</span></span>
-<span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">          20 :     if(std::ranges::find(materialsPaths, workingCopy) == materialsPaths.cend())</span></span>
+<span id="L280"><span class="lineNum">     280</span> <span class="tlaGNC">          11 :     const auto workingCopy{materials.working()};</span></span>
+<span id="L281"><span class="lineNum">     281</span> <span class="tlaGNC">          22 :     if(std::ranges::find(materialsPaths, workingCopy) == materialsPaths.cend())</span></span>
 <span id="L282"><span class="lineNum">     282</span>              :     {</span>
-<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">          10 :       fs::remove_all(materials.temporary_materials());</span></span>
-<span id="L284"><span class="lineNum">     284</span> <span class="tlaGNC">          10 :       fs::create_directories(materials.temporary_materials());</span></span>
+<span id="L283"><span class="lineNum">     283</span> <span class="tlaGNC">          11 :       fs::remove_all(materials.temporary_materials());</span></span>
+<span id="L284"><span class="lineNum">     284</span> <span class="tlaGNC">          11 :       fs::create_directories(materials.temporary_materials());</span></span>
 <span id="L285"><span class="lineNum">     285</span>              : </span>
-<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">          10 :       if(const auto originalWorking{materials.original_working()}; fs::exists(originalWorking))</span></span>
+<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">          11 :       if(const auto originalWorking{materials.original_working()}; fs::exists(originalWorking))</span></span>
 <span id="L287"><span class="lineNum">     287</span>              :       {</span>
-<span id="L288"><span class="lineNum">     288</span> <span class="tlaGNC">          10 :         fs::copy(originalWorking, workingCopy, fs::copy_options::recursive | fs::copy_options::overwrite_existing);</span></span>
+<span id="L288"><span class="lineNum">     288</span> <span class="tlaGNC">          11 :         fs::copy(originalWorking, workingCopy, fs::copy_options::recursive | fs::copy_options::overwrite_existing);</span></span>
 <span id="L289"><span class="lineNum">     289</span>              :       }</span>
 <span id="L290"><span class="lineNum">     290</span>              :       else</span>
 <span id="L291"><span class="lineNum">     291</span>              :       {</span>
 <span id="L292"><span class="lineNum">     292</span> <span class="tlaUNC">           0 :         fs::create_directory(workingCopy);</span></span>
-<span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">          10 :       }</span></span>
+<span id="L293"><span class="lineNum">     293</span> <span class="tlaGNC">          11 :       }</span></span>
 <span id="L294"><span class="lineNum">     294</span>              : </span>
-<span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">          10 :       if(const auto originalAux{materials.original_auxiliary()}; fs::exists(originalAux))</span></span>
+<span id="L295"><span class="lineNum">     295</span> <span class="tlaGNC">          11 :       if(const auto originalAux{materials.original_auxiliary()}; fs::exists(originalAux))</span></span>
 <span id="L296"><span class="lineNum">     296</span>              :       {</span>
 <span id="L297"><span class="lineNum">     297</span> <span class="tlaUNC">           0 :         fs::copy(originalAux, materials.auxiliary(), fs::copy_options::recursive | fs::copy_options::overwrite_existing);</span></span>
-<span id="L298"><span class="lineNum">     298</span> <span class="tlaGNC">          10 :       }</span></span>
+<span id="L298"><span class="lineNum">     298</span> <span class="tlaGNC">          11 :       }</span></span>
 <span id="L299"><span class="lineNum">     299</span>              : </span>
-<span id="L300"><span class="lineNum">     300</span> <span class="tlaGNC">          10 :       materialsPaths.emplace_back(workingCopy);</span></span>
+<span id="L300"><span class="lineNum">     300</span> <span class="tlaGNC">          11 :       materialsPaths.emplace_back(workingCopy);</span></span>
 <span id="L301"><span class="lineNum">     301</span>              :     }</span>
 <span id="L302"><span class="lineNum">     302</span>              : </span>
-<span id="L303"><span class="lineNum">     303</span> <span class="tlaGNC">          10 :     return materials;</span></span>
+<span id="L303"><span class="lineNum">     303</span> <span class="tlaGNC">          11 :     return materials;</span></span>
 <span id="L304"><span class="lineNum">     304</span> <span class="tlaGNC">          38 :   }</span></span>
 <span id="L305"><span class="lineNum">     305</span>              : </span>
 <span id="L306"><span class="lineNum">     306</span>              : </span>

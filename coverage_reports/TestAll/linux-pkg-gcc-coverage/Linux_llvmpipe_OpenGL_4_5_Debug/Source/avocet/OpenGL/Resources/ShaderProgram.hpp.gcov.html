@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -95,18 +95,18 @@
 <span id="L33"><span class="lineNum">      33</span>              :     public:</span>
 <span id="L34"><span class="lineNum">      34</span>              :         template&lt;class... Args&gt;</span>
 <span id="L35"><span class="lineNum">      35</span>              :             requires std::is_constructible_v&lt;LifeEvents, Args...&gt;</span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          74 :         explicit(sizeof...(Args) == 0) generic_shader_resource(const decorated_context&amp; ctx, const Args&amp;... args)</span></span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          74 :             : m_Handle{LifeEvents{args...}.create(ctx)}</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          74 :         {}</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">         146 :         explicit(sizeof...(Args) == 0) generic_shader_resource(const decorated_context&amp; ctx, const Args&amp;... args)</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         146 :             : m_Handle{LifeEvents{args...}.create(ctx)}</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         146 :         {}</span></span>
 <span id="L39"><span class="lineNum">      39</span>              : </span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          73 :         ~generic_shader_resource() { LifeEvents::destroy(view()); }</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         146 :         ~generic_shader_resource() { LifeEvents::destroy(view()); }</span></span>
 <span id="L41"><span class="lineNum">      41</span>              : </span>
 <span id="L42"><span class="lineNum">      42</span>              :         generic_shader_resource(generic_shader_resource&amp;&amp;) noexcept = default;</span>
 <span id="L43"><span class="lineNum">      43</span>              : </span>
 <span id="L44"><span class="lineNum">      44</span>              :         generic_shader_resource&amp; operator=(generic_shader_resource&amp;&amp;) noexcept = default;</span>
 <span id="L45"><span class="lineNum">      45</span>              : </span>
 <span id="L46"><span class="lineNum">      46</span>              :         [[nodiscard]]</span>
-<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">         809 :         contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">        1434 :         contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }</span></span>
 <span id="L48"><span class="lineNum">      48</span>              : </span>
 <span id="L49"><span class="lineNum">      49</span>              :         [[nodiscard]]</span>
 <span id="L50"><span class="lineNum">      50</span>              :         friend bool operator==(const generic_shader_resource&amp;, const generic_shader_resource&amp;) noexcept = default;</span>
@@ -114,15 +114,15 @@
 <span id="L52"><span class="lineNum">      52</span>              : </span>
 <span id="L53"><span class="lineNum">      53</span>              :     template&lt;class LifeEvents&gt;</span>
 <span id="L54"><span class="lineNum">      54</span>              :     [[nodiscard]]</span>
-<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">         349 :     GLuint get_index(const generic_shader_resource&lt;LifeEvents&gt;&amp; gsr) noexcept { return get_index(gsr.view()); }</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">         613 :     GLuint get_index(const generic_shader_resource&lt;LifeEvents&gt;&amp; gsr) noexcept { return get_index(gsr.view()); }</span></span>
 <span id="L56"><span class="lineNum">      56</span>              : </span>
 <span id="L57"><span class="lineNum">      57</span>              :     struct shader_program_resource_lifecycle {</span>
 <span id="L58"><span class="lineNum">      58</span>              :         [[nodiscard]]</span>
-<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          26 :         static contextual_resource_handle create(const decorated_context&amp; ctx) {</span></span>
-<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">          26 :             return contextual_resource_handle{ctx, std::array{gl_function{&amp;GladGLContext::CreateProgram}(ctx)}};</span></span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          50 :         static contextual_resource_handle create(const decorated_context&amp; ctx) {</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">          50 :             return contextual_resource_handle{ctx, std::array{gl_function{&amp;GladGLContext::CreateProgram}(ctx)}};</span></span>
 <span id="L61"><span class="lineNum">      61</span>              :         }</span>
 <span id="L62"><span class="lineNum">      62</span>              : </span>
-<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">          26 :         static void destroy(contextual_resource_view handle) { gl_function{&amp;GladGLContext::DeleteProgram}(handle.context(), get_index(handle)); }</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">          50 :         static void destroy(contextual_resource_view handle) { gl_function{&amp;GladGLContext::DeleteProgram}(handle.context(), get_index(handle)); }</span></span>
 <span id="L64"><span class="lineNum">      64</span>              :     };</span>
 <span id="L65"><span class="lineNum">      65</span>              : </span>
 <span id="L66"><span class="lineNum">      66</span>              :     using shader_program_resource = generic_shader_resource&lt;shader_program_resource_lifecycle&gt;;</span>
@@ -131,13 +131,13 @@
 <span id="L69"><span class="lineNum">      69</span>              :         using is_transparent = void;</span>
 <span id="L70"><span class="lineNum">      70</span>              : </span>
 <span id="L71"><span class="lineNum">      71</span>              :         [[nodiscard]]</span>
-<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">         108 :         std::size_t operator()(const std::string&amp; txt) const noexcept {</span></span>
-<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">         108 :             return std::hash&lt;std::string&gt;{}(txt);</span></span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">         132 :         std::size_t operator()(const std::string&amp; txt) const noexcept {</span></span>
+<span id="L73"><span class="lineNum">      73</span> <span class="tlaGNC">         132 :             return std::hash&lt;std::string&gt;{}(txt);</span></span>
 <span id="L74"><span class="lineNum">      74</span>              :         }</span>
 <span id="L75"><span class="lineNum">      75</span>              : </span>
 <span id="L76"><span class="lineNum">      76</span>              :         [[nodiscard]]</span>
-<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">          70 :         std::size_t operator()(std::string_view txt) const noexcept {</span></span>
-<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">          70 :             return std::hash&lt;std::string_view&gt;{}(txt);</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">          78 :         std::size_t operator()(std::string_view txt) const noexcept {</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">          78 :             return std::hash&lt;std::string_view&gt;{}(txt);</span></span>
 <span id="L79"><span class="lineNum">      79</span>              :         }</span>
 <span id="L80"><span class="lineNum">      80</span>              :     };</span>
 <span id="L81"><span class="lineNum">      81</span>              : </span>
@@ -149,12 +149,12 @@
 <span id="L87"><span class="lineNum">      87</span>              : </span>
 <span id="L88"><span class="lineNum">      88</span>              :         shader_program&amp; operator=(shader_program&amp;&amp;) noexcept = default;</span>
 <span id="L89"><span class="lineNum">      89</span>              : </span>
-<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          16 :         ~shader_program() { program_tracker::reset(m_Resource); }</span></span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          40 :         ~shader_program() { program_tracker::reset(m_Resource); }</span></span>
 <span id="L91"><span class="lineNum">      91</span>              : </span>
 <span id="L92"><span class="lineNum">      92</span>              :         [[nodiscard]]</span>
 <span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">           6 :         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.view()); }</span></span>
 <span id="L94"><span class="lineNum">      94</span>              : </span>
-<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          96 :         void use() { program_tracker::utilize(m_Resource); }</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">         144 :         void use() { program_tracker::utilize(m_Resource); }</span></span>
 <span id="L96"><span class="lineNum">      96</span>              : </span>
 <span id="L97"><span class="lineNum">      97</span> <span class="tlaGNC">           3 :         void set_uniform(std::string_view name, GLfloat val) {</span></span>
 <span id="L98"><span class="lineNum">      98</span> <span class="tlaGNC">           3 :             do_set_uniform(name, gl_function{&amp;GladGLContext::Uniform1f}, val);</span></span>
@@ -172,9 +172,9 @@
 <span id="L110"><span class="lineNum">     110</span> <span class="tlaGNC">           1 :             do_set_uniform(name, gl_function{&amp;GladGLContext::Uniform4f}, vals[0], vals[1], vals[2], vals[3]);</span></span>
 <span id="L111"><span class="lineNum">     111</span> <span class="tlaGNC">           1 :         }</span></span>
 <span id="L112"><span class="lineNum">     112</span>              : </span>
-<span id="L113"><span class="lineNum">     113</span> <span class="tlaGNC">           1 :         void set_uniform(std::string_view name, GLint val) {</span></span>
-<span id="L114"><span class="lineNum">     114</span> <span class="tlaGNC">           1 :             do_set_uniform(name, gl_function{&amp;GladGLContext::Uniform1i}, val);</span></span>
-<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">           1 :         }</span></span>
+<span id="L113"><span class="lineNum">     113</span> <span class="tlaGNC">          25 :         void set_uniform(std::string_view name, GLint val) {</span></span>
+<span id="L114"><span class="lineNum">     114</span> <span class="tlaGNC">          25 :             do_set_uniform(name, gl_function{&amp;GladGLContext::Uniform1i}, val);</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">          25 :         }</span></span>
 <span id="L116"><span class="lineNum">     116</span>              : </span>
 <span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">           1 :         void set_uniform(std::string_view name, std::span&lt;const GLint, 2&gt; vals) {</span></span>
 <span id="L118"><span class="lineNum">     118</span> <span class="tlaGNC">           1 :             do_set_uniform(name, gl_function{&amp;GladGLContext::Uniform2i}, vals[0], vals[1]);</span></span>
@@ -234,10 +234,10 @@
 <span id="L172"><span class="lineNum">     172</span>              :         GLint extract_uniform_location(std::string_view name);</span>
 <span id="L173"><span class="lineNum">     173</span>              : </span>
 <span id="L174"><span class="lineNum">     174</span>              :         template&lt;class... Args&gt;</span>
-<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">          10 :         void do_set_uniform(std::string_view name, gl_function&lt;void(GLint, Args...)&gt; fn, Args... args) {</span></span>
-<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">          10 :             use();</span></span>
-<span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC">          10 :             fn(m_Resource.view().context(), extract_uniform_location(name), args...);</span></span>
-<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">           8 :         }</span></span>
+<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">          34 :         void do_set_uniform(std::string_view name, gl_function&lt;void(GLint, Args...)&gt; fn, Args... args) {</span></span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaGNC">          34 :             use();</span></span>
+<span id="L177"><span class="lineNum">     177</span> <span class="tlaGNC">          34 :             fn(m_Resource.view().context(), extract_uniform_location(name), args...);</span></span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">          32 :         }</span></span>
 <span id="L179"><span class="lineNum">     179</span>              : </span>
 <span id="L180"><span class="lineNum">     180</span>              :         template&lt;gl_arithmetic T&gt;</span>
 <span id="L181"><span class="lineNum">     181</span> <span class="tlaGNC">          66 :         void do_get_uniform(std::string_view name, gl_function&lt;void(GLuint, GLint, T*)&gt; fn, T* val) {</span></span>
@@ -248,20 +248,20 @@
 <span id="L186"><span class="lineNum">     186</span>              :         class program_tracker {</span>
 <span id="L187"><span class="lineNum">     187</span>              :             inline static thread_local std::map&lt;const decorated_context*, GLuint&gt; st_Current{};</span>
 <span id="L188"><span class="lineNum">     188</span>              :         public:</span>
-<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">          96 :             static void utilize(const shader_program_resource&amp; spr) {</span></span>
-<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">          96 :                 const auto index{get_index(spr)};</span></span>
-<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">          96 :                 auto [iter, created] {st_Current.emplace(&amp;spr.view().context(), index)};</span></span>
-<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">          96 :                 if(created || (iter-&gt;second != index)) {</span></span>
-<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">          44 :                     gl_function{&amp;GladGLContext::UseProgram}(spr.view().context(), index);</span></span>
-<span id="L194"><span class="lineNum">     194</span> <span class="tlaGNC">          44 :                     iter-&gt;second = index;</span></span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">         144 :             static void utilize(const shader_program_resource&amp; spr) {</span></span>
+<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">         144 :                 const auto index{get_index(spr)};</span></span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">         144 :                 auto [iter, created] {st_Current.emplace(&amp;spr.view().context(), index)};</span></span>
+<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">         144 :                 if(created || (iter-&gt;second != index)) {</span></span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">          68 :                     gl_function{&amp;GladGLContext::UseProgram}(spr.view().context(), index);</span></span>
+<span id="L194"><span class="lineNum">     194</span> <span class="tlaGNC">          68 :                     iter-&gt;second = index;</span></span>
 <span id="L195"><span class="lineNum">     195</span>              :                 }</span>
-<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">          96 :             }</span></span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">         144 :             }</span></span>
 <span id="L197"><span class="lineNum">     197</span>              : </span>
-<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">          16 :             static void reset(const shader_program_resource&amp; spr) {</span></span>
-<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">          16 :                 auto found{st_Current.find(&amp;spr.view().context())};</span></span>
-<span id="L200"><span class="lineNum">     200</span> <span class="tlaGNC">          16 :                 if((found != st_Current.end()) &amp;&amp; (get_index(spr) == found-&gt;second))</span></span>
-<span id="L201"><span class="lineNum">     201</span> <span class="tlaGNC">          13 :                     found-&gt;second = 0;</span></span>
-<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          16 :             }</span></span>
+<span id="L198"><span class="lineNum">     198</span> <span class="tlaGNC">          40 :             static void reset(const shader_program_resource&amp; spr) {</span></span>
+<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">          40 :                 auto found{st_Current.find(&amp;spr.view().context())};</span></span>
+<span id="L200"><span class="lineNum">     200</span> <span class="tlaGNC">          40 :                 if((found != st_Current.end()) &amp;&amp; (get_index(spr) == found-&gt;second))</span></span>
+<span id="L201"><span class="lineNum">     201</span> <span class="tlaGNC">          37 :                     found-&gt;second = 0;</span></span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          40 :             }</span></span>
 <span id="L203"><span class="lineNum">     203</span>              :         };</span>
 <span id="L204"><span class="lineNum">     204</span>              :     };</span>
 <span id="L205"><span class="lineNum">     205</span>              : }</span>

@@ -32,17 +32,17 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">19</td>
-            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntry">20</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">15</td>
-            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">32</td>
+            <td class="headerCovTableEntry">32</td>
           </tr>
                   <tr><td><img src="../../../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -1312,15 +1312,15 @@
 <span id="L1250"><span class="lineNum">    1250</span>              : </span>
 <span id="L1251"><span class="lineNum">    1251</span>              :     constexpr coordinates_base() noexcept = default;</span>
 <span id="L1252"><span class="lineNum">    1252</span>              : </span>
-<span id="L1253"><span class="lineNum">    1253</span> <span class="tlaGNC">           3 :     constexpr explicit coordinates_base(std::span&lt;const value_type, D&gt; vals) noexcept(has_identity_validator)</span></span>
-<span id="L1254"><span class="lineNum">    1254</span> <span class="tlaGNC">           3 :       : m_Values{validate(vals, m_Validator)}</span></span>
-<span id="L1255"><span class="lineNum">    1255</span> <span class="tlaGNC">           3 :     {}</span></span>
+<span id="L1253"><span class="lineNum">    1253</span> <span class="tlaGNC">          87 :     constexpr explicit coordinates_base(std::span&lt;const value_type, D&gt; vals) noexcept(has_identity_validator)</span></span>
+<span id="L1254"><span class="lineNum">    1254</span> <span class="tlaGNC">          87 :       : m_Values{validate(vals, m_Validator)}</span></span>
+<span id="L1255"><span class="lineNum">    1255</span> <span class="tlaGNC">          87 :     {}</span></span>
 <span id="L1256"><span class="lineNum">    1256</span>              : </span>
 <span id="L1257"><span class="lineNum">    1257</span>              :     template&lt;class... Ts&gt;</span>
 <span id="L1258"><span class="lineNum">    1258</span>              :       requires (D &gt; 1) &amp;&amp; (std::convertible_to&lt;Ts, value_type&gt; &amp;&amp; ...)</span>
-<span id="L1259"><span class="lineNum">    1259</span> <span class="tlaGNC">          15 :     constexpr explicit(sizeof...(Ts) == 1) coordinates_base(Ts... ts) noexcept(has_identity_validator)</span></span>
-<span id="L1260"><span class="lineNum">    1260</span> <span class="tlaGNC">          15 :       : m_Values{m_Validator(std::array&lt;value_type, D&gt;{ts...})}</span></span>
-<span id="L1261"><span class="lineNum">    1261</span> <span class="tlaGNC">          15 :     {}</span></span>
+<span id="L1259"><span class="lineNum">    1259</span> <span class="tlaGNC">         323 :     constexpr explicit(sizeof...(Ts) == 1) coordinates_base(Ts... ts) noexcept(has_identity_validator)</span></span>
+<span id="L1260"><span class="lineNum">    1260</span> <span class="tlaGNC">         323 :       : m_Values{m_Validator(std::array&lt;value_type, D&gt;{ts...})}</span></span>
+<span id="L1261"><span class="lineNum">    1261</span> <span class="tlaGNC">         323 :     {}</span></span>
 <span id="L1262"><span class="lineNum">    1262</span>              : </span>
 <span id="L1263"><span class="lineNum">    1263</span>              :     template&lt;class T&gt;</span>
 <span id="L1264"><span class="lineNum">    1264</span>              :       requires (D == 1) &amp;&amp; (std::convertible_to&lt;T, value_type&gt;)</span>
@@ -1413,9 +1413,9 @@
 <span id="L1351"><span class="lineNum">    1351</span>              :     template&lt;class Derived&gt;</span>
 <span id="L1352"><span class="lineNum">    1352</span>              :       requires std::derived_from&lt;Derived, coordinates_base&gt;</span>
 <span id="L1353"><span class="lineNum">    1353</span>              :     [[nodiscard]]</span>
-<span id="L1354"><span class="lineNum">    1354</span> <span class="tlaGNC">           3 :     friend constexpr Derived operator+(Derived c, const displacement_coordinates_type&amp; v) noexcept(has_identity_validator)</span></span>
+<span id="L1354"><span class="lineNum">    1354</span> <span class="tlaGNC">          87 :     friend constexpr Derived operator+(Derived c, const displacement_coordinates_type&amp; v) noexcept(has_identity_validator)</span></span>
 <span id="L1355"><span class="lineNum">    1355</span>              :     {</span>
-<span id="L1356"><span class="lineNum">    1356</span> <span class="tlaGNC">           3 :       return c.apply_to_each_element(v.values(), [](value_type&amp; lhs, value_type rhs){ lhs += rhs; });</span></span>
+<span id="L1356"><span class="lineNum">    1356</span> <span class="tlaGNC">         171 :       return c.apply_to_each_element(v.values(), [](value_type&amp; lhs, value_type rhs){ lhs += rhs; });</span></span>
 <span id="L1357"><span class="lineNum">    1357</span>              :     }</span>
 <span id="L1358"><span class="lineNum">    1358</span>              : </span>
 <span id="L1359"><span class="lineNum">    1359</span>              :     template&lt;class Derived&gt;</span>
@@ -1496,10 +1496,10 @@
 <span id="L1434"><span class="lineNum">    1434</span>              :     constexpr const validator_type&amp; validator() const noexcept { return m_Validator; }</span>
 <span id="L1435"><span class="lineNum">    1435</span>              : </span>
 <span id="L1436"><span class="lineNum">    1436</span>              :     [[nodiscard]]</span>
-<span id="L1437"><span class="lineNum">    1437</span> <span class="tlaGNC">           3 :     constexpr std::span&lt;const value_type, D&gt; values() const noexcept { return m_Values; }</span></span>
+<span id="L1437"><span class="lineNum">    1437</span> <span class="tlaGNC">          87 :     constexpr std::span&lt;const value_type, D&gt; values() const noexcept { return m_Values; }</span></span>
 <span id="L1438"><span class="lineNum">    1438</span>              : </span>
 <span id="L1439"><span class="lineNum">    1439</span>              :     [[nodiscard]]</span>
-<span id="L1440"><span class="lineNum">    1440</span> <span class="tlaGNC">           3 :     constexpr std::span&lt;value_type, D&gt; values() noexcept requires has_freely_mutable_components { return m_Values; }</span></span>
+<span id="L1440"><span class="lineNum">    1440</span> <span class="tlaGNC">          87 :     constexpr std::span&lt;value_type, D&gt; values() noexcept requires has_freely_mutable_components { return m_Values; }</span></span>
 <span id="L1441"><span class="lineNum">    1441</span>              : </span>
 <span id="L1442"><span class="lineNum">    1442</span>              :     [[nodiscard]]</span>
 <span id="L1443"><span class="lineNum">    1443</span>              :     constexpr const value_type&amp; value() const noexcept requires (D == 1) { return m_Values[0]; }</span>
@@ -1518,7 +1518,7 @@
 <span id="L1456"><span class="lineNum">    1456</span>              :     constexpr value_type operator[](std::size_t i) const { return m_Values[i]; }</span>
 <span id="L1457"><span class="lineNum">    1457</span>              : </span>
 <span id="L1458"><span class="lineNum">    1458</span>              :     [[nodiscard]]</span>
-<span id="L1459"><span class="lineNum">    1459</span>              :     constexpr value_type&amp; operator[](std::size_t i) requires has_freely_mutable_components { return m_Values[i]; }</span>
+<span id="L1459"><span class="lineNum">    1459</span> <span class="tlaGNC">         168 :     constexpr value_type&amp; operator[](std::size_t i) requires has_freely_mutable_components { return m_Values[i]; }</span></span>
 <span id="L1460"><span class="lineNum">    1460</span>              : </span>
 <span id="L1461"><span class="lineNum">    1461</span>              :     [[nodiscard]]</span>
 <span id="L1462"><span class="lineNum">    1462</span> <span class="tlaGNC">          18 :     constexpr auto begin() const noexcept { return m_Values.begin(); }</span></span>
@@ -1577,11 +1577,11 @@
 <span id="L1515"><span class="lineNum">    1515</span>              :     </span>
 <span id="L1516"><span class="lineNum">    1516</span>              :     template&lt;class Self, class Fn&gt;</span>
 <span id="L1517"><span class="lineNum">    1517</span>              :       requires std::invocable&lt;Fn, value_type&amp;, value_type&gt;</span>
-<span id="L1518"><span class="lineNum">    1518</span> <span class="tlaGNC">           3 :     constexpr Self&amp;&amp; apply_to_each_element(this Self&amp;&amp; self, std::span&lt;const value_type, D&gt; rhs, Fn f)</span></span>
+<span id="L1518"><span class="lineNum">    1518</span> <span class="tlaGNC">          87 :     constexpr Self&amp;&amp; apply_to_each_element(this Self&amp;&amp; self, std::span&lt;const value_type, D&gt; rhs, Fn f)</span></span>
 <span id="L1519"><span class="lineNum">    1519</span>              :     {</span>
 <span id="L1520"><span class="lineNum">    1520</span>              :       if constexpr(has_identity_validator)</span>
 <span id="L1521"><span class="lineNum">    1521</span>              :       {</span>
-<span id="L1522"><span class="lineNum">    1522</span> <span class="tlaGNC">           9 :         std::ranges::for_each(std::views::zip(self.m_Values, rhs), [&amp;f](auto&amp;&amp; z){ f(std::get&lt;0&gt;(z), std::get&lt;1&gt;(z)); });</span></span>
+<span id="L1522"><span class="lineNum">    1522</span> <span class="tlaGNC">         261 :         std::ranges::for_each(std::views::zip(self.m_Values, rhs), [&amp;f](auto&amp;&amp; z){ f(std::get&lt;0&gt;(z), std::get&lt;1&gt;(z)); });</span></span>
 <span id="L1523"><span class="lineNum">    1523</span>              :       }</span>
 <span id="L1524"><span class="lineNum">    1524</span>              :       else</span>
 <span id="L1525"><span class="lineNum">    1525</span>              :       {</span>
@@ -1590,7 +1590,7 @@
 <span id="L1528"><span class="lineNum">    1528</span>              :         self.m_Values = validate(tmp, self.m_Validator);</span>
 <span id="L1529"><span class="lineNum">    1529</span>              :       }</span>
 <span id="L1530"><span class="lineNum">    1530</span>              : </span>
-<span id="L1531"><span class="lineNum">    1531</span> <span class="tlaGNC">           3 :       return std::forward&lt;Self&gt;(self);</span></span>
+<span id="L1531"><span class="lineNum">    1531</span> <span class="tlaGNC">          87 :       return std::forward&lt;Self&gt;(self);</span></span>
 <span id="L1532"><span class="lineNum">    1532</span>              :     }</span>
 <span id="L1533"><span class="lineNum">    1533</span>              : </span>
 <span id="L1534"><span class="lineNum">    1534</span>              :     template&lt;class Self, class Fn&gt;</span>
@@ -1615,16 +1615,16 @@
 <span id="L1553"><span class="lineNum">    1553</span>              :     std::array&lt;value_type, D&gt; m_Values{};</span>
 <span id="L1554"><span class="lineNum">    1554</span>              : </span>
 <span id="L1555"><span class="lineNum">    1555</span>              :     [[nodiscard]]</span>
-<span id="L1556"><span class="lineNum">    1556</span> <span class="tlaGNC">           3 :     static std::array&lt;value_type, D&gt; validate(std::span&lt;const value_type, D&gt; vals, Validator&amp; validator)</span></span>
+<span id="L1556"><span class="lineNum">    1556</span> <span class="tlaGNC">          87 :     static std::array&lt;value_type, D&gt; validate(std::span&lt;const value_type, D&gt; vals, Validator&amp; validator)</span></span>
 <span id="L1557"><span class="lineNum">    1557</span>              :     {</span>
-<span id="L1558"><span class="lineNum">    1558</span> <span class="tlaGNC">           3 :       return validate(utilities::to_array(vals), validator);</span></span>
+<span id="L1558"><span class="lineNum">    1558</span> <span class="tlaGNC">          87 :       return validate(utilities::to_array(vals), validator);</span></span>
 <span id="L1559"><span class="lineNum">    1559</span>              :     }</span>
 <span id="L1560"><span class="lineNum">    1560</span>              : </span>
 <span id="L1561"><span class="lineNum">    1561</span>              :     [[nodiscard]]</span>
-<span id="L1562"><span class="lineNum">    1562</span> <span class="tlaGNC">           3 :     static std::array&lt;value_type, D&gt; validate(std::array&lt;value_type, D&gt; vals, Validator&amp; validator)</span></span>
+<span id="L1562"><span class="lineNum">    1562</span> <span class="tlaGNC">          87 :     static std::array&lt;value_type, D&gt; validate(std::array&lt;value_type, D&gt; vals, Validator&amp; validator)</span></span>
 <span id="L1563"><span class="lineNum">    1563</span>              :     {</span>
 <span id="L1564"><span class="lineNum">    1564</span>              :       if constexpr(validator_for_array&lt;Validator, ConvexSpace&gt;)</span>
-<span id="L1565"><span class="lineNum">    1565</span> <span class="tlaGNC">           3 :         return validator(vals);</span></span>
+<span id="L1565"><span class="lineNum">    1565</span> <span class="tlaGNC">          87 :         return validator(vals);</span></span>
 <span id="L1566"><span class="lineNum">    1566</span>              :       else</span>
 <span id="L1567"><span class="lineNum">    1567</span>              :         return {validator(vals.front())};</span>
 <span id="L1568"><span class="lineNum">    1568</span>              :     }</span>

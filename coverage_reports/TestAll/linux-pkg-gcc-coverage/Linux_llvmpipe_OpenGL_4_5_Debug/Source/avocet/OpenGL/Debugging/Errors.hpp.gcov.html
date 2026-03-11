@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -172,7 +172,7 @@
 <span id="L110"><span class="lineNum">     110</span>              :     class default_debug_info_processor {</span>
 <span id="L111"><span class="lineNum">     111</span>              :         std::vector&lt;message_id&gt; m_PrintThenIgnore{};</span>
 <span id="L112"><span class="lineNum">     112</span>              :     public:</span>
-<span id="L113"><span class="lineNum">     113</span> <span class="tlaGNC">          32 :         default_debug_info_processor() = default;</span></span>
+<span id="L113"><span class="lineNum">     113</span> <span class="tlaGNC">          33 :         default_debug_info_processor() = default;</span></span>
 <span id="L114"><span class="lineNum">     114</span>              : </span>
 <span id="L115"><span class="lineNum">     115</span>              :         explicit default_debug_info_processor(std::initializer_list&lt;message_id&gt; printThenIgnore)</span>
 <span id="L116"><span class="lineNum">     116</span>              :             : m_PrintThenIgnore{printThenIgnore}</span>
@@ -237,25 +237,25 @@
 <span id="L175"><span class="lineNum">     175</span>              : </span>
 <span id="L176"><span class="lineNum">     176</span>              :     template&lt;class ErrorProcessor&gt;</span>
 <span id="L177"><span class="lineNum">     177</span>              :         requires is_debug_info_processor_v&lt;ErrorProcessor&gt;</span>
-<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">        1848 :     void check_for_advanced_errors(const context&amp; ctx, const error_message_info&amp; info, ErrorProcessor processor) {</span></span>
-<span id="L179"><span class="lineNum">     179</span> <span class="tlaGNC">        1846 :         const std::string errorMessage{</span></span>
-<span id="L180"><span class="lineNum">     180</span> <span class="tlaGNC">        3691 :             std::ranges::fold_left(get_messages(ctx, info.max_reported),  std::string{}, processor)</span></span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">        3239 :     void check_for_advanced_errors(const context&amp; ctx, const error_message_info&amp; info, ErrorProcessor processor) {</span></span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaGNC">        3238 :         const std::string errorMessage{</span></span>
+<span id="L180"><span class="lineNum">     180</span> <span class="tlaGNC">        6477 :             std::ranges::fold_left(get_messages(ctx, info.max_reported),  std::string{}, processor)</span></span>
 <span id="L181"><span class="lineNum">     181</span>              :         };</span>
 <span id="L182"><span class="lineNum">     182</span>              : </span>
-<span id="L183"><span class="lineNum">     183</span> <span class="tlaGNC">        1845 :         if(!errorMessage.empty())</span></span>
+<span id="L183"><span class="lineNum">     183</span> <span class="tlaGNC">        3238 :         if(!errorMessage.empty())</span></span>
 <span id="L184"><span class="lineNum">     184</span> <span class="tlaGNC">           5 :             throw std::runtime_error{compose_error_message(errorMessage, info)};</span></span>
-<span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC">        1845 :     }</span></span>
+<span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC">        3238 :     }</span></span>
 <span id="L186"><span class="lineNum">     186</span>              : </span>
 <span id="L187"><span class="lineNum">     187</span>              :     template&lt;class ErrorCodeProcessor, class DebugInfoProcessor&gt;</span>
 <span id="L188"><span class="lineNum">     188</span>              :         requires is_error_code_processor_v&lt;ErrorCodeProcessor&gt;&amp;&amp; is_debug_info_processor_v&lt;DebugInfoProcessor&gt;</span>
-<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">        1918 :     void check_for_errors(const context&amp; ctx, debugging_mode mode, const error_message_info&amp; info, ErrorCodeProcessor errorCodeProcessor, DebugInfoProcessor&amp;&amp; debugInfoProcessor) {</span></span>
-<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">        1918 :         if(mode != debugging_mode::off) {</span></span>
-<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">        1917 :             if(debug_output_supported(ctx))</span></span>
-<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">        1849 :                 check_for_advanced_errors(ctx, info, std::move(debugInfoProcessor));</span></span>
+<span id="L189"><span class="lineNum">     189</span> <span class="tlaGNC">        3307 :     void check_for_errors(const context&amp; ctx, debugging_mode mode, const error_message_info&amp; info, ErrorCodeProcessor errorCodeProcessor, DebugInfoProcessor&amp;&amp; debugInfoProcessor) {</span></span>
+<span id="L190"><span class="lineNum">     190</span> <span class="tlaGNC">        3307 :         if(mode != debugging_mode::off) {</span></span>
+<span id="L191"><span class="lineNum">     191</span> <span class="tlaGNC">        3306 :             if(debug_output_supported(ctx))</span></span>
+<span id="L192"><span class="lineNum">     192</span> <span class="tlaGNC">        3238 :                 check_for_advanced_errors(ctx, info, std::move(debugInfoProcessor));</span></span>
 <span id="L193"><span class="lineNum">     193</span>              :             else</span>
 <span id="L194"><span class="lineNum">     194</span> <span class="tlaGNC">          68 :                 check_for_basic_errors(ctx, info, std::move(errorCodeProcessor));</span></span>
 <span id="L195"><span class="lineNum">     195</span>              :         }</span>
-<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">        1906 :     }</span></span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">        3301 :     }</span></span>
 <span id="L197"><span class="lineNum">     197</span>              : </span>
 <span id="L198"><span class="lineNum">     198</span>              :     template&lt;class ErrorCodeProcessor=default_error_code_processor, class DebugInfoProcessor=default_debug_info_processor&gt;</span>
 <span id="L199"><span class="lineNum">     199</span>              :         requires    is_error_code_processor_v&lt;ErrorCodeProcessor&gt;       &amp;&amp; is_debug_info_processor_v&lt;DebugInfoProcessor&gt;</span>
@@ -264,14 +264,14 @@
 <span id="L202"><span class="lineNum">     202</span>              :         num_messages m_MaxReported;</span>
 <span id="L203"><span class="lineNum">     203</span>              :         SEQUOIA_NO_UNIQUE_ADDRESS DebugInfoProcessor m_DebugInfoProcessor;</span>
 <span id="L204"><span class="lineNum">     204</span>              :     public:</span>
-<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          31 :         standard_error_checker(num_messages maxReported, DebugInfoProcessor debugInfoProcessor)</span></span>
-<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          31 :             : m_MaxReported{maxReported}</span></span>
-<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          62 :             , m_DebugInfoProcessor{std::move(debugInfoProcessor)}</span></span>
-<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          31 :         {}</span></span>
+<span id="L205"><span class="lineNum">     205</span> <span class="tlaGNC">          32 :         standard_error_checker(num_messages maxReported, DebugInfoProcessor debugInfoProcessor)</span></span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          32 :             : m_MaxReported{maxReported}</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          64 :             , m_DebugInfoProcessor{std::move(debugInfoProcessor)}</span></span>
+<span id="L208"><span class="lineNum">     208</span> <span class="tlaGNC">          32 :         {}</span></span>
 <span id="L209"><span class="lineNum">     209</span>              : </span>
-<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">        1919 :         void operator()(const context&amp; ctx, const decorator_data&amp; data) const {</span></span>
-<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">        1919 :             check_for_errors(ctx, ctx.debug_mode(), {data.fn_name, data.loc, m_MaxReported}, ErrorCodeProcessor{}, m_DebugInfoProcessor);</span></span>
-<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">        1906 :         }</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">        3305 :         void operator()(const context&amp; ctx, const decorator_data&amp; data) const {</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">        3305 :             check_for_errors(ctx, ctx.debug_mode(), {data.fn_name, data.loc, m_MaxReported}, ErrorCodeProcessor{}, m_DebugInfoProcessor);</span></span>
+<span id="L212"><span class="lineNum">     212</span> <span class="tlaGNC">        3301 :         }</span></span>
 <span id="L213"><span class="lineNum">     213</span>              :     };</span>
 <span id="L214"><span class="lineNum">     214</span>              : }</span>
 <span id="L215"><span class="lineNum">     215</span>              : </span>

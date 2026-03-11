@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -72,8 +72,8 @@
 <span id="L10"><span class="lineNum">      10</span>              : namespace avocet::opengl {</span>
 <span id="L11"><span class="lineNum">      11</span>              :     namespace {</span>
 <span id="L12"><span class="lineNum">      12</span>              :         [[nodiscard]]</span>
-<span id="L13"><span class="lineNum">      13</span> <span class="tlaGNC">           1 :         std::optional&lt;std::string&gt; to_error_string(GLenum status) {</span></span>
-<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC">           1 :             switch(status) {</span></span>
+<span id="L13"><span class="lineNum">      13</span> <span class="tlaGNC">           2 :         std::optional&lt;std::string&gt; to_error_string(GLenum status) {</span></span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC">           2 :             switch(status) {</span></span>
 <span id="L15"><span class="lineNum">      15</span> <span class="tlaUNC">           0 :             case GL_FRAMEBUFFER_UNDEFINED:</span></span>
 <span id="L16"><span class="lineNum">      16</span> <span class="tlaUNC">           0 :                 return &quot;Undefined&quot;;</span></span>
 <span id="L17"><span class="lineNum">      17</span> <span class="tlaUNC">           0 :             case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:</span></span>
@@ -92,16 +92,16 @@
 <span id="L30"><span class="lineNum">      30</span> <span class="tlaUNC">           0 :                 return &quot;Incomplete Layer Target&quot;;</span></span>
 <span id="L31"><span class="lineNum">      31</span>              :             }</span>
 <span id="L32"><span class="lineNum">      32</span>              : </span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           1 :             return {};</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           2 :             return {};</span></span>
 <span id="L34"><span class="lineNum">      34</span>              :         }</span>
 <span id="L35"><span class="lineNum">      35</span>              : </span>
 <span id="L36"><span class="lineNum">      36</span>              :     }</span>
 <span id="L37"><span class="lineNum">      37</span>              : </span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           1 :     void framebuffer_object::check_framebuffer_status() {</span></span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           1 :         const auto status{gl_function{&amp;GladGLContext::CheckFramebufferStatus}(this-&gt;context(), GL_FRAMEBUFFER)};</span></span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           1 :         if(const auto optError{to_error_string(status)}; optError)</span></span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           1 :             throw std::runtime_error{std::format(&quot;Frambuffer incomplete: {}&quot;, optError.value())};</span></span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           1 :     }</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           2 :     void framebuffer_object::check_framebuffer_status() {</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">           2 :         const auto status{gl_function{&amp;GladGLContext::CheckFramebufferStatus}(this-&gt;context(), GL_FRAMEBUFFER)};</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           2 :         if(const auto optError{to_error_string(status)}; optError)</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           2 :             throw std::runtime_error{std::format(&quot;Frambuffer incomplete: {}&quot;, optError.value())};</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           2 :     }</span></span>
 <span id="L43"><span class="lineNum">      43</span>              : }</span>
         </pre>
               </td>

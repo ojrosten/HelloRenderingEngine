@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -96,9 +96,9 @@
 <span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          10 :                 : m_Calls{&amp;calls}</span></span>
 <span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          10 :             {}</span></span>
 <span id="L36"><span class="lineNum">      36</span>              : </span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         213 :             void operator()(const agl::context&amp;, const agl::decorator_data&amp; data) {</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         213 :                 if(data.fn_name == &quot;UseProgram&quot;)</span></span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          25 :                     m_Calls-&gt;push_back(std::string{data.fn_name});</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         217 :             void operator()(const agl::context&amp;, const agl::decorator_data&amp; data) {</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         217 :                 if(data.fn_name == &quot;UseProgram&quot;)</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          27 :                     m_Calls-&gt;push_back(std::string{data.fn_name});</span></span>
 <span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         213 :             }</span></span>
 <span id="L41"><span class="lineNum">      41</span>              :         };</span>
 <span id="L42"><span class="lineNum">      42</span>              : </span>
@@ -119,10 +119,10 @@
 <span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">          10 :         agl::resource_handle get_current_program_index(const agl::decorated_context&amp; ctx) {</span></span>
 <span id="L58"><span class="lineNum">      58</span> <span class="tlaGNC">          10 :             GLint param{};</span></span>
 <span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          10 :             agl::gl_function{&amp;GladGLContext::GetIntegerv}(ctx, GL_CURRENT_PROGRAM, &amp;param);</span></span>
-<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">           9 :             if(param &lt; 0)</span></span>
+<span id="L60"><span class="lineNum">      60</span> <span class="tlaGNC">          10 :             if(param &lt; 0)</span></span>
 <span id="L61"><span class="lineNum">      61</span> <span class="tlaUNC">           0 :                 throw std::runtime_error{std::format(&quot;Negative program index: {}&quot;, param)};</span></span>
 <span id="L62"><span class="lineNum">      62</span>              : </span>
-<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">          18 :             return agl::resource_handle{static_cast&lt;GLuint&gt;(param)};</span></span>
+<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">          20 :             return agl::resource_handle{static_cast&lt;GLuint&gt;(param)};</span></span>
 <span id="L64"><span class="lineNum">      64</span>              :         }</span>
 <span id="L65"><span class="lineNum">      65</span>              : </span>
 <span id="L66"><span class="lineNum">      66</span>              : </span>
@@ -140,7 +140,7 @@
 <span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">           8 :             sp.use();</span></span>
 <span id="L79"><span class="lineNum">      79</span>              : </span>
 <span id="L80"><span class="lineNum">      80</span> <span class="tlaGNC">           8 :             auto handle{get_current_program_index(ctx)};</span></span>
-<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">           7 :             if(exitLatch) exitLatch-&gt;get().arrive_and_wait();</span></span>
+<span id="L81"><span class="lineNum">      81</span> <span class="tlaGNC">           8 :             if(exitLatch) exitLatch-&gt;get().arrive_and_wait();</span></span>
 <span id="L82"><span class="lineNum">      82</span>              : </span>
 <span id="L83"><span class="lineNum">      83</span> <span class="tlaGNC">          16 :             return handle;</span></span>
 <span id="L84"><span class="lineNum">      84</span> <span class="tlaGNC">           8 :         }</span></span>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -79,10 +79,10 @@
 <span id="L17"><span class="lineNum">      17</span>              :     template&lt;&gt; struct value_tester&lt;avocet::colour_channels&gt;</span>
 <span id="L18"><span class="lineNum">      18</span>              :     {</span>
 <span id="L19"><span class="lineNum">      19</span>              :         template&lt;test_mode Mode&gt;</span>
-<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">         151 :         static void test(equality_check_t, test_logger&lt;Mode&gt;&amp; logger, const avocet::colour_channels&amp; actual, const avocet::colour_channels&amp; prediction)</span></span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">         175 :         static void test(equality_check_t, test_logger&lt;Mode&gt;&amp; logger, const avocet::colour_channels&amp; actual, const avocet::colour_channels&amp; prediction)</span></span>
 <span id="L21"><span class="lineNum">      21</span>              :         {</span>
-<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">         302 :             check(equality, &quot;Raw value&quot;, logger, actual.raw_value(), prediction.raw_value());</span></span>
-<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">         151 :         }</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">         350 :             check(equality, &quot;Raw value&quot;, logger, actual.raw_value(), prediction.raw_value());</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">         175 :         }</span></span>
 <span id="L24"><span class="lineNum">      24</span>              :         </span>
 <span id="L25"><span class="lineNum">      25</span>              :         template&lt;test_mode Mode&gt;</span>
 <span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           3 :         static void test(equivalence_check_t, test_logger&lt;Mode&gt;&amp; logger, const avocet::colour_channels&amp; actual, const std::size_t prediction)</span></span>

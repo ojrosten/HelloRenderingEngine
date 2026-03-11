@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-05 17:59:13</td>
+            <td class="headerValue">2026-03-11 17:20:59</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryMed">81.0&nbsp;%</td>
@@ -82,40 +82,40 @@
 <span id="L20"><span class="lineNum">      20</span> <span class="tlaUNC">           0 :             std::cerr &lt;&lt; std::format(&quot;Error - {}: {}\n&quot;, error, description);</span></span>
 <span id="L21"><span class="lineNum">      21</span> <span class="tlaUNC">           0 :         }</span></span>
 <span id="L22"><span class="lineNum">      22</span>              : </span>
-<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">          31 :         void set_debug_context(const agl::debugging_mode mode, const agl::opengl_version&amp; version) {</span></span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          31 :             const bool advancedDebugging{(mode == agl::debugging_mode::dynamic) &amp;&amp; agl::debug_output_supported(version)};</span></span>
-<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">          31 :             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, advancedDebugging);</span></span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          31 :         }</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">          32 :         void set_debug_context(const agl::debugging_mode mode, const agl::opengl_version&amp; version) {</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          32 :             const bool advancedDebugging{(mode == agl::debugging_mode::dynamic) &amp;&amp; agl::debug_output_supported(version)};</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">          32 :             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, advancedDebugging);</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          32 :         }</span></span>
 <span id="L27"><span class="lineNum">      27</span>              : </span>
 <span id="L28"><span class="lineNum">      28</span>              :         [[nodiscard]]</span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          31 :         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          32 :         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }</span></span>
 <span id="L30"><span class="lineNum">      30</span>              : </span>
 <span id="L31"><span class="lineNum">      31</span>              :         [[nodiscard]]</span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          31 :         constexpr int to_int(num_samples samples) { return static_cast&lt;int&gt;(samples.value()); }</span></span>
+<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          32 :         constexpr int to_int(num_samples samples) { return static_cast&lt;int&gt;(samples.value()); }</span></span>
 <span id="L33"><span class="lineNum">      33</span>              : </span>
 <span id="L34"><span class="lineNum">      34</span>              :         [[nodiscard]]</span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          31 :         GLFWwindow&amp; make_window(const window_config&amp; config, const agl::opengl_version&amp; version) {</span></span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          31 :             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast&lt;int&gt;(version.major));</span></span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          31 :             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast&lt;int&gt;(version.minor));</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          31 :             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</span></span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          31 :             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);</span></span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          31 :             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));</span></span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          31 :             glfwWindowHint(GLFW_SAMPLES, to_int(config.samples));</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          32 :         GLFWwindow&amp; make_window(const window_config&amp; config, const agl::opengl_version&amp; version) {</span></span>
+<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          32 :             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast&lt;int&gt;(version.major));</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          32 :             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast&lt;int&gt;(version.minor));</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          32 :             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          32 :             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">          32 :             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));</span></span>
+<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">          32 :             glfwWindowHint(GLFW_SAMPLES, to_int(config.samples));</span></span>
 <span id="L42"><span class="lineNum">      42</span>              : </span>
-<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">          31 :             set_debug_context(config.debug_mode, version);</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">          32 :             set_debug_context(config.debug_mode, version);</span></span>
 <span id="L44"><span class="lineNum">      44</span>              : </span>
-<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          31 :             auto win{glfwCreateWindow(static_cast&lt;int&gt;(config.extent.width), static_cast&lt;int&gt;(config.extent.height), config.name.data(), nullptr, nullptr)};</span></span>
-<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">          31 :             return win ? *win : throw std::runtime_error{&quot;Failed to create GLFW window&quot;};</span></span>
+<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          32 :             auto win{glfwCreateWindow(static_cast&lt;int&gt;(config.extent.width), static_cast&lt;int&gt;(config.extent.height), config.name.data(), nullptr, nullptr)};</span></span>
+<span id="L46"><span class="lineNum">      46</span> <span class="tlaGNC">          32 :             return win ? *win : throw std::runtime_error{&quot;Failed to create GLFW window&quot;};</span></span>
 <span id="L47"><span class="lineNum">      47</span>              :         }</span>
 <span id="L48"><span class="lineNum">      48</span>              : </span>
 <span id="L49"><span class="lineNum">      49</span>              :         [[nodiscard]]</span>
-<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">          31 :         GladGLContext load_gl_fuctions(window_resource&amp; win, GladGLContext ctx) {</span></span>
-<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">          31 :             glfwMakeContextCurrent(&amp;win.get());</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">          32 :         GladGLContext load_gl_fuctions(window_resource&amp; win, GladGLContext ctx) {</span></span>
+<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">          32 :             glfwMakeContextCurrent(&amp;win.get());</span></span>
 <span id="L52"><span class="lineNum">      52</span>              : </span>
-<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">          31 :             if(!gladLoadGLContext(&amp;ctx, glfwGetProcAddress))</span></span>
+<span id="L53"><span class="lineNum">      53</span> <span class="tlaGNC">          32 :             if(!gladLoadGLContext(&amp;ctx, glfwGetProcAddress))</span></span>
 <span id="L54"><span class="lineNum">      54</span> <span class="tlaUNC">           0 :                 throw std::runtime_error{&quot;Failed to initialize GLAD&quot;};</span></span>
 <span id="L55"><span class="lineNum">      55</span>              : </span>
-<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">          31 :             return ctx;</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">          32 :             return ctx;</span></span>
 <span id="L57"><span class="lineNum">      57</span>              :         }</span>
 <span id="L58"><span class="lineNum">      58</span>              : </span>
 <span id="L59"><span class="lineNum">      59</span>              :         [[nodiscard]]</span>
@@ -168,15 +168,15 @@
 <span id="L106"><span class="lineNum">     106</span> <span class="tlaGNC">           1 :         return setup;</span></span>
 <span id="L107"><span class="lineNum">     107</span> <span class="tlaGNC">           1 :     }</span></span>
 <span id="L108"><span class="lineNum">     108</span>              : </span>
-<span id="L109"><span class="lineNum">     109</span> <span class="tlaGNC">          30 :     window glfw_manager::create_window(const window_config&amp; config) { return window{config, m_RenderingSetup.version}; }</span></span>
+<span id="L109"><span class="lineNum">     109</span> <span class="tlaGNC">          31 :     window glfw_manager::create_window(const window_config&amp; config) { return window{config, m_RenderingSetup.version}; }</span></span>
 <span id="L110"><span class="lineNum">     110</span>              : </span>
 <span id="L111"><span class="lineNum">     111</span> <span class="tlaGNC">           6 :     void glfw_manager::detach_current_context() {</span></span>
 <span id="L112"><span class="lineNum">     112</span> <span class="tlaGNC">           6 :         glfwMakeContextCurrent(nullptr);</span></span>
 <span id="L113"><span class="lineNum">     113</span> <span class="tlaGNC">           6 :     }</span></span>
 <span id="L114"><span class="lineNum">     114</span>              : </span>
-<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">          31 :     window_resource::window_resource(const window_config&amp; config, const agl::opengl_version&amp; version) : m_Window{make_window(config, version)} {}</span></span>
+<span id="L115"><span class="lineNum">     115</span> <span class="tlaGNC">          32 :     window_resource::window_resource(const window_config&amp; config, const agl::opengl_version&amp; version) : m_Window{make_window(config, version)} {}</span></span>
 <span id="L116"><span class="lineNum">     116</span>              : </span>
-<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">          31 :     window_resource::~window_resource() { glfwDestroyWindow(&amp;m_Window); }</span></span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">          32 :     window_resource::~window_resource() { glfwDestroyWindow(&amp;m_Window); }</span></span>
 <span id="L118"><span class="lineNum">     118</span>              : </span>
 <span id="L119"><span class="lineNum">     119</span>              :     [[nodiscard]]</span>
 <span id="L120"><span class="lineNum">     120</span> <span class="tlaUNC">           0 :     avocet::discrete_extent window_resource::get_framebuffer_extent() const {</span></span>
@@ -188,16 +188,16 @@
 <span id="L126"><span class="lineNum">     126</span>              :     }</span>
 <span id="L127"><span class="lineNum">     127</span>              : </span>
 <span id="L128"><span class="lineNum">     128</span>              : </span>
-<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">          31 :     window::window(const window_config&amp; config, const agl::opengl_version&amp; version)</span></span>
-<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">          31 :         : m_Window{config, version}</span></span>
-<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">          31 :         , m_Context{</span></span>
-<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">          31 :             config.debug_mode,</span></span>
-<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">          31 :             [&amp;win = m_Window](GladGLContext ctx) { return load_gl_fuctions(win, ctx); },</span></span>
-<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">          31 :             config.prologue,</span></span>
-<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">          31 :             config.epilogue,</span></span>
-<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">          31 :             config.compensate</span></span>
+<span id="L129"><span class="lineNum">     129</span> <span class="tlaGNC">          32 :     window::window(const window_config&amp; config, const agl::opengl_version&amp; version)</span></span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">          32 :         : m_Window{config, version}</span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">          32 :         , m_Context{</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">          32 :             config.debug_mode,</span></span>
+<span id="L133"><span class="lineNum">     133</span> <span class="tlaGNC">          32 :             [&amp;win = m_Window](GladGLContext ctx) { return load_gl_fuctions(win, ctx); },</span></span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">          32 :             config.prologue,</span></span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">          32 :             config.epilogue,</span></span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">          32 :             config.compensate</span></span>
 <span id="L137"><span class="lineNum">     137</span>              :           }</span>
-<span id="L138"><span class="lineNum">     138</span> <span class="tlaGNC">          31 :     {}</span></span>
+<span id="L138"><span class="lineNum">     138</span> <span class="tlaGNC">          32 :     {}</span></span>
 <span id="L139"><span class="lineNum">     139</span>              : </span>
 <span id="L140"><span class="lineNum">     140</span> <span class="tlaUNC">           0 :     void window::update_viewport(const avocet::viewport&amp; vp) {</span></span>
 <span id="L141"><span class="lineNum">     141</span> <span class="tlaUNC">           0 :         agl::gl_function{&amp;GladGLContext::Viewport}(m_Context, vp.offset.x, vp.offset.y, vp.extent.width, vp.extent.height);</span></span>
