@@ -1,12 +1,13 @@
-#version 330 core
+#version 410 core
 out vec4 FragColour;
 
 in vec2 TexCoords0;
 in vec2 TexCoords1;
+in float weight;
 
 uniform sampler2D image0;
 uniform sampler2D image1;
-uniform float weight = 0.5;
+
 
 void main()
 {

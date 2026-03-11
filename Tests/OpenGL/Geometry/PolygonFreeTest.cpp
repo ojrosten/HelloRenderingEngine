@@ -61,8 +61,14 @@ namespace avocet::testing
                     .decoding{sampling_decoding::none},
                     .parameter_setter{
                         [&ctx]() {
-                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+                            gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+                            float color[] = {0.3f, 0.4f, 0.7f, 0.1f};
+                            gl_function{&GladGLContext::TexParameterfv}(ctx, GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, color);
                         }
                     },
                     .label{}
@@ -89,6 +95,19 @@ namespace avocet::testing
                     for(auto& vert : verts) {
                         auto& coords{sequoia::get<0>(vert)};
                         coords = {away_from_zero(coords[0]), away_from_zero(coords[1])};
+                        if constexpr(Dim == dimensionality{3}) {
+                            coords[2] = 0.25;
+                        }
+
+                        constexpr auto numTextures{sizeof...(Images)};
+                        if constexpr(numTextures > 0) {
+                            auto& texCoords{sequoia::get<1>(vert)};
+                            texCoords = {(coords[0] + 1) / 2, (coords[1] + 1) / 2};
+                        }
+                        if constexpr(numTextures > 1) {
+                            auto& texCoords{sequoia::get<2>(vert)};
+                            texCoords = {(coords[0] + 1) / 2, (coords[1] + 1) / 2};
+                        }
                     }
 
                     return verts;
@@ -104,6 +123,9 @@ namespace avocet::testing
         constexpr std::array<unsigned char, Extent.width * Extent.height> build_prediction(const std::array<unsigned char, Extent.width>& bottomPrediction) {
             std::array<unsigned char, Extent.width * Extent.height> prediction{};
             std::ranges::copy(bottomPrediction, prediction.begin());
+            if constexpr(NumVerts == 3) {
+                prediction[4] = bottomPrediction[1];
+            }
             if constexpr(NumVerts == 4) {
                 std::ranges::copy(bottomPrediction, std::ranges::next(prediction.begin(), Extent.width));
             }
@@ -123,7 +145,7 @@ namespace avocet::testing
         using namespace curlew;
         auto w{create_window({.extent{.width{1}, .height{1}}, .hiding{window_hiding_mode::on}})};
 
-        constexpr discrete_extent fbExtent{.width{2}, .height{2}};
+        constexpr discrete_extent fbExtent{.width{3}, .height{2}};
         framebuffer_object
             fbo{
                 w.context(),
@@ -159,7 +181,7 @@ namespace avocet::testing
                 .vertex_shader{"Identity.vs"},
                 .frag_shader{"Monochrome.fs"},
                 .images{},
-                .bottom_prediction{128, 128}
+                .bottom_prediction{128, 128, 128}
             }
         );
 
@@ -170,11 +192,11 @@ namespace avocet::testing
                 .frag_shader{"Textured.fs"},
                 .images{
                     {
-                        128, 128,
-                        128, 128,
+                        32, 64, 128,
+                        32, 64, 128,
                     }
                 },
-                .bottom_prediction{128, 128}
+                .bottom_prediction{32, 64, 128}
             }
         );
 
@@ -185,15 +207,15 @@ namespace avocet::testing
                 .frag_shader{"MixedTextures.fs"},
                 .images{
                     std::array<unsigned char, Extent.width * Extent.height>{
-                        128, 0,
-                        128, 0,
+                        128, 0, 128,
+                        128, 0, 128,
                     },
                      std::array<unsigned char, Extent.width* Extent.height>{
-                         0,  128,
-                         0,  128,
+                         0, 64, 0,
+                         0, 64, 0,
                     }
                 },
-                .bottom_prediction{64, 64}
+                .bottom_prediction{96, 16, 96}
             }
         );
     }
