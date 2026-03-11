@@ -71,10 +71,18 @@ namespace avocet::testing
             };
         }
 
+        template<class T, class U>
+        struct replace {
+            using type = U;
+        };
+
+        template<class T, class U>
+        using replace_t = replace<T, U>::type;
+
         template<gl_floating_point T, std::size_t NumVertices, dimensionality Dim, class... Images>
             requires (std::convertible_to<Images, image_view> && ...)
         [[nodiscard]]
-        polygon<T, NumVertices, Dim> make_poly(const decorated_context& ctx, const Images&... images) {
+        polygon<T, NumVertices, Dim, texture_coordinates<replace_t<Images, T>>...> make_poly(const decorated_context& ctx, const Images&... images) {
             return {
                 ctx,
                 [](auto verts) {
@@ -85,6 +93,7 @@ namespace avocet::testing
 
                     return verts;
                 },
+                std::array<texture_2d_configurator, sizeof...(Images)>{make_texture2d_configurator(ctx, images)...},
                 make_label(describe_poly<T>(NumVertices, Dim, sizeof...(Images)))
             };
         }
@@ -125,5 +134,116 @@ namespace avocet::testing
                     .extent{fbExtent}
                 }
         };
+
+        test_polys<GLfloat,  3, dimensionality{2}, fbExtent>(fbo);
+        test_polys<GLfloat,  3, dimensionality{3}, fbExtent>(fbo);
+        test_polys<GLdouble, 3, dimensionality{2}, fbExtent>(fbo);
+        test_polys<GLdouble, 3, dimensionality{3}, fbExtent>(fbo);
+
+        test_polys<GLfloat,  4, dimensionality{2}, fbExtent>(fbo);
+        test_polys<GLfloat,  4, dimensionality{3}, fbExtent>(fbo);
+        test_polys<GLdouble, 4, dimensionality{2}, fbExtent>(fbo);
+        test_polys<GLdouble, 4, dimensionality{3}, fbExtent>(fbo);
     }
+
+    template<
+        opengl::gl_floating_point T,
+        std::size_t NumVerts,
+        dimensionality Dim,
+        discrete_extent Extent
+    >
+    void polygon_free_test::test_polys(const opengl::framebuffer_object& fbo) {
+        test_poly(
+            fbo,
+            poly_data<T, NumVerts, Dim, 0, Extent> {
+                .vertex_shader{"Identity.vs"},
+                .frag_shader{"Monochrome.fs"},
+                .images{},
+                .bottom_prediction{128, 128}
+            }
+        );
+
+        test_poly(
+            fbo,
+            poly_data<T, NumVerts, Dim, 1, Extent> {
+                .vertex_shader{"IdentityTextured.vs"},
+                .frag_shader{"Textured.fs"},
+                .images{
+                    {
+                        128, 128,
+                        128, 128,
+                    }
+                },
+                .bottom_prediction{128, 128}
+            }
+        );
+
+        test_poly(
+            fbo,
+            poly_data<T, NumVerts, Dim, 2, Extent> {
+                .vertex_shader{"IdentityTwiceTextured.vs"},
+                .frag_shader{"MixedTextures.fs"},
+                .images{
+                    std::array<unsigned char, Extent.width * Extent.height>{
+                        128, 0,
+                        128, 0,
+                    },
+                     std::array<unsigned char, Extent.width* Extent.height>{
+                         0,  128,
+                         0,  128,
+                    }
+                },
+                .bottom_prediction{64, 64}
+            }
+        );
+    }
+
+    template<
+        opengl::gl_floating_point T,
+        std::size_t NumVerts,
+        dimensionality Dim,
+        discrete_extent Extent,
+        std::size_t... Is
+    >
+    void polygon_free_test::test_poly(const opengl::framebuffer_object& fbo, const poly_data<T, NumVerts, Dim, sizeof...(Is), Extent>& polyData, std::index_sequence<Is...>) {
+        const auto& ctx{fbo.context()};
+
+        gl_function{&GladGLContext::ClearColor}(ctx, 0.0, 0.0, 0.0, 0.0);
+        gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT);
+
+        shader_program prog{
+            ctx,
+            get_vertex_shader_dir() / to_precision_name<T>() / to_dimensionality_name(Dim) / polyData.vertex_shader,
+            get_frag_shader_dir()   / polyData.frag_shader
+        };
+        (prog.set_uniform(to_uniform_name(Is), to_gl_int(Is)), ...);
+
+        auto poly{
+            make_poly<T, NumVerts, Dim>(
+                ctx,
+                unique_image{polyData.images[Is], Extent.width, Extent.height, colour_channels{1}, alignment{1}}...
+            )
+        };
+
+        gl_function{&GladGLContext::Viewport}(ctx, 0, 0, Extent.width, Extent.height);
+        prog.use();
+
+        constexpr auto numTextures{sizeof...(Is)};
+        using array_t = std::array<texture_unit, numTextures>;
+        poly.draw(array_t{texture_unit{Is}...});
+
+        check(
+            equivalence,
+            describe_poly<T>(NumVerts, Dim, numTextures),
+            fbo.extract_data(texture_format::red, alignment{1}),
+            unique_image{
+                build_prediction<NumVerts, Extent>(polyData.bottom_prediction),
+                Extent.width,
+                Extent.height,
+                colour_channels{1},
+                alignment{1}
+            }
+        );
+    }
+
 }
