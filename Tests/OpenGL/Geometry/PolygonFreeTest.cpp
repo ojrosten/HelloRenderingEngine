@@ -183,16 +183,16 @@ namespace avocet::testing
             poly_data<T, NumVerts, Dim, 2, Extent> {
                 .vertex_shader{"IdentityTwiceTextured.vs"},
                 .frag_shader{"MixedTextures.fs"},
-                .images{
-                    std::array<unsigned char, Extent.width * Extent.height>{
+                .images{{
+                    {
                         128, 0,
                         128, 0,
                     },
-                     std::array<unsigned char, Extent.width* Extent.height>{
+                    {
                          0,  128,
                          0,  128,
                     }
-                },
+                }},
                 .bottom_prediction{64, 64}
             }
         );
