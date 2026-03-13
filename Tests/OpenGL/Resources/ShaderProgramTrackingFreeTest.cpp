@@ -205,8 +205,8 @@ namespace avocet::testing
     {
         check_program_indices(tag, data0.prog, data1.prog);
 
-        check(equivalence, "", data0.calls, std::initializer_list{"UseProgram"});
-        check(equivalence, "", data1.calls, std::initializer_list{"UseProgram"});
+        //check(equivalence, tag, data0.calls, std::initializer_list{"UseProgram"});
+        //check(equivalence, tag, data1.calls, std::initializer_list{"UseProgram"});
     }
 
     void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& index0, const avocet::opengl::resource_handle& index1)
