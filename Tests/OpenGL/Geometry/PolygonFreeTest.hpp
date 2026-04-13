@@ -30,48 +30,50 @@ namespace avocet::testing
     private:
 
         template<
-            opengl::gl_floating_point T,
+            opengl::gl_floating_point CoordsValueType,
             std::size_t NumVerts,
             dimensionality Dim,
-            std::size_t NumTextures,
-            discrete_extent Extent
+            discrete_extent Extent,
+            opengl::gl_floating_point... TextureCoordsValueTypes
         >
         struct poly_data {
             std::filesystem::path vertex_shader{}, frag_shader{};
 
             using image_t = std::array<unsigned char, Extent.width * Extent.height>;
-            std::array<image_t, NumTextures> images{};
+            std::array<image_t, sizeof...(TextureCoordsValueTypes)> images{};
 
             std::array<unsigned char, Extent.width> bottom_prediction{};
         };
 
         template<
-            opengl::gl_floating_point T,
+            opengl::gl_floating_point CoordsValueType,
             std::size_t NumVerts,
             dimensionality Dim,
+            opengl::gl_floating_point TextureCoordsValueType,
             discrete_extent Extent
         >
         void test_polys(const opengl::framebuffer_object& fbo);
 
         template<
-            opengl::gl_floating_point T,
-            std::size_t NumVerts,
-            dimensionality Dim,
-            std::size_t NumTextures,
-            discrete_extent Extent
-        >
-        void test_poly(const opengl::framebuffer_object& fbo, const poly_data<T, NumVerts, Dim, NumTextures, Extent>& polyData) {
-            test_poly(fbo, polyData, std::make_index_sequence<NumTextures>{});
-        }
-
-        template<
-            opengl::gl_floating_point T,
+            opengl::gl_floating_point CoordsValueType,
             std::size_t NumVerts,
             dimensionality Dim,
             discrete_extent Extent,
+            opengl::gl_floating_point... TextureCoordsValueTypes
+        >
+        void test_poly(const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData) {
+            test_poly(fbo, polyData, std::make_index_sequence<sizeof...(TextureCoordsValueTypes)>{});
+        }
+
+        template<
+            opengl::gl_floating_point CoordsValueType,
+            std::size_t NumVerts,
+            dimensionality Dim,
+            discrete_extent Extent,
+            opengl::gl_floating_point... TextureCoordsValueTypes,
             std::size_t... Is
         >
-        void test_poly(const opengl::framebuffer_object& fbo, const poly_data<T, NumVerts, Dim, sizeof...(Is), Extent>& polyData, std::index_sequence<Is...>);
+        void test_poly(const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData, std::index_sequence<Is...>);
 
 
         [[nodiscard]]

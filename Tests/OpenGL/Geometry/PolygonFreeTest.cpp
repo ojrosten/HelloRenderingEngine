@@ -32,10 +32,17 @@ namespace avocet::testing
         [[nodiscard]]
         T away_from_zero(T t) { return t > 0 ? std::ceil(t) : std::floor(t); };
 
-        template<gl_floating_point T>
+        template<gl_floating_point CoordsValueType, gl_floating_point... TextureCoordsValueTypes>
         [[nodiscard]]
         std::string to_precision_name() {
-            return std::same_as<T, GLfloat> ? "SinglePrecision" : "DoublePrecision";
+            if constexpr(std::same_as<CoordsValueType, GLfloat> && (std::same_as<TextureCoordsValueTypes, GLfloat> && ...))
+                return "SinglePrecision";
+            else if constexpr(std::same_as<CoordsValueType, GLdouble> && (std::same_as<TextureCoordsValueTypes, GLdouble> && ...))
+                return "DoublePrecision";
+            else if constexpr(std::same_as<CoordsValueType, GLdouble> && (std::same_as<TextureCoordsValueTypes, GLfloat> &&... ))
+                return "MixedPrecision";
+            else
+                static_assert(false, "Test Materials must be prepared for any additional cases");
         }
 
         [[nodiscard]]
@@ -48,10 +55,10 @@ namespace avocet::testing
             return std::format("image{}", i);
         }
 
-        template<gl_floating_point T>
+        template<gl_floating_point CoordsValueType, gl_floating_point... TextureCoordsValueTypes>
         [[nodiscard]]
-        std::string describe_poly(std::size_t numVerts, dimensionality dim, std::size_t numTextures) {
-            return std::format("{}-gon embedded in D = {} with {} textures ({})", numVerts, dim, numTextures, to_precision_name<T>());
+        std::string describe_poly(std::size_t numVerts, dimensionality dim) {
+            return std::format("{}-gon embedded in D = {} with {} textures ({})", numVerts, dim, sizeof...(TextureCoordsValueTypes), to_precision_name<CoordsValueType, TextureCoordsValueTypes...>());
         }
 
         [[nodiscard]]
@@ -71,18 +78,10 @@ namespace avocet::testing
             };
         }
 
-        template<class T, class U>
-        struct replace {
-            using type = U;
-        };
 
-        template<class T, class U>
-        using replace_t = replace<T, U>::type;
-
-        template<gl_floating_point T, std::size_t NumVertices, dimensionality Dim, class... Images>
-            requires (std::convertible_to<Images, image_view> && ...)
+        template<gl_floating_point CoordsValueType, std::size_t NumVertices, dimensionality Dim, gl_floating_point... TextureCoordsValueTypes>
         [[nodiscard]]
-        polygon<T, NumVertices, Dim, texture_coordinates<replace_t<Images, T>>...> make_poly(const decorated_context& ctx, const Images&... images) {
+        polygon<CoordsValueType, NumVertices, Dim, texture_coordinates<TextureCoordsValueTypes>...> make_poly(const decorated_context& ctx, const std::array<unique_image, sizeof...(TextureCoordsValueTypes)>& images) {
             return {
                 ctx,
                 [](auto verts) {
@@ -93,8 +92,8 @@ namespace avocet::testing
 
                     return verts;
                 },
-                std::array<texture_2d_configurator, sizeof...(Images)>{make_texture2d_configurator(ctx, images)...},
-                make_label(describe_poly<T>(NumVertices, Dim, sizeof...(Images)))
+                to_array(images, [&ctx](image_view iv) { return make_texture2d_configurator(ctx, iv); }),
+                make_label(describe_poly<CoordsValueType, TextureCoordsValueTypes...>(NumVertices, Dim))
             };
         }
 
@@ -121,7 +120,27 @@ namespace avocet::testing
     void polygon_free_test::run_tests()
     {
         using namespace curlew;
-        auto w{create_window({.extent{.width{1}, .height{1}}, .hiding{window_hiding_mode::on}})};
+
+        const std::vector<message_id> acceptableWarnings{
+            [setup{test_window_manager::find_rendering_setup()}]() -> std::vector<message_id> {
+                if(curlew::is_nvidia(setup.renderer))
+                    return {message_id{131218}};
+
+                return {};
+            }()
+        };
+
+        auto w{
+            create_window(
+                {
+                    .extent{.width{1}, .height{1}},
+                    .hiding{window_hiding_mode::on},
+                    .debug_mode{debugging_mode::dynamic},
+                    .prologue{},
+                    .epilogue{standard_error_checker{num_messages{10}, default_debug_info_processor{acceptableWarnings}}},
+                }
+            )
+        };
 
         constexpr discrete_extent fbExtent{.width{2}, .height{2}};
         framebuffer_object
@@ -135,27 +154,28 @@ namespace avocet::testing
                 }
         };
 
-        test_polys<GLfloat,  3, dimensionality{2}, fbExtent>(fbo);
-        test_polys<GLfloat,  3, dimensionality{3}, fbExtent>(fbo);
-        test_polys<GLdouble, 3, dimensionality{2}, fbExtent>(fbo);
-        test_polys<GLdouble, 3, dimensionality{3}, fbExtent>(fbo);
+        test_polys<GLfloat , 3, dimensionality{2}, GLfloat , fbExtent>(fbo);
+        test_polys<GLfloat , 3, dimensionality{3}, GLfloat , fbExtent>(fbo);
+        test_polys<GLdouble, 3, dimensionality{2}, GLdouble, fbExtent>(fbo);
+        test_polys<GLdouble, 3, dimensionality{3}, GLdouble, fbExtent>(fbo);
 
-        test_polys<GLfloat,  4, dimensionality{2}, fbExtent>(fbo);
-        test_polys<GLfloat,  4, dimensionality{3}, fbExtent>(fbo);
-        test_polys<GLdouble, 4, dimensionality{2}, fbExtent>(fbo);
-        test_polys<GLdouble, 4, dimensionality{3}, fbExtent>(fbo);
+        test_polys<GLfloat , 4, dimensionality{2}, GLfloat , fbExtent>(fbo);
+        test_polys<GLfloat , 4, dimensionality{3}, GLfloat , fbExtent>(fbo);
+        test_polys<GLdouble, 4, dimensionality{2}, GLdouble, fbExtent>(fbo);
+        test_polys<GLdouble, 4, dimensionality{3}, GLdouble, fbExtent>(fbo);
     }
 
     template<
-        opengl::gl_floating_point T,
+        gl_floating_point CoordsValueType,
         std::size_t NumVerts,
         dimensionality Dim,
+        gl_floating_point TextureCoordsValueType,
         discrete_extent Extent
     >
     void polygon_free_test::test_polys(const opengl::framebuffer_object& fbo) {
         test_poly(
             fbo,
-            poly_data<T, NumVerts, Dim, 0, Extent> {
+            poly_data<CoordsValueType, NumVerts, Dim, Extent> {
                 .vertex_shader{"Identity.vs"},
                 .frag_shader{"Monochrome.fs"},
                 .images{},
@@ -165,7 +185,7 @@ namespace avocet::testing
 
         test_poly(
             fbo,
-            poly_data<T, NumVerts, Dim, 1, Extent> {
+            poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueType> {
                 .vertex_shader{"IdentityTextured.vs"},
                 .frag_shader{"Textured.fs"},
                 .images{
@@ -180,7 +200,7 @@ namespace avocet::testing
 
         test_poly(
             fbo,
-            poly_data<T, NumVerts, Dim, 2, Extent> {
+            poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueType, TextureCoordsValueType> {
                 .vertex_shader{"IdentityTwiceTextured.vs"},
                 .frag_shader{"MixedTextures.fs"},
                 .images{{
@@ -199,13 +219,14 @@ namespace avocet::testing
     }
 
     template<
-        opengl::gl_floating_point T,
+        gl_floating_point CoordsValueType,
         std::size_t NumVerts,
         dimensionality Dim,
         discrete_extent Extent,
+        gl_floating_point... TextureCoordsValueTypes,
         std::size_t... Is
     >
-    void polygon_free_test::test_poly(const opengl::framebuffer_object& fbo, const poly_data<T, NumVerts, Dim, sizeof...(Is), Extent>& polyData, std::index_sequence<Is...>) {
+    void polygon_free_test::test_poly(const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData, std::index_sequence<Is...>) {
         const auto& ctx{fbo.context()};
 
         gl_function{&GladGLContext::ClearColor}(ctx, 0.0, 0.0, 0.0, 0.0);
@@ -213,28 +234,29 @@ namespace avocet::testing
 
         shader_program prog{
             ctx,
-            get_vertex_shader_dir() / to_precision_name<T>() / to_dimensionality_name(Dim) / polyData.vertex_shader,
+            get_vertex_shader_dir() / to_precision_name<CoordsValueType, TextureCoordsValueTypes...>() / to_dimensionality_name(Dim) / polyData.vertex_shader,
             get_frag_shader_dir()   / polyData.frag_shader
         };
         (prog.set_uniform(to_uniform_name(Is), to_gl_int(Is)), ...);
 
+        constexpr auto numTextures{sizeof...(TextureCoordsValueTypes)};
+
         auto poly{
-            make_poly<T, NumVerts, Dim>(
+            make_poly<CoordsValueType, NumVerts, Dim, TextureCoordsValueTypes...>(
                 ctx,
-                unique_image{polyData.images[Is], Extent.width, Extent.height, colour_channels{1}, alignment{1}}...
+                std::array<unique_image, numTextures>{unique_image{polyData.images[Is], Extent.width, Extent.height, colour_channels{1}, alignment{1}}...}
             )
         };
 
         gl_function{&GladGLContext::Viewport}(ctx, 0, 0, Extent.width, Extent.height);
         prog.use();
 
-        constexpr auto numTextures{sizeof...(Is)};
         using array_t = std::array<texture_unit, numTextures>;
         poly.draw(array_t{texture_unit{Is}...});
 
         check(
             equivalence,
-            describe_poly<T>(NumVerts, Dim, numTextures),
+            describe_poly<CoordsValueType, TextureCoordsValueTypes...>(NumVerts, Dim),
             fbo.extract_data(texture_format::red, alignment{1}),
             unique_image{
                 build_prediction<NumVerts, Extent>(polyData.bottom_prediction),
