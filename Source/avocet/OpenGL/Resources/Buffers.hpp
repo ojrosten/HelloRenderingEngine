@@ -127,7 +127,7 @@ namespace avocet::opengl {
         void bind(this const vertex_attribute_object& self) { do_bind(self); }
     private:
         struct attrib_ptr_info {
-            GLint index{};
+            GLint       index{};
             std::size_t offset{};
 
             void advance(std::size_t offsetIncrement) {
