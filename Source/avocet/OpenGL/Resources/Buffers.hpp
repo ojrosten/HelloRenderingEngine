@@ -119,7 +119,7 @@ namespace avocet::opengl {
 
             attrib_ptr_info info{};
             constexpr auto stride{(sizeof(Attributes) + ...)};
-            (set_attribute_ptr<gl_arithmetic_type_of_t<Attributes>>(info, sizeof(Attributes), stride), ...);
+            (set_attribute_ptr<Attributes>(info, stride), ...);
         }
 
         void bind(this const vertex_attribute_object& self) { do_bind(self); }
@@ -134,12 +134,15 @@ namespace avocet::opengl {
             }
         };
 
-        template<gl_arithmetic ValueType>
-        void set_attribute_ptr(attrib_ptr_info& info, std::size_t sizeofAtt, GLsizei stride) {
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<ValueType>)};
-            const auto components{to_gl_int(sizeofAtt / sizeof(ValueType))};
+        template<class Attribute>
+        void set_attribute_ptr(attrib_ptr_info& info, GLsizei stride) {
+            using value_type = gl_arithmetic_type_of_t<Attribute>;
+
+            constexpr auto sizeofAtt{sizeof(Attribute)};
+            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
+            const auto components{to_gl_int(sizeofAtt / sizeof(value_type))};
             const auto& ctx{this->context()};
-            if constexpr(std::is_same_v<ValueType, GLdouble>) {
+            if constexpr(std::is_same_v<value_type, GLdouble>) {
                 gl_function{&GladGLContext::VertexAttribLPointer}(ctx, info.index, components, typeSpecifier, stride, std::bit_cast<GLvoid*>(info.offset));
             }
             else {
