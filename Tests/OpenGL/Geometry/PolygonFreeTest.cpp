@@ -163,6 +163,11 @@ namespace avocet::testing
         test_polys<GLfloat , 4, dimensionality{3}, GLfloat , fbExtent>(fbo);
         test_polys<GLdouble, 4, dimensionality{2}, GLdouble, fbExtent>(fbo);
         test_polys<GLdouble, 4, dimensionality{3}, GLdouble, fbExtent>(fbo);
+
+        test_polys<GLdouble, 3, dimensionality{2}, GLfloat , fbExtent>(fbo);
+        test_polys<GLdouble, 3, dimensionality{3}, GLfloat , fbExtent>(fbo);
+        test_polys<GLdouble, 4, dimensionality{2}, GLfloat , fbExtent>(fbo);
+        test_polys<GLdouble, 4, dimensionality{3}, GLfloat , fbExtent>(fbo);
     }
 
     template<
@@ -190,11 +195,11 @@ namespace avocet::testing
                 .frag_shader{"Textured.fs"},
                 .images{
                     {
-                        128, 128,
-                        128, 128,
+                        128, 64,
+                        128, 64,
                     }
                 },
-                .bottom_prediction{128, 128}
+                .bottom_prediction{128, 64}
             }
         );
 
@@ -209,11 +214,11 @@ namespace avocet::testing
                         128, 0,
                     },
                     {
-                         0,  128,
-                         0,  128,
+                         0,  64,
+                         0,  64,
                     }
                 }},
-                .bottom_prediction{64, 64}
+                .bottom_prediction{64, 32}
             }
         );
     }

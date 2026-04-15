@@ -47,7 +47,6 @@ namespace avocet::opengl {
 
     template<class... Ts>
         requires (is_legal_gl_buffer_value_type_v<Ts> && ...)
-              && (sequoia::are_same_v<gl_arithmetic_type_of_t<Ts>...>)
               && (sizeof(sequoia::mem_ordered_tuple<Ts...>) == (sizeof(Ts) + ...))
     struct is_legal_gl_buffer_value_type<sequoia::mem_ordered_tuple<Ts...>> : std::true_type
     {};
@@ -115,13 +114,12 @@ namespace avocet::opengl {
             : base_type{ctx, {{label}}}
         {
             using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
-            using fundamental_t = vbo_t::fundamental_type;
 
             vbo_t::do_bind(vbo);
 
             attrib_ptr_info info{};
             constexpr auto stride{(sizeof(Attributes) + ...)};
-            (set_attribute_ptr<fundamental_t>(info, sizeof(Attributes), stride), ...);
+            (set_attribute_ptr<gl_arithmetic_type_of_t<Attributes>>(info, sizeof(Attributes), stride), ...);
         }
 
         void bind(this const vertex_attribute_object& self) { do_bind(self); }
@@ -130,9 +128,9 @@ namespace avocet::opengl {
             GLint       index{};
             std::size_t offset{};
 
-            void advance(std::size_t offsetIncrement) {
-                ++index;
-                offset += offsetIncrement;
+            void advance(std::size_t attSize) {
+                index += to_gl_int(1 + (attSize - 1) / 16);
+                offset += attSize;
             }
         };
 
@@ -195,8 +193,6 @@ namespace avocet::opengl {
         friend class vertex_attribute_object;
     public:
         using generic_buffer_object<buffer_species::array, sequoia::mem_ordered_tuple<Attributes...>>::generic_buffer_object;
-
-        using fundamental_type = std::common_type_t<gl_arithmetic_type_of_t<Attributes>...>;
     };
 
     template<gl_integral T>

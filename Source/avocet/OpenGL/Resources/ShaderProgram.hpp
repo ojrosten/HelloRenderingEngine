@@ -197,8 +197,10 @@ namespace avocet::opengl {
 
             static void reset(const shader_program_resource& spr) {
                 auto found{st_Current.find(&spr.view().context())};
-                if((found != st_Current.end()) && (get_index(spr) == found->second))
+                if((found != st_Current.end()) && (get_index(spr) == found->second)) {
+                    gl_function{&GladGLContext::UseProgram}(spr.view().context(), 0);
                     found->second = 0;
+                }
             }
         };
     };

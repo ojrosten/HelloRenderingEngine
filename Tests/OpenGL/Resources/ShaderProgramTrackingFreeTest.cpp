@@ -68,6 +68,8 @@ namespace avocet::testing
 
         constexpr opt_latch_ref no_latch{};
 
+        using program_handles = shader_program_tracking_free_test::program_handles;
+
         [[nodiscard]]
         agl::resource_handle make_and_use_shader_program(const curlew::window& w, const fs::path& shaderDir, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
             const auto& ctx{w.context()};
@@ -84,26 +86,26 @@ namespace avocet::testing
         }
 
         [[nodiscard]]
-        agl::resource_handle make_and_use_shader_program(curlew::window w, const fs::path& shaderDir) {
-            return make_and_use_shader_program(w, shaderDir, no_latch, no_latch);
+        program_handles make_and_use_shader_program(curlew::window w, const fs::path& shaderDir) {
+            return {make_and_use_shader_program(w, shaderDir, no_latch, no_latch), get_current_program_index(w.context())};
         }
 
-        using task_t = std::packaged_task<agl::resource_handle()>;
+        using task_t = std::packaged_task<program_handles()>;
 
         [[nodiscard]]
         task_t make_shader_program_task(curlew::window& w, const fs::path& shaderDir, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
             curlew::test_window_manager::detach_current_context();
 
             return task_t{
-                [&, entryLatch, exitLatch](){
+                [&, entryLatch, exitLatch]() -> program_handles {
                     w.make_context_current();
-                    return make_and_use_shader_program(w, shaderDir, entryLatch, exitLatch);
+                    return {make_and_use_shader_program(w, shaderDir, entryLatch, exitLatch), get_current_program_index(w.context())};
                 }
             };
         }
 
         [[nodiscard]]
-        agl::resource_handle make_and_use_shader_program_threaded(curlew::window w, const fs::path& shaderDir) {
+        program_handles make_and_use_shader_program_threaded(curlew::window w, const fs::path& shaderDir) {
             auto task{make_shader_program_task(w, shaderDir, no_latch, no_latch)};
 
             auto future{task.get_future()};
@@ -155,14 +157,14 @@ namespace avocet::testing
         agl::shader_program sp0{win0.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
         sp0.use();
         sp0.use();
-        data0.prog = get_current_program_index(win0.context());
+        data0.prog.active = get_current_program_index(win0.context());
 
         gpu_data data1{};
         auto win1{create_window(make_window_config(data1.calls))};
         agl::shader_program sp1{win1.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
         sp1.use();
         sp1.use();
-        data1.prog = get_current_program_index(win1.context());
+        data1.prog.active = get_current_program_index(win1.context());
 
         check_program_data("Serial overlapping lifetimes", data0, data1);
     }
@@ -205,15 +207,34 @@ namespace avocet::testing
     {
         check_program_indices(tag, data0.prog, data1.prog);
 
-        check(equivalence, "", data0.calls, std::initializer_list{"UseProgram"});
-        check(equivalence, "", data1.calls, std::initializer_list{"UseProgram"});
+        auto buildPrediction{
+            [](const program_handles& prog) {
+                std::vector<std::string> calls{"UseProgram"};
+                if(prog.after_destruction)
+                    calls.push_back("UseProgram");
+
+                return calls;
+            }
+        };
+
+        check(equivalence, "", data0.calls, buildPrediction(data0.prog));
+        check(equivalence, "", data1.calls, buildPrediction(data1.prog));
     }
 
-    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& index0, const avocet::opengl::resource_handle& index1)
+    void shader_program_tracking_free_test::check_reset_after_destruction(std::string_view tag, const program_handles& prog)
     {
-        check(make_description(tag, "prog0 should not be null"), index0 != agl::resource_handle{});
-        check(make_description(tag, "prog1 should not be null"), index1 != agl::resource_handle{});
+        if(prog.after_destruction)
+            check(equality, make_description(tag, "Program should be reset to 0"), prog.after_destruction.value(), agl::resource_handle{});
+    }
 
-        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), index0, index1);
+    void shader_program_tracking_free_test::check_program_indices(std::string_view tag, const program_handles& prog0, const program_handles& prog1)
+    {
+        check(make_description(tag, "prog0 should not be null"), prog0.active != agl::resource_handle{});
+        check(make_description(tag, "prog1 should not be null"), prog1.active != agl::resource_handle{});
+
+        check(equality, make_description(tag, "Assumption required for sensitivity to: program 0 utilization accidentally suppressing program 1 utilization"), prog0.active, prog1.active);
+
+        check_reset_after_destruction(tag, prog0);
+        check_reset_after_destruction(tag, prog1);
     }
 }

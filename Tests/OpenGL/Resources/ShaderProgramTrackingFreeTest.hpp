@@ -26,9 +26,16 @@ namespace avocet::testing
         std::filesystem::path source_file() const;
 
         void run_tests();
+
+        struct program_handles {
+            using handle_t = avocet::opengl::resource_handle;
+
+            handle_t active;
+            std::optional<handle_t> after_destruction{};
+        };
     private:
         struct gpu_data {
-            avocet::opengl::resource_handle prog{};
+            program_handles prog{};
             std::vector<std::string> calls;
         };
 
@@ -42,6 +49,8 @@ namespace avocet::testing
 
         void check_program_data(std::string_view tag, const gpu_data& data0, const gpu_data& data1);
 
-        void check_program_indices(std::string_view tag, const avocet::opengl::resource_handle& index0, const avocet::opengl::resource_handle& index1);
+        void check_reset_after_destruction(std::string_view tag, const program_handles& prog);
+
+        void check_program_indices(std::string_view tag, const program_handles& prog0, const program_handles& prog1);
     };
 }

@@ -31,7 +31,7 @@ namespace avocet::opengl {
         using vertices_type         = std::array<vertex_attribute_type, N>;
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
-        constexpr static std::size_t num_textures{(std::same_as<Attributes, texture_coordinates<T>> + ... + 0)};
+        constexpr static std::size_t num_textures{(std::same_as<Attributes, texture_coordinates<gl_arithmetic_type_of_t<Attributes>>> + ... + 0)};
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 0)
