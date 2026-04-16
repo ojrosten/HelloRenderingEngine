@@ -5,6 +5,7 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
+#include "avocet/OpenGL/Resources/ContextualResource.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"

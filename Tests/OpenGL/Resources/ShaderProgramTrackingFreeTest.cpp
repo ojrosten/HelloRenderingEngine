@@ -11,7 +11,9 @@
 
 #include "OpenGL/ResourceInfrastructure/ResourceHandleTestingUtilities.hpp"
 
+#include "avocet/Core/Utilities/ContainerUtilities.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
+
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include <future>
@@ -186,14 +188,14 @@ namespace avocet::testing
 
         std::array<gpu_data, 4> data{};
 
-        auto windows{agl::to_array(std::span{data}, [this](gpu_data& d) { return create_window(make_window_config(d.calls)); })};
+        auto windows{to_array(std::span{data}, [this](gpu_data& d) { return create_window(make_window_config(d.calls)); })};
 
         std::latch entryLatch{data.size()}, exitLatch{data.size()};
-        auto tasks{agl::to_array(std::span{windows}, [&](curlew::window& win) { return make_shader_program_task(win, shaderDir, entryLatch, exitLatch); })};
+        auto tasks{to_array(std::span{windows}, [&](curlew::window& win) { return make_shader_program_task(win, shaderDir, entryLatch, exitLatch); })};
 
-        auto futures{agl::to_array(std::span{tasks}, [](task_t& t) { return t.get_future(); })};
+        auto futures{to_array(std::span{tasks}, [](task_t& t) { return t.get_future(); })};
 
-        auto workers{agl::to_array(std::span{tasks}, [](task_t& t) { return std::jthread{std::move(t)}; })};
+        auto workers{to_array(std::span{tasks}, [](task_t& t) { return std::jthread{std::move(t)}; })};
 
         for(auto e : std::views::zip(data, futures)) {
             std::get<0>(e).prog = std::get<1>(e).get();
