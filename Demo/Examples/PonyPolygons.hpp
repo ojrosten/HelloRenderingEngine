@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
+#include "avocet/OpenGL/StateAwareContext/CapableContext.hpp"
 #include "avocet/OpenGL/Geometry/Polygon.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
