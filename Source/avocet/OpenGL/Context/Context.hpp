@@ -16,9 +16,24 @@ namespace avocet::opengl {
     };
 
     class context_characteristics {
+        std::string m_Vendor{},
+                    m_Renderer{};
+        bool m_DebugOutputSupported{};
         std::size_t m_MaxDebugMessageLength{};
     public:
         explicit context_characteristics(const context_base& ctx);
+
+        [[nodiscard]]
+        const std::string& vendor() const noexcept { return m_Vendor; }
+
+        [[nodiscard]]
+        const std::string& renderer() const noexcept { return m_Renderer; }
+
+        [[nodiscard]]
+        bool debug_output_supported() const noexcept { return m_DebugOutputSupported; }
+
+        [[nodiscard]]
+        bool object_labels_activated() const noexcept { return debug_output_supported(); }
 
         [[nodiscard]]
         std::size_t max_debug_message_length() const noexcept { return m_MaxDebugMessageLength; }

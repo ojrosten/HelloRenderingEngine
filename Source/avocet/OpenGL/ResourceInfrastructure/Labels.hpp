@@ -8,7 +8,6 @@
 #pragma once
 
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
-#include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
@@ -20,7 +19,7 @@ namespace avocet::opengl {
     inline constexpr optional_label null_label{std::nullopt};
 
     inline void add_label(object_identifier identifier, contextual_resource_view h, const optional_label& label) {
-        if(label && object_labels_activated(h.context())) {
+        if(label && h.context().characteristics().object_labels_activated()) {
             const auto& str{label.value()};
             gl_function{&GladGLContext::ObjectLabel}(h.context(), to_gl_enum(identifier), get_index(h), to_gl_sizei(str.size()), str.data());
         }

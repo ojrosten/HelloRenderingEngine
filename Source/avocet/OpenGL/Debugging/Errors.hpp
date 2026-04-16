@@ -8,7 +8,6 @@
 #pragma once
 
 #include "avocet/OpenGL/Context/Context.hpp"
-#include "avocet/OpenGL/Context/Version.hpp"
 
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"
 
@@ -188,7 +187,7 @@ namespace avocet::opengl {
         requires is_error_code_processor_v<ErrorCodeProcessor>&& is_debug_info_processor_v<DebugInfoProcessor>
     void check_for_errors(const context& ctx, debugging_mode mode, const error_message_info& info, ErrorCodeProcessor errorCodeProcessor, DebugInfoProcessor&& debugInfoProcessor) {
         if(mode != debugging_mode::off) {
-            if(debug_output_supported(ctx))
+            if(ctx.characteristics().debug_output_supported())
                 check_for_advanced_errors(ctx, info, std::move(debugInfoProcessor));
             else
                 check_for_basic_errors(ctx, info, std::move(errorCodeProcessor));

@@ -7,12 +7,7 @@
 
 #pragma once
 
-#include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
-#include "avocet/OpenGL/Context/ContextBase.hpp"
-
 #include <format>
-
-#include "glad/gl.h"
 
 namespace avocet::opengl{
     struct opengl_version {
@@ -23,26 +18,9 @@ namespace avocet::opengl{
     };
 
     [[nodiscard]]
-    std::string get_vendor(const context_base& ctx);
-
-    [[nodiscard]]
-    std::string get_renderer(const context_base& ctx);
-
-    [[nodiscard]]
-    opengl_version get_opengl_version(const context_base& ctx);
-
-    [[nodiscard]]
     constexpr bool debug_output_supported(opengl_version version) noexcept {
         return (version.major > 3) && (version.minor >= 3);
     }
-
-    [[nodiscard]]
-    inline bool debug_output_supported(const context_base& ctx) {
-        return debug_output_supported(get_opengl_version(ctx)) && (ctx.debug_mode() == debugging_mode::dynamic);
-    }
-
-    [[nodiscard]]
-    inline bool object_labels_activated(const context_base& ctx) { return debug_output_supported(ctx); }
 }
 
 

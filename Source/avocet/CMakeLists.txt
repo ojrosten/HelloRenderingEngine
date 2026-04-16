@@ -14,7 +14,6 @@ set(SourceList
     OpenGL/Capabilities/CapabilitiesConfiguration.cpp
     OpenGL/Context/Context.cpp
     OpenGL/Context/ContextBase.cpp
-    OpenGL/Context/Version.cpp
     OpenGL/Debugging/Errors.cpp
     OpenGL/Resources/Framebuffer.cpp
     OpenGL/Resources/ShaderProgram.cpp

@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "avocet/OpenGL/Context/Version.hpp"
+
 #include <array>
 #include <concepts>
 #include <filesystem>
@@ -61,6 +63,7 @@ namespace avocet::opengl {
         context_base(debugging_mode mode, Loader loader)
             : m_Mode{mode}
             , m_Context{loader(GladGLContext{})}
+            , m_Version{get_opengl_version()}
         {
             init_debug();
         }
@@ -77,6 +80,9 @@ namespace avocet::opengl {
         const GladGLContext& glad_context() const noexcept { return m_Context.get(); }
 
         [[nodiscard]]
+        opengl_version version() const noexcept { return m_Version; }
+
+        [[nodiscard]]
         friend constexpr bool operator==(const context_base&, const context_base&) noexcept = default;
     protected:
         context_base(context_base&&) noexcept = default;
@@ -87,6 +93,10 @@ namespace avocet::opengl {
     private:
         debugging_mode m_Mode{};
         unique_glad_context m_Context{};
+        opengl_version m_Version{};
+
+        [[nodiscard]]
+        opengl_version get_opengl_version();
 
         void init_debug();
     };

@@ -8,7 +8,6 @@
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
 #include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
-#include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl::capabilities::impl {
@@ -94,7 +93,7 @@ namespace avocet::opengl::capabilities::impl {
     }
 
     void compensate_for_driver_init_bugs(const decorated_context& ctx, const gl_stencil_test& init) {
-        if(is_intel_arc(get_renderer(ctx))) {
+        if(is_intel_arc(ctx.characteristics().renderer())) {
             const auto& func{init.front.func};
             gl_function{&GladGLContext::StencilFunc}(ctx, to_gl_enum(func.comparison), func.reference_value, func.mask);
         }
