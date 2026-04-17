@@ -20,7 +20,7 @@
 namespace avocet::opengl {
     template<class T>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, contextual_resource_view handle) {
+        requires(T& t, generic_contextual_resource_view<resourceful_context> handle) {
             { t.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
             T::destroy(handle);
         }
@@ -33,7 +33,7 @@ namespace avocet::opengl {
     public:
         template<class... Args>
             requires std::is_constructible_v<LifeEvents, Args...>
-        explicit(sizeof...(Args) == 0) generic_shader_resource(const decorated_context& ctx, const Args&... args)
+        explicit(sizeof...(Args) == 0) generic_shader_resource(const resourceful_context& ctx, const Args&... args)
             : m_Handle{LifeEvents{args...}.create(ctx)}
         {}
 
@@ -56,7 +56,7 @@ namespace avocet::opengl {
 
     struct shader_program_resource_lifecycle {
         [[nodiscard]]
-        static contextual_resource_handle create(const decorated_context& ctx) {
+        static contextual_resource_handle create(const resourceful_context& ctx) {
             return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
         }
 
@@ -81,7 +81,7 @@ namespace avocet::opengl {
 
     class shader_program {
     public:
-        shader_program(const decorated_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
+        shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         shader_program(shader_program&&) noexcept = default;
 

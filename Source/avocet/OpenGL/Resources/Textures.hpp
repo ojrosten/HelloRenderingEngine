@@ -224,13 +224,13 @@ namespace avocet::opengl {
         using configurator_type = base_type::configurator_type;
         using value_type        = configurator_type::value_type;
 
-        generic_texture_2d(const decorated_context& ctx, const configurator_type& textureConfig)
+        generic_texture_2d(const resourceful_context& ctx, const configurator_type& textureConfig)
             : base_type{ctx, {textureConfig}}
         {}
 
         [[nodiscard]]
         unique_image extract_data(this const generic_texture_2d& self, texture_format format, alignment rowAlignment) {
-            base_type::do_bind(self);
+            self.do_bind();
 
             const auto& ctx{self.context()};
             const auto width{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH))},
@@ -257,7 +257,7 @@ namespace avocet::opengl {
 
         void bind(this const generic_texture_2d& self, texture_unit unit) {
             gl_function{&GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());
-            base_type::do_bind(self);
+            self.do_bind();
         }
     protected:
         ~generic_texture_2d() = default;

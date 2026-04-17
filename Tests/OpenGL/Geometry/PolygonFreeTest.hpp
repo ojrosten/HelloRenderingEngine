@@ -52,7 +52,7 @@ namespace avocet::testing
             opengl::gl_floating_point TextureCoordsValueType,
             discrete_extent Extent
         >
-        void test_polys(const opengl::framebuffer_object& fbo);
+        void test_polys(const opengl::resourceful_context& ctx, const opengl::framebuffer_object& fbo);
 
         template<
             opengl::gl_floating_point CoordsValueType,
@@ -61,8 +61,8 @@ namespace avocet::testing
             discrete_extent Extent,
             opengl::gl_floating_point... TextureCoordsValueTypes
         >
-        void test_poly(const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData) {
-            test_poly(fbo, polyData, std::make_index_sequence<sizeof...(TextureCoordsValueTypes)>{});
+        void test_poly(const opengl::resourceful_context& ctx, const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData) {
+            test_poly(ctx, fbo, polyData, std::make_index_sequence<sizeof...(TextureCoordsValueTypes)>{});
         }
 
         template<
@@ -73,7 +73,7 @@ namespace avocet::testing
             opengl::gl_floating_point... TextureCoordsValueTypes,
             std::size_t... Is
         >
-        void test_poly(const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData, std::index_sequence<Is...>);
+        void test_poly(const opengl::resourceful_context& ctx, const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData, std::index_sequence<Is...>);
 
 
         [[nodiscard]]
