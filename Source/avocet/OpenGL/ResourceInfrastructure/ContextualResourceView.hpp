@@ -11,26 +11,36 @@
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 
 namespace avocet::opengl {
-    class contextual_resource_view {
-        const decorated_context* m_Context{};
+    template<std::derived_from<context_base> Context>
+    class generic_contextual_resource_view {
+        const Context* m_Context{};
         const resource_handle* m_Handle{};
     public:
-        contextual_resource_view(const decorated_context& ctx, const resource_handle& crv)
+        generic_contextual_resource_view(const Context& ctx, const resource_handle& crv)
             : m_Context{&ctx}
             , m_Handle{&crv}
         {
         }
 
         [[nodiscard]]
-        const decorated_context& context() const noexcept { return *m_Context; }
+        const Context& context() const noexcept { return *m_Context; }
 
         [[nodiscard]]
         const resource_handle& handle() const noexcept { return *m_Handle; }
 
+        template<class OtherContext>
+            requires std::derived_from<Context, OtherContext>
         [[nodiscard]]
-        friend bool operator==(const contextual_resource_view&, const contextual_resource_view&) noexcept = default;
+        operator generic_contextual_resource_view<OtherContext>() const noexcept { return {context(), handle()}; }
+
+
+        [[nodiscard]]
+        friend bool operator==(const generic_contextual_resource_view&, const generic_contextual_resource_view&) noexcept = default;
     };
 
+    using contextual_resource_view = generic_contextual_resource_view<decorated_context>;
+
+    template<std::derived_from<context_base> Context>
     [[nodiscard]]
-    inline GLuint get_index(contextual_resource_view crv) { return crv.handle().index(); }
+    GLuint get_index(generic_contextual_resource_view<Context> crv) { return crv.handle().index(); }
 }

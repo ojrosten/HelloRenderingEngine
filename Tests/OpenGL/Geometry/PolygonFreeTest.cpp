@@ -81,7 +81,7 @@ namespace avocet::testing
 
         template<gl_floating_point CoordsValueType, std::size_t NumVertices, dimensionality Dim, gl_floating_point... TextureCoordsValueTypes>
         [[nodiscard]]
-        polygon<CoordsValueType, NumVertices, Dim, texture_coordinates<TextureCoordsValueTypes>...> make_poly(const decorated_context& ctx, const std::array<unique_image, sizeof...(TextureCoordsValueTypes)>& images) {
+        polygon<CoordsValueType, NumVertices, Dim, texture_coordinates<TextureCoordsValueTypes>...> make_poly(const resourceful_context& ctx, const std::array<unique_image, sizeof...(TextureCoordsValueTypes)>& images) {
             return {
                 ctx,
                 [](auto verts) {
@@ -154,20 +154,20 @@ namespace avocet::testing
                 }
         };
 
-        test_polys<GLfloat , 3, dimensionality{2}, GLfloat , fbExtent>(fbo);
-        test_polys<GLfloat , 3, dimensionality{3}, GLfloat , fbExtent>(fbo);
-        test_polys<GLdouble, 3, dimensionality{2}, GLdouble, fbExtent>(fbo);
-        test_polys<GLdouble, 3, dimensionality{3}, GLdouble, fbExtent>(fbo);
+        test_polys<GLfloat , 3, dimensionality{2}, GLfloat , fbExtent>(w.context(), fbo);
+        test_polys<GLfloat , 3, dimensionality{3}, GLfloat , fbExtent>(w.context(), fbo);
+        test_polys<GLdouble, 3, dimensionality{2}, GLdouble, fbExtent>(w.context(), fbo);
+        test_polys<GLdouble, 3, dimensionality{3}, GLdouble, fbExtent>(w.context(), fbo);
 
-        test_polys<GLfloat , 4, dimensionality{2}, GLfloat , fbExtent>(fbo);
-        test_polys<GLfloat , 4, dimensionality{3}, GLfloat , fbExtent>(fbo);
-        test_polys<GLdouble, 4, dimensionality{2}, GLdouble, fbExtent>(fbo);
-        test_polys<GLdouble, 4, dimensionality{3}, GLdouble, fbExtent>(fbo);
+        test_polys<GLfloat , 4, dimensionality{2}, GLfloat , fbExtent>(w.context(), fbo);
+        test_polys<GLfloat , 4, dimensionality{3}, GLfloat , fbExtent>(w.context(), fbo);
+        test_polys<GLdouble, 4, dimensionality{2}, GLdouble, fbExtent>(w.context(), fbo);
+        test_polys<GLdouble, 4, dimensionality{3}, GLdouble, fbExtent>(w.context(), fbo);
 
-        test_polys<GLdouble, 3, dimensionality{2}, GLfloat , fbExtent>(fbo);
-        test_polys<GLdouble, 3, dimensionality{3}, GLfloat , fbExtent>(fbo);
-        test_polys<GLdouble, 4, dimensionality{2}, GLfloat , fbExtent>(fbo);
-        test_polys<GLdouble, 4, dimensionality{3}, GLfloat , fbExtent>(fbo);
+        test_polys<GLdouble, 3, dimensionality{2}, GLfloat , fbExtent>(w.context(), fbo);
+        test_polys<GLdouble, 3, dimensionality{3}, GLfloat , fbExtent>(w.context(), fbo);
+        test_polys<GLdouble, 4, dimensionality{2}, GLfloat , fbExtent>(w.context(), fbo);
+        test_polys<GLdouble, 4, dimensionality{3}, GLfloat , fbExtent>(w.context(), fbo);
     }
 
     template<
@@ -177,8 +177,9 @@ namespace avocet::testing
         gl_floating_point TextureCoordsValueType,
         discrete_extent Extent
     >
-    void polygon_free_test::test_polys(const opengl::framebuffer_object& fbo) {
+    void polygon_free_test::test_polys(const opengl::resourceful_context& ctx, const opengl::framebuffer_object& fbo) {
         test_poly(
+            ctx,
             fbo,
             poly_data<CoordsValueType, NumVerts, Dim, Extent> {
                 .vertex_shader{"Identity.vs"},
@@ -189,6 +190,7 @@ namespace avocet::testing
         );
 
         test_poly(
+            ctx,
             fbo,
             poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueType> {
                 .vertex_shader{"IdentityTextured.vs"},
@@ -204,6 +206,7 @@ namespace avocet::testing
         );
 
         test_poly(
+            ctx,
             fbo,
             poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueType, TextureCoordsValueType> {
                 .vertex_shader{"IdentityTwiceTextured.vs"},
@@ -231,9 +234,7 @@ namespace avocet::testing
         gl_floating_point... TextureCoordsValueTypes,
         std::size_t... Is
     >
-    void polygon_free_test::test_poly(const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData, std::index_sequence<Is...>) {
-        const auto& ctx{fbo.context()};
-
+    void polygon_free_test::test_poly(const opengl::resourceful_context& ctx, const opengl::framebuffer_object& fbo, const poly_data<CoordsValueType, NumVerts, Dim, Extent, TextureCoordsValueTypes...>& polyData, std::index_sequence<Is...>) {
         gl_function{&GladGLContext::ClearColor}(ctx, 0.0, 0.0, 0.0, 0.0);
         gl_function{&GladGLContext::Clear}(ctx, GL_COLOR_BUFFER_BIT);
 
