@@ -43,6 +43,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Resources/BufferObjectTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Resources/FramebufferFreeTest.cpp
+               ${TestDir}/OpenGL/Resources/FramebufferTrackingFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramFileExistenceFreeTest.cpp

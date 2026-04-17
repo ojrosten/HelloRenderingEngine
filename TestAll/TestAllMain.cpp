@@ -28,13 +28,14 @@
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
 #include "OpenGL/Geometry/PolygonFreeTest.hpp"
+#include "OpenGL/ResourceInfrastructure/ResourceHandleTest.hpp"
+#include "OpenGL/ResourceInfrastructure/ResourceHandleTestingDiagnostics.hpp"
 #include "OpenGL/Resources/BufferMetaFreeTest.hpp"
 #include "OpenGL/Resources/BufferObjectLabellingTest.hpp"
 #include "OpenGL/Resources/BufferObjectTest.hpp"
 #include "OpenGL/Resources/BufferObjectTestingDiagnostics.hpp"
 #include "OpenGL/Resources/FramebufferFreeTest.hpp"
-#include "OpenGL/ResourceInfrastructure/ResourceHandleTest.hpp"
-#include "OpenGL/ResourceInfrastructure/ResourceHandleTestingDiagnostics.hpp"
+#include "OpenGL/Resources/FramebufferTrackingFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramFileExistenceFreeTest.hpp"
@@ -133,7 +134,8 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Framebuffer",
-            framebuffer_free_test{"Framebuffer Free Test"}
+            framebuffer_free_test{"Framebuffer Free Test"},
+            framebuffer_tracking_free_test{"Framebuffer Tracking Free Test"}
         );
 
         runner.add_test_suite(
