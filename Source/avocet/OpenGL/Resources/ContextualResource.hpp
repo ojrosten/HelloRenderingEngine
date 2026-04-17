@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/ResourceInfrastructure/ContextualResourceView.hpp"
+#include "avocet/OpenGL/StateAwareContext/ResourcefulContext.hpp"
 #include "avocet/Core/Utilities/ContainerUtilities.hpp"
 
 #include "sequoia/Core/ContainerUtilities/Iterator.hpp"

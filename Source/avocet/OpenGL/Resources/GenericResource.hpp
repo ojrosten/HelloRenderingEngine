@@ -15,8 +15,6 @@
 #include <ranges>
 
 namespace avocet::opengl {
-    struct num_resources { std::size_t value{}; };
-
     template<std::size_t I>
     struct index { constexpr static std::size_t value{I}; };
 
