@@ -16,4 +16,17 @@
 
 namespace avocet::opengl {
     struct num_resources { std::size_t value{}; };
+
+    class resourceful_context : public decorated_context {
+    public:
+        using decorated_context::decorated_context;
+
+    protected:
+        ~resourceful_context() = default;
+
+        resourceful_context(resourceful_context&&) noexcept = default;
+
+        resourceful_context& operator=(resourceful_context&&) noexcept = default;
+    private:
+    };
 }
