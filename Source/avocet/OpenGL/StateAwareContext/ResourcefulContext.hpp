@@ -43,17 +43,17 @@ namespace avocet::opengl {
         resourceful_context& operator=(resourceful_context&&) noexcept = default;
     private:
         template<class T>
-        struct utilization {
+        struct index_cache {
             GLuint currently_active{};
         };
 
         using tuple_t
             = std::tuple<
-                utilization<tracking_identifier_constant<tracking_identifier::framebuffer>>,
-                utilization<tracking_identifier_constant<tracking_identifier::program>>
+                index_cache<tracking_identifier_constant<tracking_identifier::framebuffer>>,
+                index_cache<tracking_identifier_constant<tracking_identifier::program>>
             >;
 
-        mutable tuple_t m_UtilizationCache;
+        mutable tuple_t m_IndexCache;
 
         template<class LifeEvents>
         constexpr static bool requests_tracking_cache_v{
@@ -65,7 +65,7 @@ namespace avocet::opengl {
         template<class LifeEvents>
         constexpr static bool has_static_cache_for_v{
             requires {
-                requires sequoia::meta::contains_v<tuple_t, utilization<tracking_identifier_constant<LifeEvents::tracking_id>>>;
+                requires sequoia::meta::contains_v<tuple_t, index_cache<tracking_identifier_constant<LifeEvents::tracking_id>>>;
             }
         };
 
@@ -81,7 +81,7 @@ namespace avocet::opengl {
                 static_assert(has_static_cache_for_v<LifeEvents>);
 
                 constexpr auto id{LifeEvents::tracking_id};
-                auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
+                auto& cache{std::get<index_cache<tracking_identifier_constant<id>>>(self.m_IndexCache)};
                 if(cache.currently_active != h.index()) {
                     self.do_utilize(lifeEvents, h);
                     cache.currently_active = h.index();
@@ -102,7 +102,7 @@ namespace avocet::opengl {
                 static_assert(has_static_cache_for_v<LifeEvents>);
 
                 constexpr auto id{LifeEvents::tracking_id};
-                auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
+                auto& cache{std::get<index_cache<tracking_identifier_constant<id>>>(self.m_IndexCache)};
                 if(cache.currently_active == h.index()) {
                     self.do_utilize(lifeEvents, resource_handle{});
                     cache.currently_active = 0;
