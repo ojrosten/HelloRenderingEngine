@@ -30,5 +30,7 @@ namespace avocet::opengl {
     };
 
     template<caching_identifier id>
-    struct caching_identifier_constant : std::integral_constant<caching_identifier, id> {};
+    struct caching_identifier_constant
+        : std::integral_constant<caching_identifier, id>
+    {};
 }
