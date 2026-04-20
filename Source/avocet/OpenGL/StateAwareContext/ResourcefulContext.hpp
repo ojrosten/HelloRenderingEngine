@@ -56,7 +56,7 @@ namespace avocet::opengl {
         mutable tuple_t m_IndexCache;
 
         template<class LifeEvents>
-        constexpr static bool requests_cache_v{
+        constexpr static bool opts_in_to_caching_v{
             requires(contextual_resource_view crv) {
                 { LifeEvents::caching_id } -> std::convertible_to<caching_identifier>;
             }
@@ -77,7 +77,7 @@ namespace avocet::opengl {
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
         void utilize(this const resourceful_context & self, const LifeEvents& lifeEvents, const resource_handle& h) {
-            if constexpr(requests_cache_v<LifeEvents>) {
+            if constexpr(opts_in_to_caching_v<LifeEvents>) {
                 static_assert(has_cache_v<LifeEvents>);
 
                 constexpr auto id{LifeEvents::caching_id};
@@ -95,7 +95,7 @@ namespace avocet::opengl {
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
         void reset(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
-            if constexpr(requests_cache_v<LifeEvents>) {
+            if constexpr(opts_in_to_caching_v<LifeEvents>) {
                 static_assert(has_cache_v<LifeEvents>);
 
                 constexpr auto id{LifeEvents::caching_id};
