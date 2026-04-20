@@ -58,14 +58,14 @@ namespace avocet::opengl {
         template<class LifeEvents>
         constexpr static bool requests_tracking_cache_v{
             requires(contextual_resource_view crv) {
-                { LifeEvents::tracking_id } -> std::convertible_to<caching_identifier>;
+                { LifeEvents::caching_id } -> std::convertible_to<caching_identifier>;
             }
         };
 
         template<class LifeEvents>
         constexpr static bool has_static_cache_for_v{
             requires {
-                requires sequoia::meta::contains_v<tuple_t, index_cache<caching_identifier_constant<LifeEvents::tracking_id>>>;
+                requires sequoia::meta::contains_v<tuple_t, index_cache<caching_identifier_constant<LifeEvents::caching_id>>>;
             }
         };
 
@@ -80,7 +80,7 @@ namespace avocet::opengl {
             if constexpr(requests_tracking_cache_v<LifeEvents>) {
                 static_assert(has_static_cache_for_v<LifeEvents>);
 
-                constexpr auto id{LifeEvents::tracking_id};
+                constexpr auto id{LifeEvents::caching_id};
                 auto& cache{std::get<index_cache<caching_identifier_constant<id>>>(self.m_IndexCache)};
                 if(cache.currently_active != h.index()) {
                     self.do_utilize(lifeEvents, h);
@@ -88,7 +88,7 @@ namespace avocet::opengl {
                 }
             }
             else if constexpr(has_static_cache_for_v<LifeEvents>) {
-                static_assert(false);
+                static_assert(false, "Add a caching_id to the relevant life events");
             }
             else {
                 self.do_utilize(lifeEvents, h);
@@ -101,7 +101,7 @@ namespace avocet::opengl {
             if constexpr(requests_tracking_cache_v<LifeEvents>) {
                 static_assert(has_static_cache_for_v<LifeEvents>);
 
-                constexpr auto id{LifeEvents::tracking_id};
+                constexpr auto id{LifeEvents::caching_id};
                 auto& cache{std::get<index_cache<caching_identifier_constant<id>>>(self.m_IndexCache)};
                 if(cache.currently_active == h.index()) {
                     self.do_utilize(lifeEvents, resource_handle{});
@@ -109,7 +109,7 @@ namespace avocet::opengl {
                 }
             }
             else if constexpr (has_static_cache_for_v<LifeEvents>) {
-                static_assert(false);
+                static_assert(false, "Add a caching_id to the relevant life events");
             }
         }
 

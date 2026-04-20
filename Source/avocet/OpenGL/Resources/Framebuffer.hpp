@@ -17,7 +17,7 @@ namespace avocet::opengl {
         };
 
         constexpr static auto identifier{object_identifier::framebuffer};
-        constexpr static auto tracking_id{caching_identifier::framebuffer};
+        constexpr static auto caching_id{caching_identifier::framebuffer};
 
         template<std::size_t N>
         static void generate(const decorated_context& ctx, raw_indices<N>& indices) {
