@@ -49,8 +49,8 @@ namespace avocet::opengl {
 
         using tuple_t
             = std::tuple<
-                index_cache<tracking_identifier_constant<tracking_identifier::framebuffer>>,
-                index_cache<tracking_identifier_constant<tracking_identifier::program>>
+                index_cache<caching_identifier_constant<caching_identifier::framebuffer>>,
+                index_cache<caching_identifier_constant<caching_identifier::program>>
             >;
 
         mutable tuple_t m_IndexCache;
@@ -58,14 +58,14 @@ namespace avocet::opengl {
         template<class LifeEvents>
         constexpr static bool requests_tracking_cache_v{
             requires(contextual_resource_view crv) {
-                { LifeEvents::tracking_id } -> std::convertible_to<tracking_identifier>;
+                { LifeEvents::tracking_id } -> std::convertible_to<caching_identifier>;
             }
         };
 
         template<class LifeEvents>
         constexpr static bool has_static_cache_for_v{
             requires {
-                requires sequoia::meta::contains_v<tuple_t, index_cache<tracking_identifier_constant<LifeEvents::tracking_id>>>;
+                requires sequoia::meta::contains_v<tuple_t, index_cache<caching_identifier_constant<LifeEvents::tracking_id>>>;
             }
         };
 
@@ -81,7 +81,7 @@ namespace avocet::opengl {
                 static_assert(has_static_cache_for_v<LifeEvents>);
 
                 constexpr auto id{LifeEvents::tracking_id};
-                auto& cache{std::get<index_cache<tracking_identifier_constant<id>>>(self.m_IndexCache)};
+                auto& cache{std::get<index_cache<caching_identifier_constant<id>>>(self.m_IndexCache)};
                 if(cache.currently_active != h.index()) {
                     self.do_utilize(lifeEvents, h);
                     cache.currently_active = h.index();
@@ -102,7 +102,7 @@ namespace avocet::opengl {
                 static_assert(has_static_cache_for_v<LifeEvents>);
 
                 constexpr auto id{LifeEvents::tracking_id};
-                auto& cache{std::get<index_cache<tracking_identifier_constant<id>>>(self.m_IndexCache)};
+                auto& cache{std::get<index_cache<caching_identifier_constant<id>>>(self.m_IndexCache)};
                 if(cache.currently_active == h.index()) {
                     self.do_utilize(lifeEvents, resource_handle{});
                     cache.currently_active = 0;

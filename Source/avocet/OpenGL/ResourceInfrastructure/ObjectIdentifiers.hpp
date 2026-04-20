@@ -24,11 +24,11 @@ namespace avocet::opengl {
         framebuffer        = GL_FRAMEBUFFER
     };
 
-    enum class tracking_identifier {
+    enum class caching_identifier {
         program,
         framebuffer
     };
 
-    template<tracking_identifier id>
-    struct tracking_identifier_constant : std::integral_constant<tracking_identifier, id> {};
+    template<caching_identifier id>
+    struct caching_identifier_constant : std::integral_constant<caching_identifier, id> {};
 }
