@@ -56,9 +56,15 @@ namespace avocet::opengl {
         mutable tuple_t m_UtilizationCache;
 
         template<class LifeEvents>
-        constexpr static bool use_tracking_cache_v{
+        constexpr static bool requests_tracking_cache_v{
             requires(contextual_resource_view crv) {
                 { LifeEvents::tracking_id } -> std::convertible_to<tracking_identifier>;
+            }
+        };
+
+        template<class LifeEvents>
+        constexpr static bool has_static_cache_for_v{
+            requires {
                 requires sequoia::meta::contains_v<tuple_t, utilization<tracking_identifier_constant<LifeEvents::tracking_id>>>;
             }
         };
@@ -71,13 +77,18 @@ namespace avocet::opengl {
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
         void utilize(this const resourceful_context & self, const LifeEvents& lifeEvents, const resource_handle& h) {
-            if constexpr(use_tracking_cache_v<LifeEvents>) {
+            if constexpr(requests_tracking_cache_v<LifeEvents>) {
+                static_assert(has_static_cache_for_v<LifeEvents>);
+
                 constexpr auto id{LifeEvents::tracking_id};
                 auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
                 if(cache.currently_active != h.index()) {
                     self.do_utilize(lifeEvents, h);
                     cache.currently_active = h.index();
                 }
+            }
+            else if constexpr(has_static_cache_for_v<LifeEvents>) {
+                static_assert(false);
             }
             else {
                 self.do_utilize(lifeEvents, h);
@@ -87,13 +98,18 @@ namespace avocet::opengl {
         template<class LifeEvents>
             requires has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
         void reset(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
-            if constexpr(use_tracking_cache_v<LifeEvents>) {
+            if constexpr(requests_tracking_cache_v<LifeEvents>) {
+                static_assert(has_static_cache_for_v<LifeEvents>);
+
                 constexpr auto id{LifeEvents::tracking_id};
                 auto& cache{std::get<utilization<tracking_identifier_constant<id>>>(self.m_UtilizationCache)};
                 if(cache.currently_active == h.index()) {
                     self.do_utilize(lifeEvents, resource_handle{});
                     cache.currently_active = 0;
                 }
+            }
+            else if constexpr (has_static_cache_for_v<LifeEvents>) {
+                static_assert(false);
             }
         }
 
