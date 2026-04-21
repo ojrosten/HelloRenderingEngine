@@ -82,7 +82,7 @@ namespace avocet::opengl {
         void utilize(this const resourceful_context & self, const LifeEvents& lifeEvents, const resource_handle& h) {
             if constexpr(opts_in_to_caching_v<LifeEvents>) {
                 if(auto& cache{self.get_cache(lifeEvents)}; cache.currently_active != h.index()) {
-                    self.cached_utlization(lifeEvents, cache, h);
+                    self.utilize_and_cache(lifeEvents, cache, h);
                 }
             }
             else {
@@ -95,7 +95,7 @@ namespace avocet::opengl {
         void reset(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
             if constexpr(opts_in_to_caching_v<LifeEvents>) {
                 if(auto& cache{self.get_cache(lifeEvents)}; cache.currently_active == h.index()) {
-                    self.cached_utlization(lifeEvents, cache, resource_handle{});
+                    self.utilize_and_cache(lifeEvents, cache, resource_handle{});
                 }
             }
         }
@@ -113,7 +113,7 @@ namespace avocet::opengl {
 
         template<class LifeEvents, caching_identifier id>
             requires has_utilization_event_v<LifeEvents>
-        void cached_utlization(this const resourceful_context& self, const LifeEvents& lifeEvents, index_cache<caching_identifier_constant<id>>& cache, const resource_handle& h) {
+        void utilize_and_cache(this const resourceful_context& self, const LifeEvents& lifeEvents, index_cache<caching_identifier_constant<id>>& cache, const resource_handle& h) {
             self.do_utilize(lifeEvents, h);
             cache.currently_active = h.index();
         }
