@@ -79,7 +79,10 @@ namespace avocet::opengl {
 
         template<class LifeEvents>
             requires has_utilization_event_v<LifeEvents> 
-        void utilize(this const resourceful_context & self, const LifeEvents& lifeEvents, const resource_handle& h) {
+        void utilize(this const resourceful_context& self,
+                     const LifeEvents& lifeEvents,
+                     const resource_handle& h)
+        {
             if constexpr(opts_in_to_caching_v<LifeEvents>) {
                 if(auto& cache{self.get_cache(lifeEvents)}; cache.currently_active != h.index()) {
                     self.utilize_and_cache(lifeEvents, cache, h);
@@ -92,7 +95,10 @@ namespace avocet::opengl {
 
         template<class LifeEvents>
             requires has_utilization_event_v<LifeEvents>
-        void reset(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
+        void reset(this const resourceful_context& self,
+                   const LifeEvents& lifeEvents,
+                   const resource_handle& h)
+        {
             if constexpr(opts_in_to_caching_v<LifeEvents>) {
                 if(auto& cache{self.get_cache(lifeEvents)}; cache.currently_active == h.index()) {
                     self.utilize_and_cache(lifeEvents, cache, resource_handle{});
