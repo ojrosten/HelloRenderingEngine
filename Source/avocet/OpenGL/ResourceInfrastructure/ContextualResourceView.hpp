@@ -19,8 +19,7 @@ namespace avocet::opengl {
         generic_contextual_resource_view(const Context& ctx, const resource_handle& crv)
             : m_Context{&ctx}
             , m_Handle{&crv}
-        {
-        }
+        {}
 
         [[nodiscard]]
         const Context& context() const noexcept { return *m_Context; }
@@ -32,7 +31,6 @@ namespace avocet::opengl {
             requires std::derived_from<Context, OtherContext>
         [[nodiscard]]
         operator generic_contextual_resource_view<OtherContext>() const noexcept { return {context(), handle()}; }
-
 
         [[nodiscard]]
         friend bool operator==(const generic_contextual_resource_view&, const generic_contextual_resource_view&) noexcept = default;
