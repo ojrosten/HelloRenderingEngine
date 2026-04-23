@@ -23,4 +23,14 @@ namespace avocet::opengl {
         render_buffer      = GL_RENDERBUFFER,
         framebuffer        = GL_FRAMEBUFFER
     };
+
+    enum class caching_identifier {
+        program,
+        framebuffer
+    };
+
+    template<caching_identifier id>
+    struct caching_identifier_constant
+        : std::integral_constant<caching_identifier, id>
+    {};
 }
