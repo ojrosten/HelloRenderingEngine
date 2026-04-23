@@ -11,6 +11,7 @@
 #include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
 
 namespace avocet::opengl {
+
     class contextual_resource_view {
         const decorated_context* m_Context{};
         const resource_handle* m_Handle{};
@@ -18,8 +19,7 @@ namespace avocet::opengl {
         contextual_resource_view(const decorated_context& ctx, const resource_handle& crv)
             : m_Context{&ctx}
             , m_Handle{&crv}
-        {
-        }
+        {}
 
         [[nodiscard]]
         const decorated_context& context() const noexcept { return *m_Context; }
