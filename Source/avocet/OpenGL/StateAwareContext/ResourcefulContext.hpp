@@ -103,7 +103,7 @@ namespace avocet::opengl {
         template<class LifeEvents>
         [[nodiscard]]
         auto& get_cache(this const resourceful_context& self, const LifeEvents&) {
-            static_assert(has_cache_v<LifeEvents>);
+            static_assert(has_cache_v<LifeEvents>, "tuple_t missing entry needed for this caching_id");
 
             constexpr auto id{LifeEvents::caching_id};
             return std::get<index_cache<id>>(self.m_Cache);
