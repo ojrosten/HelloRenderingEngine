@@ -60,7 +60,7 @@ namespace avocet::opengl {
             return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
         }
 
-        static void destroy(contextual_resource_view handle) { gl_function{&GladGLContext::DeleteProgram}(handle.context(), get_index(handle)); }
+        static void destroy(contextual_resource_view crv) { gl_function{&GladGLContext::DeleteProgram}(crv.context(), get_index(crv)); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
