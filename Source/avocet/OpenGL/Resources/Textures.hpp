@@ -99,7 +99,7 @@ namespace avocet::opengl {
     template<class T>
     inline constexpr bool defines_texture_configuration_v{
            has_configurator_type_v<T>
-        && requires (contextual_resource_view crv, const T::configurator & config) {
+        && requires (decorated_contextual_resource_view crv, const T::configurator & config) {
                typename T::configurator::value_type;
                T::preliminary_configuration(crv, config);
                { T::to_raw_configurator(config) } -> std::convertible_to<raw_texture_2d_configurator<typename T::configurator::value_type>>;
@@ -115,11 +115,11 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
 
-        static void bind(contextual_resource_view crv) { gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv)); }
+        static void bind(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv)); }
 
         template<class Self>
             requires defines_texture_configuration_v<Self>
-        void configure(this const Self&, contextual_resource_view crv, const Self::configurator& config) {
+        void configure(this const Self&, decorated_contextual_resource_view crv, const Self::configurator& config) {
             add_label(identifier, crv, config.common_config.label);
 
             Self::preliminary_configuration(crv, config);
@@ -173,7 +173,7 @@ namespace avocet::opengl {
         using configurator = texture_2d_configurator;
         using value_type   = configurator::value_type;
 
-        static void preliminary_configuration(contextual_resource_view crv, const configurator& config) {
+        static void preliminary_configuration(decorated_contextual_resource_view crv, const configurator& config) {
             gl_function{&GladGLContext::PixelStorei}(crv.context(), GL_UNPACK_ALIGNMENT, to_ogl_alignment(config.data_view.row_alignment()));
         }
 
@@ -194,7 +194,7 @@ namespace avocet::opengl {
         using configurator = framebuffer_texture_2d_configurator;
         using value_type   = configurator::value_type;
 
-        static void preliminary_configuration(contextual_resource_view, const configurator&) {}
+        static void preliminary_configuration(decorated_contextual_resource_view, const configurator&) {}
 
         [[nodiscard]]
         static raw_texture_2d_configurator<value_type> to_raw_configurator(const configurator& config) {
@@ -224,13 +224,13 @@ namespace avocet::opengl {
         using configurator_type = base_type::configurator_type;
         using value_type        = configurator_type::value_type;
 
-        generic_texture_2d(const decorated_context& ctx, const configurator_type& textureConfig)
+        generic_texture_2d(const resourceful_context& ctx, const configurator_type& textureConfig)
             : base_type{ctx, {textureConfig}}
         {}
 
         [[nodiscard]]
         unique_image extract_data(this const generic_texture_2d& self, texture_format format, alignment rowAlignment) {
-            base_type::do_bind(self);
+            self.do_bind();
 
             const auto& ctx{self.context()};
             const auto width{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH))},
@@ -257,7 +257,7 @@ namespace avocet::opengl {
 
         void bind(this const generic_texture_2d& self, texture_unit unit) {
             gl_function{&GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());
-            base_type::do_bind(self);
+            self.do_bind();
         }
     protected:
         ~generic_texture_2d() = default;
@@ -268,7 +268,7 @@ namespace avocet::opengl {
         friend class framebuffer_object;
 
         [[nodiscard]]
-        contextual_resource_view contextual_handle() const noexcept {
+        decorated_contextual_resource_view contextual_handle() const noexcept {
             return base_type::contextual_handle(index<0>{});
         }
     };

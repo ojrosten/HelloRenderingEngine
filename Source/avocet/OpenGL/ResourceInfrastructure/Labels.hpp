@@ -18,7 +18,7 @@ namespace avocet::opengl {
     using optional_label = std::optional<std::string>;
     inline constexpr optional_label null_label{std::nullopt};
 
-    inline void add_label(object_identifier identifier, contextual_resource_view h, const optional_label& label) {
+    inline void add_label(object_identifier identifier, decorated_contextual_resource_view h, const optional_label& label) {
         if(label && h.context().characteristics().object_labels_activated()) {
             const auto& str{label.value()};
             gl_function{&GladGLContext::ObjectLabel}(h.context(), to_gl_enum(identifier), get_index(h), to_gl_sizei(str.size()), str.data());
@@ -39,7 +39,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    inline std::string get_object_label(avocet::opengl::object_identifier identifier, avocet::opengl::contextual_resource_view handle) {
+    inline std::string get_object_label(avocet::opengl::object_identifier identifier, avocet::opengl::decorated_contextual_resource_view handle) {
         const auto& ctx{handle.context()};
         std::string label(get_max_label_length(ctx), ' ');
         GLsizei numChars{};

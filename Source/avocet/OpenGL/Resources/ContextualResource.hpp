@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "avocet/OpenGL/ResourceInfrastructure/ContextualResourceView.hpp"
 #include "avocet/OpenGL/StateAwareContext/ResourcefulContext.hpp"
 #include "avocet/Core/Utilities/ContainerUtilities.hpp"
 
@@ -19,10 +20,12 @@
 #include <utility>
 
 namespace avocet::opengl {
+    using contextual_resource_view = generic_contextual_resource_view<resourceful_context>;
+
     class context_ref {
-        const decorated_context* m_Context{};
+        const resourceful_context* m_Context{};
     public:
-        context_ref(const decorated_context& ctx)
+        context_ref(const resourceful_context& ctx)
             : m_Context{&ctx}
         {
         }
@@ -35,7 +38,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        const decorated_context& get() const noexcept { return *m_Context; }
+        const resourceful_context& get() const noexcept { return *m_Context; }
 
         [[nodiscard]]
         friend bool operator==(const context_ref&, const context_ref&) noexcept = default;
@@ -45,7 +48,7 @@ namespace avocet::opengl {
     using raw_indices = std::array<GLuint, N>;
 
     class contextual_deref_policy {
-        const decorated_context* m_Context{};
+        const resourceful_context* m_Context{};
     protected:
         ~contextual_deref_policy() = default;
 
@@ -56,7 +59,7 @@ namespace avocet::opengl {
 
         contextual_deref_policy() = default;
 
-        explicit contextual_deref_policy(const decorated_context& ctx) : m_Context{&ctx} {}
+        explicit contextual_deref_policy(const resourceful_context& ctx) : m_Context{&ctx} {}
 
         contextual_deref_policy(const contextual_deref_policy&) = default;
 
@@ -81,7 +84,7 @@ namespace avocet::opengl {
     public:
         using const_iterator = sequoia::utilities::iterator<citer_t, contextual_deref_policy>;
 
-        contextual_resource_handles(const decorated_context& ctx, const raw_indices<N>& indices)
+        contextual_resource_handles(const resourceful_context& ctx, const raw_indices<N>& indices)
             : m_Context{ctx}
             , m_Handles{to_array(indices, [&ctx](GLuint i) { return resource_handle{i}; })}
         {}
@@ -98,7 +101,7 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        const decorated_context& context() const noexcept { return m_Context.get(); }
+        const resourceful_context& context() const noexcept { return m_Context.get(); }
 
         [[nodiscard]]
         friend bool operator==(const contextual_resource_handles&, const contextual_resource_handles&) noexcept = default;

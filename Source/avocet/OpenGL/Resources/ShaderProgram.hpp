@@ -20,9 +20,9 @@
 namespace avocet::opengl {
     template<class T>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, contextual_resource_view handle) {
-            { t.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
-            T::destroy(handle);
+        requires(T& t, contextual_resource_view crv) {
+            //{ t.create(crv.context()) } -> std::same_as<contextual_resource_handle>;
+            T::destroy(crv);
         }
     };
 
@@ -33,7 +33,7 @@ namespace avocet::opengl {
     public:
         template<class... Args>
             requires std::is_constructible_v<LifeEvents, Args...>
-        explicit(sizeof...(Args) == 0) generic_shader_resource(const decorated_context& ctx, const Args&... args)
+        explicit(sizeof...(Args) == 0) generic_shader_resource(const resourceful_context& ctx, const Args&... args)
             : m_Handle{LifeEvents{args...}.create(ctx)}
         {}
 
@@ -55,12 +55,16 @@ namespace avocet::opengl {
     GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.contextual_handle()); }
 
     struct shader_program_resource_lifecycle {
+        constexpr static auto caching_id{caching_identifier::program};
+
         [[nodiscard]]
-        static contextual_resource_handle create(const decorated_context& ctx) {
+        static contextual_resource_handle create(const resourceful_context& ctx) {
             return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
         }
 
-        static void destroy(contextual_resource_view crv) { gl_function{&GladGLContext::DeleteProgram}(crv.context(), get_index(crv)); }
+        static void destroy(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::DeleteProgram}(crv.context(), get_index(crv)); }
+
+        static void use(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::UseProgram}(crv.context(), get_index(crv)); }
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
@@ -81,18 +85,20 @@ namespace avocet::opengl {
 
     class shader_program {
     public:
-        shader_program(const decorated_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
+        shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         shader_program(shader_program&&) noexcept = default;
 
         shader_program& operator=(shader_program&&) noexcept = default;
 
-        ~shader_program() { program_tracker::reset(m_Resource); }
+        ~shader_program() {
+            m_Resource.contextual_handle().context().reset(shader_program_resource_lifecycle{}, m_Resource.contextual_handle().handle());
+        }
 
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.contextual_handle()); }
 
-        void use() { program_tracker::utilize(m_Resource); }
+        void use() { m_Resource.contextual_handle().context().utilize(shader_program_resource_lifecycle{}, m_Resource.contextual_handle().handle()); }
 
         void set_uniform(std::string_view name, GLfloat val) {
             do_set_uniform(name, gl_function{&GladGLContext::Uniform1f}, val);
@@ -182,26 +188,5 @@ namespace avocet::opengl {
             use();
             fn(m_Resource.contextual_handle().context(), get_index(m_Resource), extract_uniform_location(name), val);
         }
-
-        class program_tracker {
-            inline static thread_local std::map<const decorated_context*, GLuint> st_Current{};
-        public:
-            static void utilize(const shader_program_resource& spr) {
-                const auto index{get_index(spr)};
-                auto [iter, created] {st_Current.emplace(&spr.contextual_handle().context(), index)};
-                if(created || (iter->second != index)) {
-                    gl_function{&GladGLContext::UseProgram}(spr.contextual_handle().context(), index);
-                    iter->second = index;
-                }
-            }
-
-            static void reset(const shader_program_resource& spr) {
-                auto found{st_Current.find(&spr.contextual_handle().context())};
-                if((found != st_Current.end()) && (get_index(spr) == found->second)) {
-                    gl_function{&GladGLContext::UseProgram}(spr.contextual_handle().context(), 0);
-                    found->second = 0;
-                }
-            }
-        };
     };
 }
