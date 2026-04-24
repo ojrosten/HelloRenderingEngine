@@ -48,7 +48,7 @@ namespace avocet::opengl {
             using gl_param_getter    = gl_function<void(GLuint, GLenum, GLint*)>;
             using gl_info_log_getter = gl_function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
 
-            shader_checker(contextual_resource_view crv, gl_param_getter paramGetter, gl_info_log_getter logGetter)
+            shader_checker(decorated_contextual_resource_view crv, gl_param_getter paramGetter, gl_info_log_getter logGetter)
                 : m_Handle{crv}
                 , m_ParamGetter{paramGetter}
                 , m_InfoLogGetter{logGetter}
@@ -64,7 +64,7 @@ namespace avocet::opengl {
         protected:
             ~shader_checker() = default;
         private:
-            contextual_resource_view m_Handle;
+            decorated_contextual_resource_view m_Handle;
             gl_param_getter    m_ParamGetter;
             gl_info_log_getter m_InfoLogGetter;
 
@@ -90,11 +90,11 @@ namespace avocet::opengl {
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
-            contextual_resource_handle create(const decorated_context& ctx) {
+            contextual_resource_handle create(const resourceful_context& ctx) {
                 return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}};
             }
 
-            static void destroy(contextual_resource_view handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }
+            static void destroy(decorated_contextual_resource_view handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
@@ -142,7 +142,7 @@ namespace avocet::opengl {
         class shader_compiler {
             shader_resource m_Resource;
         public:
-            shader_compiler(const decorated_context& ctx, shader_species species, const fs::path& sourceFile)
+            shader_compiler(const resourceful_context& ctx, shader_species species, const fs::path& sourceFile)
                 : m_Resource{ctx, species}
             {
                 const auto index{get_index(m_Resource)};
@@ -179,7 +179,7 @@ namespace avocet::opengl {
         static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
-    shader_program::shader_program(const decorated_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
+    shader_program::shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
         : m_Resource{ctx}
     {
         shader_compiler
