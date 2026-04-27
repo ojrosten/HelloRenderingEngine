@@ -37,14 +37,14 @@ namespace avocet::opengl {
             : m_Handle{LifeEvents{args...}.create(ctx)}
         {}
 
-        ~generic_shader_resource() { LifeEvents::destroy(contextual_handle()); }
+        ~generic_shader_resource() { LifeEvents::destroy(view()); }
 
         generic_shader_resource(generic_shader_resource&&) noexcept = default;
 
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        contextual_resource_view contextual_handle() const noexcept { return m_Handle.begin()[0]; }
+        contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
@@ -52,7 +52,7 @@ namespace avocet::opengl {
 
     template<class LifeEvents>
     [[nodiscard]]
-    GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.contextual_handle()); }
+    GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.view()); }
 
     struct shader_program_resource_lifecycle {
         constexpr static auto caching_id{caching_identifier::program};
@@ -94,14 +94,14 @@ namespace avocet::opengl {
         shader_program& operator=(shader_program&&) noexcept = default;
 
         ~shader_program() {
-            m_Resource.contextual_handle().context().reset(shader_program_resource_lifecycle{}, m_Resource.contextual_handle().handle());
+            m_Resource.view().context().reset(shader_program_resource_lifecycle{}, m_Resource.view().handle());
         }
 
         [[nodiscard]]
-        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.contextual_handle()); }
+        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.view()); }
 
         void use() {
-            m_Resource.contextual_handle().context().utilize(shader_program_resource_lifecycle{}, m_Resource.contextual_handle().handle());
+            m_Resource.view().context().utilize(shader_program_resource_lifecycle{}, m_Resource.view().handle());
         }
 
         void set_uniform(std::string_view name, GLfloat val) {
@@ -184,13 +184,13 @@ namespace avocet::opengl {
         template<class... Args>
         void do_set_uniform(std::string_view name, gl_function<void(GLint, Args...)> fn, Args... args) {
             use();
-            fn(m_Resource.contextual_handle().context(), extract_uniform_location(name), args...);
+            fn(m_Resource.view().context(), extract_uniform_location(name), args...);
         }
 
         template<gl_arithmetic T>
         void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T* val) {
             use();
-            fn(m_Resource.contextual_handle().context(), get_index(m_Resource), extract_uniform_location(name), val);
+            fn(m_Resource.view().context(), get_index(m_Resource), extract_uniform_location(name), val);
         }
     };
 }

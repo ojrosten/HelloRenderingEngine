@@ -106,7 +106,7 @@ namespace avocet::opengl {
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
             shader_compiler_checker(const shader_resource& r, shader_species species)
-                : shader_checker{r.contextual_handle(), gl_function{&GladGLContext::GetShaderiv}, gl_function{&GladGLContext::GetShaderInfoLog}}
+                : shader_checker{r.view(), gl_function{&GladGLContext::GetShaderiv}, gl_function{&GladGLContext::GetShaderInfoLog}}
                 , m_Species{species}
             {}
 
@@ -120,7 +120,7 @@ namespace avocet::opengl {
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
             explicit shader_program_checker(const shader_program_resource& r)
-                : shader_checker{r.contextual_handle(), gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
+                : shader_checker{r.view(), gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
             {}
 
             [[nodiscard]]
@@ -165,7 +165,7 @@ namespace avocet::opengl {
             GLuint m_ProgIndex{}, m_ShaderIndex{};
         public:
             shader_attacher(const shader_program_resource& progResource, const shader_compiler& shader)
-                : m_Context{progResource.contextual_handle().context()}
+                : m_Context{progResource.view().context()}
                 , m_ProgIndex{get_index(progResource)}
                 , m_ShaderIndex{get_index(shader.resource())}
             {
@@ -192,7 +192,7 @@ namespace avocet::opengl {
             shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
             gl_function{&GladGLContext::LinkProgram}(ctx, progIndex);
 
-            if(m_Resource.contextual_handle().context().characteristics().object_labels_activated()) {
+            if(m_Resource.view().context().characteristics().object_labels_activated()) {
                 const std::string label{
                     std::format("{} / {}",
                                 sequoia::back(vertexShaderSource).string(),
@@ -210,9 +210,9 @@ namespace avocet::opengl {
         if(auto found{m_Uniforms.find(name)}; found != m_Uniforms.end())
             return found->second;
 
-        const auto location{gl_function{&GladGLContext::GetUniformLocation}(m_Resource.contextual_handle().context(), get_index(m_Resource), name.data())};
+        const auto location{gl_function{&GladGLContext::GetUniformLocation}(m_Resource.view().context(), get_index(m_Resource), name.data())};
         if(location == -1) {
-            const bool labelled{m_Resource.contextual_handle().context().characteristics().object_labels_activated()};
+            const bool labelled{m_Resource.view().context().characteristics().object_labels_activated()};
             const std::string label{labelled ? extract_label() : "[unlabelled]"};
 
             throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", label, name)};
