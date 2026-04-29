@@ -15,7 +15,8 @@ dependencies=(
 	libxrandr-dev
 	libxinerama-dev
 	libxcursor-dev
-	libxi-dev)
+	libxi-dev
+	libdecor-0-dev)
 
 sudo apt install ppa-purge
 sudo ppa-purge ppa:kisak/kisak-mesa
