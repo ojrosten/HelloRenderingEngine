@@ -62,7 +62,7 @@ namespace avocet::testing
         }
 
         [[nodiscard]]
-        texture_2d_configurator make_texture2d_configurator(const decorated_context& ctx, image_view picture) {
+        texture_2d_configurator make_texture2d_configurator(const resourceful_context& ctx, image_view picture) {
             return {
                 .common_config{
                     .decoding{sampling_decoding::none},
@@ -81,7 +81,7 @@ namespace avocet::testing
 
         template<gl_floating_point CoordsValueType, std::size_t NumVertices, dimensionality Dim, gl_floating_point... TextureCoordsValueTypes>
         [[nodiscard]]
-        polygon<CoordsValueType, NumVertices, Dim, texture_coordinates<TextureCoordsValueTypes>...> make_poly(const decorated_context& ctx, const std::array<unique_image, sizeof...(TextureCoordsValueTypes)>& images) {
+        polygon<CoordsValueType, NumVertices, Dim, texture_coordinates<TextureCoordsValueTypes>...> make_poly(const resourceful_context& ctx, const std::array<unique_image, sizeof...(TextureCoordsValueTypes)>& images) {
             return {
                 ctx,
                 [](auto verts) {

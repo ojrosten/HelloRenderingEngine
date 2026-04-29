@@ -39,5 +39,7 @@ namespace avocet::testing
 
         gl_function{&GladGLContext::ClearColor}(w.context(), 1.f, 128.f / 255.f, 128.f / 255.f, 1.f);
         gl_function{&GladGLContext::Clear}(w.context(), GL_COLOR_BUFFER_BIT);
+
+        fbo.bind(texture_unit{1});
     }
 }

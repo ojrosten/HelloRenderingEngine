@@ -28,7 +28,7 @@ namespace avocet::opengl {
            std::is_empty_v<T>
         && std::is_default_constructible_v<T>
         && has_configurator_type_v<T>
-        && requires(const T& t, raw_indices<NumResources.value>& indices, contextual_resource_view crv) {
+        && requires(const T& t, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv) {
                T::generate(crv.context(), indices);
                T::destroy(crv.context(), indices);
                { T::identifier } -> std::convertible_to<object_identifier>;
@@ -38,26 +38,33 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
+    struct resource_lifecycle;
+
+    template<num_resources NumResources, class LifeEvents>
         requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
-    struct resource_lifecycle {
+    struct resource_lifecycle<NumResources, LifeEvents> {
         using configurator_type = LifeEvents::configurator;
 
         constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
-        static contextual_resource_handles<N> generate(const decorated_context& ctx) {
+        static contextual_resource_handles<N> generate(const resourceful_context& ctx) {
             raw_indices<N> indices{};
             LifeEvents::generate(ctx, indices);
             return {ctx, indices};
         }
 
-        static void destroy(const contextual_resource_handles<N>& crv) {
-            LifeEvents::destroy(crv.context(), crv.get_raw_indices());
+        static void destroy(const contextual_resource_handles<N>& crhs) {
+            for (const auto& crh : crhs) {
+                crh.context().reset(LifeEvents{}, crh.handle());
+            }
         }
 
-        static void bind(contextual_resource_view crv) { LifeEvents::bind(crv); }
+        static void bind(contextual_resource_view crv) { 
+            crv.context().utilize(LifeEvents{}, crv.handle());
+        }
 
-        static void configure(contextual_resource_view crv, const configurator_type& config) {
+        static void configure(decorated_contextual_resource_view crv, const configurator_type& config) {
             LifeEvents{}.configure(crv, config);
         }
     };
@@ -70,7 +77,7 @@ namespace avocet::opengl {
 
         constexpr static std::size_t N{NumResources.value};
 
-        explicit resource_wrapper(const decorated_context& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
+        explicit resource_wrapper(const resourceful_context& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
         ~resource_wrapper() { lifecycle_type::destroy(m_Handles); }
 
         resource_wrapper(resource_wrapper&&)           noexcept = default;
@@ -95,7 +102,7 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        generic_resource(const decorated_context& ctx, const std::array<configurator_type, N>& configs)
+        generic_resource(const resourceful_context& ctx, const std::array<configurator_type, N>& configs)
             : m_Resource{ctx}
         {
             for(const auto& [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {
@@ -109,7 +116,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         bool is_null() const noexcept {
-            auto isNull{[](contextual_resource_view crv) { return crv.handle() == resource_handle{}; }};
+            auto isNull{[](decorated_contextual_resource_view crv) { return crv.handle() == resource_handle{}; }};
             assert(std::ranges::all_of(contextual_handles(), isNull) or std::ranges::none_of(contextual_handles(), isNull));
             return isNull(contextual_handle(index<0>{}));
         }
@@ -123,7 +130,7 @@ namespace avocet::opengl {
         std::string extract_label() const requires (N == 1) { return extract_label(index<0>{}); }
 
         [[nodiscard]]
-        const decorated_context& context() const noexcept { return contextual_handles().context(); }
+        const resourceful_context& context() const noexcept { return contextual_handles().context(); }
 
         [[nodiscard]]
         friend bool operator==(const generic_resource&, const generic_resource&) noexcept = default;
