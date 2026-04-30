@@ -1,4 +1,4 @@
-Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 34
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 33
 
 Expected Exception Type:
 [std::runtime_error]
@@ -6,7 +6,7 @@ padded_row_size: bytes per channel must be > 0
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 39
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 38
 Zero bytes per channel considered a bug, even if the image holds no data
 
 Expected Exception Type:
@@ -15,43 +15,35 @@ padded_row_size: bytes per channel must be > 0
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 44
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 43
 
 Expected Exception Type:
 [std::runtime_error]
-padded_row_size: width (9223372036854775808) * bytes per texel (2) exceeds max allowed value, 18446744073709551615
+padded_row_size: width (2147483648) * bytes per texel (2) exceeds max allowed value, 4294967295
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 49
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 48
 
 Expected Exception Type:
 [std::runtime_error]
-padded_row_size: channels (2) * bytes per channel (9223372036854775808) exceeds max allowed value, 18446744073709551615
+padded_row_size: channels (2) * bytes per channel (2147483648) exceeds max allowed value, 4294967295
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 54
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 53
 
 Expected Exception Type:
 [std::runtime_error]
-padded_row_size: width (2) * bytes per texel (9223372036854775808) exceeds max allowed value, 18446744073709551615
+padded_row_size: width (2) * bytes per texel (2147483648) exceeds max allowed value, 4294967295
 
 =======================================
 
-Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 59
+Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 58
 
 Expected Exception Type:
 [std::runtime_error]
-padded_row_size: nominal row size (18446744073709551615) aligned to (2) bytes will be padded to exceed max allowed value, 18446744073709551615
-
-=======================================
-
-Tests/Core/AssetManagement/PaddedImageSizeFreeTest.cpp, Line 83
-
-Expected Exception Type:
-[std::runtime_error]
-safe_image_size: width (9223372036854775808) * height (2) exceeds max allowed value, 18446744073709551615
+padded_row_size: nominal row size (4294967295) aligned to (2) bytes will be padded to exceed max allowed value, 4294967295
 
 =======================================
 

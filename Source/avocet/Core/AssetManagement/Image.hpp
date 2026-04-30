@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "avocet/Core/Geometry/Extent.hpp"
+
 #include "sequoia/Core/Meta/Utilities.hpp"
 
 #include <algorithm>
@@ -24,26 +26,26 @@ namespace avocet {
     enum class flip_vertically : bool { no, yes };
 
     class colour_channels {
-        std::size_t m_Value{};
+        std::uint32_t m_Value{};
     public:
         constexpr colour_channels() noexcept = default;
 
-        constexpr explicit colour_channels(std::size_t val) noexcept : m_Value{val} {}
+        constexpr explicit colour_channels(std::uint32_t val) noexcept : m_Value{val} {}
 
         [[nodiscard]]
         friend constexpr auto operator<=>(const colour_channels&, const colour_channels&) noexcept = default;
 
         [[nodiscard]]
-        constexpr std::size_t raw_value() const noexcept { return m_Value; }
+        constexpr std::uint32_t raw_value() const noexcept { return m_Value; }
     };
 
     inline constexpr std::optional<colour_channels> all_channels_in_image{std::nullopt};
 
     class alignment {
-        std::size_t m_Value{1};
+        std::uint32_t m_Value{1};
 
         [[nodiscard]]
-        constexpr static std::size_t validate(std::size_t val) {
+        constexpr static std::uint32_t validate(std::uint32_t val) {
             const bool powOfTwo{(val > 0) && ((val & (val - 1)) == 0)};
             if(!powOfTwo)
                 throw std::runtime_error{std::format("alignment: value {} is not a power of 2", val)};
@@ -53,29 +55,25 @@ namespace avocet {
     public:
         constexpr alignment() noexcept = default;
 
-        constexpr explicit alignment(std::size_t val) : m_Value{validate(val)}
+        constexpr explicit alignment(std::uint32_t val) : m_Value{validate(val)}
         {}
 
         [[nodiscard]]
         friend constexpr auto operator<=>(const alignment&, const alignment&) noexcept = default;
 
         [[nodiscard]]
-        constexpr std::size_t raw_value() const noexcept { return m_Value; }
+        constexpr std::uint32_t raw_value() const noexcept { return m_Value; }
     };
 
     [[nodiscard]]
-    std::size_t padded_row_size(std::size_t width, colour_channels channels, std::size_t bytesPerChannel, alignment rowAlignment);
-
-    [[nodiscard]]
-    std::size_t safe_image_size(std::size_t width, std::size_t height);
+    uint32_t padded_row_size(uint32_t width, colour_channels channels, std::uint32_t bytesPerChannel, alignment rowAlignment);
 
     namespace impl {
         template<class ImageValueType>
         struct image_spec {
             using value_type = ImageValueType;
 
-            std::size_t     width;
-            std::size_t     height;
+            discrete_extent extent;
             colour_channels channels;
             alignment       row_alignment;
 
@@ -83,16 +81,13 @@ namespace avocet {
             friend bool operator==(const image_spec&, const image_spec&) noexcept = default;
 
             [[nodiscard]]
-            std::size_t padded_row_size() const {
-                return avocet::padded_row_size(width, channels, sizeof(value_type), row_alignment);
+            discrete_extent padded_extent() const {
+                return {avocet::padded_row_size(extent.width, channels, sizeof(value_type), row_alignment), extent.height};
             }
 
-            [[nodiscard]]
-            std::size_t size() const { return safe_image_size(height, padded_row_size()); }
-
-            void validate(std::size_t imageSize) const {
-                if(imageSize != size())
-                    throw std::runtime_error{std::format("unique_image size {} is not height ({}) * padded_row_size ({})\n[width = {}; channels = {}; alignment = {}]", imageSize, height, padded_row_size(), width, channels, row_alignment)};
+            void validate(std::uint64_t imageSize) const {
+                if (const auto paddedExtent{padded_extent()}; imageSize != paddedExtent.size())
+                    throw std::runtime_error{std::format("unique_image size {} is not height ({}) * padded_row_size ({})\n[width = {}; channels = {}; alignment = {}]", imageSize, extent.height, paddedExtent.width, extent.width, channels, row_alignment)};
             }
         };
     }
@@ -105,22 +100,22 @@ namespace avocet {
             : unique_image{make(texturePath, flip, requestedChannels)}
         {}
 
-        unique_image(std::vector<value_type> data, std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment)
+        unique_image(std::vector<value_type> data, discrete_extent extent, colour_channels channels, alignment rowAlignment)
             : m_Data{std::move(data)}
-            , m_Spec{{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}}
+            , m_Spec{{.extent{extent},.channels{channels}, .row_alignment{rowAlignment}}}
         {
             m_Spec.value.validate(std::get<vec_t>(m_Data).size());
         }
 
-        unique_image(std::span<const value_type> data, std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment)
-            : unique_image{std::ranges::to<std::vector>(data), width, height, channels, rowAlignment}
+        unique_image(std::span<const value_type> data, discrete_extent extent, colour_channels channels, alignment rowAlignment)
+            : unique_image{std::ranges::to<std::vector>(data), extent, channels, rowAlignment}
         {}
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Spec.value.width; }
+        discrete_extent extent() const noexcept { return m_Spec.value.extent; }
 
         [[nodiscard]]
-        std::size_t height() const noexcept { return m_Spec.value.height; }
+        discrete_extent padded_extent() const noexcept { return m_Spec.value.padded_extent(); }
 
         [[nodiscard]]
         colour_channels num_channels() const noexcept { return m_Spec.value.channels; }
@@ -129,17 +124,11 @@ namespace avocet {
         alignment row_alignment() const noexcept { return m_Spec.value.row_alignment; }
 
         [[nodiscard]]
-        std::size_t padded_row_size() const { return m_Spec.value.padded_row_size(); }
-
-        [[nodiscard]]
-        std::size_t size() const { return m_Spec.value.size(); }
-
-        [[nodiscard]]
         std::span<const value_type> span() const noexcept {
             using span_t = std::span<const value_type>;
             return std::visit(
                 sequoia::overloaded{
-                    [sz{size()}](const ptr_t& ptr) { return span_t{ptr.get(), sz}; },
+                    [sz{padded_extent().size()}](const ptr_t& ptr) { return span_t{ptr.get(), sz}; },
                               [](const vec_t& vec) { return span_t{vec}; }
                 },
                 m_Data
@@ -183,18 +172,18 @@ namespace avocet {
 
         unique_image(value_type* ptr, int width, int height, int channels, alignment rowAlignment)
             : m_Data{ptr_t{ptr}}
-            , m_Spec{spec_t{.width{to_unsigned(width)}, .height{to_unsigned(height)}, .channels{to_unsigned(channels)}, .row_alignment{rowAlignment}}}
+            , m_Spec{spec_t{.extent{to_unsigned(width), to_unsigned(height)}, .channels{to_unsigned(channels)}, .row_alignment{rowAlignment}}}
         {}
 
         [[nodiscard]]
         static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels);
 
         [[nodiscard]]
-        static std::size_t to_unsigned(int val) {
+        static std::uint32_t to_unsigned(int val) {
             if(val < 0)
                 throw std::logic_error{std::format("unique_image::specification - negative value {}", val)};
 
-            return static_cast<std::size_t>(val);
+            return static_cast<std::uint32_t>(val);
         }
     };
 
@@ -204,21 +193,18 @@ namespace avocet {
 
         image_view(const unique_image& image)
             : m_Span{image.span()}
-            , m_Spec{.width{image.width()}, .height{image.height()}, .channels{image.num_channels()}, .row_alignment{image.row_alignment()}}
+            , m_Spec{.extent{image.extent()}, .channels{image.num_channels()}, .row_alignment{image.row_alignment()}}
         {}
 
-        image_view(std::span<const value_type> data, std::size_t width, std::size_t height, colour_channels channels, alignment rowAlignment)
+        image_view(std::span<const value_type> data, discrete_extent extent, colour_channels channels, alignment rowAlignment)
             : m_Span{data}
-            , m_Spec{.width{width}, .height{height}, .channels{channels}, .row_alignment{rowAlignment}}
+            , m_Spec{.extent{extent}, .channels{channels}, .row_alignment{rowAlignment}}
         {
             m_Spec.validate(m_Span.size());
         }
 
         [[nodiscard]]
-        std::size_t width() const noexcept { return m_Spec.width; }
-
-        [[nodiscard]]
-        std::size_t height() const noexcept { return m_Spec.height; }
+        discrete_extent extent() const noexcept { return m_Spec.extent; }
 
         [[nodiscard]]
         colour_channels num_channels() const noexcept { return m_Spec.channels; }
@@ -227,10 +213,7 @@ namespace avocet {
         alignment row_alignment() const noexcept { return m_Spec.row_alignment; }
 
         [[nodiscard]]
-        std::size_t padded_row_size() const { return m_Spec.padded_row_size(); }
-
-        [[nodiscard]]
-        std::size_t size() const { return m_Spec.size(); }
+        discrete_extent padded_extent() const { return m_Spec.padded_extent(); }
 
         [[nodiscard]]
         std::span<const value_type> span() const noexcept { return m_Span; }

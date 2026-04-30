@@ -247,7 +247,7 @@ namespace avocet::testing
         auto poly{
             make_poly<CoordsValueType, NumVerts, Dim, TextureCoordsValueTypes...>(
                 ctx,
-                std::array<unique_image, numTextures>{unique_image{polyData.images[Is], Extent.width, Extent.height, colour_channels{1}, alignment{1}}...}
+                std::array<unique_image, numTextures>{unique_image{polyData.images[Is], Extent, colour_channels{1}, alignment{1}}...}
             )
         };
 
@@ -263,8 +263,7 @@ namespace avocet::testing
             fbo.extract_data(texture_format::red, alignment{1}),
             unique_image{
                 build_prediction<NumVerts, Extent>(polyData.bottom_prediction),
-                Extent.width,
-                Extent.height,
+                Extent,
                 colour_channels{1},
                 alignment{1}
             }

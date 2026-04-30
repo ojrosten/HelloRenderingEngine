@@ -34,6 +34,6 @@ namespace avocet::testing
             []() { return alignment{14}; }
         );
 
-        check_semantics("", alignment{}, alignment{4}, 1uz, 4uz, std::strong_ordering::less);
+        check_semantics("", alignment{}, alignment{4}, 1, 4, std::strong_ordering::less);
     }
 }

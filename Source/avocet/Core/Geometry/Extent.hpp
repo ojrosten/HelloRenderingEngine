@@ -21,6 +21,9 @@ namespace avocet {
         std::uint32_t width{}, height{};
 
         [[nodiscard]]
+        std::uint64_t size() const noexcept { return width * height; }
+
+        [[nodiscard]]
         friend constexpr bool operator==(const discrete_extent&, const discrete_extent&) noexcept = default;
     };
 }
