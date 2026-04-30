@@ -23,7 +23,7 @@ namespace sequoia::testing
         }
         
         template<test_mode Mode>
-        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::alignment& actual, const std::size_t prediction)
+        static void test(equivalence_check_t, test_logger<Mode>& logger, const avocet::alignment& actual, const std::uint32_t prediction)
         {
             check(equality, "Raw value", logger, actual.raw_value(), prediction);
         }

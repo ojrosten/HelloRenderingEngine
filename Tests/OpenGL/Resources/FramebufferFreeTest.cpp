@@ -53,8 +53,7 @@ namespace avocet::testing
                         255, 128, 128, 255
                     }
                 },
-                .width{fbExtent.width},
-                .height{fbExtent.height},
+                .extent{fbExtent},
                 .num_channels{4},
                 .row_alignment{1}
             }

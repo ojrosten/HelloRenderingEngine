@@ -28,17 +28,21 @@ Checking for equivalence with:
   Checking for equivalence with:
   [avocet::testing::image_data]
 
-    Width
-    [unsigned long long]
+    Extent
+    [avocet::discrete_extent]
     operator== returned false
-    Obtained : 1
-    Predicted: 0
 
-    Height
-    [unsigned long long]
-    operator== returned false
-    Obtained : 1
-    Predicted: 0
+      Width
+      [unsigned int]
+      operator== returned false
+      Obtained : 1
+      Predicted: 0
+
+      Height
+      [unsigned int]
+      operator== returned false
+      Obtained : 1
+      Predicted: 0
 
     Data
     [std::span<unsigned char const, -1>]
@@ -108,11 +112,15 @@ Checking for equivalence with:
   Checking for equivalence with:
   [avocet::testing::image_data]
 
-    Width
-    [unsigned long long]
+    Extent
+    [avocet::discrete_extent]
     operator== returned false
-    Obtained : 1
-    Predicted: 2
+
+      Width
+      [unsigned int]
+      operator== returned false
+      Obtained : 1
+      Predicted: 2
 
     Data
     [std::span<unsigned char const, -1>]

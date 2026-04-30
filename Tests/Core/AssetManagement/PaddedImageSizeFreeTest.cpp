@@ -13,7 +13,7 @@
 namespace avocet::testing
 {
     namespace {
-        constexpr auto maxVal{std::numeric_limits<std::size_t>::max()};
+        constexpr auto maxVal{std::numeric_limits<std::uint32_t>::max()};
     }
 
     [[nodiscard]]
@@ -25,7 +25,6 @@ namespace avocet::testing
     void padded_image_size_free_test::run_tests()
     {
         test_padded_row_size();
-        test_safe_image_size();
     }
 
     void padded_image_size_free_test::test_padded_row_size()
@@ -60,35 +59,20 @@ namespace avocet::testing
             []() { return padded_row_size(maxVal, colour_channels{1}, 1, alignment{2}); }
         );
 
-        check(equality, "", padded_row_size(0, colour_channels{1}, 1, alignment{1}), 0uz);
-        check(equality, "", padded_row_size(1, colour_channels{0}, 1, alignment{1}), 0uz);
-        check(equality, "", padded_row_size(1, colour_channels{1}, 1, alignment{1}), 1uz);
-        check(equality, "", padded_row_size(2, colour_channels{1}, 1, alignment{1}), 2uz);
-        check(equality, "", padded_row_size(1, colour_channels{2}, 1, alignment{1}), 2uz);
-        check(equality, "", padded_row_size(1, colour_channels{1}, 2, alignment{1}), 2uz);
-        check(equality, "", padded_row_size(2, colour_channels{3}, 4, alignment{1}), 24uz);
+        check(equality, "", padded_row_size(0, colour_channels{1}, 1, alignment{1}), std::uint32_t{0});
+        check(equality, "", padded_row_size(1, colour_channels{0}, 1, alignment{1}), std::uint32_t{0});
+        check(equality, "", padded_row_size(1, colour_channels{1}, 1, alignment{1}), std::uint32_t{1});
+        check(equality, "", padded_row_size(2, colour_channels{1}, 1, alignment{1}), std::uint32_t{2});
+        check(equality, "", padded_row_size(1, colour_channels{2}, 1, alignment{1}), std::uint32_t{2});
+        check(equality, "", padded_row_size(1, colour_channels{1}, 2, alignment{1}), std::uint32_t{2});
+        check(equality, "", padded_row_size(2, colour_channels{3}, 4, alignment{1}), std::uint32_t{24});
 
-        check(equality, "", padded_row_size(1, colour_channels{1}, 1, alignment{2}), 2uz);
-        check(equality, "", padded_row_size(1, colour_channels{1}, 1, alignment{4}), 4uz);
-        check(equality, "", padded_row_size(3, colour_channels{3}, 1, alignment{2}), 10uz);
-        check(equality, "", padded_row_size(2, colour_channels{3}, 2, alignment{8}), 16uz);
-        check(equality, "", padded_row_size(2, colour_channels{3}, 4, alignment{8}), 24uz);
+        check(equality, "", padded_row_size(1, colour_channels{1}, 1, alignment{2}), std::uint32_t{2});
+        check(equality, "", padded_row_size(1, colour_channels{1}, 1, alignment{4}), std::uint32_t{4});
+        check(equality, "", padded_row_size(3, colour_channels{3}, 1, alignment{2}), std::uint32_t{10});
+        check(equality, "", padded_row_size(2, colour_channels{3}, 2, alignment{8}), std::uint32_t{16});
+        check(equality, "", padded_row_size(2, colour_channels{3}, 4, alignment{8}), std::uint32_t{24});
 
         check(equality, "", padded_row_size(maxVal, colour_channels{1}, 1, alignment{1}), maxVal);
-    }
-
-    void padded_image_size_free_test::test_safe_image_size()
-    {
-        check_exception_thrown<std::runtime_error>(
-            "",
-            []() { return safe_image_size(1 + maxVal / 2, 2); }
-        );
-
-        check(equality, "", safe_image_size(1, 1), 1uz);
-        check(equality, "", safe_image_size(1, 2), 2uz);
-        check(equality, "", safe_image_size(3, 4), 12uz);
-
-        check(equality, "", safe_image_size(1, maxVal), maxVal);
-        check(equality, "", safe_image_size(maxVal, 1), maxVal);
     }
 }

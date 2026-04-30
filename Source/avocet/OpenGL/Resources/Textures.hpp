@@ -181,10 +181,7 @@ namespace avocet::opengl {
         static raw_texture_2d_configurator<value_type> to_raw_configurator(const configurator& config) {
             return {
                 .format{to_texture_format(config.data_view.num_channels())},
-                .extent{
-                     .width{static_cast<std::uint32_t>(config.data_view.width())},
-                    .height{static_cast<std::uint32_t>(config.data_view.height())}
-                },
+                .extent{config.data_view.extent()},
                 .image_span{config.data_view.span()}
             };
         }
@@ -233,11 +230,11 @@ namespace avocet::opengl {
             base_type::do_bind(self);
 
             const auto& ctx{self.context()};
-            const auto width{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH))},
-                      height{static_cast<std::size_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
+            const discrete_extent extent{static_cast<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH)),
+                                         static_cast<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
 
             const auto numChannels{to_num_channels(format)};
-            const auto size{safe_image_size(padded_row_size(width, numChannels, sizeof(value_type), rowAlignment), height)};
+            const auto size{discrete_extent{padded_row_size(extent.width, numChannels, sizeof(value_type), rowAlignment), extent.height}.size()};
 
             std::vector<value_type> texture(size);
 
@@ -252,7 +249,7 @@ namespace avocet::opengl {
                 texture.data()
             );
 
-            return {texture, width, height, numChannels, rowAlignment};
+            return {texture, extent, numChannels, rowAlignment};
         }
 
         void bind(this const generic_texture_2d& self, texture_unit unit) {

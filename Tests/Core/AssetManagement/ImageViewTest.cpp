@@ -24,14 +24,14 @@ namespace avocet::testing
             []() {
                 using value_t = unique_image::value_type;
                 std::vector<value_t> data{};
-                return unique_image{data, 2uz, 3uz, colour_channels{4}, alignment{1}};
+                return unique_image{data, {2, 3}, colour_channels{4}, alignment{1}};
             }
         );
 
         check_semantics_via_image_data(
             "",
-            make_red(        1, 3, colour_channels{2}, alignment{1}),
-            make_rgb_striped(3, 2, colour_channels{4}, alignment{1})
+            make_red(        {1, 3}, colour_channels{2}, alignment{1}),
+            make_rgb_striped({3, 2}, colour_channels{4}, alignment{1})
         );
     }
 }

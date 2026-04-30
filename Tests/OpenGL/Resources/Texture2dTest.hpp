@@ -62,7 +62,7 @@ namespace avocet::testing
 
         [[nodiscard]]
         static image_view image_view_over_data(const image_data& im) {
-            return {im.data, im.width, im.height, im.num_channels, im.row_alignment};
+            return {im.data, im.extent, im.num_channels, im.row_alignment};
         }
     };
 }

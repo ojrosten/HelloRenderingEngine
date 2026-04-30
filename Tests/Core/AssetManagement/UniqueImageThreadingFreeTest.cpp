@@ -66,8 +66,8 @@ namespace avocet::testing
         const bool passed{
             [numThreads, &imageFutures](){
                 for(auto i : std::views::iota(0uz, numThreads)) {
-                    const auto comparison{i % 2 ? make_rgb_striped(2, 3, colour_channels{3}, alignment{1})
-                                                : make_bgr_striped(2, 3, colour_channels{3}, alignment{1})};
+                    const auto comparison{i % 2 ? make_rgb_striped({2, 3}, colour_channels{3}, alignment{1})
+                                                : make_bgr_striped({2, 3}, colour_channels{3}, alignment{1})};
 
                     if(not std::ranges::equal(imageFutures[i].get().span(), comparison.data))
                         return false;

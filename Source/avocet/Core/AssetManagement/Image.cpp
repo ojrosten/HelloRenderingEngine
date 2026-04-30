@@ -14,9 +14,9 @@ namespace avocet {
     namespace fs = std::filesystem;
 
     namespace {
-        constexpr auto maxVal{std::numeric_limits<std::size_t>::max()};
+        constexpr auto maxVal{std::numeric_limits<std::uint32_t>::max()};
 
-        constexpr bool multiplication_overflows(std::size_t x, std::size_t y) noexcept {
+        constexpr bool multiplication_overflows(std::uint32_t x, std::uint32_t y) noexcept {
             return y ? maxVal / y < x : false;
         }
     }
@@ -48,7 +48,7 @@ namespace avocet {
     }
 
     [[nodiscard]]
-    std::size_t padded_row_size(std::size_t width, colour_channels channels, std::size_t bytesPerChannel, alignment rowAlignment) {
+    uint32_t padded_row_size(uint32_t width, colour_channels channels, std::uint32_t bytesPerChannel, alignment rowAlignment) {
         if(!bytesPerChannel)
             throw std::runtime_error{"padded_row_size: bytes per channel must be > 0"};
 
@@ -68,13 +68,5 @@ namespace avocet {
             throw std::runtime_error{std::format("padded_row_size: nominal row size ({}) aligned to ({}) bytes will be padded to exceed max allowed value, {}", nominalWidth, rowAlignment, maxVal)};
 
         return nominalWidth - unpaddedBytes + rowAlignment.raw_value();
-    }
-
-    [[nodiscard]]
-    std::size_t safe_image_size(std::size_t width, std::size_t height) {
-        if(multiplication_overflows(width, height))
-            throw std::runtime_error{std::format("safe_image_size: width ({}) * height ({}) exceeds max allowed value, {}", width, height, maxVal)};
-
-        return width * height;
     }
 }

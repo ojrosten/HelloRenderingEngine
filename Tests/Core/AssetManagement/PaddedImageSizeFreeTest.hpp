@@ -26,6 +26,5 @@ namespace avocet::testing
         void run_tests();
     private:
         void test_padded_row_size();
-        void test_safe_image_size();
     };
 }

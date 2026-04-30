@@ -3,10 +3,10 @@ Tests/Core/AssetManagement/AlignmentTestingDiagnostics.cpp, Line 22
 Comparison performed using:
 [sequoia::testing::value_tester<avocet::alignment>]
 Checking for equivalence with:
-[unsigned long long]
+[int]
 
   Raw value
-  [unsigned long long]
+  [unsigned int]
   operator== returned false
   Obtained : 1
   Predicted: 4
@@ -19,7 +19,7 @@ Tests/Core/AssetManagement/AlignmentTestingDiagnostics.cpp, Line 23
 operator== returned false
 
   Raw value
-  [unsigned long long]
+  [unsigned int]
   operator== returned false
   Obtained : 4
   Predicted: 2

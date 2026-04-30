@@ -19,7 +19,7 @@ namespace avocet::testing
 
     void alignment_false_negative_test::run_tests()
     {
-        check(equivalence, "", alignment{}, 4uz);
+        check(equivalence, "", alignment{}, 4);
         check(equality, "", alignment{4}, alignment{2});
     }
 }
