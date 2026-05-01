@@ -14,6 +14,8 @@ namespace avocet::opengl {
     class context_characteristics {
         std::string m_Vendor{},
                    m_Renderer{};
+
+        GLint m_MaxLabelLength{};
     public:
         explicit context_characteristics(const decorated_context& ctx);
 
@@ -22,6 +24,9 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         const std::string& renderer() const noexcept { return m_Renderer; }
+
+        [[nodiscard]]
+        GLint max_label_length() const noexcept { return m_MaxLabelLength; }
     };
 
     class characteristic_context : public decorated_context {

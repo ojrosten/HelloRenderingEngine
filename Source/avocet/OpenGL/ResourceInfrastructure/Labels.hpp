@@ -18,42 +18,8 @@ namespace avocet::opengl {
     using optional_label = std::optional<std::string>;
     inline constexpr optional_label null_label{std::nullopt};
 
-    inline void add_label(object_identifier identifier, decorated_contextual_resource_view h, const optional_label& label) {
-        if(label && h.context().debug_characteristics().object_labels_activated()) {
-            const auto& str{label.value()};
-            gl_function{&GladGLContext::ObjectLabel}(h.context(), to_gl_enum(identifier), get_index(h), checked_conversion_to<GLsizei>(str.size()), str.data());
-        }
-    }
+    void add_label(object_identifier identifier, decorated_contextual_resource_view h, const optional_label& label);
 
     [[nodiscard]]
-    inline GLint get_max_label_length(const decorated_context& ctx) {
-        const static GLint length{
-            [&ctx](){
-                GLint param{};
-                gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_LABEL_LENGTH, &param);
-                return param;
-            }()
-        };
-
-        return length;
-    }
-
-    [[nodiscard]]
-    inline std::string get_object_label(avocet::opengl::object_identifier identifier, avocet::opengl::decorated_contextual_resource_view handle) {
-        const auto& ctx{handle.context()};
-        std::string label(get_max_label_length(ctx), ' ');
-        GLsizei numChars{};
-        gl_function{&GladGLContext::GetObjectLabel}(
-            ctx,
-            to_gl_enum(identifier),
-            get_index(handle),
-            checked_conversion_to<GLsizei>(label.size()),
-            &numChars,
-            label.data()
-            );
-
-        label.erase(std::ranges::next(label.begin(), numChars, label.end()), label.end());
-
-        return label;
-    }
+    std::string get_object_label(avocet::opengl::object_identifier identifier, characteristic_contextual_resource_view handle);
 }
