@@ -8,6 +8,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
 
 #include "GLFW/glfw3.h"
 
@@ -29,12 +30,12 @@ namespace curlew {
         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
         [[nodiscard]]
-        constexpr int to_int(num_samples samples) { return static_cast<int>(samples.value()); }
+        constexpr int to_int(num_samples samples) { return avocet::convert_value_to<int>(samples.value()); }
 
         [[nodiscard]]
         GLFWwindow& make_window(const window_config& config, const agl::opengl_version& version) {
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, avocet::convert_value_to<int>(version.major));
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, avocet::convert_value_to<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));
@@ -42,7 +43,7 @@ namespace curlew {
 
             set_debug_context(config.debug_mode, version);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.extent.width), static_cast<int>(config.extent.height), config.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(avocet::convert_value_to<int>(config.extent.width), avocet::convert_value_to<int>(config.extent.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window"};
         }
 
@@ -54,14 +55,6 @@ namespace curlew {
                 throw std::runtime_error{"Failed to initialize GLAD"};
 
             return ctx;
-        }
-
-        [[nodiscard]]
-        std::uint32_t validate(std::string_view tag, int i) {
-            if(i < 0)
-                throw std::runtime_error{std::format("Negative framebuffer {}: {}", tag, i)};
-
-            return static_cast<std::uint32_t>(i);
         }
     }
 
@@ -123,7 +116,7 @@ namespace curlew {
 
         glfwGetFramebufferSize(&m_Window, &width, &height);
 
-        return avocet::discrete_extent{validate("width", width), validate("height", height)};
+        return avocet::discrete_extent{avocet::convert_value_to<std::uint32_t>(width), avocet::convert_value_to<std::uint32_t>(height)};
     }
 
 

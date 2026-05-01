@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/Core/Geometry/Extent.hpp"
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
 
 #include "sequoia/Core/Meta/Utilities.hpp"
 
@@ -172,19 +173,19 @@ namespace avocet {
 
         unique_image(value_type* ptr, int width, int height, int channels, alignment rowAlignment)
             : m_Data{ptr_t{ptr}}
-            , m_Spec{spec_t{.extent{to_unsigned(width), to_unsigned(height)}, .channels{to_unsigned(channels)}, .row_alignment{rowAlignment}}}
+            , m_Spec{
+                  spec_t{
+                      .extent{  convert_value_to<std::uint32_t>(width),
+                                convert_value_to<std::uint32_t>(height)
+                       },
+                      .channels{convert_value_to<std::uint32_t>(channels)},
+                      .row_alignment{rowAlignment}
+                  }
+              }
         {}
 
         [[nodiscard]]
         static unique_image make(const std::filesystem::path& texturePath, flip_vertically flip, std::optional<colour_channels> requestedChannels);
-
-        [[nodiscard]]
-        static std::uint32_t to_unsigned(int val) {
-            if(val < 0)
-                throw std::logic_error{std::format("unique_image::specification - negative value {}", val)};
-
-            return static_cast<std::uint32_t>(val);
-        }
     };
 
     class image_view {

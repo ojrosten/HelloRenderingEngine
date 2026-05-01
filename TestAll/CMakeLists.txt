@@ -29,6 +29,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/Geometry/PolygonCoordinatesFreeTest.cpp
                ${TestDir}/Core/Geometry/ViewportTest.cpp
                ${TestDir}/Core/Geometry/ViewportTestingDiagnostics.cpp
+               ${TestDir}/Core/Utilities/ArithmeticCastsFreeTest.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTest.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp

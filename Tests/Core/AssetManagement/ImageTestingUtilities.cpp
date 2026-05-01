@@ -50,7 +50,7 @@ namespace avocet::testing {
                 if((channelIndex == 3) || ((channels == colour_channels{2}) && (channelIndex == 1)))
                      return intensity.alpha;
 
-                return static_cast<unsigned char>(channelIndex ? 0 : intensity.red);
+                return convert_value_to<unsigned char>(channelIndex ? 0 : intensity.red);
             }
         };
 
@@ -61,7 +61,7 @@ namespace avocet::testing {
     image_data make_rgb_striped(discrete_extent extent, colour_channels channels, alignment rowAlignment) {
         auto fn{
             [channels](std::size_t row, std::size_t channelIndex) {
-                return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
+                return convert_value_to<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
             }
         };
 
@@ -72,7 +72,7 @@ namespace avocet::testing {
     image_data make_bgr_striped(discrete_extent extent, colour_channels channels, alignment rowAlignment) {
         auto fn{
             [channels](std::size_t row, std::size_t channelIndex) {
-                return static_cast<unsigned char>((channels.raw_value() - 1 - row % channels.raw_value()) == channelIndex ? 255 : 0);
+                return convert_value_to<unsigned char>((channels.raw_value() - 1 - row % channels.raw_value()) == channelIndex ? 255 : 0);
             }
         };
 

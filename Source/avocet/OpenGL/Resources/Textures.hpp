@@ -230,8 +230,8 @@ namespace avocet::opengl {
             base_type::do_bind(self);
 
             const auto& ctx{self.context()};
-            const discrete_extent extent{static_cast<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH)),
-                                         static_cast<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
+            const discrete_extent extent{convert_value_to<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH)),
+                                         convert_value_to<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
 
             const auto numChannels{to_num_channels(format)};
             const auto size{discrete_extent{padded_row_size(extent.width, numChannels, sizeof(value_type), rowAlignment), extent.height}.size()};

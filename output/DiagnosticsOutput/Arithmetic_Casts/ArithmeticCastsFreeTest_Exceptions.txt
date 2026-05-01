@@ -1,0 +1,40 @@
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 32
+
+Expected Exception Type:
+[std::domain_error]
+Unable to safely convert -1 to an unsigned integral type
+
+=======================================
+
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 37
+
+Expected Exception Type:
+[std::domain_error]
+Unable to safely convert 9223372036854775807 to an integral type with a maximum value of 2147483647
+
+=======================================
+
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 42
+
+Expected Exception Type:
+[std::domain_error]
+Unable to safely convert -9223372036854775808 to an integral type with a minimum value of -2147483648
+
+=======================================
+
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 47
+
+Expected Exception Type:
+[std::domain_error]
+Unable to safely convert 18446744073709551615 to an integral type with a maximum value of 4294967295
+
+=======================================
+
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 52
+
+Expected Exception Type:
+[std::domain_error]
+Unable to safely convert 4294967295 to an integral type with a maximum value of 2147483647
+
+=======================================
+

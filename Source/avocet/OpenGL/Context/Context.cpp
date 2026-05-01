@@ -8,6 +8,8 @@
 #include "avocet/OpenGL/Context/ContextBase.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
+
 namespace avocet::opengl {
     namespace {
         [[nodiscard]]
@@ -27,10 +29,7 @@ namespace avocet::opengl {
 
             GLint maxLen{};
             gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
-            if(maxLen < 0)
-                throw std::runtime_error{std::format("Max Debug Length is Negative: {}", maxLen)};
-
-            return static_cast<std::size_t>(maxLen);
+            return convert_value_to<std::size_t>(maxLen);
         }
     }
 

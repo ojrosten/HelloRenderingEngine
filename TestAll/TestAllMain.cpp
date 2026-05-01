@@ -21,6 +21,7 @@
 #include "Core/Geometry/PolygonCoordinatesFreeTest.hpp"
 #include "Core/Geometry/ViewportTest.hpp"
 #include "Core/Geometry/ViewportTestingDiagnostics.hpp"
+#include "Core/Utilities/ArithmeticCastsFreeTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
 #include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
@@ -147,6 +148,11 @@ int main(int argc, char** argv)
             "Polygon",
             polygon_coordinates_free_test{"Polygon Coordinates Free Test"},
             polygon_free_test{"Polygon Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Arithmetic Casts",
+            arithmetic_casts_free_test{"Arithmetic Casts Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
