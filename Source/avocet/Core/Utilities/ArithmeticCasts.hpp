@@ -7,17 +7,15 @@
 
 #pragma once
 
+#include "sequoia/Core/Meta/Concepts.hpp"
+
 #include <format>
 #include <limits>
 #include <stdexcept>
 
 namespace avocet {
     template<std::integral From, std::integral To>
-    inline constexpr bool safe_integral_conversion_v{
-           (std::is_signed_v  <From> && std::is_signed_v  <To> && (sizeof(To) >= sizeof(From)))
-        || (std::is_unsigned_v<From> && std::is_unsigned_v<To> && (sizeof(To) >= sizeof(From)))
-        || (std::is_unsigned_v<From> && std::is_signed_v  <To> && (sizeof(To) >= sizeof(From) * 2))
-    };
+    inline constexpr bool safe_integral_conversion_v{sequoia::initializable_from<To, From>};
 
     template<std::integral To, std::integral From>
     [[nodiscard]]
