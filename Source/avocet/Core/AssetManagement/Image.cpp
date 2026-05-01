@@ -38,7 +38,7 @@ namespace avocet {
 
         stbi_set_flip_vertically_on_load_thread(avocet::to_underlying_value(flip));
 
-        int width{}, height{}, channels{}, channelsSelection{requestedChannels ? convert_value_to<int>(requestedChannels.value().raw_value()) : 0};
+        int width{}, height{}, channels{}, channelsSelection{requestedChannels ? checked_conversion_to<int>(requestedChannels.value().raw_value()) : 0};
         auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, channelsSelection)};
         if(!pData)
             throw std::runtime_error{std::format("unique_image: texture {} did not load", texturePath.generic_string())};

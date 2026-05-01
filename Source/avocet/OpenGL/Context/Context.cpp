@@ -29,7 +29,7 @@ namespace avocet::opengl {
 
             GLint maxLen{};
             gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
-            return convert_value_to<std::size_t>(maxLen);
+            return checked_conversion_to<std::size_t>(maxLen);
         }
     }
 

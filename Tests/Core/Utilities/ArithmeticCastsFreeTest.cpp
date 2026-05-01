@@ -30,34 +30,34 @@ namespace avocet::testing
 
         check_exception_thrown<std::domain_error>(
             "",
-            []() { return convert_value_to<std::size_t>(-1); }
+            []() { return checked_conversion_to<std::size_t>(-1); }
         );
 
         check_exception_thrown<std::domain_error>(
             "",
-            []() { return convert_value_to<std::int32_t>(std::numeric_limits<std::int64_t>::max()); }
+            []() { return checked_conversion_to<std::int32_t>(std::numeric_limits<std::int64_t>::max()); }
         );
 
         check_exception_thrown<std::domain_error>(
             "",
-            []() { return convert_value_to<std::int32_t>(std::numeric_limits<std::int64_t>::lowest()); }
+            []() { return checked_conversion_to<std::int32_t>(std::numeric_limits<std::int64_t>::lowest()); }
         );
 
         check_exception_thrown<std::domain_error>(
             "",
-            []() { return convert_value_to<std::uint32_t>(std::numeric_limits<std::uint64_t>::max()); }
+            []() { return checked_conversion_to<std::uint32_t>(std::numeric_limits<std::uint64_t>::max()); }
         );
 
         check_exception_thrown<std::domain_error>(
             "",
-            []() { return convert_value_to<std::int32_t>(std::numeric_limits<std::uint32_t>::max()); }
+            []() { return checked_conversion_to<std::int32_t>(std::numeric_limits<std::uint32_t>::max()); }
         );
 
-        check(equality, "", convert_value_to<std::uint32_t>(std::numeric_limits<std::uint64_t>::max()    >> 32), std::numeric_limits<std::uint32_t>::max());
-        check(equality, "", convert_value_to<std::int32_t >(std::numeric_limits<std::int64_t >::max()    >> 32), std::numeric_limits<std::int32_t >::max());
-        check(equality, "", convert_value_to<std::int32_t >(std::numeric_limits<std::int64_t >::lowest() >> 32), std::numeric_limits<std::int32_t >::lowest());
-        check(equality, "", convert_value_to<std::int32_t >(std::numeric_limits<std::uint32_t>::max()     /  2), std::numeric_limits<std::int32_t >::max());
+        check(equality, "", checked_conversion_to<std::uint32_t>(std::numeric_limits<std::uint64_t>::max()    >> 32), std::numeric_limits<std::uint32_t>::max());
+        check(equality, "", checked_conversion_to<std::int32_t >(std::numeric_limits<std::int64_t >::max()    >> 32), std::numeric_limits<std::int32_t >::max());
+        check(equality, "", checked_conversion_to<std::int32_t >(std::numeric_limits<std::int64_t >::lowest() >> 32), std::numeric_limits<std::int32_t >::lowest());
+        check(equality, "", checked_conversion_to<std::int32_t >(std::numeric_limits<std::uint32_t>::max()     /  2), std::numeric_limits<std::int32_t >::max());
 
-        check(equality, "", convert_value_to<std::int32_t >(std::int64_t{}), std::int32_t{});
+        check(equality, "", checked_conversion_to<std::int32_t >(std::int64_t{}), std::int32_t{});
     }
 }

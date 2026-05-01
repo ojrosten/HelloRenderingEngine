@@ -175,10 +175,10 @@ namespace avocet {
             : m_Data{ptr_t{ptr}}
             , m_Spec{
                   spec_t{
-                      .extent{  convert_value_to<std::uint32_t>(width),
-                                convert_value_to<std::uint32_t>(height)
+                      .extent{  checked_conversion_to<std::uint32_t>(width),
+                                checked_conversion_to<std::uint32_t>(height)
                        },
-                      .channels{convert_value_to<std::uint32_t>(channels)},
+                      .channels{checked_conversion_to<std::uint32_t>(channels)},
                       .row_alignment{rowAlignment}
                   }
               }

@@ -147,7 +147,7 @@ namespace avocet::opengl {
             if(!remainder)
                 return 0;
 
-            return convert_value_to<element_index_type>(i / 3 + remainder);
+            return checked_conversion_to<element_index_type>(i / 3 + remainder);
         }
 
         constexpr static element_array_type st_Indices{

@@ -19,7 +19,7 @@ namespace avocet {
 
     template<std::integral To, std::integral From>
     [[nodiscard]]
-    constexpr To convert_value_to(From val) noexcept(safe_integral_conversion_v<From, To>)
+    constexpr To checked_conversion_to(From val) noexcept(safe_integral_conversion_v<From, To>)
     {
         if constexpr (!safe_integral_conversion_v<From, To>) {
             if (constexpr auto maxTo{std::numeric_limits<To>::max()}; val > maxTo)

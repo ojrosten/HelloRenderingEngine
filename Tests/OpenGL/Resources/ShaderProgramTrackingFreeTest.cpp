@@ -60,7 +60,7 @@ namespace avocet::testing
             GLint param{};
             agl::gl_function{&GladGLContext::GetIntegerv}(ctx, GL_CURRENT_PROGRAM, &param);
 
-            return agl::resource_handle{convert_value_to<GLuint>(param)};
+            return agl::resource_handle{checked_conversion_to<GLuint>(param)};
         }
 
 

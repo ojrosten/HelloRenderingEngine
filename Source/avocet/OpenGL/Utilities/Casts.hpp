@@ -14,11 +14,11 @@
 namespace avocet::opengl {
     template<std::unsigned_integral From>
     [[nodiscard]]
-    constexpr GLsizei to_gl_sizei(From val) noexcept(safe_integral_conversion_v<From, GLsizei>) { return convert_value_to<GLsizei>(val); }
+    constexpr GLsizei to_gl_sizei(From val) noexcept(safe_integral_conversion_v<From, GLsizei>) { return checked_conversion_to<GLsizei>(val); }
 
     template<std::integral From>
     [[nodiscard]]
-    constexpr GLint to_gl_int(From val) noexcept(safe_integral_conversion_v<From, GLint>) { return convert_value_to<GLint>(val); }
+    constexpr GLint to_gl_int(From val) noexcept(safe_integral_conversion_v<From, GLint>) { return checked_conversion_to<GLint>(val); }
 
     template<class T>
         requires std::is_scoped_enum_v<T> && std::is_same_v<std::underlying_type_t<T>, GLenum>
