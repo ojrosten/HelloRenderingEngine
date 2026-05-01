@@ -21,7 +21,10 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        GLint get_max_label_length(const decorated_context& ctx) {
+        std::optional<GLint> get_max_label_length(const decorated_context& ctx) {
+            if(!ctx.debug_characteristics().object_labels_activated())
+                return {};
+
             GLint param{};
             gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_LABEL_LENGTH, &param);
             return param;

@@ -22,7 +22,7 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string get_object_label(avocet::opengl::object_identifier identifier, characteristic_contextual_resource_view handle) {
         const auto& ctx{handle.context()};
-        std::string label(ctx.characteristics().max_label_length(), ' ');
+        std::string label(ctx.characteristics().max_label_length().value(), ' ');
         GLsizei numChars{};
         gl_function{&GladGLContext::GetObjectLabel}(
             ctx,
