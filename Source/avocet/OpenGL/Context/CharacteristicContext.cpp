@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Context/CharacteristicContext.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 
 namespace avocet::opengl {
     namespace {
@@ -25,9 +25,7 @@ namespace avocet::opengl {
             if(!ctx.debug_characteristics().object_labels_activated())
                 return {};
 
-            GLint param{};
-            gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_LABEL_LENGTH, &param);
-            return param;
+            return get<GLint>(ctx, GL_MAX_LABEL_LENGTH);
         }
     }
 

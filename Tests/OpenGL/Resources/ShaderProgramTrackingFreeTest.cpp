@@ -12,6 +12,7 @@
 #include "OpenGL/ResourceInfrastructure/ResourceHandleTestingUtilities.hpp"
 
 #include "avocet/Core/Utilities/ContainerUtilities.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
@@ -56,13 +57,10 @@ namespace avocet::testing
             };
         }
 
+        [[nodiscard]]
         agl::resource_handle get_current_program_index(const agl::decorated_context& ctx) {
-            GLint param{};
-            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, GL_CURRENT_PROGRAM, &param);
-
-            return agl::resource_handle{checked_conversion_to<GLuint>(param)};
+            return agl::resource_handle{checked_conversion_to<GLuint>(get<GLint>(ctx, GL_CURRENT_PROGRAM))};
         }
-
 
         using opt_latch_ref = std::optional<std::reference_wrapper<std::latch>>;
 

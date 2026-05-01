@@ -10,7 +10,7 @@
 /*! \file */
 
 #include "avocet/OpenGL/Capabilities/Capabilities.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 #include "avocet/OpenGL/StateAwareContext/CapableContext.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
@@ -21,9 +21,7 @@ namespace avocet::opengl::testing {
     template<class T>
     [[nodiscard]]
     T get_int_param_as(const opengl::decorated_context& ctx, GLenum name) {
-        GLint param{};
-        opengl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
-        return static_cast<T>(param);
+        return static_cast<T>(get<GLint>(ctx, name));
     }
 
     [[nodiscard]]

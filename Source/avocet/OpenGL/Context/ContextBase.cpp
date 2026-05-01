@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Context/ContextBase.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 #include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/Core/Formatting/Formatting.hpp"
 
@@ -53,8 +53,7 @@ namespace avocet::opengl {
         if((debug_mode() != debugging_mode::dynamic) or !debug_output_supported(version()))
             return;
 
-        GLint flags{};
-        gl_function{&GladGLContext::GetIntegerv}(*this, GL_CONTEXT_FLAGS, &flags);
+        const GLint flags{get<GLint>(*this, GL_CONTEXT_FLAGS)};
         if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
             gl_function{&GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT);
             gl_function{&GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT_SYNCHRONOUS);

@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Context/ContextBase.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 
 #include "avocet/Core/Utilities/ArithmeticCasts.hpp"
 
@@ -17,9 +17,7 @@ namespace avocet::opengl {
             if(!debugSupported)
                 return 0;
 
-            GLint maxLen{};
-            gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
-            return checked_conversion_to<std::size_t>(maxLen);
+            return get<GLint>(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH);
         }
     }
 
