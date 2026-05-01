@@ -17,7 +17,7 @@ namespace avocet::opengl {
             if(!debugSupported)
                 return 0;
 
-            return get<GLint>(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH);
+            return get(ctx, int_names::max_debug_message_length);
         }
     }
 

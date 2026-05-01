@@ -25,7 +25,7 @@ namespace avocet::opengl {
             if(!ctx.debug_characteristics().object_labels_activated())
                 return {};
 
-            return get<GLint>(ctx, GL_MAX_LABEL_LENGTH);
+            return get(ctx, int_names::max_label_length);
         }
     }
 

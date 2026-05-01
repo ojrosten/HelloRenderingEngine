@@ -59,7 +59,7 @@ namespace avocet::testing
 
         [[nodiscard]]
         agl::resource_handle get_current_program_index(const agl::decorated_context& ctx) {
-            return agl::resource_handle{checked_conversion_to<GLuint>(get<GLint>(ctx, GL_CURRENT_PROGRAM))};
+            return agl::resource_handle{checked_conversion_to<GLuint>(agl::get(ctx, agl::int_names::current_program))};
         }
 
         using opt_latch_ref = std::optional<std::reference_wrapper<std::latch>>;
