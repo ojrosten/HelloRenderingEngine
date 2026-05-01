@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "avocet/OpenGL/Context/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/CharacteristicContext.hpp"
 
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ContextualResourceView.hpp"
@@ -36,9 +36,9 @@ namespace avocet::opengl {
         has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
     };
 
-    class resourceful_context : public decorated_context {
+    class resourceful_context : public characteristic_context {
     public:
-        using decorated_context::decorated_context;
+        using characteristic_context::characteristic_context;
 
     protected:
         ~resourceful_context() = default;

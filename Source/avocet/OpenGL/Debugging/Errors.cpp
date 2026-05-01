@@ -24,7 +24,7 @@ namespace avocet::opengl {
     namespace {
         [[nodiscard]]
         std::optional<debug_info> get_next_message(const context& ctx) {
-            const std::size_t maxLen{ctx.characteristics().max_debug_message_length()};
+            const std::size_t maxLen{ctx.debug_characteristics().max_debug_message_length()};
             std::string message(maxLen, ' ');
             GLenum source{}, type{}, severity{};
             GLuint id{};

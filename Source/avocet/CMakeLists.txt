@@ -12,6 +12,7 @@ set(SourceList
     Core/Geometry/Viewport.cpp
     OpenGL/Capabilities/Capabilities.cpp
     OpenGL/Capabilities/CapabilitiesConfiguration.cpp
+    OpenGL/Context/CharacteristicContext.cpp
     OpenGL/Context/Context.cpp
     OpenGL/Context/ContextBase.cpp
     OpenGL/Debugging/Errors.cpp

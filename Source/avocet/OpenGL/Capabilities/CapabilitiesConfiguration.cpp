@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Capabilities/CapabilitiesConfiguration.hpp"
-#include "avocet/OpenGL/Context/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/CharacteristicContext.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
@@ -92,7 +92,7 @@ namespace avocet::opengl::capabilities::impl {
             gl_function{&GladGLContext::PolygonOffset}(ctx, requested.poly_offset.factor, requested.poly_offset.units);
     }
 
-    void compensate_for_driver_init_bugs(const decorated_context& ctx, const gl_stencil_test& init) {
+    void compensate_for_driver_init_bugs(const characteristic_context& ctx, const gl_stencil_test& init) {
         if(is_intel_arc(ctx.characteristics().renderer())) {
             const auto& func{init.front.func};
             gl_function{&GladGLContext::StencilFunc}(ctx, to_gl_enum(func.comparison), func.reference_value, func.mask);

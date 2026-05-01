@@ -192,7 +192,7 @@ namespace avocet::opengl {
             shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
             gl_function{&GladGLContext::LinkProgram}(ctx, progIndex);
 
-            if(m_Resource.view().context().characteristics().object_labels_activated()) {
+            if(m_Resource.view().context().debug_characteristics().object_labels_activated()) {
                 const std::string label{
                     std::format("{} / {}",
                                 sequoia::back(vertexShaderSource).string(),
@@ -212,7 +212,7 @@ namespace avocet::opengl {
 
         const auto location{gl_function{&GladGLContext::GetUniformLocation}(m_Resource.view().context(), get_index(m_Resource), name.data())};
         if(location == -1) {
-            const bool labelled{m_Resource.view().context().characteristics().object_labels_activated()};
+            const bool labelled{m_Resource.view().context().debug_characteristics().object_labels_activated()};
             const std::string label{labelled ? extract_label() : "[unlabelled]"};
 
             throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", label, name)};
