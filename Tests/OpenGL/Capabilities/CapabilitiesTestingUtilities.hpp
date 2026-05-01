@@ -26,14 +26,6 @@ namespace avocet::opengl::testing {
         return static_cast<T>(param);
     }
 
-    template<class T>
-    [[nodiscard]]
-    T get_int64_param_as(const opengl::decorated_context& ctx, GLenum name) {
-        GLint64 param{};
-        opengl::gl_function{&GladGLContext::GetInteger64v}(ctx, name, &param);
-        return static_cast<T>(param);
-    }
-
     [[nodiscard]]
     inline GLboolean get_bool_param(const opengl::decorated_context& ctx, GLenum name) {
         GLboolean param{};
@@ -274,7 +266,7 @@ namespace sequoia::testing
           // numeric_limits<GLuint>::max()
           // To give platform-independent output, anything beyond the first byte of the mask is masked.
           // It's masks all the way down...
-          check(equality, description, logger, get_int64_param_as<GLuint>(ctx, name) & 0xFF, predicted & 0xFF);
+          check(equality, description, logger, get_int_param_as<GLuint>(ctx, name) & 0xFF, predicted & 0xFF);
       }
     };
 }
