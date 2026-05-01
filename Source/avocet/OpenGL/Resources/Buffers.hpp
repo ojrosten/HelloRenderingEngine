@@ -129,7 +129,7 @@ namespace avocet::opengl {
             std::size_t offset{};
 
             void advance(std::size_t attSize) {
-                index += to_gl_int(1 + (attSize - 1) / 16);
+                index += checked_conversion_to<GLint>(1 + (attSize - 1) / 16);
                 offset += attSize;
             }
         };
@@ -140,7 +140,7 @@ namespace avocet::opengl {
 
             constexpr auto sizeofAtt{sizeof(Attribute)};
             constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
-            const auto components{to_gl_int(sizeofAtt / sizeof(value_type))};
+            const auto components{checked_conversion_to<GLint>(sizeofAtt / sizeof(value_type))};
             const auto& ctx{this->context()};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
                 gl_function{&GladGLContext::VertexAttribLPointer}(ctx, info.index, components, typeSpecifier, stride, std::bit_cast<GLvoid*>(info.offset));

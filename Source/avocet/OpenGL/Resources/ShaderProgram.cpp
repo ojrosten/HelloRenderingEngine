@@ -198,7 +198,7 @@ namespace avocet::opengl {
                                 sequoia::back(vertexShaderSource).string(),
                                 sequoia::back(fragmentShaderSource).string())};
 
-                gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, to_gl_sizei(label.size()), label.data());
+                gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, checked_conversion_to<GLsizei>(label.size()), label.data());
             }
         }
 

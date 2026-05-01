@@ -242,7 +242,7 @@ namespace avocet::testing
             get_vertex_shader_dir() / to_precision_name<CoordsValueType, TextureCoordsValueTypes...>() / to_dimensionality_name(Dim) / polyData.vertex_shader,
             get_frag_shader_dir()   / polyData.frag_shader
         };
-        (prog.set_uniform(to_uniform_name(Is), to_gl_int(Is)), ...);
+        (prog.set_uniform(to_uniform_name(Is), checked_conversion_to<GLint>(Is)), ...);
 
         constexpr auto numTextures{sizeof...(TextureCoordsValueTypes)};
 

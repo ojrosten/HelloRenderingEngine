@@ -83,7 +83,7 @@ namespace avocet::opengl {
         if(rowAlignment.raw_value() > 8)
             throw std::runtime_error{std::format("Row alignment of {} bytes requested, but OpenGL only supports 1, 2, 4 and 8 bytes", rowAlignment)};
 
-        return to_gl_int(rowAlignment.raw_value());
+        return checked_conversion_to<GLint>(rowAlignment.raw_value());
     }
 
     [[nodiscard]]
@@ -132,8 +132,8 @@ namespace avocet::opengl {
                 GL_TEXTURE_2D,
                 0,
                 to_gl_int(to_internal_format(rawConfig.format, config.common_config.decoding)),
-                to_gl_sizei(rawConfig.extent.width),
-                to_gl_sizei(rawConfig.extent.height),
+                checked_conversion_to<GLsizei>(rawConfig.extent.width),
+                checked_conversion_to<GLsizei>(rawConfig.extent.height),
                 0,
                 to_gl_enum(rawConfig.format),
                 to_gl_enum(to_gl_type_specifier_v<value_type>),
@@ -207,7 +207,7 @@ namespace avocet::opengl {
         std::size_t index{};
 
         [[nodiscard]]
-        GLenum gl_texture_unit() const { return GL_TEXTURE0 + to_gl_int(index); }
+        GLenum gl_texture_unit() const { return GL_TEXTURE0 + checked_conversion_to<GLint>(index); }
 
         [[nodiscard]]
         friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
