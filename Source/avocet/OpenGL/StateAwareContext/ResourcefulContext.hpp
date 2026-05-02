@@ -51,8 +51,6 @@ namespace avocet::opengl {
 
         resourceful_context& operator=(resourceful_context&&) noexcept = default;
     private:
-        friend class shader_program;
-
         template<num_resources NumResources, class LifeEvents>
         friend class resource_lifecycle;
 

@@ -27,7 +27,7 @@ namespace avocet::opengl {
 
     template<class LifeEvents>
     inline constexpr bool has_configure_event_v{
-           std::regular<LifeEvents>
+           sequoia::pseudoregular<LifeEvents>
         && has_configurator_type_v<LifeEvents>
         && requires(const LifeEvents& lifeEvents, decorated_contextual_resource_view crv) {
                lifeEvents.configure(crv, std::declval<typename LifeEvents::configurator>());
@@ -122,8 +122,37 @@ namespace avocet::opengl {
         friend bool operator==(const resource_lifecycle&, const resource_lifecycle&) noexcept = default;
     };
 
+    template<class LifeEvents>
+        requires has_shader_like_lifecycle_events_v<LifeEvents>
+    class resource_lifecycle<num_resources{1}, LifeEvents> : public resource_lifecycle_base<LifeEvents>
+    {
+    public:
+        using resource_lifecycle_base<LifeEvents>::resource_lifecycle_base;
+
+        [[nodiscard]]
+        contextual_resource_handles<1> make(this const resource_lifecycle& self, const resourceful_context& ctx) {
+            return self.life_events().create(ctx);
+        }
+
+
+        // TO DO: shift to base
+        void destroy(this const resource_lifecycle& self, const contextual_resource_handles<1>& crhs) {
+            for (const auto& crh : crhs) {
+                crh.context().reset(self.life_events(), crh.handle());
+            }
+        }
+
+        // TO DO: shift to base
+        void utilize(this const resource_lifecycle& self, contextual_resource_view crv) {
+            crv.context().utilize(self.life_events(), crv.handle());
+        }
+
+        friend bool operator==(const resource_lifecycle&, const resource_lifecycle&) noexcept = default;
+    };
+
     template<num_resources NumResources, class LifeEvents>
-        requires has_buffer_like_lifecycle_events_v<NumResources, LifeEvents>
+        requires    ((NumResources >  num_resources{0}) && has_buffer_like_lifecycle_events_v<NumResources, LifeEvents>)
+                 || ((NumResources == num_resources{1}) && has_shader_like_lifecycle_events_v<LifeEvents>)
     class resource_wrapper{
     public:
         using lifecycle_type = resource_lifecycle<NumResources, LifeEvents>;
@@ -154,8 +183,8 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-        requires    ((NumResources > num_resources{}) && has_buffer_like_lifecycle_events_v<NumResources, LifeEvents>)
-                 || ((NumResource == num_resources{}) && has_shader_like_lifecycle_events_v<LifeEvents>)
+        requires    ((NumResources >  num_resources{0}) && has_buffer_like_lifecycle_events_v<NumResources, LifeEvents>)
+                 || ((NumResources == num_resources{1}) && has_shader_like_lifecycle_events_v<LifeEvents>)
     class generic_resource {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
