@@ -154,7 +154,8 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-        requires (NumResources.value > 0) && has_buffer_like_lifecycle_events_v<NumResources, LifeEvents>
+        requires    ((NumResources > num_resources{}) && has_buffer_like_lifecycle_events_v<NumResources, LifeEvents>)
+                 || ((NumResource == num_resources{}) && has_shader_like_lifecycle_events_v<LifeEvents>)
     class generic_resource {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
