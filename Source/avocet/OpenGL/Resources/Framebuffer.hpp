@@ -36,6 +36,8 @@ namespace avocet::opengl {
         static void configure(decorated_contextual_resource_view h, const configurator& config) {
             add_label(identifier, h, config.label);
         }
+
+        friend bool operator==(const framebuffer_lifecycle_events&, const framebuffer_lifecycle_events&) noexcept = default;
     };
 
     using fbo_configurator = framebuffer_lifecycle_events::configurator;
@@ -49,7 +51,7 @@ namespace avocet::opengl {
         using texture_configurator = framebuffer_texture_2d_configurator;
 
         framebuffer_object(const resourceful_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
-            : base_type{ctx, {{fboConfig.label}}}
+            : base_type{ctx, framebuffer_lifecycle_events{}, {{fboConfig.label}}}
             , m_Texture{ctx, texConfig}
         {
             gl_function{&GladGLContext::FramebufferTexture}(
@@ -69,7 +71,7 @@ namespace avocet::opengl {
         }
 
         void bind(this const framebuffer_object& self, texture_unit unit) {
-            base_type::do_bind(self);
+            self.do_bind();
             self.m_Texture.bind(unit);
         }
     };

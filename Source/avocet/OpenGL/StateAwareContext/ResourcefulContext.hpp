@@ -19,15 +19,15 @@ namespace avocet::opengl {
 
     template<class LifeEvents>
     inline constexpr bool has_bind_event_v{
-        requires(decorated_contextual_resource_view crv) {
-            LifeEvents::bind(crv);
+        requires(const LifeEvents& lifeEvents, decorated_contextual_resource_view crv) {
+            lifeEvents.bind(crv);
         }
     };
 
     template<class LifeEvents>
     inline constexpr bool has_use_event_v{
-        requires(decorated_contextual_resource_view crv) {
-            LifeEvents::use(crv);
+        requires(const LifeEvents& lifeEvents, decorated_contextual_resource_view crv) {
+            lifeEvents.use(crv);
         }
     };
 
@@ -50,7 +50,7 @@ namespace avocet::opengl {
         friend class shader_program;
 
         template<num_resources NumResources, class LifeEvents>
-        friend struct resource_lifecycle;
+        friend class resource_lifecycle;
 
         template<caching_identifier id>
         struct index_cache {

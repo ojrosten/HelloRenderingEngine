@@ -143,6 +143,8 @@ namespace avocet::opengl {
             if(config.common_config.parameter_setter)
                 config.common_config.parameter_setter();
         }
+
+        friend bool operator==(const common_texture_2d_lifecycle_events&, const common_texture_2d_lifecycle_events&) noexcept = default;
     };
 
 
@@ -185,6 +187,8 @@ namespace avocet::opengl {
                 .image_span{config.data_view.span()}
             };
         }
+
+        friend bool operator==(const texture_2d_lifecycle_events&, const texture_2d_lifecycle_events&) noexcept = default;
     };
 
     struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
@@ -214,7 +218,7 @@ namespace avocet::opengl {
     };
 
     template<class LifeEvents>
-        requires has_resource_lifecycle_events_v<num_resources{1}, LifeEvents>
+        requires has_buffer_like_lifecycle_events_v<num_resources{1}, LifeEvents>
     class generic_texture_2d : public generic_resource<num_resources{1}, LifeEvents> {
     public:
         using base_type         = generic_resource<num_resources{1}, LifeEvents> ;
@@ -222,12 +226,12 @@ namespace avocet::opengl {
         using value_type        = configurator_type::value_type;
 
         generic_texture_2d(const resourceful_context& ctx, const configurator_type& textureConfig)
-            : base_type{ctx, {textureConfig}}
+            : base_type{ctx, LifeEvents{}, {textureConfig}}
         {}
 
         [[nodiscard]]
         unique_image extract_data(this const generic_texture_2d& self, texture_format format, alignment rowAlignment) {
-            base_type::do_bind(self);
+            self.do_bind();
 
             const auto& ctx{self.context()};
             const discrete_extent extent{checked_conversion_to<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH)),
@@ -254,7 +258,7 @@ namespace avocet::opengl {
 
         void bind(this const generic_texture_2d& self, texture_unit unit) {
             gl_function{&GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());
-            base_type::do_bind(self);
+            self.do_bind();
         }
     protected:
         ~generic_texture_2d() = default;
