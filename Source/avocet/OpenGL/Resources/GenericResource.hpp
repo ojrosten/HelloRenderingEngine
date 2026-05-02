@@ -103,7 +103,7 @@ namespace avocet::opengl {
         constexpr static std::size_t N{NumResources.value};
 
         [[nodiscard]]
-        contextual_resource_handles<N> generate(this const resource_lifecycle& self, const resourceful_context& ctx) {
+        contextual_resource_handles<N> make(this const resource_lifecycle& self, const resourceful_context& ctx) {
             raw_indices<N> indices{};
             self.life_events().generate(ctx, indices);
             return {ctx, indices};
@@ -115,7 +115,7 @@ namespace avocet::opengl {
             }
         }
 
-        void bind(this const resource_lifecycle& self, contextual_resource_view crv) {
+        void utilize(this const resource_lifecycle& self, contextual_resource_view crv) {
             crv.context().utilize(self.life_events(), crv.handle());
         }
 
@@ -132,7 +132,7 @@ namespace avocet::opengl {
 
         resource_wrapper(const resourceful_context& ctx, const LifeEvents& lifeEvents)
             : m_LifeCycle{lifeEvents}
-            , m_Handles{m_LifeCycle.generate(ctx)}
+            , m_Handles{m_LifeCycle.make(ctx)}
         {}
 
         ~resource_wrapper() { m_LifeCycle.destroy(m_Handles); }
@@ -170,7 +170,7 @@ namespace avocet::opengl {
                 if(ctxRsrc.handle() == resource_handle{})
                     throw std::runtime_error{"generic_resource  - null resource"};
 
-                do_bind(ctxRsrc);
+                do_utilize(ctxRsrc);
                 m_Resource.lifecycle().configure(ctxRsrc, config);
             }
         }
@@ -201,15 +201,15 @@ namespace avocet::opengl {
         generic_resource(generic_resource&&)            noexcept = default;
         generic_resource& operator=(generic_resource&&) noexcept = default;
 
-        void do_bind(this const generic_resource& self, contextual_resource_view crv) {
-            self.m_Resource.lifecycle().bind(crv);
+        void do_utilize(this const generic_resource& self, contextual_resource_view crv) {
+            self.m_Resource.lifecycle().utilize(crv);
         }
 
         template<std::size_t I>
             requires (I < N)
-        void do_bind(this const generic_resource& self, index<I> i) { self.m_Resource.lifecycle().bind(self.contextual_handle(i)); }
+        void do_utilize(this const generic_resource& self, index<I> i) { self.do_utilize(self.contextual_handle(i)); }
 
-        void do_bind(this const generic_resource& self) requires (N == 1) { self.do_bind(index<0>{}); }
+        void do_utilize(this const generic_resource& self) requires (N == 1) { self.do_utilize(index<0>{}); }
 
         [[nodiscard]]
         const contextual_resource_handles<N>& contextual_handles() const noexcept { return m_Resource.contextual_handles(); }

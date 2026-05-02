@@ -71,7 +71,7 @@ namespace avocet::opengl {
         }
 
         void bind(this const framebuffer_object& self, texture_unit unit) {
-            self.do_bind();
+            self.do_utilize();
             self.m_Texture.bind(unit);
         }
     };
