@@ -25,7 +25,7 @@ namespace avocet {
             using biggest_unsigned_t = unsigned long long;
             
             auto performComparison{
-                []([[maybe_unused]] From val) {
+                [=]() {
                     if constexpr (std::is_signed_v<From>)
                         return val > 0;
                     else
@@ -33,7 +33,7 @@ namespace avocet {
                 }
             };
 
-            if (constexpr auto maxTo{std::numeric_limits<To>::max()}; performComparison(val) && (biggest_unsigned_t(val) > biggest_unsigned_t(maxTo)))
+            if (constexpr auto maxTo{std::numeric_limits<To>::max()}; performComparison() && (biggest_unsigned_t(val) > biggest_unsigned_t(maxTo)))
                 throw std::domain_error{std::format("Unable to safely convert {} to an integral type with a maximum value of {}", val, maxTo)};
 
             if constexpr (std::is_signed_v<From>) {
