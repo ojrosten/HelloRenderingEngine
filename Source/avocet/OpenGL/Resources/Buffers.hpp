@@ -119,8 +119,6 @@ namespace avocet::opengl {
         vertex_attribute_object(const resourceful_context& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{ctx, vao_lifecycle_events{}, {{label}}}
         {
-            using vbo_t = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
-
             vbo.do_utilize();
 
             attrib_ptr_info info{};
