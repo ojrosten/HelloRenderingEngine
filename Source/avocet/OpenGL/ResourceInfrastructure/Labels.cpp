@@ -5,8 +5,6 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#pragma once
-
 #include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
