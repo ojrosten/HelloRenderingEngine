@@ -82,6 +82,7 @@ namespace avocet::opengl {
             add_label(identifier, h, config.label);
         }
 
+        [[nodiscard]]
         friend bool operator==(const shader_program_lifecyle_events&, const shader_program_lifecyle_events&) noexcept = default;
     };
 

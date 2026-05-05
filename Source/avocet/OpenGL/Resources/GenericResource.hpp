@@ -106,6 +106,7 @@ namespace avocet::opengl {
         [[nodiscard]]
         const LifeEvents& life_events() const noexcept { return m_Events; }
 
+        [[nodiscard]]
         friend bool operator==(const resource_lifecycle_base&, const resource_lifecycle_base&) noexcept = default;
     protected:
         ~resource_lifecycle_base() = default;
@@ -128,6 +129,7 @@ namespace avocet::opengl {
             return {ctx, indices};
         }
 
+        [[nodiscard]]
         friend bool operator==(const resource_lifecycle&, const resource_lifecycle&) noexcept = default;
     };
 
@@ -143,6 +145,7 @@ namespace avocet::opengl {
             return self.life_events().create(ctx);
         }
 
+        [[nodiscard]]
         friend bool operator==(const resource_lifecycle&, const resource_lifecycle&) noexcept = default;
     };
 

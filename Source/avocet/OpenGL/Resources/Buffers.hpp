@@ -70,6 +70,7 @@ namespace avocet::opengl {
             add_label(identifier, crv, config.label);
         }
 
+        [[nodiscard]]
         friend bool operator==(const vao_lifecycle_events&, const vao_lifecycle_events&) noexcept = default;
     };
 
@@ -87,6 +88,7 @@ namespace avocet::opengl {
         template<std::size_t N>
         static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteBuffers}(ctx, N, indices.data()); }
 
+        [[nodiscard]]
         friend bool operator==(const common_buffer_lifecycle_events&, const common_buffer_lifecycle_events&) noexcept = default;
     };
 
@@ -105,6 +107,7 @@ namespace avocet::opengl {
             gl_function{&GladGLContext::BufferData}(crv.context(), to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
         }
 
+        [[nodiscard]]
         friend bool operator==(const buffer_lifecycle_events&, const buffer_lifecycle_events&) noexcept = default;
     };
 

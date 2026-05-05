@@ -37,6 +37,7 @@ namespace avocet::opengl {
             add_label(identifier, h, config.label);
         }
 
+        [[nodiscard]]
         friend bool operator==(const framebuffer_lifecycle_events&, const framebuffer_lifecycle_events&) noexcept = default;
     };
 

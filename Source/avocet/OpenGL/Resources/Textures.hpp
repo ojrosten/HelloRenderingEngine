@@ -144,6 +144,7 @@ namespace avocet::opengl {
                 config.common_config.parameter_setter();
         }
 
+        [[nodiscard]]
         friend bool operator==(const common_texture_2d_lifecycle_events&, const common_texture_2d_lifecycle_events&) noexcept = default;
     };
 
@@ -188,6 +189,7 @@ namespace avocet::opengl {
             };
         }
 
+        [[nodiscard]]
         friend bool operator==(const texture_2d_lifecycle_events&, const texture_2d_lifecycle_events&) noexcept = default;
     };
 
