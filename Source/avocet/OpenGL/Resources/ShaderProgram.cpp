@@ -175,7 +175,7 @@ namespace avocet::opengl {
             }
 
             [[nodiscard]]
-            decorated_contextual_resource_view view() const noexcept { return contextual_handle(); }
+            decorated_contextual_resource_view view() const noexcept { return handle_view(); }
 
             [[nodiscard]]
             friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
@@ -227,7 +227,7 @@ namespace avocet::opengl {
         if(auto found{self.m_Uniforms.find(name)}; found != self.m_Uniforms.end())
             return found->second;
 
-        const auto location{gl_function{&GladGLContext::GetUniformLocation}(self.context(), get_index(self.contextual_handle()), name.data())};
+        const auto location{gl_function{&GladGLContext::GetUniformLocation}(self.context(), get_index(self.handle_view()), name.data())};
         if(location == -1) {
             const bool labelled{self.context().debug_characteristics().object_labels_activated()};
             const std::string label{labelled ? self.extract_label() : "[unlabelled]"};

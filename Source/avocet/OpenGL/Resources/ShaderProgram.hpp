@@ -18,14 +18,6 @@
 #include <span>
 
 namespace avocet::opengl {
-    template<class T>
-    inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, contextual_resource_view handle) {
-            { t.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
-            T::destroy(handle);
-        }
-    };
-
     class shader_program_lifecyle_events {
         std::filesystem::path m_VertexShaderSource, m_FragmentShaderSource;
     public:
@@ -169,7 +161,7 @@ namespace avocet::opengl {
         template<gl_arithmetic T>
         void do_get_uniform(this const shader_program& self, std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T* val) {
             self.use();
-            fn(self.context(), get_index(self.contextual_handle()), self.extract_uniform_location(name), val);
+            fn(self.context(), get_index(self.handle_view()), self.extract_uniform_location(name), val);
         }
     };
 }
