@@ -66,7 +66,21 @@ namespace avocet::testing
 
         constexpr opt_latch_ref no_latch{};
 
-        template<std::invocable<opengl::resourceful_context> Creator, std::invocable<std::invoke_result_t<Creator, opengl::resourceful_context>> Utilizer>
+        template<class Creator>
+        inline constexpr bool resource_creator_v{
+            requires(Creator creator, const opengl::resourceful_context & ctx) {
+                { creator(ctx) } -> sequoia::moveonly;
+            }
+        };
+
+        template<class Creator, class Utilizer>
+        inline constexpr bool resource_creator_and_utilizer_v{
+               resource_creator_v<Creator>
+            && std::invocable<Utilizer, std::invoke_result_t<Creator, opengl::resourceful_context>>
+        };
+
+        template<class Creator, class Utilizer>
+            requires resource_creator_and_utilizer_v<Creator, Utilizer>
         [[nodiscard]]
         opengl::resource_handle make_and_use_resource(const curlew::window& w, opengl::int_names glGetName, Creator creator, Utilizer utilizer, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
             const auto& ctx{w.context()};
@@ -84,7 +98,8 @@ namespace avocet::testing
 
         using resource_handles = resource_tracking_test_base::resource_handles;
 
-        template<std::invocable<opengl::resourceful_context> Creator, std::invocable<std::invoke_result_t<Creator, opengl::resourceful_context>> Utilizer>
+        template<class Creator, class Utilizer>
+            requires resource_creator_and_utilizer_v<Creator, Utilizer>
         [[nodiscard]]
         resource_handles make_and_utilize_resource(curlew::window w, opengl::int_names glGetName, Creator creator, Utilizer utilizer) {
             return {make_and_use_resource(w, glGetName, creator, utilizer, no_latch, no_latch), get_current_resource_index(w.context(), glGetName)};
@@ -92,7 +107,8 @@ namespace avocet::testing
 
         using task_t = std::packaged_task<resource_handles()>;
 
-        template<std::invocable<opengl::resourceful_context> Creator, std::invocable<std::invoke_result_t<Creator, opengl::resourceful_context>> Utilizer>
+        template<class Creator, class Utilizer>
+            requires resource_creator_and_utilizer_v<Creator, Utilizer>
         [[nodiscard]]
         task_t make_resource_task(curlew::window& w, opengl::int_names glGetName, Creator creator, Utilizer utilizer, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
             curlew::test_window_manager::detach_current_context();
@@ -105,7 +121,8 @@ namespace avocet::testing
             };
         }
 
-        template<std::invocable<opengl::resourceful_context> Creator, std::invocable<std::invoke_result_t<Creator, opengl::resourceful_context>> Utilizer>
+        template<class Creator, class Utilizer>
+            requires resource_creator_and_utilizer_v<Creator, Utilizer>
         [[nodiscard]]
         resource_handles make_and_utilize_resource_threaded(curlew::window w, opengl::int_names glGetName, Creator creator, Utilizer utilizer) {
             auto task{make_resource_task(w, glGetName, creator, utilizer, no_latch, no_latch)};
