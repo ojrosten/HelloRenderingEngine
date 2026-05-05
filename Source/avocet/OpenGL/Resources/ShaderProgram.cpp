@@ -165,12 +165,6 @@ namespace avocet::opengl {
             friend bool operator==(const shader_lifecycle_events&, const shader_lifecycle_events&) noexcept = default;
         };
 
-
-        class shader_resource : public generic_resource<num_resources{1}, shader_lifecycle_events> {
-        public:
-            using generic_resource<num_resources{1}, shader_lifecycle_events>::generic_resource;
-        };
-
         class shader_compiler : public generic_resource<num_resources{1}, shader_lifecycle_events> {
         public:
             using base_type = generic_resource<num_resources{1}, shader_lifecycle_events>;
@@ -229,19 +223,19 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    GLint shader_program::extract_uniform_location(std::string_view name) {
-        if(auto found{m_Uniforms.find(name)}; found != m_Uniforms.end())
+    GLint shader_program::extract_uniform_location(this const shader_program& self, std::string_view name) {
+        if(auto found{self.m_Uniforms.find(name)}; found != self.m_Uniforms.end())
             return found->second;
 
-        const auto location{gl_function{&GladGLContext::GetUniformLocation}(context(), get_index(contextual_handle()), name.data())};
+        const auto location{gl_function{&GladGLContext::GetUniformLocation}(self.context(), get_index(self.contextual_handle()), name.data())};
         if(location == -1) {
-            const bool labelled{context().debug_characteristics().object_labels_activated()};
-            const std::string label{labelled ? extract_label() : "[unlabelled]"};
+            const bool labelled{self.context().debug_characteristics().object_labels_activated()};
+            const std::string label{labelled ? self.extract_label() : "[unlabelled]"};
 
             throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", label, name)};
         }
 
-        m_Uniforms.emplace(name, location);
+        self.m_Uniforms.emplace(name, location);
         return location;
     }
 }

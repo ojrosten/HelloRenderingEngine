@@ -84,92 +84,92 @@ namespace avocet::opengl {
 
         void use(this const shader_program& self) { self.do_utilize(); }
 
-        void set_uniform(std::string_view name, GLfloat val) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform1f}, val);
+        void set_uniform(this const shader_program& self, std::string_view name, GLfloat val) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform1f}, val);
         }
 
-        void set_uniform(std::string_view name, std::span<const GLfloat, 2> vals) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform2f}, vals[0], vals[1]);
+        void set_uniform(this const shader_program& self, std::string_view name, std::span<const GLfloat, 2> vals) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform2f}, vals[0], vals[1]);
         }
 
-        void set_uniform(std::string_view name, std::span<const GLfloat, 3> vals) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform3f}, vals[0], vals[1], vals[2]);
+        void set_uniform(this const shader_program& self, std::string_view name, std::span<const GLfloat, 3> vals) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform3f}, vals[0], vals[1], vals[2]);
         }
 
-        void set_uniform(std::string_view name, std::span<const GLfloat, 4> vals) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform4f}, vals[0], vals[1], vals[2], vals[3]);
+        void set_uniform(this const shader_program& self, std::string_view name, std::span<const GLfloat, 4> vals) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform4f}, vals[0], vals[1], vals[2], vals[3]);
         }
 
-        void set_uniform(std::string_view name, GLint val) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform1i}, val);
+        void set_uniform(this const shader_program& self, std::string_view name, GLint val) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform1i}, val);
         }
 
-        void set_uniform(std::string_view name, std::span<const GLint, 2> vals) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform2i}, vals[0], vals[1]);
+        void set_uniform(this const shader_program& self, std::string_view name, std::span<const GLint, 2> vals) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform2i}, vals[0], vals[1]);
         }
 
-        void set_uniform(std::string_view name, std::span<const GLint, 3> vals) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform3i}, vals[0], vals[1], vals[2]);
+        void set_uniform(this const shader_program& self, std::string_view name, std::span<const GLint, 3> vals) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform3i}, vals[0], vals[1], vals[2]);
         }
 
-        void set_uniform(std::string_view name, std::span<const GLint, 4> vals) {
-            do_set_uniform(name, gl_function{&GladGLContext::Uniform4i}, vals[0], vals[1], vals[2], vals[3]);
+        void set_uniform(this const shader_program& self, std::string_view name, std::span<const GLint, 4> vals) {
+            self.do_set_uniform(name, gl_function{&GladGLContext::Uniform4i}, vals[0], vals[1], vals[2], vals[3]);
         }
 
         template<gl_arithmetic T>
         [[nodiscard]]
-        T get_uniform(std::string_view name) {
+        T extract_uniform(this const shader_program& self, std::string_view name) {
             T val{};
-            get_uniform(name, val);
+            self.extract_uniform(name, val);
             return val;
         }
 
         template<gl_arithmetic T, std::size_t N>
             requires (N >= 1) && (N <= 4)
         [[nodiscard]]
-        std::array<T, N> get_uniform(std::string_view name) {
+        std::array<T, N> extract_uniform(this const shader_program& self, std::string_view name) {
             std::array<T, N> vals{};
-            get_uniform(name, std::span{vals});
+            self.extract_uniform(name, std::span{vals});
             return vals;
         }
 
-        void get_uniform(std::string_view name, GLfloat& val) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, &val);
+        void extract_uniform(this const shader_program& self, std::string_view name, GLfloat& val) {
+            self.do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, &val);
         }
 
-        void get_uniform(std::string_view name, GLint& val) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, &val);
-        }
-
-        template<std::size_t N>
-        void get_uniform(std::string_view name, std::span<GLfloat, N> vals) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, vals.data());
+        void extract_uniform(this const shader_program& self, std::string_view name, GLint& val) {
+            self.do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, &val);
         }
 
         template<std::size_t N>
-        void get_uniform(std::string_view name, std::span<GLint, N> vals) {
-            do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, vals.data());
+        void extract_uniform(this const shader_program& self, std::string_view name, std::span<GLfloat, N> vals) {
+            self.do_get_uniform(name, gl_function{&GladGLContext::GetUniformfv}, vals.data());
+        }
+
+        template<std::size_t N>
+        void extract_uniform(this const shader_program& self, std::string_view name, std::span<GLint, N> vals) {
+            self.do_get_uniform(name, gl_function{&GladGLContext::GetUniformiv}, vals.data());
         }
 
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
         using map_t = std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to>;
-        map_t m_Uniforms;
+        mutable map_t m_Uniforms;
 
         [[nodiscard]]
-        GLint extract_uniform_location(std::string_view name);
+        GLint extract_uniform_location(this const shader_program& self, std::string_view name);
 
         template<class... Args>
-        void do_set_uniform(std::string_view name, gl_function<void(GLint, Args...)> fn, Args... args) {
-            use();
-            fn(context(), extract_uniform_location(name), args...);
+        void do_set_uniform(this const shader_program& self, std::string_view name, gl_function<void(GLint, Args...)> fn, Args... args) {
+            self.use();
+            fn(self.context(), self.extract_uniform_location(name), args...);
         }
 
         template<gl_arithmetic T>
-        void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T* val) {
-            use();
-            fn(context(), get_index(contextual_handle()), extract_uniform_location(name), val);
+        void do_get_uniform(this const shader_program& self, std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T* val) {
+            self.use();
+            fn(self.context(), get_index(self.contextual_handle()), self.extract_uniform_location(name), val);
         }
     };
 }

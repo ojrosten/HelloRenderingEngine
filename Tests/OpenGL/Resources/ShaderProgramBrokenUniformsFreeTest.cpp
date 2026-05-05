@@ -39,7 +39,7 @@ namespace avocet::testing
 
         check_exception_thrown<std::runtime_error>(
             "Trying to get a non-existent uniform",
-            [&sp]() { return sp.get_uniform<GLfloat>("foo"); }
+            [&sp]() { return sp.extract_uniform<GLfloat>("foo"); }
         );
     }
 }
