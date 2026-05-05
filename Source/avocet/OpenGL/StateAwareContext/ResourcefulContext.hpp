@@ -52,7 +52,7 @@ namespace avocet::opengl {
         resourceful_context& operator=(resourceful_context&&) noexcept = default;
     private:
         template<num_resources NumResources, class LifeEvents>
-        friend class resource_lifecycle;
+        friend class resource_lifecycle_base;
 
         template<caching_identifier id>
         struct index_cache {

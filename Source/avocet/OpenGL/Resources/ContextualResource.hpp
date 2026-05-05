@@ -73,8 +73,11 @@ namespace avocet::opengl {
         friend bool operator==(const contextual_deref_policy&, const contextual_deref_policy&) noexcept = default;
     };
 
-    template<std::size_t N>
+    template<num_resources NumResources>
     class contextual_resource_handles {
+    public:
+        constexpr static std::size_t N{NumResources.value};
+    private:
         using array_t = std::array<resource_handle, N>;
         context_ref m_Context;
         array_t m_Handles;
@@ -106,5 +109,5 @@ namespace avocet::opengl {
         friend bool operator==(const contextual_resource_handles&, const contextual_resource_handles&) noexcept = default;
     };
 
-    using contextual_resource_handle = contextual_resource_handles<1>;
+    using contextual_resource_handle = contextual_resource_handles<num_resources{1}>;
 }
