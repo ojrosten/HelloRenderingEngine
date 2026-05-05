@@ -8,7 +8,6 @@
 /*! \file */
 
 #include "FramebufferTrackingFreeTest.hpp"
-#include "avocet/OpenGL/Resources/Framebuffer.hpp"
 
 namespace avocet::testing
 {
@@ -20,26 +19,29 @@ namespace avocet::testing
 
     void framebuffer_tracking_free_test::run_tests()
     {
-        using namespace curlew;
         using namespace opengl;
 
-        auto w{create_window({.extent{.width{1}, .height{1}}, .hiding{window_hiding_mode::on}})};
-
-        constexpr discrete_extent fbExtent{.width{1}, .height{2}};
-        framebuffer_object
-            fbo{
-                w.context(),
-                fbo_configurator{.label{}},
-                framebuffer_texture_2d_configurator{
-                    .common_config{},
-                    .format{texture_format::rgba},
-                    .extent{fbExtent}
-                }
+        auto creator{
+            [](const opengl::resourceful_context& ctx){
+                using namespace opengl;
+                constexpr discrete_extent fbExtent{.width{1}, .height{2}};
+                return 
+                    framebuffer_object{
+                        ctx,
+                        fbo_configurator{.label{}},
+                        framebuffer_texture_2d_configurator{
+                            .common_config{},
+                            .format{texture_format::rgba},
+                            .extent{fbExtent}
+                        }
+                    };
+            }
         };
 
-        gl_function{&GladGLContext::ClearColor}(w.context(), 1.f, 128.f / 255.f, 128.f / 255.f, 1.f);
-        gl_function{&GladGLContext::Clear}(w.context(), GL_COLOR_BUFFER_BIT);
+        auto utilizer{
+            [](const opengl::framebuffer_object& fbo) { fbo.bind(texture_unit{1}); }
+        };
 
-        fbo.bind(texture_unit{1});
+        execute_tests("BindFramebuffer", opengl::int_names::draw_framebuffer_binding, creator, utilizer);
     }
 }

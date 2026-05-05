@@ -9,18 +9,18 @@
 
 /*! \file */
 
-#include "curlew/TestFramework/GraphicsTestCore.hpp"
+#include "ResourceTrackingUtilities.hpp"
 
-#include "avocet/OpenGL/ResourceInfrastructure/ResourceHandle.hpp"
+#include "avocet/OpenGL/Resources/Framebuffer.hpp"
 
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class framebuffer_tracking_free_test final : public curlew::common_graphics_test
+    class framebuffer_tracking_free_test final : public resource_tracking_test<opengl::framebuffer_object>
     {
     public:
-        using curlew::common_graphics_test::common_graphics_test;
+        using resource_tracking_test<opengl::framebuffer_object>::resource_tracking_test;
 
         [[nodiscard]]
         std::filesystem::path source_file() const;
