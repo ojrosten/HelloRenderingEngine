@@ -26,34 +26,6 @@ namespace avocet::opengl {
         }
     };
 
-    template<class LifeEvents>
-        requires has_shader_lifecycle_events_v<LifeEvents>
-    class generic_shader_resource {
-        contextual_resource_handle m_Handle;
-    public:
-        template<class... Args>
-            requires std::is_constructible_v<LifeEvents, Args...>
-        explicit(sizeof...(Args) == 0) generic_shader_resource(const resourceful_context& ctx, const Args&... args)
-            : m_Handle{LifeEvents{args...}.create(ctx)}
-        {}
-
-        ~generic_shader_resource() { LifeEvents::destroy(view()); }
-
-        generic_shader_resource(generic_shader_resource&&) noexcept = default;
-
-        generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
-
-        [[nodiscard]]
-        contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }
-
-        [[nodiscard]]
-        friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
-    };
-
-    template<class LifeEvents>
-    [[nodiscard]]
-    GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.view()); }
-
     class shader_program_lifecyle_events {
         std::filesystem::path m_VertexShaderSource, m_FragmentShaderSource;
     public:
@@ -197,7 +169,7 @@ namespace avocet::opengl {
         template<gl_arithmetic T>
         void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T* val) {
             use();
-            fn(context(), get_index(contextual_handle(index<0>{})), extract_uniform_location(name), val);
+            fn(context(), get_index(contextual_handle()), extract_uniform_location(name), val);
         }
     };
 }

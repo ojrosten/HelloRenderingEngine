@@ -244,5 +244,12 @@ namespace avocet::opengl {
             requires (I < N)
         [[nodiscard]]
         contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+
+        [[nodiscard]]
+        contextual_resource_view contextual_handle() const noexcept
+            requires (N == 1)
+        {
+            return contextual_handle(index<0>{});
+        }
     };
 }
