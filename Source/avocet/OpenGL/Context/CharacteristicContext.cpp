@@ -22,7 +22,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         std::optional<GLint> get_max_label_length(const decorated_context& ctx) {
-            if(!ctx.debug_characteristics().object_labels_activated())
+            if(!ctx.debug_characteristics().object_labels_supported())
                 return {};
 
             return get(ctx, int_names::max_label_length);

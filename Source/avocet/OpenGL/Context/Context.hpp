@@ -27,7 +27,7 @@ namespace avocet::opengl {
         bool debug_output_supported() const noexcept { return m_DebugOutputSupported; }
 
         [[nodiscard]]
-        bool object_labels_activated() const noexcept { return debug_output_supported(); }
+        bool object_labels_supported() const noexcept { return debug_output_supported(); }
 
         [[nodiscard]]
         std::size_t max_debug_message_length() const noexcept { return m_MaxDebugMessageLength; }
