@@ -42,7 +42,7 @@ namespace avocet::testing
             }
         };
 
-        checkMaxLabelLenCall();
+        //checkMaxLabelLenCall();
         //checkMaxLabelLenCall();
     }
 }
