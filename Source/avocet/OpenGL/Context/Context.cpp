@@ -21,8 +21,8 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        std::optional<std::size_t> get_max_debug_message_length(const context_base& ctx, const bool debugSupported) {
-            if(!debugSupported)
+        std::optional<std::size_t> get_max_debug_message_length(const context_base& ctx, const bool debugEnabled) {
+            if(!debugEnabled)
                 return std::nullopt;
 
             GLint maxLen{};
