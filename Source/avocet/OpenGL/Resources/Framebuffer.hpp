@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Resources/Textures.hpp"
 
 namespace avocet::opengl {

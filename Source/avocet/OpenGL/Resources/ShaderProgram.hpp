@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
 #include "avocet/OpenGL/Resources/ContextualResource.hpp"
 

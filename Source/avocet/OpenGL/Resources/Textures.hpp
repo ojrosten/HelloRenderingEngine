@@ -10,8 +10,10 @@
 #include "avocet/Core/AssetManagement/Image.hpp"
 #include "avocet/Core/Geometry/Extent.hpp"
 
+#include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Resources/GenericResource.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
+#include "avocet/OpenGL/Utilities/Casts.hpp"
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
 #include <array>
