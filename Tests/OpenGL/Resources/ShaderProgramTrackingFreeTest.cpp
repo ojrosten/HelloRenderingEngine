@@ -15,6 +15,7 @@
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
+#include "curlew/Window/WindowConfigurations.hpp"
 
 #include <future>
 #include <thread>
@@ -29,19 +30,6 @@ namespace avocet::testing
 
     namespace
     {
-        class call_logger {
-            std::vector<std::string>* m_Calls{};
-        public:
-            explicit call_logger(std::vector<std::string>& calls)
-                : m_Calls{&calls}
-            {}
-
-            void operator()(const agl::context&, const agl::decorator_data& data) {
-                if(data.fn_name == "UseProgram")
-                    m_Calls->push_back(std::string{data.fn_name});
-            }
-        };
-
         [[nodiscard]]
         curlew::window_config make_window_config(std::vector<std::string>& calls) {
             return {
@@ -49,7 +37,7 @@ namespace avocet::testing
                 .name{},
                 .hiding{curlew::window_hiding_mode::on},
                 .debug_mode{agl::debugging_mode::dynamic},
-                .prologue{call_logger{calls}},
+                .prologue{curlew::call_logger{calls, [](const agl::decorator_data& data) { return data.fn_name == "UseProgram"; }}},
                 .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}},
                 .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
                 .samples{1}
