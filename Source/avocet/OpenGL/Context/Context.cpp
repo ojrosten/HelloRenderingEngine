@@ -5,7 +5,7 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "avocet/OpenGL/Context/ContextBase.hpp"
+#include "avocet/OpenGL/Context/Context.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 
 namespace avocet::opengl {
@@ -21,9 +21,9 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        std::size_t get_max_debug_message_length(const context_base& ctx, const bool debugSupported) {
+        std::optional<std::size_t> get_max_debug_message_length(const context_base& ctx, const bool debugSupported) {
             if(!debugSupported)
-                return 0;
+                return std::nullopt;
 
             GLint maxLen{};
             gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
@@ -32,13 +32,25 @@ namespace avocet::opengl {
 
             return static_cast<std::size_t>(maxLen);
         }
+
+        [[nodiscard]]
+        object_labelling_available labelling_available(const opengl_version& version, const bool debugEnabled) {
+            if(!object_labels_supported(version))
+                return object_labelling_available::no;
+
+            if(debugEnabled)
+                return object_labelling_available::yes;
+
+            return object_labelling_available::driver_dependent;
+        }
     }
 
     context_characteristics::context_characteristics(const context_base& ctx)
         : m_Vendor{get_vendor(ctx)}
         , m_Renderer{get_renderer(ctx)}
-        , m_DebugOutputSupported{opengl::debug_output_supported(ctx.version()) && (ctx.debug_mode() == debugging_mode::dynamic)}
-        , m_MaxDebugMessageLength{get_max_debug_message_length(ctx, m_DebugOutputSupported)}
+        , m_DebugOutputEnabled{opengl::debug_output_supported(ctx.version()) && (ctx.debug_mode() == debugging_mode::dynamic)}
+        , m_ObjectLabelsAvailable{labelling_available(ctx.version(), m_DebugOutputEnabled)}
+        , m_MaxDebugMessageLength{get_max_debug_message_length(ctx, m_DebugOutputEnabled)}
     {
     }
 }

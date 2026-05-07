@@ -19,7 +19,12 @@ namespace avocet::opengl{
 
     [[nodiscard]]
     constexpr bool debug_output_supported(opengl_version version) noexcept {
-        return (version.major > 3) && (version.minor >= 3);
+        return version >= opengl_version{4, 3};
+    }
+
+    [[nodiscard]]
+    constexpr bool object_labels_supported(opengl_version version) noexcept {
+        return version >= opengl_version{4, 3};
     }
 }
 
