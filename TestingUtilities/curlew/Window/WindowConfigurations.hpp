@@ -31,4 +31,20 @@ namespace curlew {
         }
     };
 
+    template<class Pred>
+        requires std::is_invocable_r_v<bool, Pred, avocet::opengl::decorator_data>
+    [[nodiscard]]
+    curlew::window_config make_call_logging_window_config(const avocet::discrete_extent& extent, std::vector<std::string>& calls, Pred pred) {
+        return {
+            .extent{extent},
+            .name{},
+            .hiding{curlew::window_hiding_mode::on},
+            .debug_mode{agl::debugging_mode::dynamic},
+            .prologue{curlew::call_logger{calls, std::move(pred)}},
+            .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}},
+            .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
+            .samples{1}
+        };
+    }
+
 }

@@ -32,16 +32,7 @@ namespace avocet::testing
     {
         [[nodiscard]]
         curlew::window_config make_window_config(std::vector<std::string>& calls) {
-            return {
-                .extent{.width{1}, .height{1}},
-                .name{},
-                .hiding{curlew::window_hiding_mode::on},
-                .debug_mode{agl::debugging_mode::dynamic},
-                .prologue{curlew::call_logger{calls, [](const agl::decorator_data& data) { return data.fn_name == "UseProgram"; }}},
-                .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{}}},
-                .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
-                .samples{1}
-            };
+            return curlew::make_call_logging_window_config({.width{1}, .height{1}}, calls, [](const agl::decorator_data& data) { return data.fn_name == "UseProgram"; });
         }
 
         agl::resource_handle get_current_program_index(const agl::decorated_context& ctx) {
