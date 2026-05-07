@@ -45,6 +45,7 @@
 #include "OpenGL/Resources/Texture2dLabellingTest.hpp"
 #include "OpenGL/Resources/Texture2dTest.hpp"
 #include "OpenGL/Resources/Texture2dTestingDiagnostics.hpp"
+#include "OpenGL/StateAwareContext/ResourcefulContextFreeTest.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -147,6 +148,11 @@ int main(int argc, char** argv)
             "Polygon",
             polygon_coordinates_free_test{"Polygon Coordinates Free Test"},
             polygon_free_test{"Polygon Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Resourceful Context",
+            resourceful_context_free_test{"Resourceful Context Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
