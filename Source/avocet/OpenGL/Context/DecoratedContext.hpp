@@ -13,7 +13,9 @@ namespace avocet::opengl {
     class decorated_context : public context {
     public:
         template<class Fn>
-        constexpr static bool is_decorator_v{std::is_invocable_r_v<void, Fn, const context&, const decorator_data&>};
+        constexpr static bool is_decorator_v{
+            std::is_invocable_r_v<void, Fn, const context&, const decorator_data&>
+        };
 
         template<class Loader, class Prologue, class Epilogue>
             requires is_decorator_v<Prologue>
