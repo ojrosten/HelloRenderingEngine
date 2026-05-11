@@ -26,7 +26,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    opengl_version context_base::get_opengl_version() {
+    opengl_version context_base::get_opengl_version() const noexcept {
         if(glad_context().VERSION_4_6) return {4, 6};
         if(glad_context().VERSION_4_5) return {4, 5};
         if(glad_context().VERSION_4_4) return {4, 4};

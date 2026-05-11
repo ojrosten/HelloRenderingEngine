@@ -96,7 +96,7 @@ namespace avocet::opengl {
         opengl_version m_Version{};
 
         [[nodiscard]]
-        opengl_version get_opengl_version();
+        opengl_version get_opengl_version() const noexcept;
 
         void init_debug();
     };
