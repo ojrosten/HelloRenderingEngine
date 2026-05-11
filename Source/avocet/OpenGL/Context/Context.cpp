@@ -35,13 +35,9 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         object_labelling_available labelling_available(const opengl_version& version, const bool debugEnabled) {
-            if(!object_labels_supported(version))
-                return object_labelling_available::no;
-
-            if(debugEnabled)
-                return object_labelling_available::yes;
-
-            return object_labelling_available::driver_dependent;
+            return   !object_labels_supported(version) ? object_labelling_available::no
+                   : debugEnabled                      ? object_labelling_available::yes
+                                                       : object_labelling_available::driver_dependent;
         }
     }
 
