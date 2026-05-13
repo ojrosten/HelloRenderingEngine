@@ -104,9 +104,6 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         const context_fundamental_characteristics& fundamental_characteristics() const noexcept { return m_Characteristics; }
-
-        [[nodiscard]]
-        friend constexpr bool operator==(const context_base&, const context_base&) noexcept = default;
     protected:
         context_base(context_base&&) noexcept = default;
 
