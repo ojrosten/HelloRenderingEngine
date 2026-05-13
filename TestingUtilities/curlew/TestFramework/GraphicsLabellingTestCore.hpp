@@ -34,7 +34,7 @@ namespace curlew {
         void run_tests(this Self& self) {
             using namespace curlew;
             auto w{self.create_window({.hiding{window_hiding_mode::on}})};
-            if(w.context().debug_characteristics().object_labels_available() == avocet::opengl::object_labelling_available::yes) {
+            if(w.context().fundamental_characteristics().object_labels_available() == avocet::opengl::object_labelling_available::yes) {
                 self.labelling_tests(w);
             }
         }

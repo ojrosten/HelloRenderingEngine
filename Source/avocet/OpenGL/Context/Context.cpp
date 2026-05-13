@@ -22,19 +22,10 @@ namespace avocet::opengl {
 
             return static_cast<std::size_t>(maxLen);
         }
-
-        [[nodiscard]]
-        object_labelling_available labelling_available(const opengl_version& version, const bool debugEnabled) {
-            return   !object_labels_supported(version) ? object_labelling_available::no
-                   : debugEnabled                      ? object_labelling_available::yes
-                                                       : object_labelling_available::driver_dependent;
-        }
     }
 
     context_debug_characteristics::context_debug_characteristics(const context_base& ctx)
-        : m_DebugOutputEnabled{opengl::debug_output_supported(ctx.version()) && (ctx.debug_mode() == debugging_mode::dynamic)}
-        , m_ObjectLabelsAvailable{labelling_available(ctx.version(), m_DebugOutputEnabled)}
-        , m_MaxDebugMessageLength{get_max_debug_message_length(ctx, m_DebugOutputEnabled)}
+        : m_MaxDebugMessageLength{get_max_debug_message_length(ctx, ctx.fundamental_characteristics().debug_output_enabled())}
     {
     }
 }

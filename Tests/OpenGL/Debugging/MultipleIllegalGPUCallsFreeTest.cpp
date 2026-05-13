@@ -29,7 +29,7 @@ namespace avocet::testing
         auto w{create_window({.hiding{window_hiding_mode::on}})};
         const auto& ctx{w.context()};
 
-        if(ctx.debug_characteristics().debug_output_enabled()) {
+        if(ctx.fundamental_characteristics().debug_output_enabled()) {
             check_exception_thrown<std::runtime_error>(
                 "At least two errors",
                 [&ctx](){

@@ -56,6 +56,29 @@ namespace avocet::opengl {
 
     struct decorator_data;
 
+    enum class object_labelling_available {
+        no,
+        yes,
+        driver_dependent
+    };
+
+    class context_fundamental_characteristics {
+        opengl_version m_Version{};
+        bool m_DebugOutputEnabled{};
+        object_labelling_available m_ObjectLabelsAvailable{};
+    public:
+        context_fundamental_characteristics(opengl_version version, debugging_mode mode);
+
+        [[nodiscard]]
+        opengl_version version() const noexcept { return m_Version; }
+
+        [[nodiscard]]
+        bool debug_output_enabled() const noexcept { return m_DebugOutputEnabled; }
+
+        [[nodiscard]]
+        object_labelling_available object_labels_available() const noexcept { return m_ObjectLabelsAvailable; }
+    };
+
     class context_base {
     public:
         template<class Loader>
@@ -63,7 +86,7 @@ namespace avocet::opengl {
         context_base(debugging_mode mode, Loader loader)
             : m_Mode{mode}
             , m_Context{loader(GladGLContext{})}
-            , m_Version{get_opengl_version()}
+            , m_Characteristics{get_opengl_version(), m_Mode}
         {
             init_debug();
         }
@@ -80,7 +103,7 @@ namespace avocet::opengl {
         const GladGLContext& glad_context() const noexcept { return m_Context.get(); }
 
         [[nodiscard]]
-        opengl_version version() const noexcept { return m_Version; }
+        const context_fundamental_characteristics& fundamental_characteristics() const noexcept { return m_Characteristics; }
 
         [[nodiscard]]
         friend constexpr bool operator==(const context_base&, const context_base&) noexcept = default;
@@ -93,7 +116,7 @@ namespace avocet::opengl {
     private:
         debugging_mode m_Mode{};
         unique_glad_context m_Context{};
-        opengl_version m_Version{};
+        context_fundamental_characteristics m_Characteristics;
 
         [[nodiscard]]
         opengl_version get_opengl_version() const noexcept;

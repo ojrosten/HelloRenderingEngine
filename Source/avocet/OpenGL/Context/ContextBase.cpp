@@ -13,6 +13,15 @@
 namespace avocet::opengl {
     namespace fs = std::filesystem;
 
+    namespace {
+        [[nodiscard]]
+        object_labelling_available labelling_available(const opengl_version& version, const bool debugEnabled) {
+            return   !object_labels_supported(version) ? object_labelling_available::no
+                   : debugEnabled                      ? object_labelling_available::yes
+                                                       : object_labelling_available::driver_dependent;
+        }
+    }
+
     [[nodiscard]]
     std::string to_string(debugging_mode mode) {
         using enum debugging_mode;
@@ -23,6 +32,13 @@ namespace avocet::opengl {
         }
 
         throw std::runtime_error{error_message("debugging_mode", mode)};
+    }
+
+    context_fundamental_characteristics::context_fundamental_characteristics(opengl_version version, debugging_mode mode)
+        : m_Version{version}
+        , m_DebugOutputEnabled{opengl::debug_output_supported(version) && (mode == debugging_mode::dynamic)}
+        , m_ObjectLabelsAvailable{labelling_available(version, m_DebugOutputEnabled)}
+    {
     }
 
     [[nodiscard]]
@@ -50,7 +66,7 @@ namespace avocet::opengl {
     }
 
     void context_base::init_debug() {
-        if((debug_mode() != debugging_mode::dynamic) or !debug_output_supported(version()))
+        if(!fundamental_characteristics().debug_output_enabled())
             return;
 
         GLint flags{};
@@ -68,7 +84,7 @@ namespace avocet::opengl {
                 GL_TRUE);
         }
         else {
-            throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and debug mode {} / OpengGL version {}", flags, debug_mode(), version())};
+            throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and debug mode {} / OpengGL version {}", flags, debug_mode(), fundamental_characteristics().version())};
         }
     }
 }

@@ -83,7 +83,7 @@ namespace curlew {
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::off}}, referenceVersion)};
         const auto& characteristics{w.context().characteristics()};
-        return {w.context().version(), characteristics.vendor(), characteristics.renderer()};
+        return {w.context().fundamental_characteristics().version(), characteristics.vendor(), characteristics.renderer()};
     }
 
     [[nodiscard]]

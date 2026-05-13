@@ -12,7 +12,7 @@
 
 namespace avocet::opengl {
     void add_label(object_identifier identifier, decorated_contextual_resource_view h, const optional_label& label) {
-        if(label && (h.context().debug_characteristics().object_labels_available() != object_labelling_available::no)) {
+        if(label && (h.context().fundamental_characteristics().object_labels_available() != object_labelling_available::no)) {
             const auto& str{label.value()};
             gl_function{&GladGLContext::ObjectLabel}(h.context(), to_gl_enum(identifier), get_index(h), to_gl_sizei(str.size()), str.data());
         }
