@@ -192,7 +192,7 @@ namespace avocet::opengl {
             shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
             gl_function{&GladGLContext::LinkProgram}(ctx, progIndex);
 
-            if(m_Resource.view().context().characteristics().object_labels_available() != object_labelling_available::no) {
+            if(m_Resource.view().context().debug_characteristics().object_labels_available() != object_labelling_available::no) {
                 const std::string label{
                     std::format("{} / {}",
                                 sequoia::back(vertexShaderSource).string(),

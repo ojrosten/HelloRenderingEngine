@@ -19,8 +19,5 @@ namespace avocet::opengl {
     void add_label(object_identifier identifier, decorated_contextual_resource_view h, const optional_label& label);
 
     [[nodiscard]]
-    std::optional<GLint> get_max_label_length(const decorated_context& ctx);
-
-    [[nodiscard]]
-    std::string get_object_label(avocet::opengl::object_identifier identifier, avocet::opengl::decorated_contextual_resource_view dcrv);
+    std::string get_object_label(object_identifier identifier, characteristic_contextual_resource_view ccrv);
 }

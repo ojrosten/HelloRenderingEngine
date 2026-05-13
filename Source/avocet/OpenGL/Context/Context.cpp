@@ -11,16 +11,6 @@
 namespace avocet::opengl {
     namespace {
         [[nodiscard]]
-        std::string get_vendor(const context_base& ctx) {
-            return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_VENDOR))};
-        }
-
-        [[nodiscard]]
-        std::string get_renderer(const context_base& ctx) {
-            return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_RENDERER))};
-        }
-
-        [[nodiscard]]
         std::optional<std::size_t> get_max_debug_message_length(const context_base& ctx, const bool debugEnabled) {
             if(!debugEnabled)
                 return std::nullopt;
@@ -41,10 +31,8 @@ namespace avocet::opengl {
         }
     }
 
-    context_characteristics::context_characteristics(const context_base& ctx)
-        : m_Vendor{get_vendor(ctx)}
-        , m_Renderer{get_renderer(ctx)}
-        , m_DebugOutputEnabled{opengl::debug_output_supported(ctx.version()) && (ctx.debug_mode() == debugging_mode::dynamic)}
+    context_debug_characteristics::context_debug_characteristics(const context_base& ctx)
+        : m_DebugOutputEnabled{opengl::debug_output_supported(ctx.version()) && (ctx.debug_mode() == debugging_mode::dynamic)}
         , m_ObjectLabelsAvailable{labelling_available(ctx.version(), m_DebugOutputEnabled)}
         , m_MaxDebugMessageLength{get_max_debug_message_length(ctx, m_DebugOutputEnabled)}
     {

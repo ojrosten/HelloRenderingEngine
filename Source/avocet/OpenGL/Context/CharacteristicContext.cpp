@@ -9,4 +9,38 @@
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 
 namespace avocet::opengl {
+    namespace {
+        [[nodiscard]]
+        std::string get_vendor(const decorated_context& ctx) {
+            return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_VENDOR))};
+        }
+
+        [[nodiscard]]
+        std::string get_renderer(const decorated_context& ctx) {
+            return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_RENDERER))};
+        }
+
+        [[nodiscard]]
+        std::optional<GLint> get_max_label_length(const decorated_context& ctx) {
+            if (ctx.debug_characteristics().object_labels_available() == object_labelling_available::no)
+                return std::nullopt;
+
+            const GLint length{
+                [&ctx]() {
+                    GLint param{};
+                    gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_LABEL_LENGTH, &param);
+                    return param;
+                }()
+            };
+
+            return length;
+        }
+    }
+
+    context_characteristics::context_characteristics(const decorated_context& ctx)
+        : m_Vendor{get_vendor(ctx)}
+        , m_Renderer{get_renderer(ctx)}
+        , m_MaxLabelLength{get_max_label_length(ctx)}
+    {
+    }
 }

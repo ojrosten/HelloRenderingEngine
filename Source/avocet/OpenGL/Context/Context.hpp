@@ -21,20 +21,12 @@ namespace avocet::opengl {
         driver_dependent
     };
 
-    class context_characteristics {
-        std::string m_Vendor{},
-                    m_Renderer{};
+    class context_debug_characteristics {
         bool m_DebugOutputEnabled{};
         object_labelling_available m_ObjectLabelsAvailable{};
         std::optional<std::size_t> m_MaxDebugMessageLength{};
     public:
-        explicit context_characteristics(const context_base& ctx);
-
-        [[nodiscard]]
-        const std::string& vendor() const noexcept { return m_Vendor; }
-
-        [[nodiscard]]
-        const std::string& renderer() const noexcept { return m_Renderer; }
+        explicit context_debug_characteristics(const context_base& ctx);
 
         [[nodiscard]]
         bool debug_output_enabled() const noexcept { return m_DebugOutputEnabled; }
@@ -56,7 +48,7 @@ namespace avocet::opengl {
         {}
 
         [[nodiscard]]
-        const context_characteristics& characteristics() const noexcept { return m_Characteristics; }
+        const context_debug_characteristics& debug_characteristics() const noexcept { return m_Characteristics; }
     protected:
         ~context() = default;
 
@@ -64,6 +56,6 @@ namespace avocet::opengl {
 
         context& operator=(context&&) noexcept = default;
     private:
-        context_characteristics m_Characteristics;
+        context_debug_characteristics m_Characteristics;
     };
 }

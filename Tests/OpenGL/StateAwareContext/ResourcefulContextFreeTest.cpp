@@ -37,12 +37,12 @@ namespace avocet::testing
                 std::vector<std::string> calls{};
                 auto win{create_window(make_window_config(calls))};
 
-                if(const auto optLen{agl::get_max_label_length(win.context())}; optLen)
+                if(const auto optLen{win.context().characteristics().max_label_length()}; optLen)
                     check(equivalence, reporter{"", loc}, calls, std::array{std::string_view{"GetIntegerv"}});
             }
         };
 
-        //checkMaxLabelLenCall();
-        //checkMaxLabelLenCall();
+        checkMaxLabelLenCall();
+        checkMaxLabelLenCall();
     }
 }

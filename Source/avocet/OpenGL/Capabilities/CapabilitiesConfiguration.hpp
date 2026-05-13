@@ -11,6 +11,7 @@
 
 namespace avocet::opengl {
     class decorated_context;
+    class characteristic_context;
 }
 
 /// The use of the impl namespace is a tempory hack to discourage
@@ -25,5 +26,5 @@ namespace avocet::opengl::capabilities::impl {
 
     void configure(const decorated_context& ctx, const gl_depth_test& current, const gl_depth_test& requested);
 
-    void compensate_for_driver_init_bugs(const decorated_context& ctx, const gl_stencil_test& init);
+    void compensate_for_driver_init_bugs(const characteristic_context& ctx, const gl_stencil_test& init);
 }
