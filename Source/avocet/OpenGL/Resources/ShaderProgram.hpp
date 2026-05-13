@@ -9,7 +9,7 @@
 
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
-#include "avocet/OpenGL/Resources/ContextualResource.hpp"
+#include "avocet/OpenGL/Resources/GenericResource.hpp"
 
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
@@ -19,12 +19,14 @@
 #include <span>
 
 namespace avocet::opengl {
-    template<class T>
+
+    template<class LifeEvents>
     inline constexpr bool has_shader_lifecycle_events_v{
-        requires(T& t, contextual_resource_view handle) {
-            { t.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
-            T::destroy(handle);
-        }
+           has_lifecycle_identifiers_v<LifeEvents>
+        && requires(LifeEvents& lifeEvents, contextual_resource_view handle) {
+               { lifeEvents.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
+               LifeEvents::destroy(handle);
+           }
     };
 
     template<class LifeEvents>
@@ -56,7 +58,8 @@ namespace avocet::opengl {
     GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.view()); }
 
     struct shader_program_resource_lifecycle {
-        constexpr static auto caching_id{ caching_identifier::program };
+        constexpr static auto identifier{object_identifier::program};
+		constexpr static auto caching_id{caching_identifier::program};
 
         [[nodiscard]]
         static contextual_resource_handle create(const resourceful_context& ctx) {

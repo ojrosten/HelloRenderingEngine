@@ -55,6 +55,7 @@ namespace avocet::opengl {
 
     struct vao_lifecycle_events {
         constexpr static auto identifier{object_identifier::vertex_array};
+        constexpr static auto caching_id{caching_identifier::opt_out};
 
         struct configurator {
             optional_label label;
@@ -80,6 +81,7 @@ namespace avocet::opengl {
 
     struct common_buffer_lifecycle_events {
         constexpr static auto identifier{object_identifier::buffer};
+        constexpr static auto caching_id{caching_identifier::opt_out};
 
         template<std::size_t N>
         static void generate(const decorated_context& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenBuffers}(ctx, N, indices.data()); }

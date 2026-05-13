@@ -87,6 +87,9 @@ namespace avocet::opengl {
         class shader_resource_lifecycle {
             shader_species m_Species;
         public:
+            constexpr static auto identifier{object_identifier::shader};
+            constexpr static auto caching_id{caching_identifier::opt_out};
+
             explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]

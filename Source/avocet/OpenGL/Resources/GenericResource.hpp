@@ -23,17 +23,17 @@ namespace avocet::opengl {
         requires { typename T::configurator; }
     };
 
-    template<num_resources NumResources, class T>
+    template<num_resources NumResources, class LifeEvents>
     inline constexpr bool has_resource_lifecycle_events_v{
-           std::is_empty_v<T>
-        && std::is_default_constructible_v<T>
-        && has_configurator_type_v<T>
-        && requires(const T& t, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv) {
-               T::generate(crv.context(), indices);
-               T::destroy(crv.context(), indices);
-               { T::identifier } -> std::convertible_to<object_identifier>;
-               T::bind(crv);
-               t.configure(crv, std::declval<typename T::configurator>());
+           std::is_empty_v<LifeEvents>
+        && std::is_default_constructible_v<LifeEvents>
+        && has_configurator_type_v<LifeEvents>
+        && has_lifecycle_identifiers_v<LifeEvents>
+        && requires(const LifeEvents& t, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv) {
+               LifeEvents::generate(crv.context(), indices);
+               LifeEvents::destroy(crv.context(), indices);
+               LifeEvents::bind(crv);
+               t.configure(crv, std::declval<typename LifeEvents::configurator>());
            }
     };
 

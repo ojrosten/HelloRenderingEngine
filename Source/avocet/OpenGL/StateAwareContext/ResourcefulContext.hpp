@@ -36,6 +36,15 @@ namespace avocet::opengl {
         has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
     };
 
+
+    template<class LifeEvents>
+    inline constexpr bool has_lifecycle_identifiers_v{
+           requires {
+               { LifeEvents::identifier } -> std::convertible_to<object_identifier>;
+               { LifeEvents::caching_id } -> std::convertible_to<caching_identifier>;
+           }
+    };
+
     class resourceful_context : public characteristic_context {
     public:
         using characteristic_context::characteristic_context;
@@ -62,19 +71,17 @@ namespace avocet::opengl {
         mutable tuple_t m_Cache{};
 
         template<class LifeEvents>
-        constexpr static bool opts_in_to_cache_v{
-            requires {
-                { LifeEvents::caching_id } -> std::convertible_to<caching_identifier>;
-            }
-        };
+            requires has_lifecycle_identifiers_v<LifeEvents>
+        constexpr static bool opts_in_to_cache_v{LifeEvents::caching_id != caching_identifier::opt_out};
 
         template<class LifeEvents>
+            requires has_lifecycle_identifiers_v<LifeEvents>
         constexpr static bool has_cache_v{
             sequoia::meta::contains_v<tuple_t, index_cache<LifeEvents::caching_id>>
         };
 
         template<class LifeEvents>
-            requires has_utilization_event_v<LifeEvents>
+            requires has_utilization_event_v<LifeEvents> && has_lifecycle_identifiers_v<LifeEvents>
         void utilize(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
             if constexpr (opts_in_to_cache_v<LifeEvents>) {
                 if (auto& cache{self.get_cache(lifeEvents)}; cache.currently_active != h.index()) {
@@ -87,7 +94,7 @@ namespace avocet::opengl {
         }
 
         template<class LifeEvents>
-            requires has_utilization_event_v<LifeEvents>
+            requires has_utilization_event_v<LifeEvents> && has_lifecycle_identifiers_v<LifeEvents>
         void reset(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
             if constexpr (opts_in_to_cache_v<LifeEvents>) {
                 if (auto& cache{self.get_cache(lifeEvents)}; cache.currently_active == h.index()) {
