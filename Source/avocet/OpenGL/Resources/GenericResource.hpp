@@ -55,8 +55,8 @@ namespace avocet::opengl {
         }
 
         static void destroy(const contextual_resource_handles<N>& crhs) {
-            for (const auto& crh : crhs) {
-                crh.context().reset(LifeEvents{}, crh.handle());
+            for (contextual_resource_view crv : crhs) {
+                crv.context().reset(LifeEvents{}, crv.handle());
             }
         }
 
