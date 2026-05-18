@@ -51,24 +51,47 @@ namespace avocet::testing
 
         using program_handles = shader_program_tracking_free_test::program_handles;
 
+        struct resource_artefacts {
+            agl::resource_handle handle;
+            std::optional<agl::shader_program> opt_shader_prog{};
+        };
+
+        enum class extend_resource_lifetime : bool { no, yes };
+
         [[nodiscard]]
-        agl::resource_handle make_and_use_shader_program(const curlew::window& w, const fs::path& shaderDir, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
+        resource_artefacts make_and_use_shader_program(const curlew::window& w,
+                                                       const fs::path& shaderDir,
+                                                       opt_latch_ref entryLatch,
+                                                       opt_latch_ref exitLatch,
+                                                       extend_resource_lifetime extendResourceLifetime)
+        {
             const auto& ctx{w.context()};
 
             agl::shader_program sp{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
             if(entryLatch) entryLatch->get().arrive_and_wait();
+
             sp.use();
             sp.use();
 
             auto handle{get_current_program_index(ctx)};
+
             if(exitLatch) exitLatch->get().arrive_and_wait();
 
-            return handle;
+            return {
+                std::move(handle),
+                extendResourceLifetime == extend_resource_lifetime::yes ? std::optional{std::move(sp)}
+                                                                        : std::optional<agl::shader_program>{}
+            };
         }
 
         [[nodiscard]]
         program_handles make_and_use_shader_program(curlew::window w, const fs::path& shaderDir) {
-            return {make_and_use_shader_program(w, shaderDir, no_latch, no_latch), get_current_program_index(w.context())};
+            return {make_and_use_shader_program(w, shaderDir, no_latch, no_latch, extend_resource_lifetime::no).handle, get_current_program_index(w.context())};
+        }
+
+        [[nodiscard]]
+        resource_artefacts make_and_use_extended_life_shader_program(const curlew::window& w, const fs::path& shaderDir) {
+            return make_and_use_shader_program(w, shaderDir, no_latch, no_latch, extend_resource_lifetime::yes);
         }
 
         using task_t = std::packaged_task<program_handles()>;
@@ -80,7 +103,7 @@ namespace avocet::testing
             return task_t{
                 [&, entryLatch, exitLatch]() -> program_handles {
                     w.make_context_current();
-                    return {make_and_use_shader_program(w, shaderDir, entryLatch, exitLatch), get_current_program_index(w.context())};
+                    return {make_and_use_shader_program(w, shaderDir, entryLatch, exitLatch, extend_resource_lifetime::no).handle, get_current_program_index(w.context())};
                 }
             };
         }
@@ -135,17 +158,13 @@ namespace avocet::testing
 
         gpu_data data0{};
         auto win0{create_window(make_window_config(data0.calls))};
-        agl::shader_program sp0{win0.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-        sp0.use();
-        sp0.use();
-        data0.prog.active = get_current_program_index(win0.context());
+        auto [handle0, sp0] {make_and_use_extended_life_shader_program(win0, shaderDir)};
+        data0.prog.active = std::move(handle0);
 
         gpu_data data1{};
         auto win1{create_window(make_window_config(data1.calls))};
-        agl::shader_program sp1{win1.context(), shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
-        sp1.use();
-        sp1.use();
-        data1.prog.active = get_current_program_index(win1.context());
+        auto [handle1, sp1] {make_and_use_extended_life_shader_program(win1, shaderDir)};
+        data1.prog.active = std::move(handle1);
 
         check_program_data("Serial overlapping lifetimes", data0, data1);
     }
@@ -176,8 +195,8 @@ namespace avocet::testing
 
         auto workers{to_array(std::span{tasks}, [](task_t& t) { return std::jthread{std::move(t)}; })};
 
-        for(auto e : std::views::zip(data, futures)) {
-            std::get<0>(e).prog = std::get<1>(e).get();
+        for(auto [gpuData, fut] : std::views::zip(data, futures)) {
+            gpuData.prog = fut.get();
         }
 
         for(auto i  : std::views::iota(1uz, data.size()))
