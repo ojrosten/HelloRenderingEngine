@@ -11,6 +11,7 @@
 
 namespace avocet::testing
 {
+    namespace agl = avocet::opengl;
 
     [[nodiscard]]
     std::filesystem::path shader_program_tracking_free_test::source_file() const
