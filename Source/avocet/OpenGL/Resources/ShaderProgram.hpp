@@ -105,8 +105,8 @@ namespace avocet::opengl {
         [[nodiscard]]
         std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.view()); }
 
-        void use() {
-            auto crv{ m_Resource.view() };
+        void use(this const shader_program& self) {
+            auto crv{ self.m_Resource.view() };
             crv.context().utilize(shader_program_resource_lifecycle{}, crv.handle());
         }
 

@@ -17,7 +17,7 @@ namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class framebuffer_tracking_free_test final : public resource_tracking_test
+    class framebuffer_tracking_free_test final : public resource_tracking_test<opengl::framebuffer_object>
     {
     public:
         using resource_tracking_test::resource_tracking_test;
