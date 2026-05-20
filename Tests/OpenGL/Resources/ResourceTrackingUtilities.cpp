@@ -62,12 +62,12 @@ namespace avocet::testing
         template<class Creator, class Utilizer, class Resource=std::invoke_result_t<Creator, agl::resourceful_context>>
         [[nodiscard]]
         resource_artefacts<Resource> make_and_use_resource(const curlew::window& w,
-                                                 GLenum glName,
-                                                 Creator creator,
-                                                 Utilizer utilizer,
-                                                 opt_latch_ref entryLatch,
-                                                 opt_latch_ref exitLatch,
-                                                 extend_resource_lifetime extendResourceLifetime)
+                                                           GLenum glName,
+                                                           Creator creator,
+                                                           Utilizer utilizer,
+                                                           opt_latch_ref entryLatch,
+                                                           opt_latch_ref exitLatch,
+                                                           extend_resource_lifetime extendResourceLifetime)
         {
             const auto& ctx{w.context()};
 
