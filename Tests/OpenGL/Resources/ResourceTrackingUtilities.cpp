@@ -30,14 +30,14 @@ namespace avocet::testing
 
     namespace {
         [[nodiscard]]
-        curlew::window_config make_window_config(std::vector<std::string>& calls) {
-            return curlew::make_call_logging_window_config({.width{1}, .height{1}}, calls, [](const agl::decorator_data& data) { return data.fn_name == "UseProgram"; });
+        curlew::window_config make_window_config(std::vector<std::string>& calls, std::string_view expectedGPUCall) {
+            return curlew::make_call_logging_window_config({.width{1}, .height{1}}, calls, [expectedGPUCall](const agl::decorator_data& data) { return data.fn_name == expectedGPUCall; });
         }
 
         [[nodiscard]]
-        agl::resource_handle get_current_resource_index(const agl::decorated_context& ctx) {
+        agl::resource_handle get_current_resource_index(const agl::decorated_context& ctx, GLenum glName) {
             GLint param{};
-            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, GL_CURRENT_PROGRAM, &param);
+            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, glName, &param);
             if(param < 0)
                 throw std::runtime_error{std::format("Negative resource index: {}", param)};
 
@@ -51,66 +51,74 @@ namespace avocet::testing
 
         using resource_handles = resource_tracking_test_base::resource_handles;
 
+        template<class Resource>
         struct resource_artefacts {
             agl::resource_handle handle;
-            std::optional<agl::shader_program> opt_shader_prog{};
+            std::optional<Resource> opt_shader_prog{};
         };
 
         enum class extend_resource_lifetime : bool { no, yes };
 
+        template<class Creator, class Utilizer, class Resource=std::invoke_result_t<Creator, agl::resourceful_context>>
         [[nodiscard]]
-        resource_artefacts make_and_use_resource(const curlew::window& w,
-            const fs::path& shaderDir,
-            opt_latch_ref entryLatch,
-            opt_latch_ref exitLatch,
-            extend_resource_lifetime extendResourceLifetime)
+        resource_artefacts<Resource> make_and_use_resource(const curlew::window& w,
+                                                 GLenum glName,
+                                                 Creator creator,
+                                                 Utilizer utilizer,
+                                                 opt_latch_ref entryLatch,
+                                                 opt_latch_ref exitLatch,
+                                                 extend_resource_lifetime extendResourceLifetime)
         {
             const auto& ctx{w.context()};
 
-            agl::shader_program sp{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+            auto resource{creator(ctx)};
             if(entryLatch) entryLatch->get().arrive_and_wait();
 
-            sp.use();
-            sp.use();
+            utilizer(resource);
+            utilizer(resource);
 
-            auto handle{get_current_resource_index(ctx)};
+            auto handle{get_current_resource_index(ctx, glName)};
 
             if(exitLatch) exitLatch->get().arrive_and_wait();
 
             return {
                 std::move(handle),
-                extendResourceLifetime == extend_resource_lifetime::yes ? std::optional{std::move(sp)}
-                                                                        : std::optional<agl::shader_program>{}
+                extendResourceLifetime == extend_resource_lifetime::yes ? std::optional{std::move(resource)}
+                                                                        : std::optional<Resource>{}
             };
         }
 
+        template<class Creator, class Utilizer>
         [[nodiscard]]
-        resource_handles make_and_use_resource(curlew::window w, const fs::path& shaderDir) {
-            return {make_and_use_resource(w, shaderDir, no_latch, no_latch, extend_resource_lifetime::no).handle, get_current_resource_index(w.context())};
+        resource_handles make_and_use_resource(curlew::window w, GLenum glName, Creator creator, Utilizer utilizer) {
+            return {make_and_use_resource(w, glName, creator, utilizer, no_latch, no_latch, extend_resource_lifetime::no).handle, get_current_resource_index(w.context(), glName)};
         }
 
+        template<class Creator, class Utilizer, class Resource = std::invoke_result_t<Creator, agl::resourceful_context>>
         [[nodiscard]]
-        resource_artefacts make_and_use_extended_life_resource(const curlew::window& w, const fs::path& shaderDir) {
-            return make_and_use_resource(w, shaderDir, no_latch, no_latch, extend_resource_lifetime::yes);
+        resource_artefacts<Resource> make_and_use_extended_life_resource(const curlew::window& w, GLenum glName, Creator creator, Utilizer utilizer) {
+            return make_and_use_resource(w, glName, creator, utilizer, no_latch, no_latch, extend_resource_lifetime::yes);
         }
 
         using task_t = std::packaged_task<resource_handles()>;
 
+        template<class Creator, class Utilizer>
         [[nodiscard]]
-        task_t make_resource_task(curlew::window& w, const fs::path& shaderDir, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
+        task_t make_resource_task(curlew::window& w, GLenum glName, Creator creator, Utilizer utilizer, opt_latch_ref entryLatch, opt_latch_ref exitLatch) {
             curlew::test_window_manager::detach_current_context();
 
             return task_t{
-                [&, entryLatch, exitLatch]() -> resource_handles {
+                [=,&w]() -> resource_handles {
                     w.make_context_current();
-                    return {make_and_use_resource(w, shaderDir, entryLatch, exitLatch, extend_resource_lifetime::no).handle, get_current_resource_index(w.context())};
+                    return {make_and_use_resource(w, glName, creator, utilizer, entryLatch, exitLatch, extend_resource_lifetime::no).handle, get_current_resource_index(w.context(), glName)};
                 }
             };
         }
 
+        template<class Creator, class Utilizer>
         [[nodiscard]]
-        resource_handles make_and_use_resource_threaded(curlew::window w, const fs::path& shaderDir) {
-            auto task{make_resource_task(w, shaderDir, no_latch, no_latch)};
+        resource_handles make_and_use_resource_threaded(curlew::window w, GLenum glName, Creator creator, Utilizer utilizer) {
+            auto task{make_resource_task(w, glName, creator, utilizer, no_latch, no_latch)};
 
             auto future{task.get_future()};
 
@@ -161,55 +169,53 @@ namespace avocet::testing
         check_reset_after_destruction(tag, resource1);
     }
 
-    void resource_tracking_test::check_serial_tracking_non_overlapping_lifetimes()
+    template<class Resource>
+    void resource_tracking_test<Resource>::check_serial_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer)
     {
         gpu_data data0{}, data1{};
 
-        const auto shaderDir{working_materials()};
-        data0.resource = make_and_use_resource(create_window(make_window_config(data0.calls)), shaderDir);
-        data1.resource = make_and_use_resource(create_window(make_window_config(data1.calls)), shaderDir);
+        data0.resource = make_and_use_resource(create_window(make_window_config(data0.calls, expectedGPUCall)), glName, creator, utilizer);
+        data1.resource = make_and_use_resource(create_window(make_window_config(data1.calls, expectedGPUCall)), glName, creator, utilizer);
 
-        check_resource_data("Serial non-overlapping lifetimes", "UseProgram", data0, data1);
+        check_resource_data("Serial non-overlapping lifetimes", expectedGPUCall, data0, data1);
     }
 
-    void resource_tracking_test::check_serial_tracking_overlapping_lifetimes()
+    template<class Resource>
+    void resource_tracking_test<Resource>::check_serial_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer)
     {
-        const auto shaderDir{working_materials()};
-
         gpu_data data0{};
-        auto win0{create_window(make_window_config(data0.calls))};
-        auto [handle0, sp0] {make_and_use_extended_life_resource(win0, shaderDir)};
+        auto win0{create_window(make_window_config(data0.calls, expectedGPUCall))};
+        auto [handle0, sp0] {make_and_use_extended_life_resource(win0, glName, creator, utilizer)};
         data0.resource.active = std::move(handle0);
 
         gpu_data data1{};
-        auto win1{create_window(make_window_config(data1.calls))};
-        auto [handle1, sp1] {make_and_use_extended_life_resource(win1, shaderDir)};
+        auto win1{create_window(make_window_config(data1.calls, expectedGPUCall))};
+        auto [handle1, sp1] {make_and_use_extended_life_resource(win1, glName, creator, utilizer)};
         data1.resource.active = std::move(handle1);
 
-        check_resource_data("Serial overlapping lifetimes", "UseProgram", data0, data1);
+        check_resource_data("Serial overlapping lifetimes", expectedGPUCall, data0, data1);
     }
 
-    void resource_tracking_test::check_threaded_tracking_non_overlapping_lifetimes()
+    template<class Resource>
+    void resource_tracking_test<Resource>::check_threaded_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer)
     {
         gpu_data data0{}, data1{};
 
-        const auto shaderDir{working_materials()};
-        data0.resource = make_and_use_resource_threaded(create_window(make_window_config(data0.calls)), shaderDir);
-        data1.resource = make_and_use_resource_threaded(create_window(make_window_config(data1.calls)), shaderDir);
+        data0.resource = make_and_use_resource_threaded(create_window(make_window_config(data0.calls, expectedGPUCall)), glName, creator, utilizer);
+        data1.resource = make_and_use_resource_threaded(create_window(make_window_config(data1.calls, expectedGPUCall)), glName, creator, utilizer);
 
-        check_resource_data("Threaded non-overlapping lifetimes", "UseProgram", data0, data1);
+        check_resource_data("Threaded non-overlapping lifetimes", expectedGPUCall, data0, data1);
     }
 
-    void resource_tracking_test::check_threaded_tracking_overlapping_lifetimes()
+    template<class Resource>
+    void resource_tracking_test<Resource>::check_threaded_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer)
     {
-        const auto shaderDir{working_materials()};
-
         std::array<gpu_data, 4> data{};
 
-        auto windows{to_array(std::span{data}, [this](gpu_data& d) { return create_window(make_window_config(d.calls)); })};
+        auto windows{to_array(std::span{data}, [this, expectedGPUCall](gpu_data& d) { return create_window(make_window_config(d.calls, expectedGPUCall)); })};
 
         std::latch entryLatch{data.size()}, exitLatch{data.size()};
-        auto tasks{to_array(std::span{windows}, [&](curlew::window& win) { return make_resource_task(win, shaderDir, entryLatch, exitLatch); })};
+        auto tasks{to_array(std::span{windows}, [=,&entryLatch, &exitLatch](curlew::window& win) { return make_resource_task(win, glName, creator, utilizer, entryLatch, exitLatch); })};
 
         auto futures{to_array(std::span{tasks}, [](task_t& t) { return t.get_future(); })};
 
@@ -220,7 +226,9 @@ namespace avocet::testing
         }
 
         for(auto i : std::views::iota(1uz, data.size()))
-            check_resource_data("Threaded overlapping lifetimes", "UseProgram", data[0], data[i]);
+            check_resource_data("Threaded overlapping lifetimes", expectedGPUCall, data[0], data[i]);
     }
 
+    template class resource_tracking_test<agl::shader_program>;
+    template class resource_tracking_test<agl::framebuffer_object>;
 }

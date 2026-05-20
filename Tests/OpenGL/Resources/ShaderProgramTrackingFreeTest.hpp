@@ -11,11 +11,13 @@
 
 #include "ResourceTrackingUtilities.hpp"
 
+#include "avocet/OpenGL/Resources/ShaderProgram.hpp"
+
 namespace avocet::testing
 {
     using namespace sequoia::testing;
 
-    class shader_program_tracking_free_test final : public resource_tracking_test
+    class shader_program_tracking_free_test final : public resource_tracking_test<opengl::shader_program>
     {
     public:
         using resource_tracking_test::resource_tracking_test;

@@ -47,18 +47,22 @@ namespace avocet::testing
         void check_resource_indices(std::string_view tag, const resource_handles& resource0, const resource_handles& resource1);
     };
 
+    template<class Resource>
     class resource_tracking_test : public resource_tracking_test_base
     {
     public:
         using resource_tracking_test_base::resource_tracking_test_base;
 
     protected:
-        void execute_tests() {
-            check_serial_tracking_non_overlapping_lifetimes();
-            check_serial_tracking_overlapping_lifetimes();
+        template<class Creator, class Utilizer>
+            requires std::is_invocable_r_v<Resource, Creator, opengl::resourceful_context>
+                  && std::is_invocable_r_v<void, Utilizer, Resource>
+        void execute_tests(std::string_view expectedGPUCall, GLenum glName, Creator creator, Utilizer utilizer) {
+            check_serial_tracking_non_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
+            check_serial_tracking_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
 
-            check_threaded_tracking_non_overlapping_lifetimes();
-            check_threaded_tracking_overlapping_lifetimes();
+            check_threaded_tracking_non_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
+            check_threaded_tracking_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
         }
 
         ~resource_tracking_test() = default;
@@ -67,13 +71,15 @@ namespace avocet::testing
 
         resource_tracking_test& operator=(resource_tracking_test&&) noexcept = default;
     private:
+        using creator_type  = std::function<Resource(const opengl::resourceful_context&)>;
+        using utilizer_type = std::function<void(const Resource&)>;
 
-        void check_serial_tracking_non_overlapping_lifetimes();
+        void check_serial_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
 
-        void check_serial_tracking_overlapping_lifetimes();
+        void check_serial_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
 
-        void check_threaded_tracking_non_overlapping_lifetimes();
+        void check_threaded_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
 
-        void check_threaded_tracking_overlapping_lifetimes();
+        void check_threaded_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
     };
 }

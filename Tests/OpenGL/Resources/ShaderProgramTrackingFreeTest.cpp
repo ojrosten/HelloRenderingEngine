@@ -21,6 +21,18 @@ namespace avocet::testing
 
     void shader_program_tracking_free_test::run_tests()
     {
-        execute_tests();
+        auto creator{
+            [shaderDir{working_materials()}](const agl::resourceful_context& ctx) {
+                return agl::shader_program{ctx, shaderDir / "Identity.vs", shaderDir / "Monochrome.fs"};
+            }
+        };
+
+        auto utilizer{
+            [](const agl::shader_program& sp) {
+                sp.use();
+            }
+        };
+
+        execute_tests("UseProgram", GL_CURRENT_PROGRAM, creator, utilizer);
     }
 }
