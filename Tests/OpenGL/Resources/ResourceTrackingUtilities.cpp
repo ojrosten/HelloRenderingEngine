@@ -11,6 +11,7 @@
 #include "OpenGL/ResourceInfrastructure/ResourceHandleTestingUtilities.hpp"
 
 #include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Resources/Framebuffer.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
 #include "curlew/Window/GLFWWrappers.hpp"
