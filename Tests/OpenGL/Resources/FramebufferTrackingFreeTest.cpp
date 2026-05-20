@@ -8,7 +8,6 @@
 /*! \file */
 
 #include "FramebufferTrackingFreeTest.hpp"
-#include "avocet/OpenGL/Resources/Framebuffer.hpp"
 
 namespace avocet::testing
 {
