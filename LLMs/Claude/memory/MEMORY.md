@@ -1,0 +1,14 @@
+- [OpenGL is frozen — don't flag GL entry-point tables as fragile](feedback_opengl_frozen_api.md) — calibration for code review in this repo
+- [Don't raise speculative compiler-warning concerns](feedback_verified_across_compilers.md) — user verifies across MSVC/gcc/clang
+- [shader_program uniform setters → DSA glProgramUniform*](project_shader_program_dsa_uniforms.md) — acknowledged improvement, not yet implemented
+- [Check production sites of multi-valued types](feedback_check_production_sites.md) — don't judge enum value-set from consumers alone
+- [Defensive throws are intentional tripwires](feedback_defensive_throws.md) — don't flag "should never happen" throws as smells
+- [Teaching project with accompanying lectures](user_teaching_project.md) — weight pedagogical purpose alongside technical merit
+- [Read concept-constraint qualifiers carefully](feedback_read_constraint_qualifiers.md) — `invocable<From>` vs `invocable<From&>` is load-bearing
+- [Planned lecture topics overlap with my "deeper improvements"](project_planned_lecture_topics.md) — resource-hierarchy unification is the current 5-lecture sub-series
+- [Tests are real customers of API generality](feedback_tests_are_customers.md) — grep Tests/ before claiming plumbing is unused
+- [Binding cache is opt-in by design, driven by FBO driver warning](project_binding_cache_rationale.md) — partial caching is intentional, `opt_out` is self-documentation
+- [Sub-optimal code isn't always intentional](feedback_suboptimal_not_always_intentional.md) — flag observations as questions, don't pre-decide either way
+- [Lecture branch naming: -experimental → -preliminary → -expected](reference_lecture_branch_naming.md) — refinement stage; informs diff base and review register
+- [Cross-platform targets: Win/Linux/Mac × MSVC/gcc/clang × GL 4.1–4.6](reference_cross_platform_targets.md) — 4.1 is the floor, libc++ has no std::generator
+- [Non-templated deducing-this marks "object-const but GPU/cache side-effecting"](feedback_deducing_this_convention.md) — convention, not stylistic preference
