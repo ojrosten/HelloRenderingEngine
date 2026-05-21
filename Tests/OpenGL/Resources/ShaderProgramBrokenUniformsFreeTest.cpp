@@ -22,7 +22,7 @@ namespace avocet::testing
 
     void shader_program_broken_uniforms_free_test::run_tests()
     {
-        test_broken_uniforms(create_window({.hiding{window_hiding_mode::on}}));
+        test_broken_uniforms(create_default_window({1, 1}));
         test_broken_uniforms(create_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::basic}}));
     }
 

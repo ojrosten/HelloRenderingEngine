@@ -32,7 +32,7 @@ namespace avocet::testing
 
     void illegal_gpu_call_free_test::test_with_best_available_debugging()
     {
-        auto w{create_window({.hiding{window_hiding_mode::on}})};
+        auto w{create_default_window({1, 1})};
         const auto& ctx{w.context()};
 
         check_exception_thrown<std::runtime_error>(

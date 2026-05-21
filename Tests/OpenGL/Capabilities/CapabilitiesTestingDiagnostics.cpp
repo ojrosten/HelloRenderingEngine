@@ -24,7 +24,7 @@ namespace avocet::testing {
     void capabilities_false_negative_test::run_tests()
     {
         using namespace curlew;
-        auto w{ create_window({.hiding{curlew::window_hiding_mode::on}})};
+        auto w{create_default_window({1, 1})};
 
         test_blending(w.context());
         test_depth_test(w.context());

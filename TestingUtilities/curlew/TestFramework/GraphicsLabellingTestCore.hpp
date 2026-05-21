@@ -33,7 +33,7 @@ namespace curlew {
             requires has_labelling_tests_v<Self>
         void run_tests(this Self& self) {
             using namespace curlew;
-            auto w{self.create_window({.hiding{window_hiding_mode::on}})};
+            auto w{self.create_default_window({1, 1})};
             if(w.context().fundamental_characteristics().object_labels_available() == avocet::opengl::object_labelling_available::yes) {
                 self.labelling_tests(w);
             }

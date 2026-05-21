@@ -23,7 +23,7 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        auto w{create_window({.hiding{window_hiding_mode::on}})};
+        auto w{create_default_window({1, 1})};
 
         check_semantics_via_texture_data(
             "Faithful roundtrip rgba and rgb: data sent and received naturally aligned",

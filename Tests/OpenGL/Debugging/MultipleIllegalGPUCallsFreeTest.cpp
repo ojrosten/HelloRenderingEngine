@@ -26,7 +26,7 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        auto w{create_window({.hiding{window_hiding_mode::on}})};
+        auto w{create_default_window({1, 1})};
         const auto& ctx{w.context()};
 
         if(ctx.fundamental_characteristics().debug_output_enabled()) {

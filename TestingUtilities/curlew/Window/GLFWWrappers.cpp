@@ -80,6 +80,30 @@ namespace curlew {
     {}
 
     [[nodiscard]]
+    std::vector<agl::message_id> printed_then_ignored_warnings(const rendering_setup& setup) {
+        if (is_intel(setup.renderer))
+            return {
+                agl::message_id{2} // shader recompiled due to state change
+            };
+        else if (is_nvidia(setup.renderer))
+            return {
+                agl::message_id{131218} // shader in program X is being recompiled based on GL state
+            };
+
+        return {};
+    }
+
+    [[nodiscard]]
+    std::vector<agl::message_id> ignored_warnings(const rendering_setup& setup) {
+        if (is_nvidia(setup.renderer))
+            return {
+                agl::message_id{131185} // will use VIDEO memory as the source for buffer object operations
+            };
+
+        return {};
+    }
+
+    [[nodiscard]]
     rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::off}}, referenceVersion)};
         const auto& characteristics{w.context().characteristics()};

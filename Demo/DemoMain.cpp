@@ -26,29 +26,24 @@ int main()
         const auto renderingSetup{manager.get_rendering_setup()};
         std::cout << curlew::rendering_setup_summary(renderingSetup);
 
-        const std::vector<agl::message_id> acceptableWarnings{
-            [&renderingSetup]() -> std::vector<agl::message_id> {
-                if(curlew::is_intel(renderingSetup.renderer))
-                    return {agl::message_id{2}};
-                else if(curlew::is_nvidia(renderingSetup.renderer))
-                    return {agl::message_id{131204}, agl::message_id{131218}};
-
-                return {};
-            }()
-        };
-
         constexpr avocet::discrete_extent nominalWindowSize{.width{800}, .height{800}};
 
         auto w{
             manager.create_window(
-                {.extent{nominalWindowSize},
-                 .name{"Hello Rendering Engine"},
-                 .hiding{curlew::window_hiding_mode::off},
-                 .debug_mode{agl::debugging_mode::dynamic},
-                 .prologue{},
-                 .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{acceptableWarnings}}},
-                 .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
-                 .samples{4}
+                {
+                    .extent{nominalWindowSize},
+                    .name{"Hello Rendering Engine"},
+                    .hiding{curlew::window_hiding_mode::off},
+                    .debug_mode{agl::debugging_mode::dynamic},
+                    .prologue{},
+                    .epilogue{
+                         agl::standard_error_checker{
+                             agl::num_messages{10},
+                             agl::default_debug_info_processor{curlew::printed_then_ignored_warnings(renderingSetup), curlew::ignored_warnings(renderingSetup)}
+                         }
+                     },
+                    .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
+                    .samples{4}
                 }
             )
         };

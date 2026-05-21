@@ -64,7 +64,31 @@ namespace curlew {
         basic_graphics_test& operator=(basic_graphics_test&&) noexcept = default;
 
         [[nodiscard]]
-        curlew::window create_window(const curlew::window_config& config) { return test_window_manager::create_window(config); }
+        curlew::window_config make_default_config(avocet::discrete_extent extent) const {
+            return {
+                .extent{extent},
+                .name{""},
+                .hiding{curlew::window_hiding_mode::on},
+                .debug_mode{agl::debugging_mode::dynamic},
+                .prologue{},
+                .epilogue{
+                     agl::standard_error_checker{
+                         agl::num_messages{10},
+                         agl::default_debug_info_processor{{}, curlew::ignored_warnings(test_window_manager::find_rendering_setup())}
+                     }
+                 },
+                .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
+                .samples{1}
+            };
+        }
+
+        [[nodiscard]]
+        curlew::window create_window(const curlew::window_config& config) const { return test_window_manager::create_window(config); }
+
+        [[nodiscard]]
+        curlew::window create_default_window(avocet::discrete_extent extent) const {
+            return create_window(make_default_config(extent));
+        }
     };
 
     template<selectivity_flavour Selectivity, specificity_flavour Specificity>

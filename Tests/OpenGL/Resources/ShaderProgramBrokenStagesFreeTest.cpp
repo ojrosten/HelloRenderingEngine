@@ -23,7 +23,7 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        test_broken_programs(create_window({.hiding{window_hiding_mode::on}}));
+        test_broken_programs(create_default_window({1, 1}));
         test_broken_programs(create_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::basic}}));
     }
 

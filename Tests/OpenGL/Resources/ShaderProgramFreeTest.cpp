@@ -21,7 +21,7 @@ namespace avocet::testing
     void shader_program_free_test::run_tests()
     {
         using namespace curlew;
-        auto win{create_window({.hiding{window_hiding_mode::on}})};
+        auto win{create_default_window({1, 1})};
 
         const auto shaderDir{working_materials()};
 

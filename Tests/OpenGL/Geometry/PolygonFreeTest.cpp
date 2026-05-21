@@ -121,14 +121,7 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        const std::vector<message_id> acceptableWarnings{
-            [setup{test_window_manager::find_rendering_setup()}]() -> std::vector<message_id> {
-                if(curlew::is_nvidia(setup.renderer))
-                    return {message_id{131218}};
-
-                return {};
-            }()
-        };
+        const auto renderingSetup{test_window_manager::find_rendering_setup()};
 
         auto w{
             create_window(
@@ -137,7 +130,12 @@ namespace avocet::testing
                     .hiding{window_hiding_mode::on},
                     .debug_mode{debugging_mode::dynamic},
                     .prologue{},
-                    .epilogue{standard_error_checker{num_messages{10}, default_debug_info_processor{acceptableWarnings}}},
+                    .epilogue{
+                         standard_error_checker{
+                             num_messages{10},
+                             default_debug_info_processor{printed_then_ignored_warnings(renderingSetup), ignored_warnings(renderingSetup)}
+                         }
+                    },
                 }
             )
         };

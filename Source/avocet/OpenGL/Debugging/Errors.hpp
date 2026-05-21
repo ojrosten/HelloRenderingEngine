@@ -107,26 +107,30 @@ namespace avocet::opengl {
     };
 
     class default_debug_info_processor {
-        std::vector<message_id> m_PrintThenIgnore{};
+        std::vector<message_id> m_PrintThenIgnore{}, m_Ignore{};
     public:
         default_debug_info_processor() = default;
 
-        explicit default_debug_info_processor(std::initializer_list<message_id> printThenIgnore)
+        default_debug_info_processor(std::initializer_list<message_id> printThenIgnore, std::initializer_list<message_id> ignore)
             : m_PrintThenIgnore{printThenIgnore}
+            , m_Ignore{ignore}
         {}
 
-        explicit default_debug_info_processor(std::vector<message_id> printThenIgnore)
+        default_debug_info_processor(std::vector<message_id> printThenIgnore, std::vector<message_id> ignore)
             : m_PrintThenIgnore{std::move(printThenIgnore)}
+            , m_Ignore{ignore}
         {}
 
         [[nodiscard]]
         std::string operator()(std::string message, const debug_info& info) const {
-            if((info.severity == debug_severity::notification) || std::ranges::find(m_PrintThenIgnore, info.id) != m_PrintThenIgnore.end()) {
-                std::println("{}", to_detailed_message(info));
-            }
-            else {
-                const auto separator{message.empty() ? "" : "\n\n"};
-                (message += separator) += to_detailed_message(info);
+            if (!std::ranges::contains(m_Ignore, info.id)) {
+                if ((info.severity == debug_severity::notification) || std::ranges::contains(m_PrintThenIgnore, info.id)) {
+                    std::println("{}", to_detailed_message(info));
+                }
+                else {
+                    const auto separator{message.empty() ? "" : "\n\n"};
+                    (message += separator) += to_detailed_message(info);
+                }
             }
 
             return message;

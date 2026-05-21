@@ -89,7 +89,7 @@ namespace avocet::testing
 
     void capability_manager_free_test::run_tests()
     {
-        auto w{create_window({.hiding{curlew::window_hiding_mode::on}})};
+        auto w{create_default_window({1, 1})};
         const auto& ctx{w.context()};
 
         namespace agl = avocet::opengl;

@@ -39,6 +39,12 @@ namespace curlew {
         friend constexpr auto operator<=>(const num_samples&, const num_samples&) noexcept = default;
     };
 
+    [[nodiscard]]
+    std::vector<agl::message_id> printed_then_ignored_warnings(const rendering_setup& setup);
+
+    [[nodiscard]]
+    std::vector<agl::message_id> ignored_warnings(const rendering_setup& setup);
+
     struct window_config {
         using decorator_type = std::function<void(const agl::context&, const agl::decorator_data)>;
 
