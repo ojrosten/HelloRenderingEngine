@@ -20,8 +20,8 @@ namespace avocet::opengl {
         case clip_distance_2:               return "clip_distance_2";
         case colour_logic_op:               return "colour_logic_op";
         case cull_face:                     return "cull_face";
-        case debug_ouptut:                  return "debug_ouptut";
-        case debug_ouptut_synchronous:      return "debug_ouptut_synchronous";
+        case debug_output:                  return "debug_output";
+        case debug_output_synchronous:      return "debug_output_synchronous";
         case depth_clamp:                   return "depth_clamp";
         case depth_test:                    return "depth_test";
         case dither:                        return "dither";
