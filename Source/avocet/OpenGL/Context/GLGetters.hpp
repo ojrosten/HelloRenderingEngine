@@ -280,32 +280,43 @@ namespace avocet::opengl {
 
     };
 
+    namespace impl {
+        template<gl_arithmetic T, std::derived_from<context_base> Context, class Enum>
+            requires std::is_scoped_enum_v<Enum>
+        T do_get(const Context& ctx, Enum glName) {
+            const auto name{to_underlying_value(glName)};
+            T val{};
+            if constexpr (std::same_as<T, GLboolean>)
+                gl_function{&GladGLContext::GetBooleanv}(ctx, name, &val);
+            else if constexpr (std::same_as<T, GLint>)
+                gl_function{&GladGLContext::GetIntegerv}(ctx, name, &val);
+            else if constexpr (std::same_as<T, GLfloat>)
+                gl_function{&GladGLContext::GetFloatv}(ctx, name, &val);
+            else if constexpr (std::same_as<T, GLdouble>)
+                gl_function{&GladGLContext::GetDoublev}(ctx, name, &val);
+            else
+                static_assert(false, "Getter not yet supported");
+
+            return val;
+        }
+    }
+
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLint get(const Context& ctx, int_names name) {
-        GLint val{};
-        gl_function{&GladGLContext::GetIntegerv}(ctx, to_underlying_value(name), &val);
-        return val;
+        return impl::do_get<GLint>(ctx, name);
     }
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLboolean get(const Context& ctx, bool_names name) {
-        GLboolean val{};
-        gl_function{&GladGLContext::GetBooleanv}(ctx, to_underlying_value(name), &val);
-        return val;
+        return impl::do_get<GLboolean>(ctx, name);
     }
 
     template<gl_floating_point T, std::derived_from<context_base> Context>
     [[nodiscard]]
     T get(const Context& ctx, floating_point_names name) {
-        T val{};
-        if constexpr(std::same_as<T, GLfloat>)
-            gl_function{&GladGLContext::GetFloatv}(ctx, to_underlying_value(name), &val);
-        else
-            gl_function{&GladGLContext::GetDoublev}(ctx, to_underlying_value(name), &val);
-
-        return val;
+        return impl::do_get<T>(ctx, name);
     }
 
     template<gl_floating_point T, std::derived_from<context_base> Context>
@@ -315,7 +326,7 @@ namespace avocet::opengl {
         if constexpr(std::same_as<T, GLfloat>)
             gl_function{&GladGLContext::GetFloatv}(ctx, to_underlying_value(name), vals.data());
         else
-            gl_function{&GladGLContext::GetDoublev}(ctx, to_underlying_value(name), vals.data);
+            gl_function{&GladGLContext::GetDoublev}(ctx, to_underlying_value(name), vals.data());
 
         return vals;
     }
