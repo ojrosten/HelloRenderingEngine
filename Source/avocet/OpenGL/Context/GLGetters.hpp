@@ -281,18 +281,52 @@ namespace avocet::opengl {
     };
 
     namespace impl {
-        template<class T, class U>
-        inline constexpr bool commensurate_v{
-               std::same_as<T, U>
+        template<class T>
+        inline constexpr bool gl_gettable_v{
+               gl_arithmetic<T>
             || (    std::ranges::range<T>
                  && requires {
-                        requires std::same_as<std::ranges::range_value_t<T>, U>;
+                        requires gl_arithmetic<std::ranges::range_value_t<T>>;
                     }
                )
         };
 
+        template<class T>
+        struct to_context_mem_fn_ptr
+        {
+        };
+
+        template<std::ranges::range T>
+        struct to_context_mem_fn_ptr<T> : to_context_mem_fn_ptr<typename T::value_type>
+        {
+        };
+
+        template<class T>
+        inline constexpr auto to_context_mem_fn_ptr_v{to_context_mem_fn_ptr<T>::value};
+
+        template<>
+        struct to_context_mem_fn_ptr<GLboolean> {
+            constexpr static auto value{&GladGLContext::GetBooleanv};
+        };
+
+        template<>
+        struct to_context_mem_fn_ptr<GLint> {
+            constexpr static auto value{&GladGLContext::GetIntegerv};
+        };
+
+        template<>
+        struct to_context_mem_fn_ptr<GLfloat> {
+            constexpr static auto value{&GladGLContext::GetFloatv};
+        };
+
+        template<>
+        struct to_context_mem_fn_ptr<GLdouble> {
+            constexpr static auto value{&GladGLContext::GetDoublev};
+        };
+
         template<class T, std::derived_from<context_base> Context, class Enum>
-            requires std::is_scoped_enum_v<Enum>
+            requires gl_gettable_v<T> && std::is_scoped_enum_v<Enum>
+        [[nodiscard]]
         T do_get(const Context& ctx, Enum glName) {
             const auto name{to_underlying_value(glName)};
             T val{};
@@ -306,16 +340,7 @@ namespace avocet::opengl {
                 }
             };
 
-            if constexpr (commensurate_v<T, GLboolean>)
-                gl_function{&GladGLContext::GetBooleanv}(ctx, name, getPtr(val));
-            else if constexpr (commensurate_v<T, GLint>)
-                gl_function{&GladGLContext::GetIntegerv}(ctx, name, getPtr(val));
-            else if constexpr (commensurate_v<T, GLfloat>)
-                gl_function{&GladGLContext::GetFloatv}(ctx, name, getPtr(val));
-            else if constexpr (commensurate_v<T, GLdouble>)
-                gl_function{&GladGLContext::GetDoublev}(ctx, name, getPtr(val));
-            else
-                static_assert(false, "Getter not yet supported");
+            gl_function{to_context_mem_fn_ptr_v<T>}(ctx, name, getPtr(val));
 
             return val;
         }
