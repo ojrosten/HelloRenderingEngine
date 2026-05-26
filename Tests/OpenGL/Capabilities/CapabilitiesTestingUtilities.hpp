@@ -20,39 +20,39 @@
 namespace avocet::opengl::testing {
     template<class T>
     [[nodiscard]]
-    T get_int_param_as(const opengl::decorated_context& ctx, GLenum name) {
+    T get_int_param_as(const decorated_context& ctx, GLenum name) {
         GLint param{};
-        opengl::gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
+        gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
         return static_cast<T>(param);
     }
 
     template<class T>
     [[nodiscard]]
-    T get_int64_param_as(const opengl::decorated_context& ctx, GLenum name) {
+    T get_int64_param_as(const decorated_context& ctx, GLenum name) {
         GLint64 param{};
-        opengl::gl_function{&GladGLContext::GetInteger64v}(ctx, name, &param);
+        gl_function{&GladGLContext::GetInteger64v}(ctx, name, &param);
         return static_cast<T>(param);
     }
 
     [[nodiscard]]
-    inline GLboolean get_bool_param(const opengl::decorated_context& ctx, GLenum name) {
+    inline GLboolean get_bool_param(const decorated_context& ctx, GLenum name) {
         GLboolean param{};
-        opengl::gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
+        gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
         return param;
     }
 
     [[nodiscard]]
-    inline GLfloat get_float_param(const opengl::decorated_context& ctx, GLenum name) {
+    inline GLfloat get_float_param(const decorated_context& ctx, GLenum name) {
         GLfloat param{};
-        opengl::gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
+        gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
         return param;
     }
 
     template<std::size_t N>
     [[nodiscard]]
-    std::array<GLfloat, N> get_float_params(const opengl::decorated_context& ctx, GLenum name) {
+    std::array<GLfloat, N> get_float_params(const decorated_context& ctx, GLenum name) {
         std::array<GLfloat, N> params{};
-        opengl::gl_function{&GladGLContext::GetFloatv}(ctx, name, params.data());
+        gl_function{&GladGLContext::GetFloatv}(ctx, name, params.data());
         return params;
     }
 }
