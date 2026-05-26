@@ -281,19 +281,39 @@ namespace avocet::opengl {
     };
 
     namespace impl {
-        template<gl_arithmetic T, std::derived_from<context_base> Context, class Enum>
+        template<class T, class U>
+        inline constexpr bool commensurate_v{
+               std::same_as<T, U>
+            || (    std::ranges::range<T>
+                 && requires {
+                        requires std::same_as<std::ranges::range_value_t<T>, U>;
+                    }
+               )
+        };
+
+        template<class T, std::derived_from<context_base> Context, class Enum>
             requires std::is_scoped_enum_v<Enum>
         T do_get(const Context& ctx, Enum glName) {
             const auto name{to_underlying_value(glName)};
             T val{};
-            if constexpr (std::same_as<T, GLboolean>)
-                gl_function{&GladGLContext::GetBooleanv}(ctx, name, &val);
-            else if constexpr (std::same_as<T, GLint>)
-                gl_function{&GladGLContext::GetIntegerv}(ctx, name, &val);
-            else if constexpr (std::same_as<T, GLfloat>)
-                gl_function{&GladGLContext::GetFloatv}(ctx, name, &val);
-            else if constexpr (std::same_as<T, GLdouble>)
-                gl_function{&GladGLContext::GetDoublev}(ctx, name, &val);
+
+            auto getPtr{
+                [](T& t) {
+                    if constexpr (std::ranges::range<T>)
+                        return t.data();
+                    else
+                        return &t;
+                }
+            };
+
+            if constexpr (commensurate_v<T, GLboolean>)
+                gl_function{&GladGLContext::GetBooleanv}(ctx, name, getPtr(val));
+            else if constexpr (commensurate_v<T, GLint>)
+                gl_function{&GladGLContext::GetIntegerv}(ctx, name, getPtr(val));
+            else if constexpr (commensurate_v<T, GLfloat>)
+                gl_function{&GladGLContext::GetFloatv}(ctx, name, getPtr(val));
+            else if constexpr (commensurate_v<T, GLdouble>)
+                gl_function{&GladGLContext::GetDoublev}(ctx, name, getPtr(val));
             else
                 static_assert(false, "Getter not yet supported");
 
@@ -322,12 +342,6 @@ namespace avocet::opengl {
     template<gl_floating_point T, std::derived_from<context_base> Context>
     [[nodiscard]]
     std::array<T, 4> get(const Context& ctx, quadruple_floating_point_names name) {
-        std::array<T, 4> vals{};
-        if constexpr(std::same_as<T, GLfloat>)
-            gl_function{&GladGLContext::GetFloatv}(ctx, to_underlying_value(name), vals.data());
-        else
-            gl_function{&GladGLContext::GetDoublev}(ctx, to_underlying_value(name), vals.data());
-
-        return vals;
+        return impl::do_get<std::array<T, 4>>(ctx, name);
     }
 }
