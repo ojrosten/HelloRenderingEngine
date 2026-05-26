@@ -292,8 +292,8 @@ namespace avocet::opengl {
         };
 
         template<class T>
-        struct to_context_mem_fn_ptr
-        {
+        struct to_context_mem_fn_ptr {
+            static_assert(false, "Please ensure that all required specializations are present!");
         };
 
         template<std::ranges::range T>
