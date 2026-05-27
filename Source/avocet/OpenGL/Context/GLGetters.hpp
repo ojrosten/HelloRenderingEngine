@@ -13,7 +13,8 @@
 #include "avocet/Core/Utilities/ArithmeticCasts.hpp"
 
 namespace avocet::opengl {
-    enum class int_names {
+
+    enum class int_names : GLenum {
         active_texture                                  = GL_ACTIVE_TEXTURE,
         array_buffer_binding                            = GL_ARRAY_BUFFER_BINDING,
         blend_dst_alpha                                 = GL_BLEND_DST_ALPHA,
@@ -203,12 +204,12 @@ namespace avocet::opengl {
         vertex_binding_stride                           = GL_VERTEX_BINDING_STRIDE,
     };
 
-    enum class int64_names {
+    enum class int64_names : GLenum {
         max_server_wait_timeout = GL_MAX_SERVER_WAIT_TIMEOUT,
         timestamp               = GL_TIMESTAMP,
     };
 
-    enum class bool_names {
+    enum class bool_names : GLenum {
         blend                      = GL_BLEND,
         color_logic_op             = GL_COLOR_LOGIC_OP,
         cull_face                  = GL_CULL_FACE,
@@ -233,7 +234,7 @@ namespace avocet::opengl {
         unpack_swap_bytes          = GL_UNPACK_SWAP_BYTES,
     };
 
-    enum class floating_point_names {
+    enum class floating_point_names : GLenum {
         depth_clear_value                 = GL_DEPTH_CLEAR_VALUE,
         line_width                        = GL_LINE_WIDTH,
         line_width_granularity            = GL_LINE_WIDTH_GRANULARITY,
@@ -249,33 +250,33 @@ namespace avocet::opengl {
         smooth_line_width_granularity     = GL_SMOOTH_LINE_WIDTH_GRANULARITY,
     };
 
-    enum class paired_int_names {
+    enum class paired_int_names : GLenum {
         max_viewport_dims            = GL_MAX_VIEWPORT_DIMS,
         viewport_bounds_range        = GL_VIEWPORT_BOUNDS_RANGE,
     };
 
-    enum class paired_float_names {
+    enum class paired_float_names : GLenum {
         aliased_line_width_range     = GL_ALIASED_LINE_WIDTH_RANGE,
         depth_range                  = GL_DEPTH_RANGE,
         point_size_range             = GL_POINT_SIZE_RANGE,
         smooth_line_width_range      = GL_SMOOTH_LINE_WIDTH_RANGE,
     };
 
-    enum class quadruple_floating_point_names {
+    enum class quadruple_floating_point_names : GLenum {
         blend_color                  = GL_BLEND_COLOR,
         color_clear_value            = GL_COLOR_CLEAR_VALUE,
     };
 
-    enum class quadruple_int_names {
+    enum class quadruple_int_names : GLenum {
         scissor_box                  = GL_SCISSOR_BOX,
         viewport                     = GL_VIEWPORT,
     };
 
-    enum class quadruple_bool_names {
+    enum class quadruple_bool_names : GLenum {
         color_writemask              = GL_COLOR_WRITEMASK,
     };
 
-    enum class multiple_int_names {
+    enum class multiple_int_names : GLenum {
         compressed_texture_formats   = GL_COMPRESSED_TEXTURE_FORMATS,
 
     };
