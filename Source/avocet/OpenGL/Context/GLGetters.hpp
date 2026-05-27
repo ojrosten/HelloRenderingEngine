@@ -251,33 +251,33 @@ namespace avocet::opengl {
     };
 
     enum class paired_int_names : GLenum {
-        max_viewport_dims            = GL_MAX_VIEWPORT_DIMS,
-        viewport_bounds_range        = GL_VIEWPORT_BOUNDS_RANGE,
+        max_viewport_dims          = GL_MAX_VIEWPORT_DIMS,
+        viewport_bounds_range      = GL_VIEWPORT_BOUNDS_RANGE,
     };
 
     enum class paired_float_names : GLenum {
-        aliased_line_width_range     = GL_ALIASED_LINE_WIDTH_RANGE,
-        depth_range                  = GL_DEPTH_RANGE,
-        point_size_range             = GL_POINT_SIZE_RANGE,
-        smooth_line_width_range      = GL_SMOOTH_LINE_WIDTH_RANGE,
+        aliased_line_width_range   = GL_ALIASED_LINE_WIDTH_RANGE,
+        depth_range                = GL_DEPTH_RANGE,
+        point_size_range           = GL_POINT_SIZE_RANGE,
+        smooth_line_width_range    = GL_SMOOTH_LINE_WIDTH_RANGE,
     };
 
     enum class quadruple_float_names : GLenum {
-        blend_color                  = GL_BLEND_COLOR,
-        color_clear_value            = GL_COLOR_CLEAR_VALUE,
+        blend_color                = GL_BLEND_COLOR,
+        color_clear_value          = GL_COLOR_CLEAR_VALUE,
     };
 
     enum class quadruple_int_names : GLenum {
-        scissor_box                  = GL_SCISSOR_BOX,
-        viewport                     = GL_VIEWPORT,
+        scissor_box                = GL_SCISSOR_BOX,
+        viewport                   = GL_VIEWPORT,
     };
 
     enum class quadruple_bool_names : GLenum {
-        color_writemask              = GL_COLOR_WRITEMASK,
+        color_writemask            = GL_COLOR_WRITEMASK,
     };
 
     enum class multiple_int_names : GLenum {
-        compressed_texture_formats   = GL_COMPRESSED_TEXTURE_FORMATS,
+        compressed_texture_formats = GL_COMPRESSED_TEXTURE_FORMATS,
 
     };
 
@@ -359,15 +359,15 @@ namespace avocet::opengl {
         return impl::do_get<GLboolean>(ctx, name);
     }
 
-    template<gl_floating_point T, std::derived_from<context_base> Context>
+    template<std::derived_from<context_base> Context>
     [[nodiscard]]
-    T get(const Context& ctx, float_names name) {
-        return impl::do_get<T>(ctx, name);
+    GLfloat get(const Context& ctx, float_names name) {
+        return impl::do_get<GLfloat>(ctx, name);
     }
 
-    template<gl_floating_point T, std::derived_from<context_base> Context>
+    template<std::derived_from<context_base> Context>
     [[nodiscard]]
-    std::array<T, 4> get(const Context& ctx, quadruple_float_names name) {
-        return impl::do_get<std::array<T, 4>>(ctx, name);
+    std::array<GLfloat, 4> get(const Context& ctx, quadruple_float_names name) {
+        return impl::do_get<std::array<GLfloat, 4>>(ctx, name);
     }
 }
