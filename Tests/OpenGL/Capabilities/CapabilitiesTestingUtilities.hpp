@@ -206,7 +206,7 @@ namespace sequoia::testing
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
             using namespace avocet::opengl::testing;
             check(equality, "Coverage"   , logger, agl::get(ctx, agl::float_names::sample_coverage_value), predicted.coverage_val.raw_value());
-            check(equality, "Invert Mask", logger, agl::get(ctx, agl::bool_names::sample_coverage_invert)         , agl::to_gl_boolean(predicted.invert));
+            check(equality, "Invert Mask", logger, agl::get(ctx, agl::bool_names::sample_coverage_invert), agl::to_gl_boolean(predicted.invert));
         }
 
         template<test_mode Mode>
