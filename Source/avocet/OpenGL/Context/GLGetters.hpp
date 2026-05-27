@@ -328,7 +328,7 @@ namespace avocet::opengl {
         template<class T, std::derived_from<context_base> Context, class Enum>
             requires gl_gettable_v<T> && std::is_scoped_enum_v<Enum>
         [[nodiscard]]
-        T do_get(const Context& ctx, Enum glName) {
+        T do_get_value(const Context& ctx, Enum glName) {
             const auto name{to_underlying_value(glName)};
             T val{};
 
@@ -350,24 +350,24 @@ namespace avocet::opengl {
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLint get(const Context& ctx, int_names name) {
-        return impl::do_get<GLint>(ctx, name);
+        return impl::do_get_value<GLint>(ctx, name);
     }
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLboolean get(const Context& ctx, bool_names name) {
-        return impl::do_get<GLboolean>(ctx, name);
+        return impl::do_get_value<GLboolean>(ctx, name);
     }
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLfloat get(const Context& ctx, float_names name) {
-        return impl::do_get<GLfloat>(ctx, name);
+        return impl::do_get_value<GLfloat>(ctx, name);
     }
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     std::array<GLfloat, 4> get(const Context& ctx, quadruple_float_names name) {
-        return impl::do_get<std::array<GLfloat, 4>>(ctx, name);
+        return impl::do_get_value<std::array<GLfloat, 4>>(ctx, name);
     }
 }
