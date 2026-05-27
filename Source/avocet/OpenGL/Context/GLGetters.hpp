@@ -154,7 +154,6 @@ namespace avocet::opengl {
         read_buffer                                     = GL_READ_BUFFER,
         read_framebuffer_binding                        = GL_READ_FRAMEBUFFER_BINDING,
         renderbuffer_binding                            = GL_RENDERBUFFER_BINDING,
-        sample_mask_value                               = GL_SAMPLE_MASK_VALUE,
         sample_buffers                                  = GL_SAMPLE_BUFFERS,
         samples                                         = GL_SAMPLES,
         shader_storage_buffer_binding                   = GL_SHADER_STORAGE_BUFFER_BINDING,
@@ -164,16 +163,12 @@ namespace avocet::opengl {
         stencil_back_pass_depth_fail                    = GL_STENCIL_BACK_PASS_DEPTH_FAIL,
         stencil_back_pass_depth_pass                    = GL_STENCIL_BACK_PASS_DEPTH_PASS,
         stencil_back_ref                                = GL_STENCIL_BACK_REF,
-        stencil_back_value_mask                         = GL_STENCIL_BACK_VALUE_MASK,
-        stencil_back_writemask                          = GL_STENCIL_BACK_WRITEMASK,
         stencil_clear_value                             = GL_STENCIL_CLEAR_VALUE,
         stencil_fail                                    = GL_STENCIL_FAIL,
         stencil_func                                    = GL_STENCIL_FUNC,
         stencil_pass_depth_fail                         = GL_STENCIL_PASS_DEPTH_FAIL,
         stencil_pass_depth_pass                         = GL_STENCIL_PASS_DEPTH_PASS,
         stencil_ref                                     = GL_STENCIL_REF,
-        stencil_value_mask                              = GL_STENCIL_VALUE_MASK,
-        stencil_writemask                               = GL_STENCIL_WRITEMASK,
         subpixel_bits                                   = GL_SUBPIXEL_BITS,
         texture_binding_1d                              = GL_TEXTURE_BINDING_1D,
         texture_binding_1d_array                        = GL_TEXTURE_BINDING_1D_ARRAY,
@@ -202,6 +197,14 @@ namespace avocet::opengl {
         vertex_binding_divisor                          = GL_VERTEX_BINDING_DIVISOR,
         vertex_binding_offset                           = GL_VERTEX_BINDING_OFFSET,
         vertex_binding_stride                           = GL_VERTEX_BINDING_STRIDE,
+    };
+
+    enum class uint_names : GLenum {
+        sample_mask_value       = GL_SAMPLE_MASK_VALUE,
+        stencil_back_value_mask = GL_STENCIL_BACK_VALUE_MASK,
+        stencil_back_writemask  = GL_STENCIL_BACK_WRITEMASK,
+        stencil_value_mask      = GL_STENCIL_VALUE_MASK,
+        stencil_writemask       = GL_STENCIL_WRITEMASK,
     };
 
     enum class int64_names : GLenum {
@@ -328,7 +331,7 @@ namespace avocet::opengl {
         template<class T, std::derived_from<context_base> Context, class Enum>
             requires gl_gettable_v<T> && std::is_scoped_enum_v<Enum>
         [[nodiscard]]
-        T do_get_value(const Context& ctx, Enum glName) {
+        T do_get(const Context& ctx, Enum glName) {
             const auto name{to_underlying_value(glName)};
             T val{};
 
@@ -350,24 +353,30 @@ namespace avocet::opengl {
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLint get(const Context& ctx, int_names name) {
-        return impl::do_get_value<GLint>(ctx, name);
+        return impl::do_get<GLint>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    GLuint get(const Context& ctx, uint_names name) {
+        return static_cast<GLuint>(impl::do_get<GLint>(ctx, name));
     }
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLboolean get(const Context& ctx, bool_names name) {
-        return impl::do_get_value<GLboolean>(ctx, name);
+        return impl::do_get<GLboolean>(ctx, name);
     }
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLfloat get(const Context& ctx, float_names name) {
-        return impl::do_get_value<GLfloat>(ctx, name);
+        return impl::do_get<GLfloat>(ctx, name);
     }
 
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     std::array<GLfloat, 4> get(const Context& ctx, quadruple_float_names name) {
-        return impl::do_get_value<std::array<GLfloat, 4>>(ctx, name);
+        return impl::do_get<std::array<GLfloat, 4>>(ctx, name);
     }
 }

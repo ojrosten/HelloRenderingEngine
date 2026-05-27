@@ -215,34 +215,34 @@ namespace sequoia::testing
             using namespace avocet::opengl;
             check(equality, "Front Func"    , logger, get_int_param_as<comparison_mode>(ctx, agl::int_names::stencil_func), predicted.front.func.comparison     );
             check(equality, "Front Ref Val" , logger, get_int_param_as<GLint>          (ctx, agl::int_names::stencil_ref ), predicted.front.func.reference_value);
-            check_mask("Front Val Mask", logger, ctx, agl::int_names::stencil_value_mask, predicted.front.func.mask);
+            check_mask("Front Val Mask", logger, ctx, agl::uint_names::stencil_value_mask, predicted.front.func.mask);
 
             check(equality, "Front On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, agl::int_names::stencil_fail           ), predicted.front.op.on_failure                   );
             check(equality, "Front On Pass with Depth Failure"   , logger, get_int_param_as<stencil_failure_mode>(ctx, agl::int_names::stencil_pass_depth_fail), predicted.front.op.on_pass_with_depth_failure   );
             check(equality, "Front On Pass without Depth Failure", logger, get_int_param_as<stencil_failure_mode>(ctx, agl::int_names::stencil_pass_depth_pass), predicted.front.op.on_pass_without_depth_failure);
 
-            check_mask("Front Write Mask", logger, ctx, agl::int_names::stencil_writemask, predicted.front.write_mask.mask);
+            check_mask("Front Write Mask", logger, ctx, agl::uint_names::stencil_writemask, predicted.front.write_mask.mask);
 
             check(equality, "Back Func"    , logger, get_int_param_as<comparison_mode>(ctx, agl::int_names::stencil_back_func), predicted.back.func.comparison     );
             check(equality, "Back Ref Val" , logger, get_int_param_as<GLint>          (ctx, agl::int_names::stencil_back_ref ), predicted.back.func.reference_value);
-            check_mask("Back Val Mask", logger, ctx, agl::int_names::stencil_back_value_mask, predicted.back.func.mask);
+            check_mask("Back Val Mask", logger, ctx, agl::uint_names::stencil_back_value_mask, predicted.back.func.mask);
 
             check(equality, "Back On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, agl::int_names::stencil_back_fail           ), predicted.back.op.on_failure                   );
             check(equality, "Back On Pass with Depth Failure"   , logger, get_int_param_as<stencil_failure_mode>(ctx, agl::int_names::stencil_back_pass_depth_fail), predicted.back.op.on_pass_with_depth_failure   );
             check(equality, "Back On Pass without Depth Failure", logger, get_int_param_as<stencil_failure_mode>(ctx, agl::int_names::stencil_back_pass_depth_pass), predicted.back.op.on_pass_without_depth_failure);
 
-            check_mask("Back Write Mask", logger, ctx, agl::int_names::stencil_back_writemask, predicted.back.write_mask.mask);
+            check_mask("Back Write Mask", logger, ctx, agl::uint_names::stencil_back_writemask, predicted.back.write_mask.mask);
         }
     private:
       template<test_mode Mode>
-      static void check_mask(std::string description, test_logger<Mode>& logger, const agl::capable_context& ctx, agl::int_names name, GLuint predicted) {
+      static void check_mask(std::string description, test_logger<Mode>& logger, const agl::capable_context& ctx, agl::uint_names name, GLuint predicted) {
           using namespace avocet::opengl::testing;
           // Different drivers extract masks somewhat differently. The type is GLuint, though in practice only
           // the first byte is used. For a mask of all 1s, some drivers report 255 whereas others report
           // numeric_limits<GLuint>::max()
           // To give platform-independent output, anything beyond the first byte of the mask is masked.
           // It's masks all the way down...
-          check(equality, description, logger, get_int_param_as<GLuint>(ctx, name) & 0xFF, predicted & 0xFF);
+          check(equality, description, logger, agl::get(ctx, name) & 0xFF, predicted & 0xFF);
       }
     };
 }
