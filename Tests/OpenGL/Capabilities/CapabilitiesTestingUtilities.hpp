@@ -184,14 +184,14 @@ namespace sequoia::testing
             check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, agl::int_names::blend_equation_rgb)  , agl::to_gl_enum(predicted.rgb.algebraic_op));
             check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, agl::int_names::blend_equation_alpha), agl::to_gl_enum(predicted.alpha.algebraic_op));
 
-            check(equality, "Colour GPU/CPU", logger, agl::get<GLfloat>(ctx, agl::quadruple_floating_point_names::blend_color), predicted.colour);
+            check(equality, "Colour GPU/CPU", logger, agl::get<GLfloat>(ctx, agl::quadruple_float_names::blend_color), predicted.colour);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_polygon_offset& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Factor", logger, agl::get<GLfloat>(ctx, agl::floating_point_names::polygon_offset_factor), predicted.factor);
-            check(equality, "Units" , logger, agl::get<GLfloat>(ctx, agl::floating_point_names::polygon_offset_units) , predicted.units);
+            check(equality, "Factor", logger, agl::get<GLfloat>(ctx, agl::float_names::polygon_offset_factor), predicted.factor);
+            check(equality, "Units" , logger, agl::get<GLfloat>(ctx, agl::float_names::polygon_offset_units) , predicted.units);
         }
 
         template<test_mode Mode>
@@ -205,7 +205,7 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Coverage"   , logger, agl::get<GLfloat>(ctx, agl::floating_point_names::sample_coverage_value), predicted.coverage_val.raw_value());
+            check(equality, "Coverage"   , logger, agl::get<GLfloat>(ctx, agl::float_names::sample_coverage_value), predicted.coverage_val.raw_value());
             check(equality, "Invert Mask", logger, agl::get         (ctx, agl::bool_names::sample_coverage_invert)         , agl::to_gl_boolean(predicted.invert));
         }
 

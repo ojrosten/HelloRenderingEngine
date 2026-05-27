@@ -234,7 +234,7 @@ namespace avocet::opengl {
         unpack_swap_bytes          = GL_UNPACK_SWAP_BYTES,
     };
 
-    enum class floating_point_names : GLenum {
+    enum class float_names : GLenum {
         depth_clear_value                 = GL_DEPTH_CLEAR_VALUE,
         line_width                        = GL_LINE_WIDTH,
         line_width_granularity            = GL_LINE_WIDTH_GRANULARITY,
@@ -262,7 +262,7 @@ namespace avocet::opengl {
         smooth_line_width_range      = GL_SMOOTH_LINE_WIDTH_RANGE,
     };
 
-    enum class quadruple_floating_point_names : GLenum {
+    enum class quadruple_float_names : GLenum {
         blend_color                  = GL_BLEND_COLOR,
         color_clear_value            = GL_COLOR_CLEAR_VALUE,
     };
@@ -361,13 +361,13 @@ namespace avocet::opengl {
 
     template<gl_floating_point T, std::derived_from<context_base> Context>
     [[nodiscard]]
-    T get(const Context& ctx, floating_point_names name) {
+    T get(const Context& ctx, float_names name) {
         return impl::do_get<T>(ctx, name);
     }
 
     template<gl_floating_point T, std::derived_from<context_base> Context>
     [[nodiscard]]
-    std::array<T, 4> get(const Context& ctx, quadruple_floating_point_names name) {
+    std::array<T, 4> get(const Context& ctx, quadruple_float_names name) {
         return impl::do_get<std::array<T, 4>>(ctx, name);
     }
 }
