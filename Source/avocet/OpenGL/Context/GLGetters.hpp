@@ -288,4 +288,62 @@ namespace avocet::opengl {
         compressed_texture_formats = GL_COMPRESSED_TEXTURE_FORMATS,
 
     };
+
+    namespace impl {
+        template<class T>
+        struct storage_for_gl_get : std::false_type
+        {
+        };
+
+        template<class T>
+        inline constexpr bool storage_for_gl_get_v{storage_for_gl_get<T>::value};
+
+        template<gl_arithmetic T>
+        struct storage_for_gl_get<T> : std::true_type
+        {
+        };
+
+        template<gl_arithmetic T, std::size_t N>
+        struct storage_for_gl_get<std::array<T, N>> : std::true_type
+        {
+        };
+
+        template<class T>
+        struct to_context_mem_fn_ptr {
+            static_assert(false, "Please ensure that all required specializations are present!");
+        };
+
+        template<gl_arithmetic T, std::size_t N>
+        struct to_context_mem_fn_ptr<std::array<T, N>> : to_context_mem_fn_ptr<T>
+        {
+        };
+
+        template<class T>
+        inline constexpr auto to_context_mem_fn_ptr_v{to_context_mem_fn_ptr<T>::value};
+
+        template<>
+        struct to_context_mem_fn_ptr<GLboolean> {
+            constexpr static auto value{&GladGLContext::GetBooleanv};
+        };
+
+        template<>
+        struct to_context_mem_fn_ptr<GLint> {
+            constexpr static auto value{&GladGLContext::GetIntegerv};
+        };
+
+        template<>
+        struct to_context_mem_fn_ptr<GLint64> {
+            constexpr static auto value{&GladGLContext::GetInteger64v};
+        };
+
+        template<>
+        struct to_context_mem_fn_ptr<GLfloat> {
+            constexpr static auto value{&GladGLContext::GetFloatv};
+        };
+
+        template<>
+        struct to_context_mem_fn_ptr<GLdouble> {
+            constexpr static auto value{&GladGLContext::GetDoublev};
+        };
+    }
 }
