@@ -286,13 +286,21 @@ namespace avocet::opengl {
 
     namespace impl {
         template<class T>
-        inline constexpr bool gl_gettable_v{
-               gl_arithmetic<T>
-            || (    std::ranges::range<T>
-                 && requires {
-                        requires gl_arithmetic<std::ranges::range_value_t<T>>;
-                    }
-               )
+        struct storage_for_gl_get : std::false_type
+        {
+        };
+
+        template<class T>
+        inline constexpr bool storage_for_gl_get_v{storage_for_gl_get<T>::value};
+
+        template<gl_arithmetic T>
+        struct storage_for_gl_get<T> : std::true_type
+        {
+        };
+
+        template<gl_arithmetic T, std::size_t N>
+        struct storage_for_gl_get<std::array<T, N>> : std::true_type
+        {
         };
 
         template<class T>
@@ -329,7 +337,7 @@ namespace avocet::opengl {
         };
 
         template<class T, std::derived_from<context_base> Context, class Enum>
-            requires gl_gettable_v<T> && std::is_scoped_enum_v<Enum>
+            requires storage_for_gl_get_v<T> && std::is_scoped_enum_v<Enum>
         [[nodiscard]]
         T do_get(const Context& ctx, Enum glName) {
             const auto name{to_underlying_value(glName)};
@@ -337,10 +345,10 @@ namespace avocet::opengl {
 
             auto getPtr{
                 [](T& t) {
-                    if constexpr (std::ranges::range<T>)
-                        return t.data();
-                    else
+                    if constexpr (gl_arithmetic<T>)
                         return &t;
+                    else
+                        return t.data();
                 }
             };
 
