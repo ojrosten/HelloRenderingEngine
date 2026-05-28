@@ -223,7 +223,7 @@ namespace avocet::opengl {
         vertex_binding_stride                           = GL_VERTEX_BINDING_STRIDE,
     };
 
-    enum class uint_names : GLenum {
+    enum class mask_names : GLenum {
         sample_mask_value       = GL_SAMPLE_MASK_VALUE,
         stencil_back_value_mask = GL_STENCIL_BACK_VALUE_MASK,
         stencil_back_writemask  = GL_STENCIL_BACK_WRITEMASK,
