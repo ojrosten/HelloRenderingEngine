@@ -29,6 +29,16 @@ namespace avocet::testing
             handle_t active;
             std::optional<handle_t> after_destruction{};
         };
+
+        template<class Resource>
+        struct resource_scaffolding {
+            using creator_type  = std::function<Resource(const opengl::resourceful_context&)>;
+            using utilizer_type = std::function<void(const Resource&)>;
+
+            GLenum        utilization_name;
+            creator_type  creator;
+            utilizer_type utilizer;
+        };
     protected:
         struct gpu_data {
             resource_handles resource{};
@@ -58,12 +68,12 @@ namespace avocet::testing
         template<class Creator, class Utilizer>
             requires std::is_invocable_r_v<Resource, Creator, opengl::resourceful_context>
                   && std::is_invocable_r_v<void, Utilizer, Resource>
-        void execute_tests(std::string_view expectedGPUCall, GLenum glName, Creator creator, Utilizer utilizer) {
-            check_serial_tracking_non_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
-            check_serial_tracking_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
+        void execute_tests(std::string_view expectedGPUCall, GLenum utilizationName, Creator creator, Utilizer utilizer) {
+            check_serial_tracking_non_overlapping_lifetimes(expectedGPUCall, {utilizationName, creator, utilizer});
+            check_serial_tracking_overlapping_lifetimes    (expectedGPUCall, {utilizationName, creator, utilizer});
 
-            check_threaded_tracking_non_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
-            check_threaded_tracking_overlapping_lifetimes(expectedGPUCall, glName, creator, utilizer);
+            check_threaded_tracking_non_overlapping_lifetimes(expectedGPUCall, {utilizationName, creator, utilizer});
+            check_threaded_tracking_overlapping_lifetimes    (expectedGPUCall, {utilizationName, creator, utilizer});
         }
 
         ~resource_tracking_test() = default;
@@ -72,15 +82,13 @@ namespace avocet::testing
 
         resource_tracking_test& operator=(resource_tracking_test&&) noexcept = default;
     private:
-        using creator_type  = std::function<Resource(const opengl::resourceful_context&)>;
-        using utilizer_type = std::function<void(const Resource&)>;
 
-        void check_serial_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
+        void check_serial_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, const resource_scaffolding<Resource>& scaffold);
 
-        void check_serial_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
+        void check_serial_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, const resource_scaffolding<Resource>& scaffold);
 
-        void check_threaded_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
+        void check_threaded_tracking_non_overlapping_lifetimes(std::string_view expectedGPUCall, const resource_scaffolding<Resource>& scaffold);
 
-        void check_threaded_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, GLenum glName, creator_type creator, utilizer_type utilizer);
+        void check_threaded_tracking_overlapping_lifetimes(std::string_view expectedGPUCall, const resource_scaffolding<Resource>& scaffold);
     };
 }
