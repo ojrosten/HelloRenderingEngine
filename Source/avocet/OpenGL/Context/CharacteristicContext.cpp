@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Context/CharacteristicContext.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 
 namespace avocet::opengl {
     namespace {

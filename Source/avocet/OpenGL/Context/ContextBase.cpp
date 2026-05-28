@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Context/ContextBase.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 #include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/Core/Formatting/Formatting.hpp"
 
