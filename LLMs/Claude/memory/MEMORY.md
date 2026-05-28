@@ -12,3 +12,4 @@
 - [Lecture branch naming: -experimental → -preliminary → -expected](reference_lecture_branch_naming.md) — refinement stage; informs diff base and review register
 - [Cross-platform targets: Win/Linux/Mac × MSVC/gcc/clang × GL 4.1–4.6](reference_cross_platform_targets.md) — 4.1 is the floor, libc++ has no std::generator
 - [Non-templated deducing-this marks "object-const but GPU/cache side-effecting"](feedback_deducing_this_convention.md) — convention, not stylistic preference
+- [User uses me as rehearsal partner for live-coding portion of lectures](feedback_live_coding_rehearsal.md) — iterative, lecture-sized, fine-tune loop welcome
