@@ -253,6 +253,11 @@ namespace avocet::opengl {
         smooth_line_width_granularity     = GL_SMOOTH_LINE_WIDTH_GRANULARITY,
     };
 
+    enum class string_names : GLenum {
+        renderer = GL_RENDERER,
+        vendor   = GL_VENDOR,
+    };
+
     enum class paired_int_names : GLenum {
         max_viewport_dims          = GL_MAX_VIEWPORT_DIMS,
         viewport_bounds_range      = GL_VIEWPORT_BOUNDS_RANGE,
@@ -386,5 +391,11 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::array<GLfloat, 4> get(const Context& ctx, quadruple_float_names name) {
         return impl::do_get<std::array<GLfloat, 4>>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    std::string get(const Context& ctx, string_names name) {
+        return std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, to_underlying_value(name)));
     }
 }
