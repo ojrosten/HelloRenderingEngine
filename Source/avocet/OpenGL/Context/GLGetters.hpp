@@ -13,6 +13,30 @@
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl {
+        enum class bool_names : GLenum {
+        blend                  = GL_BLEND,
+        color_logic_op         = GL_COLOR_LOGIC_OP,
+        cull_face              = GL_CULL_FACE,
+        depth_test             = GL_DEPTH_TEST,
+        depth_writemask        = GL_DEPTH_WRITEMASK,
+        dither                 = GL_DITHER,
+        doublebuffer           = GL_DOUBLEBUFFER,
+        line_smooth            = GL_LINE_SMOOTH,
+        pack_lsb_first         = GL_PACK_LSB_FIRST,
+        pack_swap_bytes        = GL_PACK_SWAP_BYTES,
+        polygon_offset_fill    = GL_POLYGON_OFFSET_FILL,
+        polygon_offset_line    = GL_POLYGON_OFFSET_LINE,
+        polygon_offset_point   = GL_POLYGON_OFFSET_POINT,
+        polygon_smooth         = GL_POLYGON_SMOOTH,
+        program_point_size     = GL_PROGRAM_POINT_SIZE,
+        sample_coverage_invert = GL_SAMPLE_COVERAGE_INVERT,
+        scissor_test           = GL_SCISSOR_TEST,
+        shader_compiler        = GL_SHADER_COMPILER,
+        stencil_test           = GL_STENCIL_TEST,
+        stereo                 = GL_STEREO,
+        unpack_lsb_first       = GL_UNPACK_LSB_FIRST,
+        unpack_swap_bytes      = GL_UNPACK_SWAP_BYTES,
+    };
 
     enum class int_names : GLenum {
         active_texture                                  = GL_ACTIVE_TEXTURE,
@@ -212,31 +236,6 @@ namespace avocet::opengl {
         timestamp               = GL_TIMESTAMP,
     };
 
-    enum class bool_names : GLenum {
-        blend                      = GL_BLEND,
-        color_logic_op             = GL_COLOR_LOGIC_OP,
-        cull_face                  = GL_CULL_FACE,
-        depth_test                 = GL_DEPTH_TEST,
-        depth_writemask            = GL_DEPTH_WRITEMASK,
-        dither                     = GL_DITHER,
-        doublebuffer               = GL_DOUBLEBUFFER,
-        line_smooth                = GL_LINE_SMOOTH,
-        pack_lsb_first             = GL_PACK_LSB_FIRST,
-        pack_swap_bytes            = GL_PACK_SWAP_BYTES,
-        polygon_offset_fill        = GL_POLYGON_OFFSET_FILL,
-        polygon_offset_line        = GL_POLYGON_OFFSET_LINE,
-        polygon_offset_point       = GL_POLYGON_OFFSET_POINT,
-        polygon_smooth             = GL_POLYGON_SMOOTH,
-        program_point_size         = GL_PROGRAM_POINT_SIZE,
-        sample_coverage_invert     = GL_SAMPLE_COVERAGE_INVERT,
-        scissor_test               = GL_SCISSOR_TEST,
-        shader_compiler            = GL_SHADER_COMPILER,
-        stencil_test               = GL_STENCIL_TEST,
-        stereo                     = GL_STEREO,
-        unpack_lsb_first           = GL_UNPACK_LSB_FIRST,
-        unpack_swap_bytes          = GL_UNPACK_SWAP_BYTES,
-    };
-
     enum class float_names : GLenum {
         depth_clear_value                 = GL_DEPTH_CLEAR_VALUE,
         line_width                        = GL_LINE_WIDTH,
@@ -270,9 +269,8 @@ namespace avocet::opengl {
         smooth_line_width_range    = GL_SMOOTH_LINE_WIDTH_RANGE,
     };
 
-    enum class quadruple_float_names : GLenum {
-        blend_color                = GL_BLEND_COLOR,
-        color_clear_value          = GL_COLOR_CLEAR_VALUE,
+    enum class quadruple_bool_names : GLenum {
+        color_writemask            = GL_COLOR_WRITEMASK,
     };
 
     enum class quadruple_int_names : GLenum {
@@ -280,8 +278,9 @@ namespace avocet::opengl {
         viewport                   = GL_VIEWPORT,
     };
 
-    enum class quadruple_bool_names : GLenum {
-        color_writemask            = GL_COLOR_WRITEMASK,
+    enum class quadruple_float_names : GLenum {
+        blend_color                = GL_BLEND_COLOR,
+        color_clear_value          = GL_COLOR_CLEAR_VALUE,
     };
 
     enum class multiple_int_names : GLenum {
