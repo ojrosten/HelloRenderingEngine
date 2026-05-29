@@ -382,7 +382,7 @@ namespace avocet::opengl {
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLuint get(const Context& ctx, mask_names name) {
-        return static_cast<GLuint>(impl::do_get<GLuint>(ctx, name));
+        return static_cast<GLuint>(impl::do_get<GLint>(ctx, name));
     }
 
     template<std::derived_from<context_base> Context>
