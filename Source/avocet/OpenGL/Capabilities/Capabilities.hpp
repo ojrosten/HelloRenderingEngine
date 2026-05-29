@@ -157,7 +157,7 @@ namespace avocet::opengl {
         /******************************* Blending *******************************/
         struct gl_blend_modes {
             blend_mode      source{blend_mode::one},
-                destination{blend_mode::zero};
+                       destination{blend_mode::zero};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend_modes&, const gl_blend_modes&) noexcept = default;

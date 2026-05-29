@@ -34,11 +34,12 @@ namespace avocet::opengl::testing {
         return static_cast<T>(param);
     }
 
+    template<class T>
     [[nodiscard]]
-    inline GLboolean get_bool_param(const decorated_context& ctx, GLenum name) {
+    T get_bool_param_as(const decorated_context& ctx, GLenum name) {
         GLboolean param{};
         gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
-        return param;
+        return static_cast<T>(param);
     }
 
     [[nodiscard]]
@@ -209,12 +210,13 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_blend& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Source rgb   GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_RGB)       , agl::to_gl_enum(predicted.rgb.modes.source));
-            check(equality, "Source alpha GPU/CPU"     , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_SRC_ALPHA)     , agl::to_gl_enum(predicted.alpha.modes.source));
-            check(equality, "Destination rgb   GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_RGB)       , agl::to_gl_enum(predicted.rgb.modes.destination));
-            check(equality, "Destination alpha GPU/CPU", logger, get_int_param_as<GLenum>(ctx, GL_BLEND_DST_ALPHA)     , agl::to_gl_enum(predicted.alpha.modes.destination));
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_RGB)  , agl::to_gl_enum(predicted.rgb.algebraic_op));
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<GLenum>(ctx, GL_BLEND_EQUATION_ALPHA), agl::to_gl_enum(predicted.alpha.algebraic_op));
+            using namespace avocet::opengl;
+            check(equality, "Source rgb   GPU/CPU"     , logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_SRC_RGB)       , predicted.rgb.modes.source);
+            check(equality, "Source alpha GPU/CPU"     , logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_SRC_ALPHA)     , predicted.alpha.modes.source);
+            check(equality, "Destination rgb   GPU/CPU", logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_DST_RGB)       , predicted.rgb.modes.destination);
+            check(equality, "Destination alpha GPU/CPU", logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_DST_ALPHA)     , predicted.alpha.modes.destination);
+            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<blend_eqn_mode>(ctx, GL_BLEND_EQUATION_RGB)  , predicted.rgb.algebraic_op);
+            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<blend_eqn_mode>(ctx, GL_BLEND_EQUATION_ALPHA), predicted.alpha.algebraic_op);
 
             check(equality, "Colour GPU/CPU", logger, get_float_params<4>(ctx, GL_BLEND_COLOR), predicted.colour);
         }
@@ -229,16 +231,18 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_depth_test& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Func"       , logger, get_int_param_as<GLenum>(ctx, GL_DEPTH_FUNC), agl::to_gl_enum(predicted.func));
-            check(equality, "MasK"       , logger, get_bool_param(ctx, GL_DEPTH_WRITEMASK)     , agl::to_gl_boolean(predicted.mask));
+            using namespace avocet::opengl;
+            check(equality, "Func"       , logger, get_int_param_as <comparison_mode>        (ctx, GL_DEPTH_FUNC     ), predicted.func);
+            check(equality, "MasK"       , logger, get_bool_param_as<depth_buffer_write_mode>(ctx, GL_DEPTH_WRITEMASK), predicted.mask);
             check(weak_equivalence, "Poly Offset", logger, ctx, predicted.poly_offset);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Coverage"   , logger, get_float_param(ctx, GL_SAMPLE_COVERAGE_VALUE), predicted.coverage_val.raw_value());
-            check(equality, "Invert Mask", logger, get_bool_param(ctx, GL_SAMPLE_COVERAGE_INVERT), agl::to_gl_boolean(predicted.invert));
+            using namespace avocet::opengl;
+            check(equality, "Coverage"   , logger, get_float_param                      (ctx, GL_SAMPLE_COVERAGE_VALUE ), predicted.coverage_val.raw_value());
+            check(equality, "Invert Mask", logger, get_bool_param_as<invert_sample_mask>(ctx, GL_SAMPLE_COVERAGE_INVERT), predicted.invert                  );
         }
 
         template<test_mode Mode>
