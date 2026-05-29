@@ -13,7 +13,7 @@
 #include "avocet/OpenGL/Utilities/Casts.hpp"
 
 namespace avocet::opengl {
-        enum class bool_names : GLenum {
+    enum class bool_names : GLenum {
         blend                  = GL_BLEND,
         color_logic_op         = GL_COLOR_LOGIC_OP,
         cull_face              = GL_CULL_FACE,
