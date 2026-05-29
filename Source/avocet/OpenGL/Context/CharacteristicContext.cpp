@@ -25,15 +25,7 @@ namespace avocet::opengl {
             if (ctx.fundamental_characteristics().object_labels_available() == object_labelling_available::no)
                 return std::nullopt;
 
-            const GLint length{
-                [&ctx]() {
-                    GLint param{};
-                    gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_LABEL_LENGTH, &param);
-                    return param;
-                }()
-            };
-
-            return length;
+            return get(ctx, int_names::max_label_length);
         }
     }
 

@@ -15,8 +15,7 @@ namespace avocet::opengl {
             if(!debugEnabled)
                 return std::nullopt;
 
-            GLint maxLen{};
-            gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
+            const GLint maxLen{get(ctx, int_names::max_debug_message_length)};
             if(maxLen < 0)
                 throw std::runtime_error{std::format("Max Debug Length is Negative: {}", maxLen)};
 

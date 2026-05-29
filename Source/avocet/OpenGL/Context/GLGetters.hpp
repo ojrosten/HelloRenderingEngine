@@ -344,5 +344,86 @@ namespace avocet::opengl {
         struct to_context_mem_fn_ptr<GLdouble> {
             constexpr static auto value{&GladGLContext::GetDoublev};
         };
+
+        template<class T, std::derived_from<context_base> Context, class Enum>
+            requires storage_for_gl_get_v<T> && std::is_scoped_enum_v<Enum>
+        [[nodiscard]]
+        T do_get(const Context& ctx, Enum name) {
+            T vals{};
+
+            auto getPtr{
+                [](T& t) {
+                    if constexpr(gl_arithmetic<T>)
+                        return &t;
+                    else
+                        return t.data();
+                }
+            };
+
+            gl_function{to_context_mem_fn_ptr_v<T>}(ctx, to_gl_enum(name), getPtr(vals));
+
+            return vals;
+
+        }
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    GLboolean get(const Context& ctx, bool_names name) {
+        return impl::do_get<GLboolean>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    GLint get(const Context& ctx, int_names name) {
+        return impl::do_get<GLint>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    GLuint get(const Context& ctx, mask_names name) {
+        return static_cast<GLuint>(impl::do_get<GLuint>(ctx, name));
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    GLint64 get(const Context& ctx, int64_names name) {
+        return impl::do_get<GLint64>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    GLfloat get(const Context& ctx, float_names name) {
+        return impl::do_get<GLfloat>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    std::array<GLint, 2> get(const Context& ctx, paired_int_names name) {
+        return impl::do_get<std::array<GLint, 2>>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    std::array<GLfloat, 2> get(const Context& ctx, paired_float_names name) {
+        return impl::do_get<std::array<GLfloat, 2>>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    std::array<GLboolean, 4> get(const Context& ctx, quadruple_bool_names name) {
+        return impl::do_get<std::array<GLboolean, 4>>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    std::array<GLint, 4> get(const Context& ctx, quadruple_int_names name) {
+        return impl::do_get<std::array<GLint, 4>>(ctx, name);
+    }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    std::array<GLfloat, 4> get(const Context& ctx, quadruple_float_names name) {
+        return impl::do_get<std::array<GLfloat, 4>>(ctx, name);
     }
 }

@@ -33,6 +33,6 @@ namespace avocet::testing
             }
         };
 
-        execute_tests("UseProgram", GL_CURRENT_PROGRAM, creator, utilizer);
+        execute_tests("UseProgram", agl::int_names::current_program, creator, utilizer);
     }
 }

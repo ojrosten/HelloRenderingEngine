@@ -44,7 +44,7 @@ namespace avocet::testing
             }
         };
 
-        execute_tests("BindFramebuffer", GL_DRAW_FRAMEBUFFER_BINDING, creator, utilizer);
-        execute_tests("BindFramebuffer", GL_READ_FRAMEBUFFER_BINDING, creator, utilizer);
+        execute_tests("BindFramebuffer", int_names::draw_framebuffer_binding, creator, utilizer);
+        execute_tests("BindFramebuffer", int_names::read_framebuffer_binding, creator, utilizer);
     }
 }

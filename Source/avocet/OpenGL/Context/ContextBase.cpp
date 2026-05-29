@@ -69,8 +69,7 @@ namespace avocet::opengl {
         if(!fundamental_characteristics().debug_output_enabled())
             return;
 
-        GLint flags{};
-        gl_function{&GladGLContext::GetIntegerv}(*this, GL_CONTEXT_FLAGS, &flags);
+        const GLint flags{get(*this, int_names::context_flags)};
         if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
             gl_function{&GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT);
             gl_function{&GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT_SYNCHRONOUS);
