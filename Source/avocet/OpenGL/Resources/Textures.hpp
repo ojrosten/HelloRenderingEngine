@@ -207,10 +207,10 @@ namespace avocet::opengl {
     };
 
     struct texture_unit {
-        std::size_t index{};
+        std::uint32_t index{};
 
         [[nodiscard]]
-        GLenum gl_texture_unit() const { return GL_TEXTURE0 + to_gl_int(index); }
+        GLenum gl_texture_unit() const { return GL_TEXTURE0 + index; }
 
         [[nodiscard]]
         friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
