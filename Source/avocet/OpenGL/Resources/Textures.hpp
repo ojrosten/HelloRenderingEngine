@@ -62,7 +62,7 @@ namespace avocet::opengl {
         case texture_format::rgba: return noDecoding ? texture_internal_format::rgba : texture_internal_format::srgba;
         }
 
-        throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_enum(format))};
+        throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_underlying_value<GLenum>(format))};
     }
 
     [[nodiscard]]
@@ -75,7 +75,7 @@ namespace avocet::opengl {
         case rgba: return colour_channels{4};
         }
 
-        throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_enum(format))};
+        throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_underlying_value<GLenum>(format))};
     }
 
     [[nodiscard]]
@@ -131,12 +131,12 @@ namespace avocet::opengl {
                 crv.context(),
                 GL_TEXTURE_2D,
                 0,
-                to_gl_int(to_internal_format(rawConfig.format, config.common_config.decoding)),
+                to_gl_underlying_value<GLint>(to_internal_format(rawConfig.format, config.common_config.decoding)),
                 checked_conversion_to<GLsizei>(rawConfig.extent.width),
                 checked_conversion_to<GLsizei>(rawConfig.extent.height),
                 0,
-                to_gl_enum(rawConfig.format),
-                to_gl_enum(to_gl_type_specifier_v<value_type>),
+                to_gl_underlying_value<GLenum>(rawConfig.format),
+                to_gl_underlying_value<GLenum>(to_gl_type_specifier_v<value_type>),
                 rawConfig.image_span.data()
             );
 
@@ -250,8 +250,8 @@ namespace avocet::opengl {
                 ctx,
                 GL_TEXTURE_2D,
                 0,
-                to_gl_enum(format),
-                to_gl_enum(to_gl_type_specifier_v<value_type>),
+                to_gl_underlying_value<GLenum>(format),
+                to_gl_underlying_value<GLenum>(to_gl_type_specifier_v<value_type>),
                 texture.data()
             );
 

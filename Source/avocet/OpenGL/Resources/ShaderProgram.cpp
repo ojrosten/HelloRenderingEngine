@@ -143,7 +143,7 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             contextual_resource_handle create(this const shader_lifecycle_events& self, const resourceful_context& ctx) {
-                return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(self.m_Species))}};
+                return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_underlying_value<GLenum>(self.m_Species))}};
             }
 
             static void destroy(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::DeleteShader}(crv.context(), get_index(crv)); }

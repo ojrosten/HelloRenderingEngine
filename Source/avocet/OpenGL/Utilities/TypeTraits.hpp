@@ -36,6 +36,9 @@ namespace avocet::opengl {
         gl_uint   = GL_UNSIGNED_INT,
     };
 
+    template<class T>
+    concept gl_underlies_enum = std::same_as<T, GLint> || std::same_as<T, GLboolean> || std::same_as<T, GLenum>;
+
     template<gl_arithmetic T>
     struct to_gl_type_specifier;
 

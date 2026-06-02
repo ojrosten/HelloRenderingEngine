@@ -43,7 +43,7 @@ namespace avocet::opengl {
         template<class Cap>
         void disable(this const capable_context& self, toggled_capability<Cap>& cap) {
             if(cap.is_enabled) {
-                gl_function{&GladGLContext::Disable}(self, to_gl_enum(Cap::capability));
+                gl_function{&GladGLContext::Disable}(self, to_gl_underlying_value<GLenum>(Cap::capability));
                 cap.is_enabled = false;
             }
         }
@@ -51,7 +51,7 @@ namespace avocet::opengl {
         template<class Cap>
         void enable(this const capable_context& self, toggled_capability<Cap>& cap) {
             if(!cap.is_enabled) {
-                gl_function{&GladGLContext::Enable}(self, to_gl_enum(Cap::capability));
+                gl_function{&GladGLContext::Enable}(self, to_gl_underlying_value<GLenum>(Cap::capability));
                 cap.is_enabled = true;
             }
         }

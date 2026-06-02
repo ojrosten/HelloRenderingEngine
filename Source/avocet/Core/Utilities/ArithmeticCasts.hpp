@@ -53,5 +53,7 @@ namespace avocet {
     template<class T>
         requires std::is_scoped_enum_v<T>
     [[nodiscard]]
-    constexpr std::underlying_type_t<T> to_underlying_value(T val) noexcept { return static_cast<std::underlying_type_t<T>>(val); }
+    constexpr std::underlying_type_t<T> to_underlying_value(T val) noexcept {
+        return static_cast<std::underlying_type_t<T>>(val);
+    }
 }

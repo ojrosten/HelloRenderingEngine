@@ -9,21 +9,23 @@
 
 #include "avocet/Core/Utilities/ArithmeticCasts.hpp"
 
-#include "glad/gl.h"
+#include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
 namespace avocet::opengl {
-    template<class T>
-        requires std::is_scoped_enum_v<T> && std::is_same_v<std::underlying_type_t<T>, GLenum>
-    [[nodiscard]]
-    constexpr GLenum to_gl_enum(T val) noexcept { return to_underlying_value(val); }
 
-    template<class T>
-        requires std::is_scoped_enum_v<T> && std::is_same_v<std::underlying_type_t<T>, GLint>
+    // In some sense, the parameter `Underlying` is superfluous since it
+    // is simply the underlying type of the scoped enumeration. It is
+    // nevertheless useful since this function is generally used when
+    // supplying arguments to raw OpenGL functions. Being forced to
+    // spell the underlying type makes it easier to audit if values of
+    // the right type(s) are being used. THis scheme can therefore help
+    // avoid unwitting implicit conversions at the point of OpenGL dispatch.
+    template<gl_underlies_enum Underlying, class Enum>
+        requires std::is_scoped_enum_v<Enum>
+              && std::same_as<std::underlying_type_t<Enum>, Underlying>
     [[nodiscard]]
-    constexpr GLint to_gl_int(T val) noexcept { return to_underlying_value(val); }
+    constexpr Underlying to_gl_underlying_value(Enum e) noexcept {
+        return to_underlying_value(e);
+    }
 
-    template<class T>
-        requires (std::is_scoped_enum_v<T>&& std::is_same_v<std::underlying_type_t<T>, GLboolean>)
-    [[nodiscard]]
-    constexpr GLboolean to_gl_boolean(T val) noexcept { return to_underlying_value(val); }
 }

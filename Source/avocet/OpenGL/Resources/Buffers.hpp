@@ -100,11 +100,11 @@ namespace avocet::opengl {
             optional_label label;
         };
 
-        static void bind(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::BindBuffer}(crv.context(), to_gl_enum(Species), get_index(crv)); }
+        static void bind(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::BindBuffer}(crv.context(), to_gl_underlying_value<GLenum>(Species), get_index(crv)); }
 
         static void configure(decorated_contextual_resource_view crv, const configurator& config) {
             add_label(identifier, crv, config.label);
-            gl_function{&GladGLContext::BufferData}(crv.context(), to_gl_enum(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
+            gl_function{&GladGLContext::BufferData}(crv.context(), to_gl_underlying_value<GLenum>(Species), sizeof(T) * config.buffer_data.size(), config.buffer_data.data(), GL_STATIC_DRAW);
         }
 
         [[nodiscard]]
@@ -146,7 +146,7 @@ namespace avocet::opengl {
             using value_type = gl_arithmetic_type_of_t<Attribute>;
 
             constexpr auto sizeofAtt{sizeof(Attribute)};
-            constexpr auto typeSpecifier{to_gl_enum(to_gl_type_specifier_v<value_type>)};
+            constexpr auto typeSpecifier{to_gl_underlying_value<GLenum>(to_gl_type_specifier_v<value_type>)};
             const auto components{checked_conversion_to<GLint>(sizeofAtt / sizeof(value_type))};
             const auto& ctx{this->context()};
             if constexpr(std::is_same_v<value_type, GLdouble>) {
@@ -179,14 +179,14 @@ namespace avocet::opengl {
             self.do_utilize();
             const auto size{get_buffer_size(self.context())};
             std::vector<T> buffer(size / sizeof(T));
-            gl_function{&GladGLContext::GetBufferSubData}(self.context(), to_gl_enum(Species), 0, size, buffer.data());
+            gl_function{&GladGLContext::GetBufferSubData}(self.context(), to_gl_underlying_value<GLenum>(Species), 0, size, buffer.data());
             return buffer;
         }
     private:
         [[nodiscard]]
         static GLint get_buffer_size(const decorated_context& ctx) {
             GLint param{};
-            gl_function{&GladGLContext::GetBufferParameteriv}(ctx, to_gl_enum(Species), GL_BUFFER_SIZE, &param);
+            gl_function{&GladGLContext::GetBufferParameteriv}(ctx, to_gl_underlying_value<GLenum>(Species), GL_BUFFER_SIZE, &param);
             return param;
         }
     };
