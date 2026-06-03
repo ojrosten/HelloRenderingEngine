@@ -34,9 +34,8 @@ namespace avocet::testing
         }
 
         [[nodiscard]]
-        agl::resource_handle get_current_resource_index(const agl::decorated_context& ctx, GLenum glName) {
-            GLint param{};
-            agl::gl_function{&GladGLContext::GetIntegerv}(ctx, glName, &param);
+        agl::resource_handle get_current_resource_index(const agl::decorated_context& ctx, agl::int_names name) {
+            const GLint param{get(ctx, name)};
             if(param < 0)
                 throw std::runtime_error{std::format("Negative resource index: {}", param)};
 

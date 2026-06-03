@@ -35,9 +35,9 @@ namespace avocet::testing
             using creator_type  = std::function<Resource(const opengl::resourceful_context&)>;
             using utilizer_type = std::function<void(const Resource&)>;
 
-            GLenum        utilization_name;
-            creator_type  creator;
-            utilizer_type utilizer;
+            opengl::int_names utilization_name;
+            creator_type      creator;
+            utilizer_type     utilizer;
         };
     protected:
         struct gpu_data {
@@ -68,7 +68,7 @@ namespace avocet::testing
         template<class Creator, class Utilizer>
             requires std::is_invocable_r_v<Resource, Creator, opengl::resourceful_context>
                   && std::is_invocable_r_v<void, Utilizer, Resource>
-        void execute_tests(std::string_view expectedGPUCall, GLenum utilizationName, Creator creator, Utilizer utilizer) {
+        void execute_tests(std::string_view expectedGPUCall, opengl::int_names utilizationName, Creator creator, Utilizer utilizer) {
             check_serial_tracking_non_overlapping_lifetimes(expectedGPUCall, {utilizationName, creator, utilizer});
             check_serial_tracking_overlapping_lifetimes    (expectedGPUCall, {utilizationName, creator, utilizer});
 
