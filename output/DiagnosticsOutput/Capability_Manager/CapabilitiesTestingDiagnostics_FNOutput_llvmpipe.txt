@@ -180,34 +180,34 @@ Checking for weak equivalence with:
 [avocet::opengl::capabilities::gl_blend]
 
   Source rgb   GPU/CPU
-  [unsigned int]
+  [avocet::opengl::blend_mode]
   operator== returned false
-  Obtained : 1
-  Predicted: 32769
+  Obtained : one
+  Predicted: const_colour
 
   Source alpha GPU/CPU
-  [unsigned int]
+  [avocet::opengl::blend_mode]
   operator== returned false
-  Obtained : 1
-  Predicted: 32771
+  Obtained : one
+  Predicted: const_alpha
 
   Destination rgb   GPU/CPU
-  [unsigned int]
+  [avocet::opengl::blend_mode]
   operator== returned false
-  Obtained : 0
-  Predicted: 32770
+  Obtained : zero
+  Predicted: one_minus_const_colour
 
   Destination alpha GPU/CPU
-  [unsigned int]
+  [avocet::opengl::blend_mode]
   operator== returned false
-  Obtained : 0
-  Predicted: 32772
+  Obtained : zero
+  Predicted: one_minus_const_alpha 
 
   Blend equation GPU/CPU
-  [unsigned int]
+  [avocet::opengl::blend_eqn_mode]
   operator== returned false
-  Obtained : 32774
-  Predicted: 32776
+  Obtained : add
+  Predicted: max
 
   Colour GPU/CPU
   [std::array<float, 4>]
@@ -311,10 +311,10 @@ Checking for weak equivalence with:
 [avocet::opengl::capabilities::gl_depth_test]
 
   MasK
-  [unsigned char]
+  [avocet::opengl::depth_buffer_write_mode]
   operator== returned false
-  Obtained : 1
-  Predicted: 0
+  Obtained : enabled
+  Predicted: disabled
 
   Poly Offset
   Comparison performed using:
@@ -369,10 +369,10 @@ Checking for weak equivalence with:
   Predicted: 0.5
 
   Invert Mask
-  [unsigned char]
+  [avocet::opengl::invert_sample_mask]
   operator== returned false
-  Obtained : 0
-  Predicted: 1
+  Obtained : no
+  Predicted: yes
 
 =======================================
 
