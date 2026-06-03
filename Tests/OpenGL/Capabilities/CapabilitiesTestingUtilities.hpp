@@ -18,43 +18,11 @@
 #include "sequoia/TestFramework/FreeCheckers.hpp"
 
 namespace avocet::opengl::testing {
-    template<class T>
+    template<class T, class Enum>
+        requires std::is_scoped_enum_v<Enum>
     [[nodiscard]]
-    T get_int_param_as(const decorated_context& ctx, GLenum name) {
-        GLint param{};
-        gl_function{&GladGLContext::GetIntegerv}(ctx, name, &param);
-        return static_cast<T>(param);
-    }
-
-    template<class T>
-    [[nodiscard]]
-    T get_int64_param_as(const decorated_context& ctx, GLenum name) {
-        GLint64 param{};
-        gl_function{&GladGLContext::GetInteger64v}(ctx, name, &param);
-        return static_cast<T>(param);
-    }
-
-    template<class T>
-    [[nodiscard]]
-    T get_bool_param_as(const decorated_context& ctx, GLenum name) {
-        GLboolean param{};
-        gl_function{&GladGLContext::GetBooleanv}(ctx, name, &param);
-        return static_cast<T>(param);
-    }
-
-    [[nodiscard]]
-    inline GLfloat get_float_param(const decorated_context& ctx, GLenum name) {
-        GLfloat param{};
-        gl_function{&GladGLContext::GetFloatv}(ctx, name, &param);
-        return param;
-    }
-
-    template<std::size_t N>
-    [[nodiscard]]
-    std::array<GLfloat, N> get_float_params(const decorated_context& ctx, GLenum name) {
-        std::array<GLfloat, N> params{};
-        gl_function{&GladGLContext::GetFloatv}(ctx, name, params.data());
-        return params;
+    T get_as(const decorated_context& ctx, Enum name) {
+        return static_cast<T>(get(ctx, name));
     }
 }
 
@@ -211,29 +179,30 @@ namespace sequoia::testing
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_blend& predicted) {
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
-            check(equality, "Source rgb   GPU/CPU"     , logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_SRC_RGB)       , predicted.rgb.modes.source);
-            check(equality, "Source alpha GPU/CPU"     , logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_SRC_ALPHA)     , predicted.alpha.modes.source);
-            check(equality, "Destination rgb   GPU/CPU", logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_DST_RGB)       , predicted.rgb.modes.destination);
-            check(equality, "Destination alpha GPU/CPU", logger, get_int_param_as<blend_mode    >(ctx, GL_BLEND_DST_ALPHA)     , predicted.alpha.modes.destination);
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<blend_eqn_mode>(ctx, GL_BLEND_EQUATION_RGB)  , predicted.rgb.algebraic_op);
-            check(equality, "Blend equation GPU/CPU"   , logger, get_int_param_as<blend_eqn_mode>(ctx, GL_BLEND_EQUATION_ALPHA), predicted.alpha.algebraic_op);
+            check(equality, "Source rgb   GPU/CPU"     , logger, get_as<blend_mode    >(ctx, int_names::blend_src_rgb)       , predicted.rgb.modes.source);
+            check(equality, "Source alpha GPU/CPU"     , logger, get_as<blend_mode    >(ctx, int_names::blend_src_alpha)     , predicted.alpha.modes.source);
+            check(equality, "Destination rgb   GPU/CPU", logger, get_as<blend_mode    >(ctx, int_names::blend_dst_rgb)       , predicted.rgb.modes.destination);
+            check(equality, "Destination alpha GPU/CPU", logger, get_as<blend_mode    >(ctx, int_names::blend_dst_alpha)     , predicted.alpha.modes.destination);
+            check(equality, "Blend equation GPU/CPU"   , logger, get_as<blend_eqn_mode>(ctx, int_names::blend_equation_rgb)  , predicted.rgb.algebraic_op);
+            check(equality, "Blend equation GPU/CPU"   , logger, get_as<blend_eqn_mode>(ctx, int_names::blend_equation_alpha), predicted.alpha.algebraic_op);
 
-            check(equality, "Colour GPU/CPU", logger, get_float_params<4>(ctx, GL_BLEND_COLOR), predicted.colour);
+            check(equality, "Colour GPU/CPU", logger, get(ctx, quadruple_float_names::blend_color), predicted.colour);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_polygon_offset& predicted) {
             using namespace avocet::opengl::testing;
-            check(equality, "Factor", logger, get_float_param(ctx, GL_POLYGON_OFFSET_FACTOR), predicted.factor);
-            check(equality, "Units" , logger, get_float_param(ctx, GL_POLYGON_OFFSET_UNITS) , predicted.units);
+            using namespace avocet::opengl;
+            check(equality, "Factor", logger, get(ctx, float_names::polygon_offset_factor), predicted.factor);
+            check(equality, "Units" , logger, get(ctx, float_names::polygon_offset_units) , predicted.units);
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_depth_test& predicted) {
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
-            check(equality, "Func"       , logger, get_int_param_as <comparison_mode>        (ctx, GL_DEPTH_FUNC     ), predicted.func);
-            check(equality, "MasK"       , logger, get_bool_param_as<depth_buffer_write_mode>(ctx, GL_DEPTH_WRITEMASK), predicted.mask);
+            check(equality, "Func"       , logger, get_as<comparison_mode>        (ctx, int_names::depth_func      ), predicted.func);
+            check(equality, "MasK"       , logger, get_as<depth_buffer_write_mode>(ctx, bool_names::depth_writemask), predicted.mask);
             check(weak_equivalence, "Poly Offset", logger, ctx, predicted.poly_offset);
         }
 
@@ -241,44 +210,43 @@ namespace sequoia::testing
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_sample_coverage& predicted) {
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
-            check(equality, "Coverage"   , logger, get_float_param                      (ctx, GL_SAMPLE_COVERAGE_VALUE ), predicted.coverage_val.raw_value());
-            check(equality, "Invert Mask", logger, get_bool_param_as<invert_sample_mask>(ctx, GL_SAMPLE_COVERAGE_INVERT), predicted.invert                  );
+            check(equality, "Coverage"   , logger, get                       (ctx, float_names::sample_coverage_value ), predicted.coverage_val.raw_value());
+            check(equality, "Invert Mask", logger, get_as<invert_sample_mask>(ctx, bool_names::sample_coverage_invert), predicted.invert                  );
         }
 
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_stencil_test& predicted) {
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
-            check(equality, "Front Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_FUNC), predicted.front.func.comparison     );
-            check(equality, "Front Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_REF ), predicted.front.func.reference_value);
-            check_mask("Front Val Mask", logger, ctx, GL_STENCIL_VALUE_MASK, predicted.front.func.mask);
+            check(equality, "Front Func"    , logger, get_as<comparison_mode>(ctx, int_names::stencil_func), predicted.front.func.comparison     );
+            check(equality, "Front Ref Val" , logger, get_as<GLint>          (ctx, int_names::stencil_ref ), predicted.front.func.reference_value);
+            check_mask("Front Val Mask", logger, ctx, mask_names::stencil_value_mask, predicted.front.func.mask);
 
-            check(equality, "Front On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_FAIL           ), predicted.front.op.on_failure                   );
-            check(equality, "Front On Pass with Depth Failure"   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_PASS_DEPTH_FAIL), predicted.front.op.on_pass_with_depth_failure   );
-            check(equality, "Front On Pass without Depth Failure", logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_PASS_DEPTH_PASS), predicted.front.op.on_pass_without_depth_failure);
+            check(equality, "Front On Failure"                   , logger, get_as<stencil_failure_mode>(ctx, int_names::stencil_fail           ), predicted.front.op.on_failure                   );
+            check(equality, "Front On Pass with Depth Failure"   , logger, get_as<stencil_failure_mode>(ctx, int_names::stencil_pass_depth_fail), predicted.front.op.on_pass_with_depth_failure   );
+            check(equality, "Front On Pass without Depth Failure", logger, get_as<stencil_failure_mode>(ctx, int_names::stencil_pass_depth_pass), predicted.front.op.on_pass_without_depth_failure);
 
-            check_mask("Front Write Mask", logger, ctx, GL_STENCIL_WRITEMASK, predicted.front.write_mask.mask);
+            check_mask("Front Write Mask", logger, ctx, mask_names::stencil_writemask, predicted.front.write_mask.mask);
 
-            check(equality, "Back Func"    , logger, get_int_param_as<comparison_mode>(ctx, GL_STENCIL_BACK_FUNC), predicted.back.func.comparison     );
-            check(equality, "Back Ref Val" , logger, get_int_param_as<GLint>          (ctx, GL_STENCIL_BACK_REF ), predicted.back.func.reference_value);
-            check_mask("Back Val Mask", logger, ctx, GL_STENCIL_BACK_VALUE_MASK, predicted.back.func.mask);
+            check(equality, "Back Func"    , logger, get_as<comparison_mode>(ctx, int_names::stencil_back_func), predicted.back.func.comparison     );
+            check(equality, "Back Ref Val" , logger, get_as<GLint>          (ctx, int_names::stencil_back_ref ), predicted.back.func.reference_value);
+            check_mask("Back Val Mask", logger, ctx, mask_names::stencil_back_value_mask, predicted.back.func.mask);
 
-            check(equality, "Back On Failure"                   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_FAIL           ), predicted.back.op.on_failure                   );
-            check(equality, "Back On Pass with Depth Failure"   , logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_PASS_DEPTH_FAIL), predicted.back.op.on_pass_with_depth_failure   );
-            check(equality, "Back On Pass without Depth Failure", logger, get_int_param_as<stencil_failure_mode>(ctx, GL_STENCIL_BACK_PASS_DEPTH_PASS), predicted.back.op.on_pass_without_depth_failure);
+            check(equality, "Back On Failure"                   , logger, get_as<stencil_failure_mode>(ctx, int_names::stencil_back_fail           ), predicted.back.op.on_failure                   );
+            check(equality, "Back On Pass with Depth Failure"   , logger, get_as<stencil_failure_mode>(ctx, int_names::stencil_back_pass_depth_fail), predicted.back.op.on_pass_with_depth_failure   );
+            check(equality, "Back On Pass without Depth Failure", logger, get_as<stencil_failure_mode>(ctx, int_names::stencil_back_pass_depth_pass), predicted.back.op.on_pass_without_depth_failure);
 
-            check_mask("Back Write Mask", logger, ctx, GL_STENCIL_BACK_WRITEMASK, predicted.back.write_mask.mask);
+            check_mask("Back Write Mask", logger, ctx, mask_names::stencil_back_writemask, predicted.back.write_mask.mask);
         }
     private:
       template<test_mode Mode>
-      static void check_mask(std::string description, test_logger<Mode>& logger, const agl::capable_context& ctx, GLenum name, GLuint predicted) {
-          using namespace avocet::opengl::testing;
+      static void check_mask(std::string description, test_logger<Mode>& logger, const agl::capable_context& ctx, agl::mask_names name, GLuint predicted) {
           // Different drivers extract masks somewhat differently. The type is GLuint, though in practice only
           // the first byte is used. For a mask of all 1s, some drivers report 255 whereas others report
           // numeric_limits<GLuint>::max()
           // To give platform-independent output, anything beyond the first byte of the mask is masked.
           // It's masks all the way down...
-          check(equality, description, logger, get_int64_param_as<GLuint>(ctx, name) & 0xFF, predicted & 0xFF);
+          check(equality, description, logger, get(ctx, name) & 0xFF, predicted & 0xFF);
       }
     };
 }

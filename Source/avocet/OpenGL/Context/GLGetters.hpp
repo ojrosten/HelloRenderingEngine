@@ -381,7 +381,9 @@ namespace avocet::opengl {
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     GLuint get(const Context& ctx, mask_names name) {
-        return impl::do_get<GLuint>(ctx, name);
+        // Masks have no dedicated unsigned getter: GetIntegerv is the only way to query them.
+        // We therefore read through the GLint path and reinterpret the bit pattern as GLuint.
+        return static_cast<GLuint>(impl::do_get<GLint>(ctx, name));
     }
 
     template<std::derived_from<context_base> Context>
