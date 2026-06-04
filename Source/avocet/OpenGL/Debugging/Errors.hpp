@@ -17,11 +17,8 @@
 #include <string>
 #include <vector>
 
-#if defined(_MSC_VER)
-    #include <experimental/generator>
-    #define STD_GENERATOR std::experimental::generator
-#elif defined (__clang__)
-#elif defined(__GNUG__)
+#if defined (__clang__)
+#elif defined(__GNUG__) || defined(_MSC_VER)
     #include <generator>
     #define STD_GENERATOR std::generator
 #endif
