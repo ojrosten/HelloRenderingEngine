@@ -427,4 +427,10 @@ namespace avocet::opengl {
     std::array<GLfloat, 4> get(const Context& ctx, quadruple_float_names name) {
         return impl::do_get<std::array<GLfloat, 4>>(ctx, name);
     }
+
+    template<std::derived_from<context_base> Context>
+    [[nodiscard]]
+    std::string get(const Context& ctx, string_names name) {
+        return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, to_gl_enum(name)))};
+    }
 }

@@ -11,16 +11,6 @@
 namespace avocet::opengl {
     namespace {
         [[nodiscard]]
-        std::string get_vendor(const decorated_context& ctx) {
-            return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_VENDOR))};
-        }
-
-        [[nodiscard]]
-        std::string get_renderer(const decorated_context& ctx) {
-            return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, GL_RENDERER))};
-        }
-
-        [[nodiscard]]
         std::optional<GLint> get_max_label_length(const decorated_context& ctx) {
             if (ctx.fundamental_characteristics().object_labels_available() == object_labelling_available::no)
                 return std::nullopt;
@@ -30,8 +20,8 @@ namespace avocet::opengl {
     }
 
     context_characteristics::context_characteristics(const decorated_context& ctx)
-        : m_Vendor{get_vendor(ctx)}
-        , m_Renderer{get_renderer(ctx)}
+        : m_Vendor{get(ctx, string_names::vendor)}
+        , m_Renderer{get(ctx, string_names::renderer)}
         , m_MaxLabelLength{get_max_label_length(ctx)}
     {
     }
