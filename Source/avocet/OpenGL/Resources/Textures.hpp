@@ -237,7 +237,7 @@ namespace avocet::opengl {
                                          static_cast<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
 
             const auto numChannels{to_num_channels(format)};
-            const auto size{discrete_extent{padded_row_size(extent.width, numChannels, sizeof(value_type), rowAlignment), extent.height}.size()};
+            const auto size{discrete_extent{padded_row_size(extent.width, numChannels, sizeof(value_type), rowAlignment), extent.height}.area()};
 
             std::vector<value_type> texture(size);
 

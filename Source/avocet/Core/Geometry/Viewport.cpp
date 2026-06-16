@@ -15,30 +15,27 @@ namespace avocet {
         }
     }
 
-    // Homework: add additional tests and improve the implementation
     [[nodiscard]]
     std::optional<viewport> refit(const discrete_extent& nominalExtent, const discrete_extent& availableExtent) {
         if(!good_extent(nominalExtent) || !good_extent(availableExtent))
             return null_viewport;
 
-        const double   nominalAspectRatio{static_cast<double>(  nominalExtent.width) /   nominalExtent.height},
-                     availableAspectRatio{static_cast<double>(availableExtent.width) / availableExtent.height};
+        const std::uint64_t nominalAvailableCrossArea{discrete_extent{  nominalExtent.width, availableExtent.height}.area()},
+                            availableNominalCrossArea{discrete_extent{availableExtent.width,   nominalExtent.height}.area()};
 
-        if(availableAspectRatio < nominalAspectRatio) {
-            const std::uint32_t  width{availableExtent.width};
-            const std::uint32_t height{static_cast<std::uint32_t>(width / nominalAspectRatio)};
+        if(availableNominalCrossArea < nominalAvailableCrossArea) {
+            const std::uint32_t height{static_cast<std::uint32_t>(availableNominalCrossArea / nominalExtent.width)};
             const std::int32_t delta_y{static_cast<std::int32_t>((availableExtent.height - height) / 2)};
 
             if(height > 0)
-                return viewport{{0, delta_y}, {width, height}};
+                return viewport{{0, delta_y}, {availableExtent.width, height}};
         }
-        else if(availableAspectRatio > nominalAspectRatio) {
-            const std::uint32_t height{availableExtent.height};
-            const std::uint32_t  width{static_cast<std::uint32_t>(height * nominalAspectRatio)};
+        else if(availableNominalCrossArea > nominalAvailableCrossArea) {
+            const std::uint32_t  width{static_cast<std::uint32_t>(nominalAvailableCrossArea / nominalExtent.height)};
             const std::int32_t delta_x{static_cast<std::int32_t>((availableExtent.width - width) / 2)};
 
             if(width > 0)
-                return viewport{{delta_x, 0}, {width, height}};
+                return viewport{{delta_x, 0}, {width, availableExtent.height}};
         }
         else {
             return viewport{{}, availableExtent};

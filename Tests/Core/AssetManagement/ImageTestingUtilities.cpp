@@ -23,7 +23,7 @@ namespace avocet::testing {
                                 nominalRowSize{padded_row_size(extent.width, channels, bytesPerChannel, alignment{1})};
             return {
                 .data{
-                      std::views::iota(0u, discrete_extent{paddedRowSize, extent.height}.size())
+                      std::views::iota(0u, discrete_extent{paddedRowSize, extent.height}.area())
                     | std::views::transform(
                         [=](auto i) -> unsigned char {
                             if(const bool paddingByte{i % paddedRowSize >= nominalRowSize}; paddingByte)
