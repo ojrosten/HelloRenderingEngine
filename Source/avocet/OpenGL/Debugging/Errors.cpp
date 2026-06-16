@@ -188,7 +188,7 @@ namespace avocet::opengl {
 
 #ifdef __cpp_lib_generator
     [[nodiscard]]
-        STD_GENERATOR<error_code> get_errors(const context& ctx, num_messages maxNum) {
+        std::generator<error_code> get_errors(const context& ctx, num_messages maxNum) {
         for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
             const error_code e{get_error(ctx)};
             if(e == error_code::none) co_return;
@@ -198,7 +198,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    STD_GENERATOR<debug_info> get_messages(const context& ctx, num_messages maxNum) {
+    std::generator<debug_info> get_messages(const context& ctx, num_messages maxNum) {
         for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
             const std::optional<debug_info> message{get_next_message(ctx)};
             if(!message) co_return;

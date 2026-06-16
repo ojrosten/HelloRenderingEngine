@@ -20,7 +20,6 @@
 #if defined (__clang__)
 #elif defined(__GNUG__) || defined(_MSC_VER)
     #include <generator>
-    #define STD_GENERATOR std::generator
 #endif
 
 namespace avocet::opengl {
@@ -136,10 +135,10 @@ namespace avocet::opengl {
 
 #ifdef __cpp_lib_generator
     [[nodiscard]]
-    STD_GENERATOR<error_code> get_errors(const context& ctx, num_messages maxNum);
+    std::generator<error_code> get_errors(const context& ctx, num_messages maxNum);
 
     [[nodiscard]]
-    STD_GENERATOR<debug_info> get_messages(const context& ctx, num_messages maxNum);
+    std::generator<debug_info> get_messages(const context& ctx, num_messages maxNum);
 #else
     [[nodiscard]]
     std::vector<error_code> get_errors(const context& ctx, num_messages maxNum);
