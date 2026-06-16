@@ -21,6 +21,7 @@
 #include "Core/Geometry/PolygonCoordinatesFreeTest.hpp"
 #include "Core/Geometry/ViewportTest.hpp"
 #include "Core/Geometry/ViewportTestingDiagnostics.hpp"
+#include "Core/Utilities/ArithmeticCastsFreeTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
 #include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
@@ -153,6 +154,11 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Resourceful Context",
             resourceful_context_free_test{"Resourceful Context Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Arithmetic Casts",
+            arithmetic_casts_free_test{"Arithmetic Casts Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
