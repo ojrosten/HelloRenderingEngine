@@ -86,7 +86,7 @@ namespace avocet {
             }
 
             void validate(std::uint64_t imageSize) const {
-                if (const auto paddedExtent{padded_extent()}; imageSize != paddedExtent.size())
+                if (const auto paddedExtent{padded_extent()}; imageSize != paddedExtent.area())
                     throw std::runtime_error{std::format("unique_image size {} is not height ({}) * padded_row_size ({})\n[width = {}; channels = {}; alignment = {}]", imageSize, extent.height, paddedExtent.width, extent.width, channels, row_alignment)};
             }
         };
@@ -128,7 +128,7 @@ namespace avocet {
             using span_t = std::span<const value_type>;
             return std::visit(
                 sequoia::overloaded{
-                    [sz{padded_extent().size()}](const ptr_t& ptr) { return span_t{ptr.get(), sz}; },
+                    [sz{padded_extent().area()}](const ptr_t& ptr) { return span_t{ptr.get(), sz}; },
                               [](const vec_t& vec) { return span_t{vec}; }
                 },
                 m_Data

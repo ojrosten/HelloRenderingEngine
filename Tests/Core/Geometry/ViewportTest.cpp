@@ -56,5 +56,10 @@ namespace avocet::testing
         check(equality, "", refit({1, 1}, {1, 1}), opt_viewport{{{0, 0}, {1, 1}}});
         check(equality, "", refit({2, 2}, {1, 1}), opt_viewport{{{0, 0}, {1, 1}}});
         check(equality, "", refit({1, 1}, {2, 2}), opt_viewport{{{0, 0}, {2, 2}}});
+
+        constexpr auto maxVal{std::numeric_limits<std::uint32_t>::max()};
+        check(equality, "", refit({maxVal, maxVal}, {maxVal, maxVal}), opt_viewport{{{0, 0}, {maxVal, maxVal}}});
+        check(equality, "", refit({maxVal,      2}, {maxVal,      4}), opt_viewport{{{0, 1}, {maxVal,      2}}});
+        check(equality, "", refit({     2, maxVal}, {4,      maxVal}), opt_viewport{{{1, 0}, {     2, maxVal}}});
     }
 }
