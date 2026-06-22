@@ -13,11 +13,13 @@
 
 namespace avocet::testing {
     namespace {
+        using image_value_type = image_data::value_type;
+
         template<class Fn>
-            requires std::is_invocable_r_v<typename image_data::value_type, Fn, std::size_t, std::size_t>
+            requires std::is_invocable_r_v<image_value_type, Fn, std::size_t, std::size_t>
         [[nodiscard]]
         image_data make_image(discrete_extent extent, colour_channels channels, alignment rowAlignment, Fn fn) {
-            constexpr auto bytesPerChannel{sizeof(image_data::value_type)};
+            constexpr auto bytesPerChannel{sizeof(image_value_type)};
 
             const std::uint32_t paddedRowSize {padded_row_size(extent.width, channels, bytesPerChannel, rowAlignment)},
                                 nominalRowSize{padded_row_size(extent.width, channels, bytesPerChannel, alignment{1})};
@@ -25,7 +27,7 @@ namespace avocet::testing {
                 .data{
                       std::views::iota(0u, discrete_extent{paddedRowSize, extent.height}.area())
                     | std::views::transform(
-                        [=](auto i) -> unsigned char {
+                        [=](auto i) -> image_value_type {
                             if(const bool paddingByte{i % paddedRowSize >= nominalRowSize}; paddingByte)
                                 return 0;
 
@@ -50,7 +52,7 @@ namespace avocet::testing {
                 if((channelIndex == 3) || ((channels == colour_channels{2}) && (channelIndex == 1)))
                      return intensity.alpha;
 
-                return static_cast<unsigned char>(channelIndex ? 0 : intensity.red);
+                return channelIndex ? image_value_type{} : intensity.red;
             }
         };
 
@@ -61,7 +63,7 @@ namespace avocet::testing {
     image_data make_rgb_striped(discrete_extent extent, colour_channels channels, alignment rowAlignment) {
         auto fn{
             [channels](std::size_t row, std::size_t channelIndex) {
-                return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
+                return (row % channels.raw_value()) == channelIndex ? image_value_type{255} : image_value_type{};
             }
         };
 
@@ -72,7 +74,7 @@ namespace avocet::testing {
     image_data make_bgr_striped(discrete_extent extent, colour_channels channels, alignment rowAlignment) {
         auto fn{
             [channels](std::size_t row, std::size_t channelIndex) {
-                return static_cast<unsigned char>((channels.raw_value() - 1 - row % channels.raw_value()) == channelIndex ? 255 : 0);
+                return (channels.raw_value() - 1 - row % channels.raw_value()) == channelIndex ? image_value_type{255} : image_value_type{};
             }
         };
 

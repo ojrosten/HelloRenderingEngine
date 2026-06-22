@@ -34,7 +34,8 @@ namespace avocet::testing {
     }
 
     struct monochrome_intensity {
-        unsigned char red{255}, alpha{0};
+        using image_value_type = image_data::value_type;
+        image_value_type red{255}, alpha{0};
     };
 
     [[nodiscard]]
