@@ -17,8 +17,7 @@
 #include <string>
 #include <vector>
 
-#if defined (__clang__)
-#elif defined(__GNUG__) || defined(_MSC_VER)
+#ifdef __cpp_lib_generator
     #include <generator>
 #endif
 
