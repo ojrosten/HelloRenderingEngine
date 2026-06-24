@@ -1,4 +1,4 @@
-Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 52
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 57
 
 Expected Exception Type:
 [std::domain_error]
@@ -6,7 +6,7 @@ Value 9223372036854775807 exceeds max value 2147483647 of target type
 
 =======================================
 
-Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 59
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 64
 
 Expected Exception Type:
 [std::domain_error]
@@ -14,11 +14,27 @@ Value 4294967295 exceeds max value 2147483647 of target type
 
 =======================================
 
-Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 66
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 71
+
+Expected Exception Type:
+[std::domain_error]
+Value 18446744073709551615 exceeds max value 4294967295 of target type
+
+=======================================
+
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 78
 
 Expected Exception Type:
 [std::domain_error]
 Value -1 lower than lowest value 0 of target type
+
+=======================================
+
+Tests/Core/Utilities/ArithmeticCastsFreeTest.cpp, Line 85
+
+Expected Exception Type:
+[std::domain_error]
+Value -9223372036854775808 lower than lowest value -2147483648 of target type
 
 =======================================
 
