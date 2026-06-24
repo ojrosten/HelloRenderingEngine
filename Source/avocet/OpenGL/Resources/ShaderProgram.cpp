@@ -94,7 +94,7 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             contextual_resource_handle create(const resourceful_context& ctx) {
-                return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}};
+                return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_underlying_value<GLenum>(m_Species))}};
             }
 
             static void destroy(decorated_contextual_resource_view handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }
@@ -201,7 +201,7 @@ namespace avocet::opengl {
                                 sequoia::back(vertexShaderSource).string(),
                                 sequoia::back(fragmentShaderSource).string())};
 
-                gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, to_gl_sizei(label.size()), label.data());
+                gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, checked_conversion_to<GLsizei>(label.size()), label.data());
             }
         }
 

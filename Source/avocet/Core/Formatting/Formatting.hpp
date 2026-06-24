@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
+
 #include <format>
 #include <type_traits>
 #include <source_location>
@@ -28,7 +30,7 @@ namespace avocet {
         requires std::is_scoped_enum_v<Enum>
     [[nodiscard]]
     std::string error_message(std::string_view enumName, Enum val) {
-        return make_error_message(enumName, static_cast<std::underlying_type_t<Enum>>(val));
+        return make_error_message(enumName, to_underlying_value(val));
     }
 
     [[nodiscard]]

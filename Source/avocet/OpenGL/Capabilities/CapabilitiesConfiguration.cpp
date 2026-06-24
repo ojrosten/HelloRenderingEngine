@@ -19,15 +19,27 @@ namespace avocet::opengl::capabilities::impl {
         };
 
         void do_configure(const decorated_context& ctx, face_selection_mode face, const gl_stencil_func& requested) {
-            gl_function{&GladGLContext::StencilFuncSeparate}(ctx, to_gl_enum(face), to_gl_enum(requested.comparison), requested.reference_value, requested.mask);
+            gl_function{&GladGLContext::StencilFuncSeparate}(
+                ctx,
+                to_gl_underlying_value<GLenum>(face),
+                to_gl_underlying_value<GLenum>(requested.comparison),
+                requested.reference_value,
+                requested.mask
+            );
         }
 
         void do_configure(const decorated_context& ctx, face_selection_mode face, const gl_stencil_op& requested) {
-            gl_function{&GladGLContext::StencilOpSeparate}(ctx, to_gl_enum(face), to_gl_enum(requested.on_failure), to_gl_enum(requested.on_pass_with_depth_failure), to_gl_enum(requested.on_pass_without_depth_failure));
+            gl_function{&GladGLContext::StencilOpSeparate}(
+                ctx,
+                to_gl_underlying_value<GLenum>(face),
+                to_gl_underlying_value<GLenum>(requested.on_failure),
+                to_gl_underlying_value<GLenum>(requested.on_pass_with_depth_failure),
+                to_gl_underlying_value<GLenum>(requested.on_pass_without_depth_failure)
+            );
         }
 
         void do_configure(const decorated_context& ctx, face_selection_mode face, const gl_stencil_write_mask& requested) {
-            gl_function{&GladGLContext::StencilMaskSeparate}(ctx, to_gl_enum(face), requested.mask);
+            gl_function{&GladGLContext::StencilMaskSeparate}(ctx, to_gl_underlying_value<GLenum>(face), requested.mask);
         }
 
         template<class T>
@@ -54,15 +66,15 @@ namespace avocet::opengl::capabilities::impl {
         if((requested.rgb.modes != current.rgb.modes) or (requested.alpha.modes != current.alpha.modes)) {
             gl_function{&GladGLContext::BlendFuncSeparate}(
                 ctx,
-                to_gl_enum(requested.rgb.modes.source),
-                to_gl_enum(requested.rgb.modes.destination),
-                to_gl_enum(requested.alpha.modes.source),
-                to_gl_enum(requested.alpha.modes.destination)
+                to_gl_underlying_value<GLenum>(requested.rgb.modes.source),
+                to_gl_underlying_value<GLenum>(requested.rgb.modes.destination),
+                to_gl_underlying_value<GLenum>(requested.alpha.modes.source),
+                to_gl_underlying_value<GLenum>(requested.alpha.modes.destination)
             );
         }
 
         if((requested.rgb.algebraic_op != current.rgb.algebraic_op) or (requested.alpha.algebraic_op != current.alpha.algebraic_op))
-            gl_function{&GladGLContext::BlendEquationSeparate}(ctx, to_gl_enum(requested.rgb.algebraic_op), to_gl_enum(requested.alpha.algebraic_op));
+            gl_function{&GladGLContext::BlendEquationSeparate}(ctx, to_gl_underlying_value<GLenum>(requested.rgb.algebraic_op), to_gl_underlying_value<GLenum>(requested.alpha.algebraic_op));
 
         if(requested.colour != current.colour) {
             const auto& col{requested.colour};
@@ -72,7 +84,7 @@ namespace avocet::opengl::capabilities::impl {
 
     void configure(const decorated_context& ctx, const gl_sample_coverage& current, const gl_sample_coverage& requested) {
         if(requested != current)
-            gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), to_gl_boolean(requested.invert));
+            gl_function{&GladGLContext::SampleCoverage}(ctx, requested.coverage_val.raw_value(), to_gl_underlying_value<GLboolean>(requested.invert));
     }
 
     void configure(const decorated_context& ctx, const gl_stencil_test& current, const gl_stencil_test& requested) {
@@ -83,10 +95,10 @@ namespace avocet::opengl::capabilities::impl {
 
     void configure(const decorated_context& ctx, const gl_depth_test& current, const gl_depth_test& requested) {
         if(requested.func != current.func)
-            gl_function{&GladGLContext::DepthFunc}(ctx, to_gl_enum(requested.func));
+            gl_function{&GladGLContext::DepthFunc}(ctx, to_gl_underlying_value<GLenum>(requested.func));
 
         if(requested.mask != current.mask)
-            gl_function{&GladGLContext::DepthMask}(ctx, to_gl_boolean(requested.mask));
+            gl_function{&GladGLContext::DepthMask}(ctx, to_gl_underlying_value<GLboolean>(requested.mask));
 
         if(requested.poly_offset != current.poly_offset)
             gl_function{&GladGLContext::PolygonOffset}(ctx, requested.poly_offset.factor, requested.poly_offset.units);
@@ -95,7 +107,7 @@ namespace avocet::opengl::capabilities::impl {
     void compensate_for_driver_init_bugs(const characteristic_context& ctx, const gl_stencil_test& init) {
         if(is_intel_arc(ctx.characteristics().renderer())) {
             const auto& func{init.front.func};
-            gl_function{&GladGLContext::StencilFunc}(ctx, to_gl_enum(func.comparison), func.reference_value, func.mask);
+            gl_function{&GladGLContext::StencilFunc}(ctx, to_gl_underlying_value<GLenum>(func.comparison), func.reference_value, func.mask);
         }
     }
 }

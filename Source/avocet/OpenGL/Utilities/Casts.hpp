@@ -7,26 +7,22 @@
 
 #pragma once
 
+#include "avocet/OpenGL/Utilities/TypeTraits.hpp"
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
+
 #include "glad/gl.h"
 
-#include <type_traits>
 
 namespace avocet::opengl {
-    [[nodiscard]]
-    constexpr GLsizei to_gl_sizei(std::size_t val) noexcept { return static_cast<GLsizei>(val); }
 
-    template<class T>
-        requires std::is_scoped_enum_v<T> && std::is_same_v<std::underlying_type_t<T>, GLenum>
+    /// Function to convert an OpenGL enumeration to its underlying type, such that
+    /// the latter must be spelled out. This function is designed for use at the
+    /// C++/OpenGL boundary, where it can be very helpful to see the OpenGL types
+    /// involved stated explicitly.
+    template<gl_underlies_enum UnderlyingType, class Enum >
+        requires std::is_scoped_enum_v<Enum> && std::same_as<UnderlyingType, std::underlying_type_t<Enum>>
     [[nodiscard]]
-    constexpr GLenum to_gl_enum(T val) noexcept { return static_cast<GLenum>(val); }
-
-    template<class T>
-        requires (std::is_scoped_enum_v<T> && std::is_same_v<std::underlying_type_t<T>, GLint>) || std::is_integral_v<T>
-    [[nodiscard]]
-    constexpr GLint to_gl_int(T val) noexcept { return static_cast<GLint>(val); }
-
-    template<class T>
-        requires (std::is_scoped_enum_v<T>&& std::is_same_v<std::underlying_type_t<T>, GLboolean>)
-    [[nodiscard]]
-    constexpr GLboolean to_gl_boolean(T val) noexcept { return static_cast<GLboolean>(val); }
+    constexpr UnderlyingType to_gl_underlying_value(Enum e) noexcept {
+        return to_underlying_value(e);
+    }
 }

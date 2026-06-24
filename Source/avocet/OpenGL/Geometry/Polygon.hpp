@@ -147,7 +147,7 @@ namespace avocet::opengl {
             if(!remainder)
                 return 0;
 
-            return static_cast<element_index_type>(i / 3 + remainder);
+            return checked_conversion_to<element_index_type>(i / 3 + remainder);
         }
 
         constexpr static element_array_type st_Indices{
@@ -155,7 +155,7 @@ namespace avocet::opengl {
         };
 
         static void do_draw(const decorated_context& ctx) {
-            gl_function{&GladGLContext::DrawElements}(ctx, GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
+            gl_function{&GladGLContext::DrawElements}(ctx, GL_TRIANGLES, num_elements, to_gl_underlying_value<GLenum>(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
 
         element_buffer_object<element_index_type> m_EBO;

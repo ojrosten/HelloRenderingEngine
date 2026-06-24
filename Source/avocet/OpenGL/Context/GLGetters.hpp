@@ -360,7 +360,7 @@ namespace avocet::opengl {
                 }
             };
 
-            gl_function{to_context_mem_fn_ptr_v<T>}(ctx, to_gl_enum(name), getPtr(vals));
+            gl_function{to_context_mem_fn_ptr_v<T>}(ctx, to_gl_underlying_value<GLenum>(name), getPtr(vals));
 
             return vals;
         }
@@ -431,6 +431,6 @@ namespace avocet::opengl {
     template<std::derived_from<context_base> Context>
     [[nodiscard]]
     std::string get(const Context& ctx, string_names name) {
-        return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, to_gl_enum(name)))};
+        return {std::bit_cast<const char*>(gl_function{&GladGLContext::GetString}(ctx, to_gl_underlying_value<GLenum>(name)))};
     }
 }

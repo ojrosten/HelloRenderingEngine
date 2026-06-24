@@ -153,12 +153,12 @@ namespace sequoia::testing
         template<test_mode Mode>
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const payload_type& payload) {
             auto checkGPUState{
-                    [&] <class Cap> (const std::optional<Cap>&cap) {
+                    [&] <class Cap> (const std::optional<Cap>& cap) {
                         testing::check(
                             equality,
                             std::format("{} is enabled", Cap::capability),
                             logger,
-                            static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_enum(Cap::capability))),
+                            static_cast<bool>(agl::gl_function{&GladGLContext::IsEnabled}(ctx, to_gl_underlying_value<GLenum>(Cap::capability))),
                             static_cast<bool>(cap)
                         );
 

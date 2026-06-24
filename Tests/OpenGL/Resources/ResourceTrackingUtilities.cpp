@@ -35,13 +35,8 @@ namespace avocet::testing
 
         [[nodiscard]]
         agl::resource_handle get_current_resource_index(const agl::decorated_context& ctx, agl::int_names name) {
-            const GLint param{get(ctx, name)};
-            if(param < 0)
-                throw std::runtime_error{std::format("Negative resource index: {}", param)};
-
-            return agl::resource_handle{static_cast<GLuint>(param)};
+            return agl::resource_handle{checked_conversion_to<GLuint>(get(ctx, name))};
         }
-
 
         using opt_latch_ref = std::optional<std::reference_wrapper<std::latch>>;
 

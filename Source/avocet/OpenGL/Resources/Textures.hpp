@@ -64,7 +64,7 @@ namespace avocet::opengl {
         case texture_format::rgba: return noDecoding ? texture_internal_format::rgba : texture_internal_format::srgba;
         }
 
-        throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_enum(format))};
+        throw std::runtime_error{std::format("to_internal_format: unrecognized value of texture_format, {}", to_gl_underlying_value<GLenum>(format))};
     }
 
     [[nodiscard]]
@@ -77,7 +77,7 @@ namespace avocet::opengl {
         case rgba: return colour_channels{4};
         }
 
-        throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_enum(format))};
+        throw std::runtime_error{std::format("to_num_channels: unrecognized value of texture_format {}", to_gl_underlying_value<GLenum>(format))};
     }
 
     [[nodiscard]]
@@ -85,7 +85,7 @@ namespace avocet::opengl {
         if(rowAlignment.raw_value() > 8)
             throw std::runtime_error{std::format("Row alignment of {} bytes requested, but OpenGL only supports 1, 2, 4 and 8 bytes", rowAlignment)};
 
-        return to_gl_int(rowAlignment.raw_value());
+        return checked_conversion_to<GLint>(rowAlignment.raw_value());
     }
 
     [[nodiscard]]
@@ -134,12 +134,12 @@ namespace avocet::opengl {
                 crv.context(),
                 GL_TEXTURE_2D,
                 0,
-                to_gl_int(to_internal_format(rawConfig.format, config.common_config.decoding)),
-                to_gl_sizei(rawConfig.extent.width),
-                to_gl_sizei(rawConfig.extent.height),
+                to_gl_underlying_value<GLint>(to_internal_format(rawConfig.format, config.common_config.decoding)),
+                checked_conversion_to<GLsizei>(rawConfig.extent.width),
+                checked_conversion_to<GLsizei>(rawConfig.extent.height),
                 0,
-                to_gl_enum(rawConfig.format),
-                to_gl_enum(to_gl_type_specifier_v<value_type>),
+                to_gl_underlying_value<GLenum>(rawConfig.format),
+                to_gl_underlying_value<GLenum>(to_gl_type_specifier_v<value_type>),
                 rawConfig.image_span.data()
             );
 
@@ -233,8 +233,8 @@ namespace avocet::opengl {
             base_type::do_bind(self);
 
             const auto& ctx{self.context()};
-            const discrete_extent extent{static_cast<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH)),
-                                         static_cast<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
+            const discrete_extent extent{checked_conversion_to<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_WIDTH)),
+                                         checked_conversion_to<std::uint32_t>(extract_texture_2d_param(ctx, GL_TEXTURE_HEIGHT))};
 
             const auto numChannels{to_num_channels(format)};
             const auto size{discrete_extent{padded_row_size(extent.width, numChannels, sizeof(value_type), rowAlignment), extent.height}.area()};
@@ -247,8 +247,8 @@ namespace avocet::opengl {
                 ctx,
                 GL_TEXTURE_2D,
                 0,
-                to_gl_enum(format),
-                to_gl_enum(to_gl_type_specifier_v<value_type>),
+                to_gl_underlying_value<GLenum>(format),
+                to_gl_underlying_value<GLenum>(to_gl_type_specifier_v<value_type>),
                 texture.data()
             );
 

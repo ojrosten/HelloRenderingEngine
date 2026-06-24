@@ -7,6 +7,8 @@
 
 #include "avocet/Core/AssetManagement/Image.hpp"
 
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -14,10 +16,10 @@ namespace avocet {
     namespace fs = std::filesystem;
 
     namespace {
-        constexpr auto maxVal{std::numeric_limits<std::uint32_t>::max()};
+        constexpr auto max_unsigned_val{std::numeric_limits<std::uint32_t>::max()};
 
         constexpr bool multiplication_overflows(std::uint32_t x, std::uint32_t y) noexcept {
-            return y ? maxVal / y < x : false;
+            return y ? max_unsigned_val / y < x : false;
         }
     }
 
@@ -36,9 +38,9 @@ namespace avocet {
                 throw std::runtime_error{std::format("unique_image: {} channels requested, but only 1--4 supported by stbi_load", requestedChannels.value().raw_value())};
         }
 
-        stbi_set_flip_vertically_on_load_thread(static_cast<bool>(flip));
+        stbi_set_flip_vertically_on_load_thread(to_underlying_value(flip));
 
-        int width{}, height{}, channels{}, channelsSelection{requestedChannels ? static_cast<int>(requestedChannels.value().raw_value()) : 0};
+        int width{}, height{}, channels{}, channelsSelection{requestedChannels ? checked_conversion_to<int>(requestedChannels.value().raw_value()) : 0};
         auto pData{stbi_load(texturePath.generic_string().c_str(), &width, &height, &channels, channelsSelection)};
         if(!pData)
             throw std::runtime_error{std::format("unique_image: texture {} did not load", texturePath.generic_string())};
@@ -53,19 +55,19 @@ namespace avocet {
             throw std::runtime_error{"padded_row_size: bytes per channel must be > 0"};
 
         if(multiplication_overflows(bytesPerChannel, channels.raw_value()))
-            throw std::runtime_error{std::format("padded_row_size: channels ({}) * bytes per channel ({}) exceeds max allowed value, {}", channels, bytesPerChannel, maxVal)};
+            throw std::runtime_error{std::format("padded_row_size: channels ({}) * bytes per channel ({}) exceeds max allowed value, {}", channels, bytesPerChannel, max_unsigned_val)};
 
         const auto bytesPerTexel{channels.raw_value() * bytesPerChannel};
         if(multiplication_overflows(bytesPerTexel, width))
-            throw std::runtime_error{std::format("padded_row_size: width ({}) * bytes per texel ({}) exceeds max allowed value, {}", width, bytesPerTexel, maxVal)};
+            throw std::runtime_error{std::format("padded_row_size: width ({}) * bytes per texel ({}) exceeds max allowed value, {}", width, bytesPerTexel, max_unsigned_val)};
 
         const auto nominalWidth{width * bytesPerTexel};
         const auto unpaddedBytes{nominalWidth % rowAlignment.raw_value()};
         if(!unpaddedBytes)
             return nominalWidth;
 
-        if(maxVal - rowAlignment.raw_value() < nominalWidth - unpaddedBytes)
-            throw std::runtime_error{std::format("padded_row_size: nominal row size ({}) aligned to ({}) bytes will be padded to exceed max allowed value, {}", nominalWidth, rowAlignment, maxVal)};
+        if(max_unsigned_val - rowAlignment.raw_value() < nominalWidth - unpaddedBytes)
+            throw std::runtime_error{std::format("padded_row_size: nominal row size ({}) aligned to ({}) bytes will be padded to exceed max allowed value, {}", nominalWidth, rowAlignment, max_unsigned_val)};
 
         return nominalWidth - unpaddedBytes + rowAlignment.raw_value();
     }
