@@ -1,1 +1,2 @@
 Arithmetic Casts Free Test
+Standard Top Level Checks:                 8;  Failures:  0  [Deep checks: 8]
