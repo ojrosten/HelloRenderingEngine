@@ -15,3 +15,4 @@
 - [User uses me as rehearsal partner for live-coding portion of lectures](feedback_live_coding_rehearsal.md) — iterative, lecture-sized, fine-tune loop welcome
 - [Explicit underlying type in to_gl_underlying_value<T> is deliberate](feedback_explicit_gl_underlying_type.md) — redundancy lets you check the GL boundary against the spec; don't deduce it away
 - [Testing vs dependencies trade-off](feedback_testing_vs_dependencies_tradeoff.md) — untested anon-namespace helpers can be deliberate; factor into tested generic utilities instead of hoisting to headers
+- [A lecture branch's diff is a superset of the lecture](feedback_lecture_diff_is_superset.md) — incidental prep-time fixes and toolchain churn ride along; don't attribute everything to the lecture
