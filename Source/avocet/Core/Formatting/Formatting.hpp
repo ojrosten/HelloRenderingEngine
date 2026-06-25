@@ -30,7 +30,7 @@ namespace avocet {
         requires std::is_scoped_enum_v<Enum>
     [[nodiscard]]
     std::string error_message(std::string_view enumName, Enum val) {
-        return make_error_message(enumName, to_underlying_value(val));
+        return make_error_message(enumName, std::to_underlying(val));
     }
 
     [[nodiscard]]

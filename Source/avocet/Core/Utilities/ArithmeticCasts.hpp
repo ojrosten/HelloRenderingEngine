@@ -41,10 +41,4 @@ namespace avocet {
 
         return static_cast<To>(val);
     }
-
-    template<class Enum>
-        requires std::is_scoped_enum_v<Enum>
-    constexpr std::underlying_type_t<Enum> to_underlying_value(Enum e) noexcept {
-        return static_cast<std::underlying_type_t<Enum>>(e);
-    }
 }

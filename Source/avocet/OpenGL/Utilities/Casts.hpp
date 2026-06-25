@@ -8,10 +8,10 @@
 #pragma once
 
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
-#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
+
+#include <utility>
 
 #include "glad/gl.h"
-
 
 namespace avocet::opengl {
 
@@ -19,10 +19,10 @@ namespace avocet::opengl {
     /// the latter must be spelled out. This function is designed for use at the
     /// C++/OpenGL boundary, where it can be very helpful to see the OpenGL types
     /// involved stated explicitly.
-    template<gl_underlies_enum UnderlyingType, class Enum >
+    template<gl_underlies_enum UnderlyingType, class Enum>
         requires std::is_scoped_enum_v<Enum> && std::same_as<UnderlyingType, std::underlying_type_t<Enum>>
     [[nodiscard]]
     constexpr UnderlyingType to_gl_underlying_value(Enum e) noexcept {
-        return to_underlying_value(e);
+        return std::to_underlying(e);
     }
 }
