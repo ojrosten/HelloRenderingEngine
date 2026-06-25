@@ -14,6 +14,7 @@ When I delivered a "deeper improvements" review of the codebase on 2026-05-21, t
 - ~~Rationalising the partial binding cache in `resourceful_context`~~ — NOT planned; the partial cache is intentional opt-in design (see [[project-binding-cache-rationale]]). The DSA-uniforms switch ([[project-shader-program-dsa-uniforms]]) *is* coming and will narrow the program cache's role.
 - Unifying `generic_resource` and `generic_shader_resource` (this one specifically is the **endpoint of a current 5-lecture sub-series** — i.e. live, not future roadmap)
 - FBO depth/stencil attachment support
+- **Arithmetic promotions / `std::in_range` / `std::cmp_*`** — provisionally **lecture 51** (as of lecture 48, delivered ~2026-06; the user notes it may slip later, since topics often take more lectures than estimated). This is why `checked_conversion_to` (lecture 48) hand-rolls its bounds checks instead of using `std::in_range`: the standard facilities are being saved for this dedicated treatment. Do **not** suggest switching `checked_conversion_to` to `std::in_range`/`std::cmp_*` as an improvement — it's deliberate setup. See [[feedback-explicit-gl-underlying-type]] / the lecture-48 conversion utilities.
 
 **Why:** Knowing these are on the teaching roadmap (and one is actively in flight) changes how I should respond when they come up. Re-raising them as if they were fresh observations would be tedious and miss the user's actual context.
 
