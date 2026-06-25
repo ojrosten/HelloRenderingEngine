@@ -62,12 +62,18 @@ namespace avocet::opengl {
         };
 
         template<std::size_t N>
-        static void generate(const decorated_context& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenVertexArrays}(ctx, N, indices.data()); }
+        static void generate(const decorated_context& ctx, raw_indices<N>& indices) {
+            gl_function{&GladGLContext::GenVertexArrays}(ctx, N, indices.data());
+        }
 
         template<std::size_t N>
-        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteVertexArrays}(ctx, N, indices.data()); }
+        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) {
+            gl_function{&GladGLContext::DeleteVertexArrays}(ctx, N, indices.data());
+        }
 
-        static void bind(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::BindVertexArray}(crv.context(), get_index(crv)); }
+        static void bind(decorated_contextual_resource_view crv) {
+            gl_function{&GladGLContext::BindVertexArray}(crv.context(), get_index(crv));
+        }
 
         static void configure(decorated_contextual_resource_view crv, const configurator& config) {
             add_label(identifier, crv, config.label);

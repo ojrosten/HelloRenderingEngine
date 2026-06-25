@@ -113,12 +113,18 @@ namespace avocet::opengl {
         constexpr static auto caching_id{caching_identifier::opt_out};
 
         template<std::size_t N>
-        static void generate(const decorated_context& ctx, raw_indices<N>& indices) { gl_function{&GladGLContext::GenTextures}(ctx, N, indices.data()); }
+        static void generate(const decorated_context& ctx, raw_indices<N>& indices) {
+            gl_function{&GladGLContext::GenTextures}(ctx, N, indices.data());
+        }
 
         template<std::size_t N>
-        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) { gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data()); }
+        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) {
+            gl_function{&GladGLContext::DeleteTextures}(ctx, N, indices.data());
+        }
 
-        static void bind(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv)); }
+        static void bind(decorated_contextual_resource_view crv) {
+            gl_function{&GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv));
+        }
 
         template<class Self>
             requires defines_texture_configuration_v<Self>
