@@ -13,3 +13,5 @@
 - [Cross-platform targets: Win/Linux/Mac × MSVC/gcc/clang × GL 4.1–4.6](reference_cross_platform_targets.md) — 4.1 is the floor, libc++ has no std::generator
 - [Non-templated deducing-this marks "object-const but GPU/cache side-effecting"](feedback_deducing_this_convention.md) — convention, not stylistic preference
 - [User uses me as rehearsal partner for live-coding portion of lectures](feedback_live_coding_rehearsal.md) — iterative, lecture-sized, fine-tune loop welcome
+- [Explicit underlying type in to_gl_underlying_value<T> is deliberate](feedback_explicit_gl_underlying_type.md) — redundancy lets you check the GL boundary against the spec; don't deduce it away
+- [Testing vs dependencies trade-off](feedback_testing_vs_dependencies_tradeoff.md) — untested anon-namespace helpers can be deliberate; factor into tested generic utilities instead of hoisting to headers

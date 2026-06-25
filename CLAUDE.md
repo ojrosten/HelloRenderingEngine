@@ -24,9 +24,9 @@ The project must build and run on three platforms with three toolchains and thre
 | Linux    | gcc      | libstdc++   | 4.x (currently 4.5 on WSL, primary dev env) |
 | macOS    | clang    | libc++      | 4.1 (Apple-deprecated, floor)               |
 
-**OpenGL floor is 4.1.** The `opengl_version{4, 1}` default in `Source/avocet/OpenGL/Context/Version.hpp` is the Mac floor, not arbitrary. Features above the floor (DSA `glCreate*`/`glNamedBuffer*` at 4.5, `glDebugMessageCallback`/`glObjectLabel` at 4.3, `glBufferStorage` at 4.4) are fine to suggest — fallback design is the *engineering content* of such suggestions, not a tax on them. The existing codebase models this carefully (`debug_output_supported`/`object_labels_supported` in `Version.hpp`, the `STD_GENERATOR` macro in `Errors.hpp`).
+**OpenGL floor is 4.1.** The `opengl_version{4, 1}` default in `Source/avocet/OpenGL/Context/Version.hpp` is the Mac floor, not arbitrary. Features above the floor (DSA `glCreate*`/`glNamedBuffer*` at 4.5, `glDebugMessageCallback`/`glObjectLabel` at 4.3, `glBufferStorage` at 4.4) are fine to suggest — fallback design is the *engineering content* of such suggestions, not a tax on them. The existing codebase models this carefully (`debug_output_supported`/`object_labels_supported` in `Version.hpp`, the `#ifdef __cpp_lib_generator` guard in `Errors.hpp`).
 
-**Standard library floor is libc++.** Notably `std::generator` is not yet available on libc++ — hence the `STD_GENERATOR` macro guard and `libcpp_workaround` namespace in `Source/avocet/OpenGL/Debugging/Errors.cpp`. The `target_link_directories(... /opt/homebrew/opt/llvm@21/lib/c++)` block in `Source/avocet/CMakeLists.txt` arranges the Mac build to link against Homebrew llvm@21's libc++, not Apple's.
+**Standard library floor is libc++.** Notably `std::generator` is not yet available on libc++ — hence the `#ifdef __cpp_lib_generator` guard (which selects `std::generator` where present and the `libcpp_workaround` namespace's vector-returning fallback otherwise) in `Source/avocet/OpenGL/Debugging/Errors.cpp`. The `target_link_directories(... /opt/homebrew/opt/llvm@21/lib/c++)` block in `Source/avocet/CMakeLists.txt` arranges the Mac build to link against Homebrew llvm@21's libc++, not Apple's.
 
 ## Conventions
 
