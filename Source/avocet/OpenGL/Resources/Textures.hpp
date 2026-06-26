@@ -109,7 +109,7 @@ namespace avocet::opengl {
     };
 
     struct common_texture_2d_lifecycle_events {
-        constexpr static auto identifier{object_identifier::texture};
+        constexpr static auto identifier{ object_identifier::texture};
         constexpr static auto caching_id{caching_identifier::opt_out};
 
         template<std::size_t N>

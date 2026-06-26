@@ -58,7 +58,7 @@ namespace avocet::opengl {
     GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.view()); }
 
     struct shader_program_resource_lifecycle {
-        constexpr static auto identifier{object_identifier::program};
+        constexpr static auto identifier{ object_identifier::program};
         constexpr static auto caching_id{caching_identifier::program};
 
         [[nodiscard]]

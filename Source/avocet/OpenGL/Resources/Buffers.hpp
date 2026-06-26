@@ -54,7 +54,7 @@ namespace avocet::opengl {
     {};
 
     struct vao_lifecycle_events {
-        constexpr static auto identifier{object_identifier::vertex_array};
+        constexpr static auto identifier{ object_identifier::vertex_array};
         constexpr static auto caching_id{caching_identifier::opt_out};
 
         struct configurator {
