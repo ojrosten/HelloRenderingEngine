@@ -58,6 +58,7 @@ namespace avocet::opengl {
             for (contextual_resource_view crv : crhs) {
                 crv.context().reset(LifeEvents{}, crv.handle());
             }
+            LifeEvents::destroy(crhs.context(), crhs.get_raw_indices());
         }
 
         static void bind(contextual_resource_view crv) { 

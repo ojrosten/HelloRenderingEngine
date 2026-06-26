@@ -11,6 +11,8 @@
 
 #include "BufferObjectTestingUtilities.hpp"
 
+#include "avocet/OpenGL/Context/GLGetters.hpp"
+
 namespace avocet::testing
 {
     using namespace sequoia::testing;
@@ -27,6 +29,10 @@ namespace avocet::testing
     private:
         template<class Buffer>
             requires is_gl_buffer_v<Buffer>
-        void execute(const curlew::window& w);
+        void execute(const curlew::window& w, opengl::int_names bindPoint);
+
+        template<class Buffer>
+            requires is_gl_buffer_v<Buffer>
+        opengl::resource_handle do_check_semantics(const curlew::window& w, opengl::int_names bindPoint);
     };
 }
