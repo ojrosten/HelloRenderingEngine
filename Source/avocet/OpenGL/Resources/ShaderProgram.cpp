@@ -94,10 +94,15 @@ namespace avocet::opengl {
 
             [[nodiscard]]
             contextual_resource_handle create(const resourceful_context& ctx) {
-                return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_underlying_value<GLenum>(m_Species))}};
+                return {
+                    ctx,
+                    std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_underlying_value<GLenum>(m_Species))}
+                };
             }
 
-            static void destroy(decorated_contextual_resource_view handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }
+            static void destroy(decorated_contextual_resource_view handle) {
+                gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle));
+            }
         };
 
         using shader_resource = generic_shader_resource<shader_resource_lifecycle>;

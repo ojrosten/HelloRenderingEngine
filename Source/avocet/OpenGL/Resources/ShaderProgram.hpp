@@ -59,14 +59,16 @@ namespace avocet::opengl {
 
     struct shader_program_resource_lifecycle {
         constexpr static auto identifier{object_identifier::program};
-		constexpr static auto caching_id{caching_identifier::program};
+        constexpr static auto caching_id{caching_identifier::program};
 
         [[nodiscard]]
         static contextual_resource_handle create(const resourceful_context& ctx) {
-            return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
+            return {ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
         }
 
-        static void destroy(decorated_contextual_resource_view crv) { gl_function{&GladGLContext::DeleteProgram}(crv.context(), get_index(crv)); }
+        static void destroy(decorated_contextual_resource_view crv) {
+            gl_function{&GladGLContext::DeleteProgram}(crv.context(), get_index(crv));
+        }
 
         static void use(decorated_contextual_resource_view crv) {
             gl_function{ &GladGLContext::UseProgram }(crv.context(), get_index(crv));
