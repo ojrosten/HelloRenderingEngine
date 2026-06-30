@@ -86,3 +86,11 @@ No new entry points will be added to OpenGL. Hand-maintained tables of GL functi
 ## More context
 
 `LLMs/Claude/README.md` describes the layout of finer-grained per-session memory and how to make it visible on a fresh machine. The memory files in `LLMs/Claude/memory/` carry personal-collaboration calibration that isn't useful as always-loaded context but is recalled selectively by the auto-memory system once synced into place.
+
+### Session-start memory-sync check
+
+The version-controlled `LLMs/Claude/memory/` (source of truth) and the per-machine auto-memory directory (the path is given in your system prompt) can drift — memory writes during a session land in the auto-memory copy, while edits to the committed files land in the repo. **At the start of a session, quietly compare the two directories** (e.g. `diff -rq LLMs/Claude/memory "<auto-memory-path>"`) and, if they differ, tell the user which side is ahead and offer to reconcile. Don't sync automatically — the user decides direction:
+- **repo → auto-memory:** run `./LLMs/Claude/sync.sh "<auto-memory-path>"` (this is the normal direction; repo is canonical).
+- **auto-memory → repo:** copy the changed `*.md` back into `LLMs/Claude/memory/`, then it shows in `git diff` to review and commit.
+
+Keep the check lightweight and silent when the two are already in sync.
