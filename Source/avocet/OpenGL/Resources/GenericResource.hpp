@@ -23,17 +23,28 @@ namespace avocet::opengl {
         requires { typename T::configurator; }
     };
 
+    template<class LifeEvents>
+    inline constexpr bool has_configure_event_v{
+           has_configurator_type_v<LifeEvents>
+        && requires(const LifeEvents& lifeEvents, decorated_contextual_resource_view dcrv, const LifeEvents::configurator& configurator) {
+               lifeEvents.configure(dcrv, configurator);
+           }
+    };
+
+    template<class LifeEvents>
+    inline constexpr bool has_common_lifecycle_events_v{
+           sequoia::pseudoregular<LifeEvents>
+        && has_lifecycle_identifiers_v<LifeEvents>
+        && has_configure_event_v<LifeEvents>
+    };
+
     template<num_resources NumResources, class LifeEvents>
     inline constexpr bool has_resource_lifecycle_events_v{
-           std::is_empty_v<LifeEvents>
-        && std::is_default_constructible_v<LifeEvents>
-        && has_configurator_type_v<LifeEvents>
-        && has_lifecycle_identifiers_v<LifeEvents>
-        && requires(const LifeEvents& t, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv) {
-               LifeEvents::generate(crv.context(), indices);
-               LifeEvents::destroy(crv.context(), indices);
-               LifeEvents::bind(crv);
-               t.configure(crv, std::declval<typename LifeEvents::configurator>());
+           has_common_lifecycle_events_v<LifeEvents>
+        && has_bind_event_v<LifeEvents>
+        && requires(const LifeEvents& lifeEvents, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv) {
+               lifeEvents.generate(crv.context(), indices);
+               lifeEvents.destroy (crv.context(), indices);
            }
     };
 

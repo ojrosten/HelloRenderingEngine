@@ -37,6 +37,8 @@ namespace avocet::opengl {
         static void configure(decorated_contextual_resource_view h, const configurator& config) {
             add_label(identifier, h, config.label);
         }
+
+        friend constexpr bool operator==(const framebuffer_lifecycle_events&, const framebuffer_lifecycle_events&) noexcept = default;
     };
 
     using fbo_configurator = framebuffer_lifecycle_events::configurator;

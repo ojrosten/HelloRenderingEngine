@@ -152,6 +152,8 @@ namespace avocet::opengl {
             if(config.common_config.parameter_setter)
                 config.common_config.parameter_setter();
         }
+
+        friend constexpr bool operator==(const common_texture_2d_lifecycle_events&, const common_texture_2d_lifecycle_events&) noexcept = default;
     };
 
 
@@ -194,6 +196,8 @@ namespace avocet::opengl {
                 .image_span{config.data_view.span()}
             };
         }
+
+        friend constexpr bool operator==(const texture_2d_lifecycle_events&, const texture_2d_lifecycle_events&) noexcept = default;
     };
 
     struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {
@@ -210,6 +214,8 @@ namespace avocet::opengl {
                 .image_span{}
             };
         }
+
+        friend constexpr bool operator==(const framebuffer_texture_2d_lifecycle_events&, const framebuffer_texture_2d_lifecycle_events&) noexcept = default;
     };
 
     struct texture_unit {
