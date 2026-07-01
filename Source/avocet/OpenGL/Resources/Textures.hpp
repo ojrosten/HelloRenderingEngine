@@ -228,8 +228,7 @@ namespace avocet::opengl {
         friend constexpr auto operator<=>(const texture_unit&, const texture_unit&) noexcept = default;
     };
 
-    template<class LifeEvents>
-        requires has_resource_lifecycle_events_v<num_resources{1}, LifeEvents>
+    template<standard_lifecycle_for<num_resources{1}> LifeEvents>
     class generic_texture_2d : public generic_resource<num_resources{1}, LifeEvents> {
     public:
         using base_type         = generic_resource<num_resources{1}, LifeEvents> ;
