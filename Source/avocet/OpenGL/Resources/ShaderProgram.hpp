@@ -57,7 +57,7 @@ namespace avocet::opengl {
     [[nodiscard]]
     GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.view()); }
 
-    struct shader_program_resource_lifecycle {
+    struct shader_program_lifecycle_events {
         constexpr static auto identifier{ object_identifier::program};
         constexpr static auto caching_id{caching_identifier::program};
 
@@ -75,7 +75,7 @@ namespace avocet::opengl {
         }
     };
 
-    using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
+    using shader_program_resource = generic_shader_resource<shader_program_lifecycle_events>;
 
     struct string_hash {
         using is_transparent = void;
@@ -101,7 +101,7 @@ namespace avocet::opengl {
 
         ~shader_program() {
             auto crv{ m_Resource.view() };
-            crv.context().reset(shader_program_resource_lifecycle{}, crv.handle());
+            crv.context().reset(shader_program_lifecycle_events{}, crv.handle());
         }
 
         [[nodiscard]]
@@ -109,7 +109,7 @@ namespace avocet::opengl {
 
         void use(this const shader_program& self) {
             auto crv{ self.m_Resource.view() };
-            crv.context().utilize(shader_program_resource_lifecycle{}, crv.handle());
+            crv.context().utilize(shader_program_lifecycle_events{}, crv.handle());
         }
 
         void set_uniform(std::string_view name, GLfloat val) {

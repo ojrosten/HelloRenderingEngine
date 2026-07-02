@@ -84,13 +84,13 @@ namespace avocet::opengl {
             }
         };
 
-        class shader_resource_lifecycle {
+        class shader_stage_lifecycle_events {
             shader_species m_Species;
         public:
             constexpr static auto identifier{ object_identifier::shader};
             constexpr static auto caching_id{caching_identifier::opt_out};
 
-            explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
+            explicit shader_stage_lifecycle_events(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
             contextual_resource_handle create(const resourceful_context& ctx) {
@@ -105,7 +105,7 @@ namespace avocet::opengl {
             }
         };
 
-        using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
+        using shader_resource = generic_shader_resource<shader_stage_lifecycle_events>;
 
         class shader_compiler_checker : public shader_checker {
             shader_species m_Species;
@@ -183,8 +183,8 @@ namespace avocet::opengl {
             ~shader_attacher() { gl_function{&GladGLContext::DetachShader}(m_Context, m_ProgIndex, m_ShaderIndex); }
         };
 
-        static_assert(has_shader_lifecycle_events_v<shader_resource_lifecycle>);
-        static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
+        static_assert(has_shader_lifecycle_events_v<shader_stage_lifecycle_events>);
+        static_assert(has_shader_lifecycle_events_v<shader_program_lifecycle_events>);
     }
 
     shader_program::shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
