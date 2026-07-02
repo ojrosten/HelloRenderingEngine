@@ -61,6 +61,11 @@ namespace avocet::opengl {
         constexpr static auto identifier{ object_identifier::program};
         constexpr static auto caching_id{caching_identifier::program};
 
+        struct configurator {
+            std::filesystem::path vertex_shader, fragment_shader;
+            optional_label label;
+        };
+
         [[nodiscard]]
         static contextual_resource_handle create(const resourceful_context& ctx) {
             return {ctx, std::array{gl_function{&GladGLContext::CreateProgram}(ctx)}};
@@ -73,6 +78,10 @@ namespace avocet::opengl {
         static void use(decorated_contextual_resource_view crv) {
             gl_function{ &GladGLContext::UseProgram }(crv.context(), get_index(crv));
         }
+
+        static void configure(resourceful_contextual_resource_view progView, const configurator& config);
+
+        friend constexpr bool operator==(const shader_program_resource_lifecycle&, const shader_program_resource_lifecycle&) noexcept = default;
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_resource_lifecycle>;
