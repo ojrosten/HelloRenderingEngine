@@ -89,7 +89,7 @@ namespace avocet::opengl {
             }
         };
 
-        class shader_resource_lifecycle {
+        class shader_stage_lifecycle_events {
             shader_species m_Species;
         public:
             constexpr static auto identifier{ object_identifier::shader};
@@ -99,7 +99,7 @@ namespace avocet::opengl {
                 optional_label label;
             };
 
-            explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
+            explicit shader_stage_lifecycle_events(shader_species species) : m_Species{species} {}
 
             [[nodiscard]]
             contextual_resource_handle create(const resourceful_context& ctx) {
@@ -117,10 +117,10 @@ namespace avocet::opengl {
                 add_label(identifier, stageView, config.label);
             }
 
-            friend constexpr bool operator==(const shader_resource_lifecycle&, const shader_resource_lifecycle&) noexcept = default;
+            friend constexpr bool operator==(const shader_stage_lifecycle_events&, const shader_stage_lifecycle_events&) noexcept = default;
         };
 
-        using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
+        using shader_resource = generic_shader_resource<shader_stage_lifecycle_events>;
 
         class shader_compiler_checker : public shader_checker {
             shader_species m_Species;
@@ -196,11 +196,11 @@ namespace avocet::opengl {
             ~shader_attacher() { gl_function{&GladGLContext::DetachShader}(m_ProgView.context(), get_index(m_ProgView), get_index(m_StageView)); }
         };
 
-        static_assert(has_shader_lifecycle_events_v<shader_resource_lifecycle>);
-        static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
+        static_assert(has_shader_lifecycle_events_v<shader_stage_lifecycle_events>);
+        static_assert(has_shader_lifecycle_events_v<shader_program_lifecycle_events>);
     }
 
-    void shader_program_resource_lifecycle::configure(resourceful_contextual_resource_view progView, const configurator& config) {
+    void shader_program_lifecycle_events::configure(resourceful_contextual_resource_view progView, const configurator& config) {
         add_label(identifier, progView, config.label);
 
         shader_compiler
@@ -218,7 +218,7 @@ namespace avocet::opengl {
     shader_program::shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
         : m_Resource{ctx}
     {
-        shader_program_resource_lifecycle::configure(m_Resource.view(), {vertexShaderSource, fragmentShaderSource, make_program_label(vertexShaderSource, fragmentShaderSource)});
+        shader_program_lifecycle_events::configure(m_Resource.view(), {vertexShaderSource, fragmentShaderSource, make_program_label(vertexShaderSource, fragmentShaderSource)});
     }
 
     [[nodiscard]]
