@@ -34,6 +34,11 @@ namespace avocet::opengl {
             throw std::runtime_error{error_message("shader_species", species)};
         }
 
+        [[nodiscard]]
+        std::string make_program_label(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
+            return std::format("{} / {}", sequoia::back(vertexShaderSource).string(), sequoia::back(fragmentShaderSource).string());
+        }
+
         template<class T>
         inline constexpr bool has_checker_attributes_v{
             requires(const T & t) {
@@ -197,18 +202,15 @@ namespace avocet::opengl {
             vertexShader  {ctx, shader_species::vertex,   vertexShaderSource},
             fragmentShader{ctx, shader_species::fragment, fragmentShaderSource};
 
-        const auto progIndex{get_index(m_Resource)};
 
         {
             shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
+
+            const auto progIndex{get_index(m_Resource)};
             gl_function{&GladGLContext::LinkProgram}(ctx, progIndex);
 
             if(m_Resource.view().context().fundamental_characteristics().object_labels_available() != object_labelling_available::no) {
-                const std::string label{
-                    std::format("{} / {}",
-                                sequoia::back(vertexShaderSource).string(),
-                                sequoia::back(fragmentShaderSource).string())};
-
+                const std::string label{make_program_label(vertexShaderSource, fragmentShaderSource)};
                 gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, checked_conversion_to<GLsizei>(label.size()), label.data());
             }
         }
