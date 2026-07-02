@@ -202,7 +202,6 @@ namespace avocet::opengl {
             vertexShader  {ctx, shader_species::vertex,   vertexShaderSource},
             fragmentShader{ctx, shader_species::fragment, fragmentShaderSource};
 
-
         {
             shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
 
