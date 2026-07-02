@@ -24,6 +24,11 @@ namespace avocet::opengl {
         enum class shader_species : GLenum { vertex = GL_VERTEX_SHADER, fragment = GL_FRAGMENT_SHADER };
 
         [[nodiscard]]
+        std::string make_program_label(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
+            return std::format("{} / {}", sequoia::back(vertexShaderSource).string(), sequoia::back(fragmentShaderSource).string());
+        }
+
+        [[nodiscard]]
         std::string to_string(shader_species species) {
             using enum shader_species;
             switch(species) {
@@ -201,11 +206,7 @@ namespace avocet::opengl {
             gl_function{&GladGLContext::LinkProgram}(ctx, progIndex);
 
             if(m_Resource.view().context().fundamental_characteristics().object_labels_available() != object_labelling_available::no) {
-                const std::string label{
-                    std::format("{} / {}",
-                                sequoia::back(vertexShaderSource).string(),
-                                sequoia::back(fragmentShaderSource).string())};
-
+                const std::string label{make_program_label(vertexShaderSource, fragmentShaderSource)};
                 gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, checked_conversion_to<GLsizei>(label.size()), label.data());
             }
         }
