@@ -103,6 +103,9 @@ namespace avocet::opengl {
             static void destroy(decorated_contextual_resource_view handle) {
                 gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle));
             }
+
+            [[nodiscard]]
+            friend constexpr bool operator==(const shader_stage_lifecycle_events&, const shader_stage_lifecycle_events&) noexcept = default;
         };
 
         using shader_resource = generic_shader_resource<shader_stage_lifecycle_events>;

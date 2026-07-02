@@ -73,6 +73,9 @@ namespace avocet::opengl {
         static void use(decorated_contextual_resource_view crv) {
             gl_function{ &GladGLContext::UseProgram }(crv.context(), get_index(crv));
         }
+
+        [[nodiscard]]
+        friend constexpr bool operator==(const shader_program_lifecycle_events&, const shader_program_lifecycle_events&) noexcept = default;
     };
 
     using shader_program_resource = generic_shader_resource<shader_program_lifecycle_events>;
