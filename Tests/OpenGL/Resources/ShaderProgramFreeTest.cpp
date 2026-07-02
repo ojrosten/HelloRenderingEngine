@@ -8,10 +8,13 @@
 /*! \file */
 
 #include "ShaderProgramFreeTest.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 
 namespace avocet::testing
 {
+    namespace agl = avocet::opengl;
+
     [[nodiscard]]
     std::filesystem::path shader_program_free_test::source_file() const
     {
@@ -20,9 +23,16 @@ namespace avocet::testing
 
     void shader_program_free_test::run_tests()
     {
-        using namespace curlew;
         auto win{create_default_window({1, 1})};
 
+        const auto handle{execute(win)};
+        if(check("Index needs to be non-null for next check to be meaningful", handle != agl::resource_handle{})) {
+            check("Destruction has cleaned up the resource", not agl::gl_function{&GladGLContext::IsProgram}(win.context(), handle.index()));
+        }
+    }
+
+    opengl::resource_handle shader_program_free_test::execute(const curlew::window& win)
+    {
         const auto shaderDir{working_materials()};
 
         agl::shader_program
@@ -125,5 +135,6 @@ namespace avocet::testing
         check(equality, "", sp1.get_uniform<GLint, 4>("foo_i4"), std::array{ 1, -1,  1, -1});
         check(equality, "", sp1.get_uniform<GLint, 4>("bar_i4"), std::array{ 1, -1,  1, -1});
 
+        return agl::resource_handle{checked_conversion_to<GLuint>(agl::get(win.context(), agl::int_names::current_program))};
     }
 }

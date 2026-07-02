@@ -8,6 +8,7 @@
 /*! \file */
 
 #include "FramebufferFreeTest.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 #include "avocet/OpenGL/Resources/Framebuffer.hpp"
 
 #include "Core/AssetManagement/ImageTestingUtilities.hpp"
@@ -22,15 +23,23 @@ namespace avocet::testing
 
     void framebuffer_free_test::run_tests()
     {
+        auto win{create_default_window({1, 1})};
+
+        const auto handle{execute(win)};
+        if(check("Index needs to be non-null for next check to be meaningful", handle != opengl::resource_handle{})) {
+            check("Destruction has cleaned up the resource", not opengl::gl_function{&GladGLContext::IsFramebuffer}(win.context(), handle.index()));
+        }
+    }
+
+    opengl::resource_handle framebuffer_free_test::execute(const curlew::window& win)
+    {
         using namespace curlew;
         using namespace opengl;
-
-        auto w{create_window({.extent{.width{1}, .height{1}}, .hiding{window_hiding_mode::on}})};
 
         constexpr discrete_extent fbExtent{.width{1}, .height{2}};
         framebuffer_object
             fbo{
-                w.context(),
+                win.context(),
                 fbo_configurator{.label{}},
                 framebuffer_texture_2d_configurator{
                     .common_config{},
@@ -39,8 +48,8 @@ namespace avocet::testing
                 }
             };
 
-        gl_function{&GladGLContext::ClearColor}(w.context(), 1.f, 128.f/255.f, 128.f/255.f, 1.f);
-        gl_function{&GladGLContext::Clear}(w.context(), GL_COLOR_BUFFER_BIT);
+        gl_function{&GladGLContext::ClearColor}(win.context(), 1.f, 128.f/255.f, 128.f/255.f, 1.f);
+        gl_function{&GladGLContext::Clear}(win.context(), GL_COLOR_BUFFER_BIT);
 
         check(
             equivalence,
@@ -58,5 +67,7 @@ namespace avocet::testing
                 .row_alignment{1}
             }
         );
+
+        return resource_handle{checked_conversion_to<GLuint>(get(win.context(), int_names::draw_framebuffer_binding))};
     }
 }

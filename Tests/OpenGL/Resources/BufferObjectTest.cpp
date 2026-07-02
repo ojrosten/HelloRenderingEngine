@@ -31,7 +31,7 @@ namespace avocet::testing
     void buffer_object_test::execute(const curlew::window& w, opengl::int_names bindPoint)
     {
         const auto handle{do_check_semantics<Buffer>(w, bindPoint)};
-        if(check("Index needs to be non-null for next check to be meaningful", handle.index() > 0u)) {
+        if(check("Index needs to be non-null for next check to be meaningful", handle != agl::resource_handle{})) {
             check("Destruction has cleaned up the resource", not agl::gl_function{&GladGLContext::IsBuffer}(w.context(), handle.index()));
         }
     }
