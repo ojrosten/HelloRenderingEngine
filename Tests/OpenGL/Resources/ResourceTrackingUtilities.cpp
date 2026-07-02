@@ -50,7 +50,7 @@ namespace avocet::testing
         template<class Resource>
         struct resource_artefacts {
             agl::resource_handle handle;
-            std::optional<Resource> opt_shader_prog{};
+            std::optional<Resource> opt_resource{};
         };
 
         enum class extend_resource_lifetime : bool { no, yes };
