@@ -1,8 +1,10 @@
 ---
 name: project-planned-lecture-topics
-description: Many of the "deeper improvements" I identified in a code review are already planned lecture topics — treat as active/roadmap work, not fresh suggestions.
-metadata:
+description: "Many of the \"deeper improvements\" I identified in a code review are already planned lecture topics — treat as active/roadmap work, not fresh suggestions."
+metadata: 
+  node_type: memory
   type: project
+  originSessionId: 972874bf-746a-4860-a5b6-ea430800f8e2
 ---
 
 When I delivered a "deeper improvements" review of the codebase on 2026-05-21, the user confirmed that *many* (not all enumerated) of my structural observations are already planned topics for future lectures in the teaching series. The areas I raised that fall into this category include:
@@ -33,3 +35,9 @@ The user settled on a three-word scheme for the 5-lecture arc that harmonizes th
 The load-bearing distinction: **canonicalization = conform, unification = merge**; conforming is a precondition that unification consumes (you can't merge until they conform).
 
 Discussed (and dismissed) "normalization" as the L49 word — in CS it carries the same value-transform connotation as "canonicalize" (DB/Unicode/vector normalization), so it doesn't escape the concern. **Why:** the user agonizes over naming and asked me to frame these lectures consistently. **How to apply:** use these words as above when discussing the arc, but treat as provisional — the user explicitly flagged he may revise. Confirm before relying on it if it's been a while.
+
+## The L49 canonical concept: `sequoia::pseudoregular` (confirmed 2026-07-03)
+
+The concrete "common form" L49 will demand of every life-events type is **`sequoia::pseudoregular`** — like `std::regular` but with the default-constructibility requirement *relaxed* (still needs copyable + `operator==`). This is why the `start_lecture_49-preliminary` groundwork adds defaulted `constexpr`/`noexcept` `operator==` to *every* `*_lifecycle_events` type (vao/buffer/texture/framebuffer/shader-stage/shader-program) — none was consumed by a concept yet at the preliminary stage; it's setup for the pseudoregular constraint.
+
+Relaxing default-constructibility is load-bearing, not incidental: `shader_stage_lifecycle_events` holds a `shader_species m_Species` and is therefore **not** default-constructible, so plain `std::regular` would exclude it. `pseudoregular` is chosen precisely so the stateful shader-stage type can conform alongside the empty tag-like types. **How to apply:** when reviewing L49 work, expect a `pseudoregular` requirement on the life-events concept(s); don't flag the `operator==` additions as unused, and don't suggest `std::regular` (it would wrongly reject the shader-stage type).
