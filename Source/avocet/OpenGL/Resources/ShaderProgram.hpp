@@ -23,7 +23,7 @@ namespace avocet::opengl {
     template<class LifeEvents>
     inline constexpr bool has_shader_lifecycle_events_v{
            has_lifecycle_identifiers_v<LifeEvents>
-        && requires(LifeEvents& lifeEvents, contextual_resource_view handle) {
+        && requires(LifeEvents& lifeEvents, resourceful_contextual_resource_view handle) {
                { lifeEvents.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
                LifeEvents::destroy(handle);
            }
@@ -47,7 +47,7 @@ namespace avocet::opengl {
         generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
 
         [[nodiscard]]
-        contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }
+        resourceful_contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }
 
         [[nodiscard]]
         friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;

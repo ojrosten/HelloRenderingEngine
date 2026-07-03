@@ -55,13 +55,13 @@ namespace avocet::opengl {
         }
 
         static void destroy(const contextual_resource_handles<N>& crhs) {
-            for (contextual_resource_view crv : crhs) {
+            for (resourceful_contextual_resource_view crv : crhs) {
                 crv.context().reset(LifeEvents{}, crv.handle());
             }
             LifeEvents::destroy(crhs.context(), crhs.get_raw_indices());
         }
 
-        static void bind(contextual_resource_view crv) { 
+        static void bind(resourceful_contextual_resource_view crv) { 
             crv.context().utilize(LifeEvents{}, crv.handle());
         }
 
@@ -153,6 +153,6 @@ namespace avocet::opengl {
         template<std::size_t I>
             requires (I < N)
         [[nodiscard]]
-        contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+        resourceful_contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
     };
 }

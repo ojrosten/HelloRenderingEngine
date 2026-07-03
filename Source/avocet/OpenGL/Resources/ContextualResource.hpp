@@ -19,7 +19,7 @@
 #include <utility>
 
 namespace avocet::opengl {
-    using contextual_resource_view = generic_contextual_resource_view<resourceful_context>;
+    using resourceful_contextual_resource_view = generic_contextual_resource_view<resourceful_context>;
 
     class context_ref {
         const resourceful_context* m_Context{};
@@ -53,8 +53,8 @@ namespace avocet::opengl {
 
         contextual_deref_policy& operator=(const contextual_deref_policy&) = default;
     public:
-        using value_type = contextual_resource_view;
-        using reference  = contextual_resource_view;
+        using value_type = resourceful_contextual_resource_view;
+        using reference  = resourceful_contextual_resource_view;
 
         contextual_deref_policy() = default;
 
