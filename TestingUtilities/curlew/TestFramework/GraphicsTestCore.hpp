@@ -10,6 +10,9 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "curlew/Window/RenderingSetup.hpp"
 
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/GLFunction.hpp"
+
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
 
 namespace curlew {
@@ -88,6 +91,17 @@ namespace curlew {
         [[nodiscard]]
         curlew::window create_default_window(avocet::discrete_extent extent) const {
             return create_window(make_default_config(extent));
+        }
+
+        void check_gpu_cleanup(const avocet::opengl::decorated_context& ctx,
+                               avocet::opengl::glad_ctx_ptr_to_mem_fn_ptr_type<GLboolean, GLuint> ptrToGLFn,
+                               const avocet::opengl::resource_handle& handle,
+                               std::source_location loc=std::source_location::current())
+        {
+            namespace agl = avocet::opengl;
+            if (this->check(this->report({"Index needs to be non-null for next check to be meaningful", loc}), handle != agl::resource_handle{})) {
+                this->check(this->report({"Destruction has cleaned up the resource", loc}), not agl::gl_function{ptrToGLFn}(ctx, handle.index()));
+            }
         }
     };
 

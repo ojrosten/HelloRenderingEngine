@@ -26,9 +26,7 @@ namespace avocet::testing
         auto win{create_default_window({1, 1})};
 
         const auto handle{execute(win)};
-        if(check("Index needs to be non-null for next check to be meaningful", handle != opengl::resource_handle{})) {
-            check("Destruction has cleaned up the resource", not opengl::gl_function{&GladGLContext::IsFramebuffer}(win.context(), handle.index()));
-        }
+        check_gpu_cleanup(win.context(), &GladGLContext::IsFramebuffer, handle);
     }
 
     opengl::resource_handle framebuffer_free_test::execute(const curlew::window& win)

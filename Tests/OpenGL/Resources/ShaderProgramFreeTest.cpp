@@ -26,9 +26,7 @@ namespace avocet::testing
         auto win{create_default_window({1, 1})};
 
         const auto handle{execute(win)};
-        if(check("Index needs to be non-null for next check to be meaningful", handle != agl::resource_handle{})) {
-            check("Destruction has cleaned up the resource", not agl::gl_function{&GladGLContext::IsProgram}(win.context(), handle.index()));
-        }
+        check_gpu_cleanup(win.context(), &GladGLContext::IsProgram, handle);
     }
 
     opengl::resource_handle shader_program_free_test::execute(const curlew::window& win)
