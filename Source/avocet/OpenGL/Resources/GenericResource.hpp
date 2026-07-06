@@ -29,11 +29,11 @@ namespace avocet::opengl {
         && std::is_default_constructible_v<LifeEvents>
         && has_configurator_type_v<LifeEvents>
         && has_lifecycle_identifiers_v<LifeEvents>
-        && requires(const LifeEvents& t, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv) {
+        && requires(const LifeEvents& t, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv, const LifeEvents::configurator& configurator) {
                LifeEvents::generate(crv.context(), indices);
                LifeEvents::destroy(crv.context(), indices);
                LifeEvents::bind(crv);
-               t.configure(crv, std::declval<typename LifeEvents::configurator>());
+               t.configure(crv, configurator);
            }
     };
 
