@@ -135,8 +135,8 @@ namespace avocet::opengl {
             constexpr static std::string_view build_stage{"linking"};
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
-            explicit shader_program_checker(const shader_program_resource& r)
-                : shader_checker{r.view(), gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
+            explicit shader_program_checker(decorated_contextual_resource_view progView)
+                : shader_checker{progView, gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
             {}
 
             [[nodiscard]]
@@ -177,44 +177,45 @@ namespace avocet::opengl {
         };
 
         class [[nodiscard]] shader_attacher {
-            const decorated_context& m_Context;
-            GLuint m_ProgIndex{}, m_ShaderIndex{};
+            decorated_contextual_resource_view m_ProgView, m_StageView;
         public:
-            shader_attacher(const shader_program_resource& progResource, const shader_compiler& shader)
-                : m_Context{progResource.view().context()}
-                , m_ProgIndex{get_index(progResource)}
-                , m_ShaderIndex{get_index(shader.resource())}
+            shader_attacher(decorated_contextual_resource_view progView, decorated_contextual_resource_view stageView)
+                : m_ProgView{progView}
+                , m_StageView{stageView}
             {
-                gl_function{&GladGLContext::AttachShader}(m_Context, m_ProgIndex, m_ShaderIndex);
+                gl_function{&GladGLContext::AttachShader}(m_ProgView.context(), get_index(m_ProgView), get_index(m_StageView));
             }
 
-            ~shader_attacher() { gl_function{&GladGLContext::DetachShader}(m_Context, m_ProgIndex, m_ShaderIndex); }
+            ~shader_attacher() { gl_function{&GladGLContext::DetachShader}(m_ProgView.context(), get_index(m_ProgView), get_index(m_StageView)); }
         };
 
         static_assert(has_shader_lifecycle_events_v<shader_stage_lifecycle_events>);
         static_assert(has_shader_lifecycle_events_v<shader_program_lifecycle_events>);
     }
 
+    void shader_program_lifecycle_events::configure(resourceful_contextual_resource_view progView, const configurator& config) {
+        add_label(identifier, progView, config.label);
+
+        const auto& ctx{progView.context()};
+
+        shader_compiler
+            vertexShader  {ctx, shader_species::vertex,   config.vertex_shader},
+            fragmentShader{ctx, shader_species::fragment, config.fragment_shader};
+
+        {
+            shader_attacher verteAttacher   {progView,   vertexShader.resource().view()},
+                            fragmentAttacher{progView, fragmentShader.resource().view()};
+
+            gl_function{&GladGLContext::LinkProgram}(ctx, get_index(progView));
+        }
+
+        shader_program_checker{progView}.check();
+    }
+
     shader_program::shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
         : m_Resource{ctx}
     {
-        shader_compiler
-            vertexShader  {ctx, shader_species::vertex,   vertexShaderSource},
-            fragmentShader{ctx, shader_species::fragment, fragmentShaderSource};
-
-        {
-            shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
-
-            const auto progIndex{get_index(m_Resource)};
-            gl_function{&GladGLContext::LinkProgram}(ctx, progIndex);
-
-            if(m_Resource.view().context().fundamental_characteristics().object_labels_available() != object_labelling_available::no) {
-                const std::string label{make_program_label(vertexShaderSource, fragmentShaderSource)};
-                gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, checked_conversion_to<GLsizei>(label.size()), label.data());
-            }
-        }
-
-        shader_program_checker{m_Resource}.check();
+        shader_program_lifecycle_events::configure(m_Resource.view(), {vertexShaderSource, fragmentShaderSource, make_program_label(vertexShaderSource, fragmentShaderSource)});
     }
 
     [[nodiscard]]
