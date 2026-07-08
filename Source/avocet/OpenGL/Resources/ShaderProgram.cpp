@@ -89,13 +89,13 @@ namespace avocet::opengl {
             }
         };
 
-        class shader_compiler_checker : public shader_checker {
+        class shader_stage_checker : public shader_checker {
             shader_species m_Species;
         public:
             constexpr static std::string_view build_stage{"compilation"};
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
-            shader_compiler_checker(decorated_contextual_resource_view stageView, shader_species species)
+            shader_stage_checker(decorated_contextual_resource_view stageView, shader_species species)
                 : shader_checker{stageView, gl_function{&GladGLContext::GetShaderiv}, gl_function{&GladGLContext::GetShaderInfoLog}}
                 , m_Species{species}
             {}
@@ -163,7 +163,7 @@ namespace avocet::opengl {
                 const auto& ctx{stageView.context()};
                 gl_function{&GladGLContext::ShaderSource }(ctx, index, 1, &data, nullptr);
                 gl_function{&GladGLContext::CompileShader}(ctx, index);
-                shader_compiler_checker{stageView, self.m_Species}.check();
+                shader_stage_checker{stageView, self.m_Species}.check();
             }
 
             [[nodiscard]]
@@ -172,10 +172,10 @@ namespace avocet::opengl {
 
         using shader_resource = generic_shader_resource<shader_stage_lifecycle_events>;
 
-        class shader_compiler {
+        class shader_stage {
             shader_resource m_Resource;
         public:
-            shader_compiler(const resourceful_context& ctx, shader_species species, const fs::path& sourceFile)
+            shader_stage(const resourceful_context& ctx, shader_species species, const fs::path& sourceFile)
                 : m_Resource{ctx, species}
             {
                 shader_stage_lifecycle_events{species}.configure(m_Resource.view(), {sourceFile, sequoia::back(sourceFile).generic_string()});
@@ -185,7 +185,7 @@ namespace avocet::opengl {
             const shader_resource& resource() const noexcept { return m_Resource; }
 
             [[nodiscard]]
-            friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
+            friend bool operator==(const shader_stage&, const shader_stage&) noexcept = default;
         };
 
         class [[nodiscard]] shader_attacher {
@@ -207,7 +207,7 @@ namespace avocet::opengl {
 
         const auto& ctx{progView.context()};
 
-        shader_compiler
+        shader_stage
             vertexShader  {ctx, shader_species::vertex,   config.vertex_shader},
             fragmentShader{ctx, shader_species::fragment, config.fragment_shader};
 
