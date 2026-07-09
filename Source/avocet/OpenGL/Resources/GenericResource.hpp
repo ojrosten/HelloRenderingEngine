@@ -23,25 +23,34 @@ namespace avocet::opengl {
         requires { typename T::configurator; }
     };
 
-    template<num_resources NumResources, class LifeEvents>
-    inline constexpr bool has_resource_lifecycle_events_v{
-           std::is_empty_v<LifeEvents>
-        && std::is_default_constructible_v<LifeEvents>
-        && has_configurator_type_v<LifeEvents>
-        && has_lifecycle_identifiers_v<LifeEvents>
-        && requires(const LifeEvents& t, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv, const LifeEvents::configurator& configurator) {
-               LifeEvents::generate(crv.context(), indices);
-               LifeEvents::destroy(crv.context(), indices);
-               LifeEvents::bind(crv);
-               t.configure(crv, configurator);
+    template<class LifeEvents>
+    inline constexpr bool has_configure_event_v{
+           has_configurator_type_v<LifeEvents>
+        && requires(const LifeEvents& lifeEvents, resourceful_contextual_resource_view crv, const LifeEvents::configurator& configurator) {
+               lifeEvents.configure(crv, configurator);
            }
     };
+
+    template<class LifeEvents>
+    inline constexpr bool has_common_lifecycle_v{
+           sequoia::pseudoregular<LifeEvents>
+        && has_lifecycle_identifiers_v<LifeEvents>
+        && has_configure_event_v<LifeEvents>
+    };
+
+    template<class LifeEvents, num_resources NumResources>
+    concept standard_lifecycle_for
+        =    has_common_lifecycle_v<LifeEvents>
+          && has_bind_event_v<LifeEvents>
+          && requires(const LifeEvents& lifeEvents, raw_indices<NumResources.value>& indices, decorated_contextual_resource_view crv) {
+                 lifeEvents.generate(crv.context(), indices);
+                 lifeEvents.destroy(crv.context(), indices);
+             };
 
     template<num_resources NumResources, class LifeEvents>
     struct resource_lifecycle;
 
-    template<num_resources NumResources, class LifeEvents>
-        requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
+    template<num_resources NumResources, standard_lifecycle_for<NumResources> LifeEvents>
     struct resource_lifecycle<NumResources, LifeEvents> {
         using configurator_type = LifeEvents::configurator;
 
@@ -70,8 +79,7 @@ namespace avocet::opengl {
         }
     };
 
-    template<num_resources NumResources, class LifeEvents>
-        requires has_resource_lifecycle_events_v<NumResources, LifeEvents>
+    template<num_resources NumResources, standard_lifecycle_for<NumResources> LifeEvents>
     class resource_wrapper{
     public:
         using lifecycle_type = resource_lifecycle<NumResources, LifeEvents>;
@@ -93,8 +101,8 @@ namespace avocet::opengl {
         contextual_resource_handles<N> m_Handles;
     };
 
-    template<num_resources NumResources, class LifeEvents>
-        requires (NumResources.value > 0) && has_resource_lifecycle_events_v<NumResources, LifeEvents>
+    template<num_resources NumResources, standard_lifecycle_for<NumResources> LifeEvents>
+        requires (NumResources.value > 0)
     class generic_resource {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
