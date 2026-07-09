@@ -137,7 +137,7 @@ namespace avocet::opengl {
 
             struct configurator {
                 std::filesystem::path source_file;
-                optional_label label{};
+                optional_label label;
             };
 
             explicit shader_stage_lifecycle_events(shader_species species) : m_Species{species} {}

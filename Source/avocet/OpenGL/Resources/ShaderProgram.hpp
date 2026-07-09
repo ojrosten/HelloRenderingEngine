@@ -63,7 +63,7 @@ namespace avocet::opengl {
 
         struct configurator {
             std::filesystem::path vertex_shader, fragment_shader;
-            optional_label label{};
+            optional_label label;
         };
 
         [[nodiscard]]
