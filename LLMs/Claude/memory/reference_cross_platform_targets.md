@@ -25,7 +25,7 @@ The user personally develops on WSL most of the time, but Windows and macOS are 
 The `opengl_version{4, 1}` default in `Source/avocet/OpenGL/Context/Version.hpp` is the Mac floor, not an arbitrary value.
 
 **Standard library floor is libc++.** Specifically:
-- `std::generator` is not yet available on libc++ — hence the `STD_GENERATOR` macro guard and `libcpp_workaround` namespace in `Source/avocet/OpenGL/Debugging/Errors.cpp`. The comment in that file (line 46-52) flags this as temporary.
+- `std::generator` is not yet available on libc++ — hence the `#ifdef __cpp_lib_generator` guards (in `Errors.hpp` and `Errors.cpp`) and the `libcpp_workaround` namespace in `Source/avocet/OpenGL/Debugging/Errors.cpp`. (The earlier `STD_GENERATOR` macro was removed when an MSVC update shipped `<generator>` — see [[feedback-lecture-diff-is-superset]]; updated 2026-07-10.)
 - The `target_link_directories(avocet PUBLIC /opt/homebrew/opt/llvm@21/lib/c++)` block in `Source/avocet/CMakeLists.txt:38-42` works around Apple clang shipping with system libc++; Homebrew llvm@21's libc++ is what the Mac build actually links against.
 
 **How to apply:** Don't avoid suggesting features that need OpenGL > 4.1 or library facilities not yet in libc++ — the user has explicitly said *not* to hold back. The course is on practical software engineering, and cross-platform constraints are exactly the kind of real-world problem the course addresses.

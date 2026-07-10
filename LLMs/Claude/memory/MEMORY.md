@@ -1,7 +1,7 @@
 - [OpenGL is frozen — don't flag GL entry-point tables as fragile](feedback_opengl_frozen_api.md) — calibration for code review in this repo
 - [Don't raise speculative compiler-warning concerns](feedback_verified_across_compilers.md) — user verifies across MSVC/gcc/clang
 - [shader_program uniform setters → DSA glProgramUniform*](project_shader_program_dsa_uniforms.md) — acknowledged improvement, not yet implemented
-- [checked_conversion_to sign-compare fix is deferred ~lecture 51](project_arithmetic_casts_cmp_migration.md) — empty ArithmeticCasts.hpp + gcc -Wsign-compare are intentional "before"
+- [checked_conversion_to sign-compare fix is deferred ~lecture 51](project_arithmetic_casts_cmp_migration.md) — hand-rolled mixed-sign compare in ArithmeticCasts.hpp is the intentional "before"
 - [Check production sites of multi-valued types](feedback_check_production_sites.md) — don't judge enum value-set from consumers alone
 - [Defensive throws are intentional tripwires](feedback_defensive_throws.md) — don't flag "should never happen" throws as smells
 - [Teaching project with accompanying lectures](user_teaching_project.md) — weight pedagogical purpose alongside technical merit
@@ -10,7 +10,7 @@
 - [Tests are real customers of API generality](feedback_tests_are_customers.md) — grep Tests/ before claiming plumbing is unused
 - [Binding cache is opt-in by design, driven by FBO driver warning](project_binding_cache_rationale.md) — partial caching is intentional, `opt_out` is self-documentation
 - [Sub-optimal code isn't always intentional](feedback_suboptimal_not_always_intentional.md) — flag observations as questions, don't pre-decide either way
-- [Lecture branch naming: -experimental → -preliminary → -expected](reference_lecture_branch_naming.md) — refinement stage; informs diff base and review register
+- [Lecture branch naming: -experimental → -preliminary → -expected](reference_lecture_branch_naming.md) — refinement stage; start_lecture_X = offline-prepared, mutable until delivery; informs diff base and review register
 - [Cross-platform targets: Win/Linux/Mac × MSVC/gcc/clang × GL 4.1–4.6](reference_cross_platform_targets.md) — 4.1 is the floor, libc++ has no std::generator
 - [Non-templated deducing-this marks "object-const but GPU/cache side-effecting"](feedback_deducing_this_convention.md) — convention, not stylistic preference
 - [User uses me as rehearsal partner for live-coding portion of lectures](feedback_live_coding_rehearsal.md) — iterative, lecture-sized, fine-tune loop welcome

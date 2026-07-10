@@ -6,7 +6,7 @@ This file holds the durable project-knowledge — orientation, conventions, and 
 
 ## What this project is
 
-HelloRenderingEngine is a **teaching project** with accompanying ~1-hour lectures (~46 delivered so far). Each lecture is roughly 40 minutes presentation + 20 minutes live coding, with some infrastructure prepared off-line. The course is on **practical software engineering**, taught against a modern-C++ + OpenGL backdrop — cross-platform compromise, fallback design, capability gating, driver-bug workarounds, dependency management, and test infrastructure are *content*, not obstacles.
+HelloRenderingEngine is a **teaching project** with accompanying ~1-hour lectures (49 delivered as of July 2026). Each lecture is roughly 40 minutes presentation + 20 minutes live coding, with some infrastructure prepared off-line. The course is on **practical software engineering**, taught against a modern-C++ + OpenGL backdrop — cross-platform compromise, fallback design, capability gating, driver-bug workarounds, dependency management, and test infrastructure are *content*, not obstacles.
 
 Consequences worth keeping in mind:
 
@@ -39,6 +39,8 @@ While developing a lecture's code, branches use a three-stage refinement suffix:
 3. `end_lecture_X-expected` — close to what will be presented. Tight, high-confidence feedback only.
 
 Once delivered, the branch lands as `end_lecture_X` (no suffix) and is the stable per-lecture anchor. When reviewing a `-suffix` branch, diff against the prior lecture's stable branch (`end_lecture_<X-1>`).
+
+Each live lecture *begins* from `start_lecture_X` — the offline-prepared state from which the live coding proceeds to `end_lecture_X`. Prep for these follows the same suffix pattern (heavy use of `start_lecture_X-preliminary`, merged into `start_lecture_X` once the material is settled), and may iterate during rehearsal: more pre-prepared material added, or — when there's time to do more live — material *removed* from the start branch. `start_lecture_X` is therefore mutable until delivery; `start_lecture_X..end_lecture_X` is the lecture's on-stage content.
 
 ### Deducing-this as side-effect marker (non-templated form)
 
