@@ -47,6 +47,14 @@ namespace avocet::opengl {
                lifeEvents.destroy(crv.context(), indices);
            };
 
+    template<class LifeEvents>
+    concept program_lifecycle =
+           has_common_lifecycle_v<LifeEvents>
+        && requires(const LifeEvents& lifeEvents, resourceful_contextual_resource_view crv) {
+               { lifeEvents.create(crv.context()) } -> std::same_as<contextual_resource_handle>;
+               lifeEvents.destroy(crv);
+           };
+
     template<num_resources NumResources, class LifeEvents>
     struct resource_lifecycle;
 
