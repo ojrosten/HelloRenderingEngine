@@ -15,7 +15,12 @@
 #include "sequoia/Core/Meta/TypeAlgorithms.hpp"
 
 namespace avocet::opengl {
-    struct num_resources { std::size_t value{}; };
+    struct num_resources {
+        std::size_t value{};
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const num_resources&, const num_resources&) noexcept = default;
+    };
 
     template<class LifeEvents>
     inline constexpr bool has_bind_event_v{
