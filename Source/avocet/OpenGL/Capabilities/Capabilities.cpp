@@ -66,7 +66,7 @@ namespace avocet::opengl {
         case const_colour:           return "const_colour";
         case one_minus_const_colour: return "one_minus_const_colour";
         case const_alpha:            return "const_alpha";
-        case one_minus_const_alpha:  return "one_minus_const_alpha ";
+        case one_minus_const_alpha:  return "one_minus_const_alpha";
         }
 
         throw std::runtime_error{error_message("blend_mode", mode)};

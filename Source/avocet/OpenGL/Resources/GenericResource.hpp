@@ -171,7 +171,7 @@ namespace avocet::opengl {
         {
             for(const auto& [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {
                 if(ctxRsrc.handle() == resource_handle{})
-                    throw std::runtime_error{"generic_resource  - null resource"};
+                    throw std::runtime_error{"generic_resource - null resource"};
 
                 do_utilize(ctxRsrc);
                 lifecycle_type::configure(ctxRsrc, config);

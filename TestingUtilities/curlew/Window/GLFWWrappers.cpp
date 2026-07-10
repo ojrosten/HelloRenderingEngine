@@ -47,7 +47,7 @@ namespace curlew {
         }
 
         [[nodiscard]]
-        GladGLContext load_gl_fuctions(window_resource& win, GladGLContext ctx) {
+        GladGLContext load_gl_functions(window_resource& win, GladGLContext ctx) {
             glfwMakeContextCurrent(&win.get());
 
             if(!gladLoadGLContext(&ctx, glfwGetProcAddress))
@@ -147,7 +147,7 @@ namespace curlew {
         : m_Window{config, version}
         , m_Context{
             config.debug_mode,
-            [&win = m_Window](GladGLContext ctx) { return load_gl_fuctions(win, ctx); },
+            [&win = m_Window](GladGLContext ctx) { return load_gl_functions(win, ctx); },
             config.prologue,
             config.epilogue,
             config.compensate

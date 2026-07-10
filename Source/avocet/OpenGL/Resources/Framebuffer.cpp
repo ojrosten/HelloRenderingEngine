@@ -38,6 +38,6 @@ namespace avocet::opengl {
     void framebuffer_object::check_framebuffer_status() {
         const auto status{gl_function{&GladGLContext::CheckFramebufferStatus}(this->context(), GL_FRAMEBUFFER)};
         if(const auto optError{to_error_string(status)}; optError)
-            throw std::runtime_error{std::format("Frambuffer incomplete: {}", optError.value())};
+            throw std::runtime_error{std::format("Framebuffer incomplete: {}", optError.value())};
     }
 }
