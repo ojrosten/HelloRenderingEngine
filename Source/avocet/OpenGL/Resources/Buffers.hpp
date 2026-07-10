@@ -132,16 +132,14 @@ namespace avocet::opengl {
         vertex_attribute_object(const resourceful_context& ctx, const optional_label& label, const vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>& vbo)
             : base_type{ctx, {{label}}}
         {
-            using vbo_t         = vertex_buffer_object<sequoia::mem_ordered_tuple<Attributes...>>;
-
-            vbo_t::do_bind(vbo);
+            vbo.do_utilize();
 
             attrib_ptr_info info{};
             constexpr auto stride{(sizeof(Attributes) + ...)};
             (set_attribute_ptr<Attributes>(info, stride), ...);
         }
 
-        void bind(this const vertex_attribute_object& self) { do_bind(self); }
+        void bind(this const vertex_attribute_object& self) { self.do_utilize(); }
     private:
         struct attrib_ptr_info {
             GLint       index{};
@@ -188,7 +186,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         std::vector<T> extract_data(this const generic_buffer_object& self) {
-            base_type::do_bind(self);
+            self.do_utilize();
             const auto size{get_buffer_size(self.context())};
             std::vector<T> buffer(size / sizeof(T));
             gl_function{&GladGLContext::GetBufferSubData}(self.context(), to_gl_underlying_value<GLenum>(Species), 0, size, buffer.data());
