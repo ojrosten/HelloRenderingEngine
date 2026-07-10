@@ -60,7 +60,7 @@ namespace avocet::opengl {
                 ctx,
                 GL_FRAMEBUFFER,
                 GL_COLOR_ATTACHMENT0,
-                get_index(m_Texture.contextual_handle()),
+                get_index(m_Texture.contextual_handle_view()),
                 0
             );
 

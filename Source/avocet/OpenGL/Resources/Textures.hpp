@@ -282,8 +282,8 @@ namespace avocet::opengl {
         friend class framebuffer_object;
 
         [[nodiscard]]
-        decorated_contextual_resource_view contextual_handle() const noexcept {
-            return base_type::contextual_handle(index<0>{});
+        decorated_contextual_resource_view contextual_handle_view() const noexcept {
+            return base_type::contextual_handle_view(index<0>{});
         }
     };
 

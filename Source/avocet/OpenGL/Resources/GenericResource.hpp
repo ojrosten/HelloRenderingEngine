@@ -127,13 +127,13 @@ namespace avocet::opengl {
         bool is_null() const noexcept {
             auto isNull{[](decorated_contextual_resource_view crv) { return crv.handle() == resource_handle{}; }};
             assert(std::ranges::all_of(contextual_handles(), isNull) or std::ranges::none_of(contextual_handles(), isNull));
-            return isNull(contextual_handle(index<0>{}));
+            return isNull(contextual_handle_view(index<0>{}));
         }
 
         template<std::size_t I>
             requires (I < N)
         [[nodiscard]]
-        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, contextual_handle(i)); }
+        std::string extract_label(index<I> i) const { return get_object_label(LifeEvents::identifier, contextual_handle_view(i)); }
 
         [[nodiscard]]
         std::string extract_label() const requires (N == 1) { return extract_label(index<0>{}); }
@@ -155,7 +155,7 @@ namespace avocet::opengl {
 
         template<std::size_t I>
             requires (I < N)
-        void do_utilize(this const generic_resource& self, index<I> i) { self.do_utilize(self.contextual_handle(i)); }
+        void do_utilize(this const generic_resource& self, index<I> i) { self.do_utilize(self.contextual_handle_view(i)); }
 
         void do_utilize(this const generic_resource& self) requires (N == 1) { self.do_utilize(index<0>{}); }
 
@@ -165,6 +165,13 @@ namespace avocet::opengl {
         template<std::size_t I>
             requires (I < N)
         [[nodiscard]]
-        resourceful_contextual_resource_view contextual_handle(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+        resourceful_contextual_resource_view contextual_handle_view(index<I>) const noexcept { return contextual_handles().begin()[I]; }
+
+        [[nodiscard]]
+        resourceful_contextual_resource_view contextual_handle_view() const noexcept
+            requires (N == 1)
+        {
+            return contextual_handle_view(index<0>{});
+        }
     };
 }
