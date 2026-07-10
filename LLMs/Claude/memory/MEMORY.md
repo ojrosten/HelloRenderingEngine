@@ -18,3 +18,4 @@
 - [Testing vs dependencies trade-off](feedback_testing_vs_dependencies_tradeoff.md) — untested anon-namespace helpers can be deliberate; factor into tested generic utilities instead of hoisting to headers
 - [A lecture branch's diff is a superset of the lecture](feedback_lecture_diff_is_superset.md) — incidental prep-time fixes and toolchain churn ride along; don't attribute everything to the lecture
 - [In tests, OpenGL is the source of truth for handles](feedback_opengl_source_of_truth_in_tests.md) — query binding-point state, don't read handles off the object; don't suggest get_index as a simplification
+- [User switched to Fable 5 (2026-07-10)](user_model_preference_fable.md) — tell them if a session runs on Opus 4.8 or another model instead
