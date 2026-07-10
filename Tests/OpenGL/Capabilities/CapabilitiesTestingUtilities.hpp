@@ -179,12 +179,12 @@ namespace sequoia::testing
         static void test(weak_equivalence_check_t, test_logger<Mode>& logger, const agl::capable_context& ctx, const agl::capabilities::gl_blend& predicted) {
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
-            check(equality, "Source rgb   GPU/CPU"     , logger, get_as<blend_mode    >(ctx, int_names::blend_src_rgb       ), predicted.rgb.modes.source);
-            check(equality, "Source alpha GPU/CPU"     , logger, get_as<blend_mode    >(ctx, int_names::blend_src_alpha     ), predicted.alpha.modes.source);
-            check(equality, "Destination rgb   GPU/CPU", logger, get_as<blend_mode    >(ctx, int_names::blend_dst_rgb       ), predicted.rgb.modes.destination);
-            check(equality, "Destination alpha GPU/CPU", logger, get_as<blend_mode    >(ctx, int_names::blend_dst_alpha     ), predicted.alpha.modes.destination);
-            check(equality, "Blend equation GPU/CPU"   , logger, get_as<blend_eqn_mode>(ctx, int_names::blend_equation_rgb  ), predicted.rgb.algebraic_op);
-            check(equality, "Blend equation GPU/CPU"   , logger, get_as<blend_eqn_mode>(ctx, int_names::blend_equation_alpha), predicted.alpha.algebraic_op);
+            check(equality, "Source rgb   GPU/CPU"        , logger, get_as<blend_mode    >(ctx, int_names::blend_src_rgb       ), predicted.rgb.modes.source);
+            check(equality, "Source alpha GPU/CPU"        , logger, get_as<blend_mode    >(ctx, int_names::blend_src_alpha     ), predicted.alpha.modes.source);
+            check(equality, "Destination rgb   GPU/CPU"   , logger, get_as<blend_mode    >(ctx, int_names::blend_dst_rgb       ), predicted.rgb.modes.destination);
+            check(equality, "Destination alpha GPU/CPU"   , logger, get_as<blend_mode    >(ctx, int_names::blend_dst_alpha     ), predicted.alpha.modes.destination);
+            check(equality, "Blend equation rgb GPU/CPU"  , logger, get_as<blend_eqn_mode>(ctx, int_names::blend_equation_rgb  ), predicted.rgb.algebraic_op);
+            check(equality, "Blend equation alpha GPU/CPU", logger, get_as<blend_eqn_mode>(ctx, int_names::blend_equation_alpha), predicted.alpha.algebraic_op);
 
             check(equality, "Colour GPU/CPU", logger, get(ctx, quadruple_float_names::blend_color), predicted.colour);
         }
