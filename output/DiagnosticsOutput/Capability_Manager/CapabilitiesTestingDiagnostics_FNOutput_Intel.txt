@@ -134,7 +134,7 @@ operator== returned false
       [avocet::opengl::blend_mode]
       operator== returned false
       Obtained : one_minus_dst_alpha
-      Predicted: one_minus_const_alpha 
+      Predicted: one_minus_const_alpha
 
     Algebraic Op
     [avocet::opengl::blend_eqn_mode]
@@ -201,9 +201,9 @@ Checking for weak equivalence with:
   [avocet::opengl::blend_mode]
   operator== returned false
   Obtained : zero
-  Predicted: one_minus_const_alpha 
+  Predicted: one_minus_const_alpha
 
-  Blend equation GPU/CPU
+  Blend equation alpha GPU/CPU
   [avocet::opengl::blend_eqn_mode]
   operator== returned false
   Obtained : add
