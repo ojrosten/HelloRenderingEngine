@@ -56,6 +56,53 @@ namespace avocet::opengl {
            };
 
     template<num_resources NumResources, class LifeEvents>
+    class resource_lifecycle_base;
+
+    template<num_resources NumResources, class LifeEvents>
+        requires has_common_lifecycle_v<LifeEvents>
+    class resource_lifecycle_base<NumResources, LifeEvents> {
+        LifeEvents m_LifeEvents;
+    public:
+        using configurator_type = LifeEvents::configurator;
+
+        constexpr static std::size_t N{NumResources.value};
+
+        explicit resource_lifecycle_base(const LifeEvents& lifeEvents)
+            : m_LifeEvents{lifeEvents}
+        {
+        }
+
+        void utilize(this const resource_lifecycle_base& self, resourceful_contextual_resource_view crv)
+            requires has_utilization_event_v<LifeEvents>
+        {
+            crv.context().utilize(self.life_events(), crv.handle());
+        }
+
+        void configure(this const resource_lifecycle_base& self, resourceful_contextual_resource_view crv, const configurator_type& config) {
+            self.life_events().configure(crv, config);
+        }
+
+        template<class Self>
+        void destroy(this const Self& self, const contextual_resource_handles<N>& crhs) {
+
+        }
+
+        [[nodiscard]]
+        friend bool operator==(const resource_lifecycle_base&, const resource_lifecycle_base&) noexcept = default;
+    protected:
+        resource_lifecycle_base(const resource_lifecycle_base&)     = default;
+        resource_lifecycle_base(resource_lifecycle_base&&) noexcept = default;
+
+        resource_lifecycle_base& operator=(const resource_lifecycle_base&)     = default;
+        resource_lifecycle_base& operator=(resource_lifecycle_base&&) noexcept = default;
+
+        ~resource_lifecycle_base() = default;
+
+        [[nodiscard]]
+        const LifeEvents& life_events() const noexcept { return m_LifeEvents; }
+    };
+
+    template<num_resources NumResources, class LifeEvents>
     struct resource_lifecycle;
 
     template<num_resources NumResources, standard_lifecycle_for<NumResources> LifeEvents>
