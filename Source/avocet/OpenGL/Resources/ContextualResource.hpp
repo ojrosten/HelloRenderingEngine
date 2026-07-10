@@ -95,6 +95,13 @@ namespace avocet::opengl {
         const_iterator end() const noexcept { return {m_Handles.end(), context()}; }
 
         [[nodiscard]]
+        resourceful_contextual_resource_view view() const noexcept
+            requires (N == 1)
+        {
+            return *begin();
+        }
+
+        [[nodiscard]]
         raw_indices<N> get_raw_indices() const {
             return to_array(m_Handles, [](const resource_handle& crv) { return crv.index(); });
         }
