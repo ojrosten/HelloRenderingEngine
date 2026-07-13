@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -83,18 +83,18 @@
 <span id="L21"><span class="lineNum">      21</span>              :     {</span>
 <span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           1 :         unique_image red{working_materials() / &quot;red_2w_3h_3c.png&quot;, flip_vertically::no, all_channels_in_image};</span></span>
 <span id="L23"><span class="lineNum">      23</span>              : </span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;Wrong image&quot;,     red, make_red(        3, 2, colour_channels{4}, alignment{1}));</span></span>
-<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;Wrong colours&quot;,   red, make_rgb_striped(2, 3, colour_channels{3}, alignment{1}));</span></span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;Wrong alignment&quot;, red, make_red(        2, 3, colour_channels{3}, alignment{2}));</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;Wrong image&quot;,     red, make_red(        {3, 2}, colour_channels{4}, alignment{1}));</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;Wrong colours&quot;,   red, make_rgb_striped({2, 3}, colour_channels{3}, alignment{1}));</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;Wrong alignment&quot;, red, make_red({2, 3}, colour_channels{3}, alignment{2}));</span></span>
 <span id="L27"><span class="lineNum">      27</span>              : </span>
 <span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">           1 :         check(equivalence,</span></span>
 <span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           2 :               &quot;Padding where there should be an alpha channel&quot;,</span></span>
-<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           2 :               to_unique_image(make_red(1, 1, colour_channels{1}, alignment{2}, monochrome_intensity{.red{255}, .alpha{42}})),</span></span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">           2 :                               make_red(1, 1, colour_channels{2}, alignment{1}, monochrome_intensity{.red{255}, .alpha{42}}));</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           2 :               to_unique_image(make_red({1, 1}, colour_channels{1}, alignment{2}, monochrome_intensity{.red{255}, .alpha{42}})),</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">           2 :             make_red({1, 1}, colour_channels{2}, alignment{1}, monochrome_intensity{.red{255}, .alpha{42}}));</span></span>
 <span id="L32"><span class="lineNum">      32</span>              : </span>
 <span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           1 :         check(equality, &quot;Wrong image&quot;,     red, unique_image{working_materials() / &quot;grey_3w_2h_1c.png&quot;, flip_vertically::no, all_channels_in_image});</span></span>
 <span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           1 :         check(equality, &quot;Wrong colours&quot;,   red, unique_image{working_materials() / &quot;blue_2w_3h_3c.png&quot;, flip_vertically::no, all_channels_in_image});</span></span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           1 :         check(equality, &quot;Wrong alignment&quot;, red, to_unique_image(make_red(2, 3, colour_channels{3}, alignment{2})));</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           1 :         check(equality, &quot;Wrong alignment&quot;, red, to_unique_image(make_red({2, 3}, colour_channels{3}, alignment{2})));</span></span>
 <span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           1 :     }</span></span>
 <span id="L37"><span class="lineNum">      37</span>              : }</span>
         </pre>

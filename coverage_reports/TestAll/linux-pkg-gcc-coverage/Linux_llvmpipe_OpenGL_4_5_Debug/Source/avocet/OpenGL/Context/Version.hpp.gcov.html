@@ -32,12 +32,12 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">8</td>
-            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntry">9</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -69,55 +69,38 @@
 <span id="L7"><span class="lineNum">       7</span>              : </span>
 <span id="L8"><span class="lineNum">       8</span>              : #pragma once</span>
 <span id="L9"><span class="lineNum">       9</span>              : </span>
-<span id="L10"><span class="lineNum">      10</span>              : #include &quot;avocet/Core/Preprocessor/PreprocessorDefs.hpp&quot;</span>
-<span id="L11"><span class="lineNum">      11</span>              : #include &quot;avocet/OpenGL/Context/ContextBase.hpp&quot;</span>
-<span id="L12"><span class="lineNum">      12</span>              : </span>
-<span id="L13"><span class="lineNum">      13</span>              : #include &lt;format&gt;</span>
-<span id="L14"><span class="lineNum">      14</span>              : </span>
-<span id="L15"><span class="lineNum">      15</span>              : #include &quot;glad/gl.h&quot;</span>
-<span id="L16"><span class="lineNum">      16</span>              : </span>
-<span id="L17"><span class="lineNum">      17</span>              : namespace avocet::opengl{</span>
-<span id="L18"><span class="lineNum">      18</span>              :     struct opengl_version {</span>
-<span id="L19"><span class="lineNum">      19</span>              :         std::size_t major{4}, minor{1};</span>
-<span id="L20"><span class="lineNum">      20</span>              : </span>
-<span id="L21"><span class="lineNum">      21</span>              :         [[nodiscard]]</span>
-<span id="L22"><span class="lineNum">      22</span>              :         friend auto operator&lt;=&gt;(const opengl_version&amp;, const opengl_version&amp;) noexcept = default;</span>
-<span id="L23"><span class="lineNum">      23</span>              :     };</span>
+<span id="L10"><span class="lineNum">      10</span>              : #include &lt;format&gt;</span>
+<span id="L11"><span class="lineNum">      11</span>              : </span>
+<span id="L12"><span class="lineNum">      12</span>              : namespace avocet::opengl{</span>
+<span id="L13"><span class="lineNum">      13</span>              :     struct opengl_version {</span>
+<span id="L14"><span class="lineNum">      14</span> <span class="tlaGNC">         318 :         std::size_t major{4}, minor{1};</span></span>
+<span id="L15"><span class="lineNum">      15</span>              : </span>
+<span id="L16"><span class="lineNum">      16</span>              :         [[nodiscard]]</span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">         318 :         friend auto operator&lt;=&gt;(const opengl_version&amp;, const opengl_version&amp;) noexcept = default;</span></span>
+<span id="L18"><span class="lineNum">      18</span>              :     };</span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span>              :     [[nodiscard]]</span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         105 :     constexpr bool debug_output_supported(opengl_version version) noexcept {</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">         105 :         return version &gt;= opengl_version{4, 3};</span></span>
+<span id="L23"><span class="lineNum">      23</span>              :     }</span>
 <span id="L24"><span class="lineNum">      24</span>              : </span>
 <span id="L25"><span class="lineNum">      25</span>              :     [[nodiscard]]</span>
-<span id="L26"><span class="lineNum">      26</span>              :     std::string get_vendor(const context_base&amp; ctx);</span>
-<span id="L27"><span class="lineNum">      27</span>              : </span>
-<span id="L28"><span class="lineNum">      28</span>              :     [[nodiscard]]</span>
-<span id="L29"><span class="lineNum">      29</span>              :     std::string get_renderer(const context_base&amp; ctx);</span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          55 :     constexpr bool object_labels_supported(opengl_version version) noexcept {</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">          55 :         return version &gt;= opengl_version{4, 3};</span></span>
+<span id="L28"><span class="lineNum">      28</span>              :     }</span>
+<span id="L29"><span class="lineNum">      29</span>              : }</span>
 <span id="L30"><span class="lineNum">      30</span>              : </span>
-<span id="L31"><span class="lineNum">      31</span>              :     [[nodiscard]]</span>
-<span id="L32"><span class="lineNum">      32</span>              :     opengl_version get_opengl_version(const context_base&amp; ctx);</span>
-<span id="L33"><span class="lineNum">      33</span>              : </span>
-<span id="L34"><span class="lineNum">      34</span>              :     [[nodiscard]]</span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">        3509 :     constexpr bool debug_output_supported(opengl_version version) noexcept {</span></span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">        3509 :         return (version.major &gt; 3) &amp;&amp; (version.minor &gt;= 3);</span></span>
-<span id="L37"><span class="lineNum">      37</span>              :     }</span>
-<span id="L38"><span class="lineNum">      38</span>              : </span>
-<span id="L39"><span class="lineNum">      39</span>              :     [[nodiscard]]</span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">        3481 :     inline bool debug_output_supported(const context_base&amp; ctx) {</span></span>
-<span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">        3481 :         return debug_output_supported(get_opengl_version(ctx)) &amp;&amp; (ctx.debug_mode() == debugging_mode::dynamic);</span></span>
-<span id="L42"><span class="lineNum">      42</span>              :     }</span>
-<span id="L43"><span class="lineNum">      43</span>              : </span>
-<span id="L44"><span class="lineNum">      44</span>              :     [[nodiscard]]</span>
-<span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">         113 :     inline bool object_labels_activated(const context_base&amp; ctx) { return debug_output_supported(ctx); }</span></span>
-<span id="L46"><span class="lineNum">      46</span>              : }</span>
-<span id="L47"><span class="lineNum">      47</span>              : </span>
-<span id="L48"><span class="lineNum">      48</span>              : </span>
-<span id="L49"><span class="lineNum">      49</span>              : namespace std {</span>
-<span id="L50"><span class="lineNum">      50</span>              :     template&lt;&gt;</span>
-<span id="L51"><span class="lineNum">      51</span>              :     struct formatter&lt;avocet::opengl::opengl_version&gt; {</span>
-<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">           1 :         constexpr auto parse(auto&amp; ctx) { return ctx.begin(); }</span></span>
-<span id="L53"><span class="lineNum">      53</span>              : </span>
-<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           1 :         auto format(avocet::opengl::opengl_version version, auto&amp; ctx) const {</span></span>
-<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">           1 :             return format_to(ctx.out(), &quot;{}.{}&quot;, version.major, version.minor);</span></span>
-<span id="L56"><span class="lineNum">      56</span>              :         }</span>
-<span id="L57"><span class="lineNum">      57</span>              :     };</span>
-<span id="L58"><span class="lineNum">      58</span>              : }</span>
+<span id="L31"><span class="lineNum">      31</span>              : </span>
+<span id="L32"><span class="lineNum">      32</span>              : namespace std {</span>
+<span id="L33"><span class="lineNum">      33</span>              :     template&lt;&gt;</span>
+<span id="L34"><span class="lineNum">      34</span>              :     struct formatter&lt;avocet::opengl::opengl_version&gt; {</span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           1 :         constexpr auto parse(auto&amp; ctx) { return ctx.begin(); }</span></span>
+<span id="L36"><span class="lineNum">      36</span>              : </span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           1 :         auto format(avocet::opengl::opengl_version version, auto&amp; ctx) const {</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           1 :             return format_to(ctx.out(), &quot;{}.{}&quot;, version.major, version.minor);</span></span>
+<span id="L39"><span class="lineNum">      39</span>              :         }</span>
+<span id="L40"><span class="lineNum">      40</span>              :     };</span>
+<span id="L41"><span class="lineNum">      41</span>              : }</span>
         </pre>
               </td>
             </tr>

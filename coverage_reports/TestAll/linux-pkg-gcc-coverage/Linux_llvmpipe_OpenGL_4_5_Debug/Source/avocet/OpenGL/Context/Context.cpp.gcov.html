@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryHi">90.9&nbsp;%</td>
-            <td class="headerCovTableEntry">11</td>
-            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -67,31 +67,27 @@
 <span id="L5"><span class="lineNum">       5</span>              : //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //</span>
 <span id="L6"><span class="lineNum">       6</span>              : ////////////////////////////////////////////////////////////////////</span>
 <span id="L7"><span class="lineNum">       7</span>              : </span>
-<span id="L8"><span class="lineNum">       8</span>              : #include &quot;avocet/OpenGL/Context/ContextBase.hpp&quot;</span>
-<span id="L9"><span class="lineNum">       9</span>              : #include &quot;avocet/OpenGL/Context/GLFunction.hpp&quot;</span>
-<span id="L10"><span class="lineNum">      10</span>              : #include &quot;avocet/OpenGL/Context/Version.hpp&quot;</span>
-<span id="L11"><span class="lineNum">      11</span>              : </span>
-<span id="L12"><span class="lineNum">      12</span>              : namespace avocet::opengl {</span>
-<span id="L13"><span class="lineNum">      13</span>              :     namespace {</span>
-<span id="L14"><span class="lineNum">      14</span>              :         [[nodiscard]]</span>
-<span id="L15"><span class="lineNum">      15</span> <span class="tlaGNC">          33 :         std::size_t get_max_debug_message_length(const context_base&amp; ctx) {</span></span>
-<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">          33 :             if(!debug_output_supported(ctx))</span></span>
-<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">           5 :                 return 0;</span></span>
-<span id="L18"><span class="lineNum">      18</span>              : </span>
-<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">          28 :             GLint maxLen{};</span></span>
-<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">          28 :             gl_function{&amp;GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &amp;maxLen);</span></span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">          28 :             if(maxLen &lt; 0)</span></span>
-<span id="L22"><span class="lineNum">      22</span> <span class="tlaUNC">           0 :                 throw std::runtime_error{std::format(&quot;Max Debug Length is Negative: {}&quot;, maxLen)};</span></span>
+<span id="L8"><span class="lineNum">       8</span>              : #include &quot;avocet/OpenGL/Context/Context.hpp&quot;</span>
+<span id="L9"><span class="lineNum">       9</span>              : #include &quot;avocet/OpenGL/Context/GLGetters.hpp&quot;</span>
+<span id="L10"><span class="lineNum">      10</span>              : </span>
+<span id="L11"><span class="lineNum">      11</span>              : #include &quot;avocet/Core/Utilities/ArithmeticCasts.hpp&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>              : </span>
+<span id="L13"><span class="lineNum">      13</span>              : namespace avocet::opengl {</span>
+<span id="L14"><span class="lineNum">      14</span>              :     namespace {</span>
+<span id="L15"><span class="lineNum">      15</span>              :         [[nodiscard]]</span>
+<span id="L16"><span class="lineNum">      16</span> <span class="tlaGNC">          55 :         std::optional&lt;std::size_t&gt; get_max_debug_message_length(const context_base&amp; ctx, const bool debugEnabled) {</span></span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">          55 :             if(!debugEnabled)</span></span>
+<span id="L18"><span class="lineNum">      18</span> <span class="tlaGNC">           5 :                 return std::nullopt;</span></span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">          50 :             return checked_conversion_to&lt;std::size_t&gt;(get(ctx, int_names::max_debug_message_length));</span></span>
+<span id="L21"><span class="lineNum">      21</span>              :         }</span>
+<span id="L22"><span class="lineNum">      22</span>              :     }</span>
 <span id="L23"><span class="lineNum">      23</span>              : </span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          28 :             return static_cast&lt;std::size_t&gt;(maxLen);</span></span>
-<span id="L25"><span class="lineNum">      25</span>              :         }</span>
-<span id="L26"><span class="lineNum">      26</span>              :     }</span>
-<span id="L27"><span class="lineNum">      27</span>              : </span>
-<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">          33 :     context_characteristics::context_characteristics(const context_base&amp; ctx)</span></span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          33 :         : m_MaxDebugMessageLength{get_max_debug_message_length(ctx)}</span></span>
-<span id="L30"><span class="lineNum">      30</span>              :     {</span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          33 :     }</span></span>
-<span id="L32"><span class="lineNum">      32</span>              : }</span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          55 :     context_debug_characteristics::context_debug_characteristics(const context_base&amp; ctx)</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">          55 :         : m_MaxDebugMessageLength{get_max_debug_message_length(ctx, ctx.fundamental_characteristics().debug_output_enabled())}</span></span>
+<span id="L26"><span class="lineNum">      26</span>              :     {</span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">          55 :     }</span></span>
+<span id="L28"><span class="lineNum">      28</span>              : }</span>
         </pre>
               </td>
             </tr>

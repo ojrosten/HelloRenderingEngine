@@ -32,17 +32,17 @@
             <td></td>
             <td class="headerItem">Lines:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">20</td>
-            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntry">24</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">6</td>
-            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
           </tr>
                   <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -69,72 +69,77 @@
 <span id="L7"><span class="lineNum">       7</span>              : </span>
 <span id="L8"><span class="lineNum">       8</span>              : #pragma once</span>
 <span id="L9"><span class="lineNum">       9</span>              : </span>
-<span id="L10"><span class="lineNum">      10</span>              : #include &quot;avocet/OpenGL/Resources/Textures.hpp&quot;</span>
-<span id="L11"><span class="lineNum">      11</span>              : </span>
-<span id="L12"><span class="lineNum">      12</span>              : namespace avocet::opengl {</span>
-<span id="L13"><span class="lineNum">      13</span>              : </span>
-<span id="L14"><span class="lineNum">      14</span>              :     struct framebuffer_lifecycle_events {</span>
-<span id="L15"><span class="lineNum">      15</span>              :         struct configurator {</span>
-<span id="L16"><span class="lineNum">      16</span>              :             optional_label label;</span>
-<span id="L17"><span class="lineNum">      17</span>              :         };</span>
-<span id="L18"><span class="lineNum">      18</span>              : </span>
-<span id="L19"><span class="lineNum">      19</span>              :         constexpr static auto identifier{object_identifier::framebuffer};</span>
-<span id="L20"><span class="lineNum">      20</span>              : </span>
-<span id="L21"><span class="lineNum">      21</span>              :         template&lt;std::size_t N&gt;</span>
-<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           2 :         static void generate(const decorated_context&amp; ctx, raw_indices&lt;N&gt;&amp; indices) {</span></span>
-<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">           4 :             gl_function{&amp;GladGLContext::GenFramebuffers}(ctx, N, indices.data());</span></span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           2 :         }</span></span>
-<span id="L25"><span class="lineNum">      25</span>              : </span>
-<span id="L26"><span class="lineNum">      26</span>              :         template&lt;std::size_t N&gt;</span>
-<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">           2 :         static void destroy(const decorated_context&amp; ctx, const raw_indices&lt;N&gt;&amp; indices) {</span></span>
-<span id="L28"><span class="lineNum">      28</span> <span class="tlaGNC">           2 :             gl_function{&amp;GladGLContext::DeleteFramebuffers}(ctx, N, indices.data());</span></span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           2 :         }</span></span>
-<span id="L30"><span class="lineNum">      30</span>              : </span>
-<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">           2 :         static void bind(contextual_resource_view h) {</span></span>
-<span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">           2 :             gl_function{&amp;GladGLContext::BindFramebuffer}(h.context(), GL_FRAMEBUFFER, get_index(h));</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           2 :         }</span></span>
-<span id="L34"><span class="lineNum">      34</span>              : </span>
-<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           2 :         static void configure(contextual_resource_view h, const configurator&amp; config) {</span></span>
-<span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">           2 :             add_label(identifier, h, config.label);</span></span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">           2 :         }</span></span>
-<span id="L38"><span class="lineNum">      38</span>              :     };</span>
-<span id="L39"><span class="lineNum">      39</span>              : </span>
-<span id="L40"><span class="lineNum">      40</span>              :     using fbo_configurator = framebuffer_lifecycle_events::configurator;</span>
-<span id="L41"><span class="lineNum">      41</span>              : </span>
-<span id="L42"><span class="lineNum">      42</span>              :     class framebuffer_object : public generic_resource&lt;num_resources{1}, framebuffer_lifecycle_events&gt; {</span>
-<span id="L43"><span class="lineNum">      43</span>              :         framebuffer_texture_2d m_Texture;</span>
+<span id="L10"><span class="lineNum">      10</span>              : #include &quot;avocet/OpenGL/Context/GLFunction.hpp&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>              : #include &quot;avocet/OpenGL/Resources/Textures.hpp&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>              : </span>
+<span id="L13"><span class="lineNum">      13</span>              : namespace avocet::opengl {</span>
+<span id="L14"><span class="lineNum">      14</span>              : </span>
+<span id="L15"><span class="lineNum">      15</span>              :     struct framebuffer_lifecycle_events {</span>
+<span id="L16"><span class="lineNum">      16</span>              :         struct configurator {</span>
+<span id="L17"><span class="lineNum">      17</span>              :             optional_label label;</span>
+<span id="L18"><span class="lineNum">      18</span>              :         };</span>
+<span id="L19"><span class="lineNum">      19</span>              : </span>
+<span id="L20"><span class="lineNum">      20</span>              :         constexpr static auto identifier{ object_identifier::framebuffer};</span>
+<span id="L21"><span class="lineNum">      21</span>              :         constexpr static auto caching_id{caching_identifier::framebuffer};</span>
+<span id="L22"><span class="lineNum">      22</span>              : </span>
+<span id="L23"><span class="lineNum">      23</span>              :         template&lt;std::size_t N&gt;</span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">          22 :         static void generate(const decorated_context&amp; ctx, raw_indices&lt;N&gt;&amp; indices) {</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">          44 :             gl_function{&amp;GladGLContext::GenFramebuffers}(ctx, N, indices.data());</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">          22 :         }</span></span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span>              :         template&lt;std::size_t N&gt;</span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">          26 :         static void destroy(const decorated_context&amp; ctx, const raw_indices&lt;N&gt;&amp; indices) {</span></span>
+<span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          26 :             gl_function{&amp;GladGLContext::DeleteFramebuffers}(ctx, N, indices.data());</span></span>
+<span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          25 :         }</span></span>
+<span id="L32"><span class="lineNum">      32</span>              : </span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          44 :         static void bind(decorated_contextual_resource_view h) {</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          44 :             gl_function{&amp;GladGLContext::BindFramebuffer}(h.context(), GL_FRAMEBUFFER, get_index(h));</span></span>
+<span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          43 :         }</span></span>
+<span id="L36"><span class="lineNum">      36</span>              : </span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          22 :         static void configure(decorated_contextual_resource_view h, const configurator&amp; config) {</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          22 :             add_label(identifier, h, config.label);</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          22 :         }</span></span>
+<span id="L40"><span class="lineNum">      40</span>              : </span>
+<span id="L41"><span class="lineNum">      41</span>              :         [[nodiscard]]</span>
+<span id="L42"><span class="lineNum">      42</span>              :         friend constexpr bool operator==(const framebuffer_lifecycle_events&amp;, const framebuffer_lifecycle_events&amp;) noexcept = default;</span>
+<span id="L43"><span class="lineNum">      43</span>              :     };</span>
 <span id="L44"><span class="lineNum">      44</span>              : </span>
-<span id="L45"><span class="lineNum">      45</span>              :         void check_framebuffer_status();</span>
-<span id="L46"><span class="lineNum">      46</span>              :     public:</span>
-<span id="L47"><span class="lineNum">      47</span>              :         using base_type            = generic_resource&lt;num_resources{1}, framebuffer_lifecycle_events&gt;;</span>
-<span id="L48"><span class="lineNum">      48</span>              :         using texture_configurator = framebuffer_texture_2d_configurator;</span>
+<span id="L45"><span class="lineNum">      45</span>              :     using fbo_configurator = framebuffer_lifecycle_events::configurator;</span>
+<span id="L46"><span class="lineNum">      46</span>              : </span>
+<span id="L47"><span class="lineNum">      47</span>              :     class framebuffer_object : public generic_resource&lt;num_resources{1}, framebuffer_lifecycle_events&gt; {</span>
+<span id="L48"><span class="lineNum">      48</span>              :         framebuffer_texture_2d m_Texture;</span>
 <span id="L49"><span class="lineNum">      49</span>              : </span>
-<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">           2 :         framebuffer_object(const decorated_context&amp; ctx, const fbo_configurator&amp; fboConfig, const texture_configurator&amp; texConfig)</span></span>
-<span id="L51"><span class="lineNum">      51</span> <span class="tlaGNC">           2 :             : base_type{ctx, {{fboConfig.label}}}</span></span>
-<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">           2 :             , m_Texture{ctx, texConfig}</span></span>
-<span id="L53"><span class="lineNum">      53</span>              :         {</span>
-<span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">           2 :             gl_function{&amp;GladGLContext::FramebufferTexture}(</span></span>
-<span id="L55"><span class="lineNum">      55</span>              :                 ctx,</span>
-<span id="L56"><span class="lineNum">      56</span>              :                 GL_FRAMEBUFFER,</span>
-<span id="L57"><span class="lineNum">      57</span>              :                 GL_COLOR_ATTACHMENT0,</span>
-<span id="L58"><span class="lineNum">      58</span>              :                 get_index(m_Texture.contextual_handle()),</span>
-<span id="L59"><span class="lineNum">      59</span>              :                 0</span>
-<span id="L60"><span class="lineNum">      60</span>              :             );</span>
-<span id="L61"><span class="lineNum">      61</span>              : </span>
-<span id="L62"><span class="lineNum">      62</span> <span class="tlaGNC">           2 :             check_framebuffer_status();</span></span>
-<span id="L63"><span class="lineNum">      63</span> <span class="tlaGNC">           4 :         }</span></span>
-<span id="L64"><span class="lineNum">      64</span>              : </span>
-<span id="L65"><span class="lineNum">      65</span>              :         [[nodiscard]]</span>
-<span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">          25 :         unique_image extract_data(this const framebuffer_object&amp; self, texture_format format, alignment rowAlignment) {</span></span>
-<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">          25 :             return self.m_Texture.extract_data(format, rowAlignment);</span></span>
-<span id="L68"><span class="lineNum">      68</span>              :         }</span>
+<span id="L50"><span class="lineNum">      50</span>              :         void check_framebuffer_status();</span>
+<span id="L51"><span class="lineNum">      51</span>              :     public:</span>
+<span id="L52"><span class="lineNum">      52</span>              :         using base_type            = generic_resource&lt;num_resources{1}, framebuffer_lifecycle_events&gt;;</span>
+<span id="L53"><span class="lineNum">      53</span>              :         using texture_configurator = framebuffer_texture_2d_configurator;</span>
+<span id="L54"><span class="lineNum">      54</span>              : </span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">          22 :         framebuffer_object(const resourceful_context&amp; ctx, const fbo_configurator&amp; fboConfig, const texture_configurator&amp; texConfig)</span></span>
+<span id="L56"><span class="lineNum">      56</span> <span class="tlaGNC">          22 :             : base_type{ctx, {{fboConfig.label}}}</span></span>
+<span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">          22 :             , m_Texture{ctx, texConfig}</span></span>
+<span id="L58"><span class="lineNum">      58</span>              :         {</span>
+<span id="L59"><span class="lineNum">      59</span> <span class="tlaGNC">          22 :             gl_function{&amp;GladGLContext::FramebufferTexture}(</span></span>
+<span id="L60"><span class="lineNum">      60</span>              :                 ctx,</span>
+<span id="L61"><span class="lineNum">      61</span>              :                 GL_FRAMEBUFFER,</span>
+<span id="L62"><span class="lineNum">      62</span>              :                 GL_COLOR_ATTACHMENT0,</span>
+<span id="L63"><span class="lineNum">      63</span>              :                 get_index(m_Texture.contextual_handle_view()),</span>
+<span id="L64"><span class="lineNum">      64</span>              :                 0</span>
+<span id="L65"><span class="lineNum">      65</span>              :             );</span>
+<span id="L66"><span class="lineNum">      66</span>              : </span>
+<span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">          22 :             check_framebuffer_status();</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">          44 :         }</span></span>
 <span id="L69"><span class="lineNum">      69</span>              : </span>
-<span id="L70"><span class="lineNum">      70</span>              :         void bind(this const framebuffer_object&amp; self, texture_unit unit) {</span>
-<span id="L71"><span class="lineNum">      71</span>              :             base_type::do_bind(self);</span>
-<span id="L72"><span class="lineNum">      72</span>              :             self.m_Texture.bind(unit);</span>
+<span id="L70"><span class="lineNum">      70</span>              :         [[nodiscard]]</span>
+<span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">          37 :         unique_image extract_data(this const framebuffer_object&amp; self, texture_format format, alignment rowAlignment) {</span></span>
+<span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">          37 :             return self.m_Texture.extract_data(format, rowAlignment);</span></span>
 <span id="L73"><span class="lineNum">      73</span>              :         }</span>
-<span id="L74"><span class="lineNum">      74</span>              :     };</span>
-<span id="L75"><span class="lineNum">      75</span>              : }</span>
+<span id="L74"><span class="lineNum">      74</span>              : </span>
+<span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">          40 :         void bind(this const framebuffer_object&amp; self, texture_unit unit) {</span></span>
+<span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">          40 :             self.do_utilize();</span></span>
+<span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">          40 :             self.m_Texture.bind(unit);</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">          40 :         }</span></span>
+<span id="L79"><span class="lineNum">      79</span>              :     };</span>
+<span id="L80"><span class="lineNum">      80</span>              : }</span>
         </pre>
               </td>
             </tr>

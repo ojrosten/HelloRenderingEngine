@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - Source/avocet/OpenGL/Context/GLGetters.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory Source/avocet/OpenGL/Context">Source/avocet/OpenGL/Context</a> - GLGetters.hpp<span style="font-size: 80%;"> (source / <a href="GLGetters.hpp.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">19</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntry">22</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : ////////////////////////////////////////////////////////////////////</span>
+<span id="L2"><span class="lineNum">       2</span>              : //                Copyright Oliver J. Rosten 2024.                //</span>
+<span id="L3"><span class="lineNum">       3</span>              : // Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //</span>
+<span id="L4"><span class="lineNum">       4</span>              : //    (See accompanying file LICENSE.md or copy at                //</span>
+<span id="L5"><span class="lineNum">       5</span>              : //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //</span>
+<span id="L6"><span class="lineNum">       6</span>              : ////////////////////////////////////////////////////////////////////</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : #pragma once</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              : #include &quot;avocet/OpenGL/Context/GLFunction.hpp&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>              : #include &quot;avocet/OpenGL/Utilities/TypeTraits.hpp&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>              : </span>
+<span id="L13"><span class="lineNum">      13</span>              : #include &quot;avocet/OpenGL/Utilities/Casts.hpp&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>              : </span>
+<span id="L15"><span class="lineNum">      15</span>              : namespace avocet::opengl {</span>
+<span id="L16"><span class="lineNum">      16</span>              :     enum class bool_names : GLenum {</span>
+<span id="L17"><span class="lineNum">      17</span>              :         blend                  = GL_BLEND,</span>
+<span id="L18"><span class="lineNum">      18</span>              :         color_logic_op         = GL_COLOR_LOGIC_OP,</span>
+<span id="L19"><span class="lineNum">      19</span>              :         cull_face              = GL_CULL_FACE,</span>
+<span id="L20"><span class="lineNum">      20</span>              :         depth_test             = GL_DEPTH_TEST,</span>
+<span id="L21"><span class="lineNum">      21</span>              :         depth_writemask        = GL_DEPTH_WRITEMASK,</span>
+<span id="L22"><span class="lineNum">      22</span>              :         dither                 = GL_DITHER,</span>
+<span id="L23"><span class="lineNum">      23</span>              :         doublebuffer           = GL_DOUBLEBUFFER,</span>
+<span id="L24"><span class="lineNum">      24</span>              :         line_smooth            = GL_LINE_SMOOTH,</span>
+<span id="L25"><span class="lineNum">      25</span>              :         pack_lsb_first         = GL_PACK_LSB_FIRST,</span>
+<span id="L26"><span class="lineNum">      26</span>              :         pack_swap_bytes        = GL_PACK_SWAP_BYTES,</span>
+<span id="L27"><span class="lineNum">      27</span>              :         polygon_offset_fill    = GL_POLYGON_OFFSET_FILL,</span>
+<span id="L28"><span class="lineNum">      28</span>              :         polygon_offset_line    = GL_POLYGON_OFFSET_LINE,</span>
+<span id="L29"><span class="lineNum">      29</span>              :         polygon_offset_point   = GL_POLYGON_OFFSET_POINT,</span>
+<span id="L30"><span class="lineNum">      30</span>              :         polygon_smooth         = GL_POLYGON_SMOOTH,</span>
+<span id="L31"><span class="lineNum">      31</span>              :         program_point_size     = GL_PROGRAM_POINT_SIZE,</span>
+<span id="L32"><span class="lineNum">      32</span>              :         sample_coverage_invert = GL_SAMPLE_COVERAGE_INVERT,</span>
+<span id="L33"><span class="lineNum">      33</span>              :         scissor_test           = GL_SCISSOR_TEST,</span>
+<span id="L34"><span class="lineNum">      34</span>              :         shader_compiler        = GL_SHADER_COMPILER,</span>
+<span id="L35"><span class="lineNum">      35</span>              :         stencil_test           = GL_STENCIL_TEST,</span>
+<span id="L36"><span class="lineNum">      36</span>              :         stereo                 = GL_STEREO,</span>
+<span id="L37"><span class="lineNum">      37</span>              :         unpack_lsb_first       = GL_UNPACK_LSB_FIRST,</span>
+<span id="L38"><span class="lineNum">      38</span>              :         unpack_swap_bytes      = GL_UNPACK_SWAP_BYTES,</span>
+<span id="L39"><span class="lineNum">      39</span>              :     };</span>
+<span id="L40"><span class="lineNum">      40</span>              : </span>
+<span id="L41"><span class="lineNum">      41</span>              :     enum class int_names : GLenum {</span>
+<span id="L42"><span class="lineNum">      42</span>              :         active_texture                                  = GL_ACTIVE_TEXTURE,</span>
+<span id="L43"><span class="lineNum">      43</span>              :         array_buffer_binding                            = GL_ARRAY_BUFFER_BINDING,</span>
+<span id="L44"><span class="lineNum">      44</span>              :         blend_dst_alpha                                 = GL_BLEND_DST_ALPHA,</span>
+<span id="L45"><span class="lineNum">      45</span>              :         blend_dst_rgb                                   = GL_BLEND_DST_RGB,</span>
+<span id="L46"><span class="lineNum">      46</span>              :         blend_equation_alpha                            = GL_BLEND_EQUATION_ALPHA,</span>
+<span id="L47"><span class="lineNum">      47</span>              :         blend_equation_rgb                              = GL_BLEND_EQUATION_RGB,</span>
+<span id="L48"><span class="lineNum">      48</span>              :         blend_src_alpha                                 = GL_BLEND_SRC_ALPHA,</span>
+<span id="L49"><span class="lineNum">      49</span>              :         blend_src_rgb                                   = GL_BLEND_SRC_RGB,</span>
+<span id="L50"><span class="lineNum">      50</span>              :         context_flags                                   = GL_CONTEXT_FLAGS,</span>
+<span id="L51"><span class="lineNum">      51</span>              :         copy_read_buffer_binding                        = GL_COPY_READ_BUFFER_BINDING,</span>
+<span id="L52"><span class="lineNum">      52</span>              :         copy_write_buffer_binding                       = GL_COPY_WRITE_BUFFER_BINDING,</span>
+<span id="L53"><span class="lineNum">      53</span>              :         cull_face_mode                                  = GL_CULL_FACE_MODE,</span>
+<span id="L54"><span class="lineNum">      54</span>              :         current_program                                 = GL_CURRENT_PROGRAM,</span>
+<span id="L55"><span class="lineNum">      55</span>              :         debug_group_stack_depth                         = GL_DEBUG_GROUP_STACK_DEPTH,</span>
+<span id="L56"><span class="lineNum">      56</span>              :         depth_func                                      = GL_DEPTH_FUNC,</span>
+<span id="L57"><span class="lineNum">      57</span>              :         draw_buffer                                     = GL_DRAW_BUFFER,</span>
+<span id="L58"><span class="lineNum">      58</span>              :         draw_framebuffer_binding                        = GL_DRAW_FRAMEBUFFER_BINDING,</span>
+<span id="L59"><span class="lineNum">      59</span>              :         element_array_buffer_binding                    = GL_ELEMENT_ARRAY_BUFFER_BINDING,</span>
+<span id="L60"><span class="lineNum">      60</span>              :         fragment_shader_derivative_hint                 = GL_FRAGMENT_SHADER_DERIVATIVE_HINT,</span>
+<span id="L61"><span class="lineNum">      61</span>              :         front_face                                      = GL_FRONT_FACE,</span>
+<span id="L62"><span class="lineNum">      62</span>              :         line_smooth_hint                                = GL_LINE_SMOOTH_HINT,</span>
+<span id="L63"><span class="lineNum">      63</span>              :         logic_op_mode                                   = GL_LOGIC_OP_MODE,</span>
+<span id="L64"><span class="lineNum">      64</span>              :         major_version                                   = GL_MAJOR_VERSION,</span>
+<span id="L65"><span class="lineNum">      65</span>              :         max_3d_texture_size                             = GL_MAX_3D_TEXTURE_SIZE,</span>
+<span id="L66"><span class="lineNum">      66</span>              :         max_array_texture_layers                        = GL_MAX_ARRAY_TEXTURE_LAYERS,</span>
+<span id="L67"><span class="lineNum">      67</span>              :         max_atomic_counter_buffer_bindings              = GL_MAX_ATOMIC_COUNTER_BUFFER_BINDINGS,</span>
+<span id="L68"><span class="lineNum">      68</span>              :         max_color_attachments                           = GL_MAX_COLOR_ATTACHMENTS,</span>
+<span id="L69"><span class="lineNum">      69</span>              :         max_color_texture_samples                       = GL_MAX_COLOR_TEXTURE_SAMPLES,</span>
+<span id="L70"><span class="lineNum">      70</span>              :         max_combined_atomic_counters                    = GL_MAX_COMBINED_ATOMIC_COUNTERS,</span>
+<span id="L71"><span class="lineNum">      71</span>              :         max_combined_compute_uniform_components         = GL_MAX_COMBINED_COMPUTE_UNIFORM_COMPONENTS,</span>
+<span id="L72"><span class="lineNum">      72</span>              :         max_combined_fragment_uniform_components        = GL_MAX_COMBINED_FRAGMENT_UNIFORM_COMPONENTS,</span>
+<span id="L73"><span class="lineNum">      73</span>              :         max_combined_geometry_uniform_components        = GL_MAX_COMBINED_GEOMETRY_UNIFORM_COMPONENTS,</span>
+<span id="L74"><span class="lineNum">      74</span>              :         max_combined_shader_storage_blocks              = GL_MAX_COMBINED_SHADER_STORAGE_BLOCKS,</span>
+<span id="L75"><span class="lineNum">      75</span>              :         max_combined_tess_control_uniform_components    = GL_MAX_COMBINED_TESS_CONTROL_UNIFORM_COMPONENTS,</span>
+<span id="L76"><span class="lineNum">      76</span>              :         max_combined_tess_evaluation_uniform_components = GL_MAX_COMBINED_TESS_EVALUATION_UNIFORM_COMPONENTS,</span>
+<span id="L77"><span class="lineNum">      77</span>              :         max_combined_texture_image_units                = GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS,</span>
+<span id="L78"><span class="lineNum">      78</span>              :         max_combined_uniform_blocks                     = GL_MAX_COMBINED_UNIFORM_BLOCKS,</span>
+<span id="L79"><span class="lineNum">      79</span>              :         max_combined_vertex_uniform_components          = GL_MAX_COMBINED_VERTEX_UNIFORM_COMPONENTS,</span>
+<span id="L80"><span class="lineNum">      80</span>              :         max_compute_atomic_counters                     = GL_MAX_COMPUTE_ATOMIC_COUNTERS,</span>
+<span id="L81"><span class="lineNum">      81</span>              :         max_compute_atomic_counter_buffers              = GL_MAX_COMPUTE_ATOMIC_COUNTER_BUFFERS,</span>
+<span id="L82"><span class="lineNum">      82</span>              :         max_compute_shader_storage_blocks               = GL_MAX_COMPUTE_SHADER_STORAGE_BLOCKS,</span>
+<span id="L83"><span class="lineNum">      83</span>              :         max_compute_texture_image_units                 = GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS,</span>
+<span id="L84"><span class="lineNum">      84</span>              :         max_compute_uniform_blocks                      = GL_MAX_COMPUTE_UNIFORM_BLOCKS,</span>
+<span id="L85"><span class="lineNum">      85</span>              :         max_compute_uniform_components                  = GL_MAX_COMPUTE_UNIFORM_COMPONENTS,</span>
+<span id="L86"><span class="lineNum">      86</span>              :         max_compute_work_group_invocations              = GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS,</span>
+<span id="L87"><span class="lineNum">      87</span>              :         max_cube_map_texture_size                       = GL_MAX_CUBE_MAP_TEXTURE_SIZE,</span>
+<span id="L88"><span class="lineNum">      88</span>              :         max_debug_group_stack_depth                     = GL_MAX_DEBUG_GROUP_STACK_DEPTH,</span>
+<span id="L89"><span class="lineNum">      89</span>              :         max_debug_logged_messages                       = GL_MAX_DEBUG_LOGGED_MESSAGES,</span>
+<span id="L90"><span class="lineNum">      90</span>              :         max_debug_message_length                        = GL_MAX_DEBUG_MESSAGE_LENGTH,</span>
+<span id="L91"><span class="lineNum">      91</span>              :         max_depth_texture_samples                       = GL_MAX_DEPTH_TEXTURE_SAMPLES,</span>
+<span id="L92"><span class="lineNum">      92</span>              :         max_draw_buffers                                = GL_MAX_DRAW_BUFFERS,</span>
+<span id="L93"><span class="lineNum">      93</span>              :         max_dual_source_draw_buffers                    = GL_MAX_DUAL_SOURCE_DRAW_BUFFERS,</span>
+<span id="L94"><span class="lineNum">      94</span>              :         max_element_index                               = GL_MAX_ELEMENT_INDEX,</span>
+<span id="L95"><span class="lineNum">      95</span>              :         max_elements_indices                            = GL_MAX_ELEMENTS_INDICES,</span>
+<span id="L96"><span class="lineNum">      96</span>              :         max_elements_vertices                           = GL_MAX_ELEMENTS_VERTICES,</span>
+<span id="L97"><span class="lineNum">      97</span>              :         max_fragment_atomic_counters                    = GL_MAX_FRAGMENT_ATOMIC_COUNTERS,</span>
+<span id="L98"><span class="lineNum">      98</span>              :         max_fragment_input_components                   = GL_MAX_FRAGMENT_INPUT_COMPONENTS,</span>
+<span id="L99"><span class="lineNum">      99</span>              :         max_fragment_shader_storage_blocks              = GL_MAX_FRAGMENT_SHADER_STORAGE_BLOCKS,</span>
+<span id="L100"><span class="lineNum">     100</span>              :         max_fragment_uniform_blocks                     = GL_MAX_FRAGMENT_UNIFORM_BLOCKS,</span>
+<span id="L101"><span class="lineNum">     101</span>              :         max_fragment_uniform_components                 = GL_MAX_FRAGMENT_UNIFORM_COMPONENTS,</span>
+<span id="L102"><span class="lineNum">     102</span>              :         max_fragment_uniform_vectors                    = GL_MAX_FRAGMENT_UNIFORM_VECTORS,</span>
+<span id="L103"><span class="lineNum">     103</span>              :         max_framebuffer_height                          = GL_MAX_FRAMEBUFFER_HEIGHT,</span>
+<span id="L104"><span class="lineNum">     104</span>              :         max_framebuffer_layers                          = GL_MAX_FRAMEBUFFER_LAYERS,</span>
+<span id="L105"><span class="lineNum">     105</span>              :         max_framebuffer_samples                         = GL_MAX_FRAMEBUFFER_SAMPLES,</span>
+<span id="L106"><span class="lineNum">     106</span>              :         max_framebuffer_width                           = GL_MAX_FRAMEBUFFER_WIDTH,</span>
+<span id="L107"><span class="lineNum">     107</span>              :         max_geometry_atomic_counters                    = GL_MAX_GEOMETRY_ATOMIC_COUNTERS,</span>
+<span id="L108"><span class="lineNum">     108</span>              :         max_geometry_input_components                   = GL_MAX_GEOMETRY_INPUT_COMPONENTS,</span>
+<span id="L109"><span class="lineNum">     109</span>              :         max_geometry_output_components                  = GL_MAX_GEOMETRY_OUTPUT_COMPONENTS,</span>
+<span id="L110"><span class="lineNum">     110</span>              :         max_geometry_output_vertices                    = GL_MAX_GEOMETRY_OUTPUT_VERTICES,</span>
+<span id="L111"><span class="lineNum">     111</span>              :         max_geometry_shader_storage_blocks              = GL_MAX_GEOMETRY_SHADER_STORAGE_BLOCKS,</span>
+<span id="L112"><span class="lineNum">     112</span>              :         max_geometry_texture_image_units                = GL_MAX_GEOMETRY_TEXTURE_IMAGE_UNITS,</span>
+<span id="L113"><span class="lineNum">     113</span>              :         max_geometry_uniform_blocks                     = GL_MAX_GEOMETRY_UNIFORM_BLOCKS,</span>
+<span id="L114"><span class="lineNum">     114</span>              :         max_geometry_uniform_components                 = GL_MAX_GEOMETRY_UNIFORM_COMPONENTS,</span>
+<span id="L115"><span class="lineNum">     115</span>              :         max_integer_samples                             = GL_MAX_INTEGER_SAMPLES,</span>
+<span id="L116"><span class="lineNum">     116</span>              :         max_label_length                                = GL_MAX_LABEL_LENGTH,</span>
+<span id="L117"><span class="lineNum">     117</span>              :         max_program_texel_offset                        = GL_MAX_PROGRAM_TEXEL_OFFSET,</span>
+<span id="L118"><span class="lineNum">     118</span>              :         max_rectangle_texture_size                      = GL_MAX_RECTANGLE_TEXTURE_SIZE,</span>
+<span id="L119"><span class="lineNum">     119</span>              :         max_renderbuffer_size                           = GL_MAX_RENDERBUFFER_SIZE,</span>
+<span id="L120"><span class="lineNum">     120</span>              :         max_sample_mask_words                           = GL_MAX_SAMPLE_MASK_WORDS,</span>
+<span id="L121"><span class="lineNum">     121</span>              :         max_shader_storage_buffer_bindings              = GL_MAX_SHADER_STORAGE_BUFFER_BINDINGS,</span>
+<span id="L122"><span class="lineNum">     122</span>              :         max_tess_control_atomic_counters                = GL_MAX_TESS_CONTROL_ATOMIC_COUNTERS,</span>
+<span id="L123"><span class="lineNum">     123</span>              :         max_tess_control_input_components               = GL_MAX_TESS_CONTROL_INPUT_COMPONENTS,</span>
+<span id="L124"><span class="lineNum">     124</span>              :         max_tess_control_output_components              = GL_MAX_TESS_CONTROL_OUTPUT_COMPONENTS,</span>
+<span id="L125"><span class="lineNum">     125</span>              :         max_tess_control_shader_storage_blocks          = GL_MAX_TESS_CONTROL_SHADER_STORAGE_BLOCKS,</span>
+<span id="L126"><span class="lineNum">     126</span>              :         max_tess_control_texture_image_units            = GL_MAX_TESS_CONTROL_TEXTURE_IMAGE_UNITS,</span>
+<span id="L127"><span class="lineNum">     127</span>              :         max_tess_control_uniform_blocks                 = GL_MAX_TESS_CONTROL_UNIFORM_BLOCKS,</span>
+<span id="L128"><span class="lineNum">     128</span>              :         max_tess_control_uniform_components             = GL_MAX_TESS_CONTROL_UNIFORM_COMPONENTS,</span>
+<span id="L129"><span class="lineNum">     129</span>              :         max_tess_evaluation_atomic_counters             = GL_MAX_TESS_EVALUATION_ATOMIC_COUNTERS,</span>
+<span id="L130"><span class="lineNum">     130</span>              :         max_tess_evaluation_input_components            = GL_MAX_TESS_EVALUATION_INPUT_COMPONENTS,</span>
+<span id="L131"><span class="lineNum">     131</span>              :         max_tess_evaluation_output_components           = GL_MAX_TESS_EVALUATION_OUTPUT_COMPONENTS,</span>
+<span id="L132"><span class="lineNum">     132</span>              :         max_tess_evaluation_shader_storage_blocks       = GL_MAX_TESS_EVALUATION_SHADER_STORAGE_BLOCKS,</span>
+<span id="L133"><span class="lineNum">     133</span>              :         max_tess_evaluation_texture_image_units         = GL_MAX_TESS_EVALUATION_TEXTURE_IMAGE_UNITS,</span>
+<span id="L134"><span class="lineNum">     134</span>              :         max_tess_evaluation_uniform_blocks              = GL_MAX_TESS_EVALUATION_UNIFORM_BLOCKS,</span>
+<span id="L135"><span class="lineNum">     135</span>              :         max_tess_evaluation_uniform_components          = GL_MAX_TESS_EVALUATION_UNIFORM_COMPONENTS,</span>
+<span id="L136"><span class="lineNum">     136</span>              :         max_tess_gen_level                              = GL_MAX_TESS_GEN_LEVEL,</span>
+<span id="L137"><span class="lineNum">     137</span>              :         max_tess_patch_components                       = GL_MAX_TESS_PATCH_COMPONENTS,</span>
+<span id="L138"><span class="lineNum">     138</span>              :         max_texture_buffer_size                         = GL_MAX_TEXTURE_BUFFER_SIZE,</span>
+<span id="L139"><span class="lineNum">     139</span>              :         max_texture_image_units                         = GL_MAX_TEXTURE_IMAGE_UNITS,</span>
+<span id="L140"><span class="lineNum">     140</span>              :         max_texture_size                                = GL_MAX_TEXTURE_SIZE,</span>
+<span id="L141"><span class="lineNum">     141</span>              :         max_uniform_block_size                          = GL_MAX_UNIFORM_BLOCK_SIZE,</span>
+<span id="L142"><span class="lineNum">     142</span>              :         max_uniform_buffer_bindings                     = GL_MAX_UNIFORM_BUFFER_BINDINGS,</span>
+<span id="L143"><span class="lineNum">     143</span>              :         max_uniform_locations                           = GL_MAX_UNIFORM_LOCATIONS,</span>
+<span id="L144"><span class="lineNum">     144</span>              :         max_varying_components                          = GL_MAX_VARYING_COMPONENTS,</span>
+<span id="L145"><span class="lineNum">     145</span>              :         max_varying_floats                              = GL_MAX_VARYING_FLOATS,</span>
+<span id="L146"><span class="lineNum">     146</span>              :         max_varying_vectors                             = GL_MAX_VARYING_VECTORS,</span>
+<span id="L147"><span class="lineNum">     147</span>              :         max_vertex_atomic_counters                      = GL_MAX_VERTEX_ATOMIC_COUNTERS,</span>
+<span id="L148"><span class="lineNum">     148</span>              :         max_vertex_attrib_bindings                      = GL_MAX_VERTEX_ATTRIB_BINDINGS,</span>
+<span id="L149"><span class="lineNum">     149</span>              :         max_vertex_attrib_relative_offset               = GL_MAX_VERTEX_ATTRIB_RELATIVE_OFFSET,</span>
+<span id="L150"><span class="lineNum">     150</span>              :         max_vertex_attribs                              = GL_MAX_VERTEX_ATTRIBS,</span>
+<span id="L151"><span class="lineNum">     151</span>              :         max_vertex_output_components                    = GL_MAX_VERTEX_OUTPUT_COMPONENTS,</span>
+<span id="L152"><span class="lineNum">     152</span>              :         max_vertex_shader_storage_blocks                = GL_MAX_VERTEX_SHADER_STORAGE_BLOCKS,</span>
+<span id="L153"><span class="lineNum">     153</span>              :         max_vertex_texture_image_units                  = GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS,</span>
+<span id="L154"><span class="lineNum">     154</span>              :         max_vertex_uniform_blocks                       = GL_MAX_VERTEX_UNIFORM_BLOCKS,</span>
+<span id="L155"><span class="lineNum">     155</span>              :         max_vertex_uniform_components                   = GL_MAX_VERTEX_UNIFORM_COMPONENTS,</span>
+<span id="L156"><span class="lineNum">     156</span>              :         max_vertex_uniform_vectors                      = GL_MAX_VERTEX_UNIFORM_VECTORS,</span>
+<span id="L157"><span class="lineNum">     157</span>              :         min_map_buffer_alignment                        = GL_MIN_MAP_BUFFER_ALIGNMENT,</span>
+<span id="L158"><span class="lineNum">     158</span>              :         min_program_texel_offset                        = GL_MIN_PROGRAM_TEXEL_OFFSET,</span>
+<span id="L159"><span class="lineNum">     159</span>              :         minor_version                                   = GL_MINOR_VERSION,</span>
+<span id="L160"><span class="lineNum">     160</span>              :         num_compressed_texture_formats                  = GL_NUM_COMPRESSED_TEXTURE_FORMATS,</span>
+<span id="L161"><span class="lineNum">     161</span>              :         num_extensions                                  = GL_NUM_EXTENSIONS,</span>
+<span id="L162"><span class="lineNum">     162</span>              :         num_program_binary_formats                      = GL_NUM_PROGRAM_BINARY_FORMATS,</span>
+<span id="L163"><span class="lineNum">     163</span>              :         num_shader_binary_formats                       = GL_NUM_SHADER_BINARY_FORMATS,</span>
+<span id="L164"><span class="lineNum">     164</span>              :         pack_alignment                                  = GL_PACK_ALIGNMENT,</span>
+<span id="L165"><span class="lineNum">     165</span>              :         pack_image_height                               = GL_PACK_IMAGE_HEIGHT,</span>
+<span id="L166"><span class="lineNum">     166</span>              :         pack_row_length                                 = GL_PACK_ROW_LENGTH,</span>
+<span id="L167"><span class="lineNum">     167</span>              :         pack_skip_images                                = GL_PACK_SKIP_IMAGES,</span>
+<span id="L168"><span class="lineNum">     168</span>              :         pack_skip_pixels                                = GL_PACK_SKIP_PIXELS,</span>
+<span id="L169"><span class="lineNum">     169</span>              :         pack_skip_rows                                  = GL_PACK_SKIP_ROWS,</span>
+<span id="L170"><span class="lineNum">     170</span>              :         pixel_pack_buffer_binding                       = GL_PIXEL_PACK_BUFFER_BINDING,</span>
+<span id="L171"><span class="lineNum">     171</span>              :         pixel_unpack_buffer_binding                     = GL_PIXEL_UNPACK_BUFFER_BINDING,</span>
+<span id="L172"><span class="lineNum">     172</span>              :         polygon_mode                                    = GL_POLYGON_MODE,</span>
+<span id="L173"><span class="lineNum">     173</span>              :         polygon_smooth_hint                             = GL_POLYGON_SMOOTH_HINT,</span>
+<span id="L174"><span class="lineNum">     174</span>              :         primitive_restart_index                         = GL_PRIMITIVE_RESTART_INDEX,</span>
+<span id="L175"><span class="lineNum">     175</span>              :         program_binary_formats                          = GL_PROGRAM_BINARY_FORMATS,</span>
+<span id="L176"><span class="lineNum">     176</span>              :         program_pipeline_binding                        = GL_PROGRAM_PIPELINE_BINDING,</span>
+<span id="L177"><span class="lineNum">     177</span>              :         provoking_vertex                                = GL_PROVOKING_VERTEX,</span>
+<span id="L178"><span class="lineNum">     178</span>              :         read_buffer                                     = GL_READ_BUFFER,</span>
+<span id="L179"><span class="lineNum">     179</span>              :         read_framebuffer_binding                        = GL_READ_FRAMEBUFFER_BINDING,</span>
+<span id="L180"><span class="lineNum">     180</span>              :         renderbuffer_binding                            = GL_RENDERBUFFER_BINDING,</span>
+<span id="L181"><span class="lineNum">     181</span>              :         sample_buffers                                  = GL_SAMPLE_BUFFERS,</span>
+<span id="L182"><span class="lineNum">     182</span>              :         samples                                         = GL_SAMPLES,</span>
+<span id="L183"><span class="lineNum">     183</span>              :         shader_storage_buffer_binding                   = GL_SHADER_STORAGE_BUFFER_BINDING,</span>
+<span id="L184"><span class="lineNum">     184</span>              :         shader_storage_buffer_offset_alignment          = GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT,</span>
+<span id="L185"><span class="lineNum">     185</span>              :         stencil_back_fail                               = GL_STENCIL_BACK_FAIL,</span>
+<span id="L186"><span class="lineNum">     186</span>              :         stencil_back_func                               = GL_STENCIL_BACK_FUNC,</span>
+<span id="L187"><span class="lineNum">     187</span>              :         stencil_back_pass_depth_fail                    = GL_STENCIL_BACK_PASS_DEPTH_FAIL,</span>
+<span id="L188"><span class="lineNum">     188</span>              :         stencil_back_pass_depth_pass                    = GL_STENCIL_BACK_PASS_DEPTH_PASS,</span>
+<span id="L189"><span class="lineNum">     189</span>              :         stencil_back_ref                                = GL_STENCIL_BACK_REF,</span>
+<span id="L190"><span class="lineNum">     190</span>              :         stencil_clear_value                             = GL_STENCIL_CLEAR_VALUE,</span>
+<span id="L191"><span class="lineNum">     191</span>              :         stencil_fail                                    = GL_STENCIL_FAIL,</span>
+<span id="L192"><span class="lineNum">     192</span>              :         stencil_func                                    = GL_STENCIL_FUNC,</span>
+<span id="L193"><span class="lineNum">     193</span>              :         stencil_pass_depth_fail                         = GL_STENCIL_PASS_DEPTH_FAIL,</span>
+<span id="L194"><span class="lineNum">     194</span>              :         stencil_pass_depth_pass                         = GL_STENCIL_PASS_DEPTH_PASS,</span>
+<span id="L195"><span class="lineNum">     195</span>              :         stencil_ref                                     = GL_STENCIL_REF,</span>
+<span id="L196"><span class="lineNum">     196</span>              :         subpixel_bits                                   = GL_SUBPIXEL_BITS,</span>
+<span id="L197"><span class="lineNum">     197</span>              :         texture_binding_1d                              = GL_TEXTURE_BINDING_1D,</span>
+<span id="L198"><span class="lineNum">     198</span>              :         texture_binding_1d_array                        = GL_TEXTURE_BINDING_1D_ARRAY,</span>
+<span id="L199"><span class="lineNum">     199</span>              :         texture_binding_2d                              = GL_TEXTURE_BINDING_2D,</span>
+<span id="L200"><span class="lineNum">     200</span>              :         texture_binding_2d_array                        = GL_TEXTURE_BINDING_2D_ARRAY,</span>
+<span id="L201"><span class="lineNum">     201</span>              :         texture_binding_2d_multisample                  = GL_TEXTURE_BINDING_2D_MULTISAMPLE,</span>
+<span id="L202"><span class="lineNum">     202</span>              :         texture_binding_2d_multisample_array            = GL_TEXTURE_BINDING_2D_MULTISAMPLE_ARRAY,</span>
+<span id="L203"><span class="lineNum">     203</span>              :         texture_binding_3d                              = GL_TEXTURE_BINDING_3D,</span>
+<span id="L204"><span class="lineNum">     204</span>              :         texture_binding_buffer                          = GL_TEXTURE_BINDING_BUFFER,</span>
+<span id="L205"><span class="lineNum">     205</span>              :         texture_binding_cube_map                        = GL_TEXTURE_BINDING_CUBE_MAP,</span>
+<span id="L206"><span class="lineNum">     206</span>              :         texture_binding_cube_map_array                  = GL_TEXTURE_BINDING_CUBE_MAP_ARRAY,</span>
+<span id="L207"><span class="lineNum">     207</span>              :         texture_binding_rectangle                       = GL_TEXTURE_BINDING_RECTANGLE,</span>
+<span id="L208"><span class="lineNum">     208</span>              :         texture_buffer_offset_alignment                 = GL_TEXTURE_BUFFER_OFFSET_ALIGNMENT,</span>
+<span id="L209"><span class="lineNum">     209</span>              :         texture_compression_hint                        = GL_TEXTURE_COMPRESSION_HINT,</span>
+<span id="L210"><span class="lineNum">     210</span>              :         transform_feedback_buffer_binding               = GL_TRANSFORM_FEEDBACK_BUFFER_BINDING,</span>
+<span id="L211"><span class="lineNum">     211</span>              :         uniform_buffer_binding                          = GL_UNIFORM_BUFFER_BINDING,</span>
+<span id="L212"><span class="lineNum">     212</span>              :         uniform_buffer_offset_alignment                 = GL_UNIFORM_BUFFER_OFFSET_ALIGNMENT,</span>
+<span id="L213"><span class="lineNum">     213</span>              :         unpack_alignment                                = GL_UNPACK_ALIGNMENT,</span>
+<span id="L214"><span class="lineNum">     214</span>              :         unpack_image_height                             = GL_UNPACK_IMAGE_HEIGHT,</span>
+<span id="L215"><span class="lineNum">     215</span>              :         unpack_row_length                               = GL_UNPACK_ROW_LENGTH,</span>
+<span id="L216"><span class="lineNum">     216</span>              :         unpack_skip_images                              = GL_UNPACK_SKIP_IMAGES,</span>
+<span id="L217"><span class="lineNum">     217</span>              :         unpack_skip_pixels                              = GL_UNPACK_SKIP_PIXELS,</span>
+<span id="L218"><span class="lineNum">     218</span>              :         unpack_skip_rows                                = GL_UNPACK_SKIP_ROWS,</span>
+<span id="L219"><span class="lineNum">     219</span>              :         vertex_array_binding                            = GL_VERTEX_ARRAY_BINDING,</span>
+<span id="L220"><span class="lineNum">     220</span>              :         vertex_binding_buffer                           = GL_VERTEX_BINDING_BUFFER,</span>
+<span id="L221"><span class="lineNum">     221</span>              :         vertex_binding_divisor                          = GL_VERTEX_BINDING_DIVISOR,</span>
+<span id="L222"><span class="lineNum">     222</span>              :         vertex_binding_offset                           = GL_VERTEX_BINDING_OFFSET,</span>
+<span id="L223"><span class="lineNum">     223</span>              :         vertex_binding_stride                           = GL_VERTEX_BINDING_STRIDE,</span>
+<span id="L224"><span class="lineNum">     224</span>              :     };</span>
+<span id="L225"><span class="lineNum">     225</span>              : </span>
+<span id="L226"><span class="lineNum">     226</span>              :     enum class mask_names : GLenum {</span>
+<span id="L227"><span class="lineNum">     227</span>              :         sample_mask_value       = GL_SAMPLE_MASK_VALUE,</span>
+<span id="L228"><span class="lineNum">     228</span>              :         stencil_back_value_mask = GL_STENCIL_BACK_VALUE_MASK,</span>
+<span id="L229"><span class="lineNum">     229</span>              :         stencil_back_writemask  = GL_STENCIL_BACK_WRITEMASK,</span>
+<span id="L230"><span class="lineNum">     230</span>              :         stencil_value_mask      = GL_STENCIL_VALUE_MASK,</span>
+<span id="L231"><span class="lineNum">     231</span>              :         stencil_writemask       = GL_STENCIL_WRITEMASK,</span>
+<span id="L232"><span class="lineNum">     232</span>              :     };</span>
+<span id="L233"><span class="lineNum">     233</span>              : </span>
+<span id="L234"><span class="lineNum">     234</span>              :     enum class int64_names : GLenum {</span>
+<span id="L235"><span class="lineNum">     235</span>              :         max_server_wait_timeout = GL_MAX_SERVER_WAIT_TIMEOUT,</span>
+<span id="L236"><span class="lineNum">     236</span>              :         timestamp               = GL_TIMESTAMP,</span>
+<span id="L237"><span class="lineNum">     237</span>              :     };</span>
+<span id="L238"><span class="lineNum">     238</span>              : </span>
+<span id="L239"><span class="lineNum">     239</span>              :     enum class float_names : GLenum {</span>
+<span id="L240"><span class="lineNum">     240</span>              :         depth_clear_value                 = GL_DEPTH_CLEAR_VALUE,</span>
+<span id="L241"><span class="lineNum">     241</span>              :         line_width                        = GL_LINE_WIDTH,</span>
+<span id="L242"><span class="lineNum">     242</span>              :         line_width_granularity            = GL_LINE_WIDTH_GRANULARITY,</span>
+<span id="L243"><span class="lineNum">     243</span>              :         max_texture_lod_bias              = GL_MAX_TEXTURE_LOD_BIAS,</span>
+<span id="L244"><span class="lineNum">     244</span>              :         min_fragment_interpolation_offset = GL_MIN_FRAGMENT_INTERPOLATION_OFFSET,</span>
+<span id="L245"><span class="lineNum">     245</span>              :         polygon_offset_clamp              = GL_POLYGON_OFFSET_CLAMP,</span>
+<span id="L246"><span class="lineNum">     246</span>              :         polygon_offset_factor             = GL_POLYGON_OFFSET_FACTOR,</span>
+<span id="L247"><span class="lineNum">     247</span>              :         polygon_offset_units              = GL_POLYGON_OFFSET_UNITS,</span>
+<span id="L248"><span class="lineNum">     248</span>              :         point_fade_threshold_size         = GL_POINT_FADE_THRESHOLD_SIZE,</span>
+<span id="L249"><span class="lineNum">     249</span>              :         point_size                        = GL_POINT_SIZE,</span>
+<span id="L250"><span class="lineNum">     250</span>              :         point_size_granularity            = GL_POINT_SIZE_GRANULARITY,</span>
+<span id="L251"><span class="lineNum">     251</span>              :         sample_coverage_value             = GL_SAMPLE_COVERAGE_VALUE,</span>
+<span id="L252"><span class="lineNum">     252</span>              :         smooth_line_width_granularity     = GL_SMOOTH_LINE_WIDTH_GRANULARITY,</span>
+<span id="L253"><span class="lineNum">     253</span>              :     };</span>
+<span id="L254"><span class="lineNum">     254</span>              : </span>
+<span id="L255"><span class="lineNum">     255</span>              :     enum class string_names : GLenum {</span>
+<span id="L256"><span class="lineNum">     256</span>              :         renderer = GL_RENDERER,</span>
+<span id="L257"><span class="lineNum">     257</span>              :         vendor   = GL_VENDOR,</span>
+<span id="L258"><span class="lineNum">     258</span>              :     };</span>
+<span id="L259"><span class="lineNum">     259</span>              : </span>
+<span id="L260"><span class="lineNum">     260</span>              :     enum class paired_int_names : GLenum {</span>
+<span id="L261"><span class="lineNum">     261</span>              :         max_viewport_dims          = GL_MAX_VIEWPORT_DIMS,</span>
+<span id="L262"><span class="lineNum">     262</span>              :         viewport_bounds_range      = GL_VIEWPORT_BOUNDS_RANGE,</span>
+<span id="L263"><span class="lineNum">     263</span>              :     };</span>
+<span id="L264"><span class="lineNum">     264</span>              : </span>
+<span id="L265"><span class="lineNum">     265</span>              :     enum class paired_float_names : GLenum {</span>
+<span id="L266"><span class="lineNum">     266</span>              :         aliased_line_width_range   = GL_ALIASED_LINE_WIDTH_RANGE,</span>
+<span id="L267"><span class="lineNum">     267</span>              :         depth_range                = GL_DEPTH_RANGE,</span>
+<span id="L268"><span class="lineNum">     268</span>              :         point_size_range           = GL_POINT_SIZE_RANGE,</span>
+<span id="L269"><span class="lineNum">     269</span>              :         smooth_line_width_range    = GL_SMOOTH_LINE_WIDTH_RANGE,</span>
+<span id="L270"><span class="lineNum">     270</span>              :     };</span>
+<span id="L271"><span class="lineNum">     271</span>              : </span>
+<span id="L272"><span class="lineNum">     272</span>              :     enum class quadruple_bool_names : GLenum {</span>
+<span id="L273"><span class="lineNum">     273</span>              :         color_writemask            = GL_COLOR_WRITEMASK,</span>
+<span id="L274"><span class="lineNum">     274</span>              :     };</span>
+<span id="L275"><span class="lineNum">     275</span>              : </span>
+<span id="L276"><span class="lineNum">     276</span>              :     enum class quadruple_int_names : GLenum {</span>
+<span id="L277"><span class="lineNum">     277</span>              :         scissor_box                = GL_SCISSOR_BOX,</span>
+<span id="L278"><span class="lineNum">     278</span>              :         viewport                   = GL_VIEWPORT,</span>
+<span id="L279"><span class="lineNum">     279</span>              :     };</span>
+<span id="L280"><span class="lineNum">     280</span>              : </span>
+<span id="L281"><span class="lineNum">     281</span>              :     enum class quadruple_float_names : GLenum {</span>
+<span id="L282"><span class="lineNum">     282</span>              :         blend_color                = GL_BLEND_COLOR,</span>
+<span id="L283"><span class="lineNum">     283</span>              :         color_clear_value          = GL_COLOR_CLEAR_VALUE,</span>
+<span id="L284"><span class="lineNum">     284</span>              :     };</span>
+<span id="L285"><span class="lineNum">     285</span>              : </span>
+<span id="L286"><span class="lineNum">     286</span>              :     enum class multiple_int_names : GLenum {</span>
+<span id="L287"><span class="lineNum">     287</span>              :         compressed_texture_formats = GL_COMPRESSED_TEXTURE_FORMATS,</span>
+<span id="L288"><span class="lineNum">     288</span>              : </span>
+<span id="L289"><span class="lineNum">     289</span>              :     };</span>
+<span id="L290"><span class="lineNum">     290</span>              : </span>
+<span id="L291"><span class="lineNum">     291</span>              :     namespace impl {</span>
+<span id="L292"><span class="lineNum">     292</span>              :         template&lt;class T&gt;</span>
+<span id="L293"><span class="lineNum">     293</span>              :         struct storage_for_gl_get : std::false_type</span>
+<span id="L294"><span class="lineNum">     294</span>              :         {</span>
+<span id="L295"><span class="lineNum">     295</span>              :         };</span>
+<span id="L296"><span class="lineNum">     296</span>              : </span>
+<span id="L297"><span class="lineNum">     297</span>              :         template&lt;class T&gt;</span>
+<span id="L298"><span class="lineNum">     298</span>              :         inline constexpr bool storage_for_gl_get_v{storage_for_gl_get&lt;T&gt;::value};</span>
+<span id="L299"><span class="lineNum">     299</span>              : </span>
+<span id="L300"><span class="lineNum">     300</span>              :         template&lt;gl_arithmetic T&gt;</span>
+<span id="L301"><span class="lineNum">     301</span>              :         struct storage_for_gl_get&lt;T&gt; : std::true_type</span>
+<span id="L302"><span class="lineNum">     302</span>              :         {</span>
+<span id="L303"><span class="lineNum">     303</span>              :         };</span>
+<span id="L304"><span class="lineNum">     304</span>              : </span>
+<span id="L305"><span class="lineNum">     305</span>              :         template&lt;gl_arithmetic T, std::size_t N&gt;</span>
+<span id="L306"><span class="lineNum">     306</span>              :         struct storage_for_gl_get&lt;std::array&lt;T, N&gt;&gt; : std::true_type</span>
+<span id="L307"><span class="lineNum">     307</span>              :         {</span>
+<span id="L308"><span class="lineNum">     308</span>              :         };</span>
+<span id="L309"><span class="lineNum">     309</span>              : </span>
+<span id="L310"><span class="lineNum">     310</span>              :         template&lt;class T&gt;</span>
+<span id="L311"><span class="lineNum">     311</span>              :         struct to_context_mem_fn_ptr {</span>
+<span id="L312"><span class="lineNum">     312</span>              :             static_assert(false, &quot;Please ensure that all required specializations are present!&quot;);</span>
+<span id="L313"><span class="lineNum">     313</span>              :         };</span>
+<span id="L314"><span class="lineNum">     314</span>              : </span>
+<span id="L315"><span class="lineNum">     315</span>              :         template&lt;gl_arithmetic T, std::size_t N&gt;</span>
+<span id="L316"><span class="lineNum">     316</span>              :         struct to_context_mem_fn_ptr&lt;std::array&lt;T, N&gt;&gt; : to_context_mem_fn_ptr&lt;T&gt;</span>
+<span id="L317"><span class="lineNum">     317</span>              :         {</span>
+<span id="L318"><span class="lineNum">     318</span>              :         };</span>
+<span id="L319"><span class="lineNum">     319</span>              : </span>
+<span id="L320"><span class="lineNum">     320</span>              :         template&lt;class T&gt;</span>
+<span id="L321"><span class="lineNum">     321</span>              :         inline constexpr auto to_context_mem_fn_ptr_v{to_context_mem_fn_ptr&lt;T&gt;::value};</span>
+<span id="L322"><span class="lineNum">     322</span>              : </span>
+<span id="L323"><span class="lineNum">     323</span>              :         template&lt;&gt;</span>
+<span id="L324"><span class="lineNum">     324</span>              :         struct to_context_mem_fn_ptr&lt;GLboolean&gt; {</span>
+<span id="L325"><span class="lineNum">     325</span>              :             constexpr static auto value{&amp;GladGLContext::GetBooleanv};</span>
+<span id="L326"><span class="lineNum">     326</span>              :         };</span>
+<span id="L327"><span class="lineNum">     327</span>              : </span>
+<span id="L328"><span class="lineNum">     328</span>              :         template&lt;&gt;</span>
+<span id="L329"><span class="lineNum">     329</span>              :         struct to_context_mem_fn_ptr&lt;GLint&gt; {</span>
+<span id="L330"><span class="lineNum">     330</span>              :             constexpr static auto value{&amp;GladGLContext::GetIntegerv};</span>
+<span id="L331"><span class="lineNum">     331</span>              :         };</span>
+<span id="L332"><span class="lineNum">     332</span>              : </span>
+<span id="L333"><span class="lineNum">     333</span>              :         template&lt;&gt;</span>
+<span id="L334"><span class="lineNum">     334</span>              :         struct to_context_mem_fn_ptr&lt;GLint64&gt; {</span>
+<span id="L335"><span class="lineNum">     335</span>              :             constexpr static auto value{&amp;GladGLContext::GetInteger64v};</span>
+<span id="L336"><span class="lineNum">     336</span>              :         };</span>
+<span id="L337"><span class="lineNum">     337</span>              : </span>
+<span id="L338"><span class="lineNum">     338</span>              :         template&lt;&gt;</span>
+<span id="L339"><span class="lineNum">     339</span>              :         struct to_context_mem_fn_ptr&lt;GLfloat&gt; {</span>
+<span id="L340"><span class="lineNum">     340</span>              :             constexpr static auto value{&amp;GladGLContext::GetFloatv};</span>
+<span id="L341"><span class="lineNum">     341</span>              :         };</span>
+<span id="L342"><span class="lineNum">     342</span>              : </span>
+<span id="L343"><span class="lineNum">     343</span>              :         template&lt;&gt;</span>
+<span id="L344"><span class="lineNum">     344</span>              :         struct to_context_mem_fn_ptr&lt;GLdouble&gt; {</span>
+<span id="L345"><span class="lineNum">     345</span>              :             constexpr static auto value{&amp;GladGLContext::GetDoublev};</span>
+<span id="L346"><span class="lineNum">     346</span>              :         };</span>
+<span id="L347"><span class="lineNum">     347</span>              : </span>
+<span id="L348"><span class="lineNum">     348</span>              :         template&lt;class T, std::derived_from&lt;context_base&gt; Context, class Enum&gt;</span>
+<span id="L349"><span class="lineNum">     349</span>              :             requires storage_for_gl_get_v&lt;T&gt; &amp;&amp; std::is_scoped_enum_v&lt;Enum&gt;</span>
+<span id="L350"><span class="lineNum">     350</span>              :         [[nodiscard]]</span>
+<span id="L351"><span class="lineNum">     351</span> <span class="tlaGNC">         363 :         T do_get(const Context&amp; ctx, Enum name) {</span></span>
+<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC">         363 :             T vals{};</span></span>
+<span id="L353"><span class="lineNum">     353</span>              : </span>
+<span id="L354"><span class="lineNum">     354</span>              :             auto getPtr{</span>
+<span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">         363 :                 [](T&amp; t) {</span></span>
+<span id="L356"><span class="lineNum">     356</span>              :                     if constexpr (gl_arithmetic&lt;T&gt;)</span>
+<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">         357 :                         return &amp;t;</span></span>
+<span id="L358"><span class="lineNum">     358</span>              :                     else</span>
+<span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">           6 :                         return t.data();</span></span>
+<span id="L360"><span class="lineNum">     360</span>              :                 }</span>
+<span id="L361"><span class="lineNum">     361</span>              :             };</span>
+<span id="L362"><span class="lineNum">     362</span>              : </span>
+<span id="L363"><span class="lineNum">     363</span> <span class="tlaGNC">         363 :             gl_function{to_context_mem_fn_ptr_v&lt;T&gt;}(ctx, to_gl_underlying_value&lt;GLenum&gt;(name), getPtr(vals));</span></span>
+<span id="L364"><span class="lineNum">     364</span>              : </span>
+<span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">         364 :             return vals;</span></span>
+<span id="L366"><span class="lineNum">     366</span>              :         }</span>
+<span id="L367"><span class="lineNum">     367</span>              :     }</span>
+<span id="L368"><span class="lineNum">     368</span>              : </span>
+<span id="L369"><span class="lineNum">     369</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L370"><span class="lineNum">     370</span>              :     [[nodiscard]]</span>
+<span id="L371"><span class="lineNum">     371</span> <span class="tlaGNC">          10 :     GLboolean get(const Context&amp; ctx, bool_names name) {</span></span>
+<span id="L372"><span class="lineNum">     372</span> <span class="tlaGNC">          10 :         return impl::do_get&lt;GLboolean&gt;(ctx, name);</span></span>
+<span id="L373"><span class="lineNum">     373</span>              :     }</span>
+<span id="L374"><span class="lineNum">     374</span>              : </span>
+<span id="L375"><span class="lineNum">     375</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L376"><span class="lineNum">     376</span>              :     [[nodiscard]]</span>
+<span id="L377"><span class="lineNum">     377</span> <span class="tlaGNC">         311 :     GLint get(const Context&amp; ctx, int_names name) {</span></span>
+<span id="L378"><span class="lineNum">     378</span> <span class="tlaGNC">         311 :         return impl::do_get&lt;GLint&gt;(ctx, name);</span></span>
+<span id="L379"><span class="lineNum">     379</span>              :     }</span>
+<span id="L380"><span class="lineNum">     380</span>              : </span>
+<span id="L381"><span class="lineNum">     381</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L382"><span class="lineNum">     382</span>              :     [[nodiscard]]</span>
+<span id="L383"><span class="lineNum">     383</span> <span class="tlaGNC">          20 :     GLuint get(const Context&amp; ctx, mask_names name) {</span></span>
+<span id="L384"><span class="lineNum">     384</span>              :         // Masks have no dedicated unsigned getter: GetIntegerv is the only way to query them.</span>
+<span id="L385"><span class="lineNum">     385</span>              :         // We therefore read through the GLint path and reinterpret the bit pattern as GLuint.</span>
+<span id="L386"><span class="lineNum">     386</span> <span class="tlaGNC">          20 :         return static_cast&lt;GLuint&gt;(impl::do_get&lt;GLint&gt;(ctx, name));</span></span>
+<span id="L387"><span class="lineNum">     387</span>              :     }</span>
+<span id="L388"><span class="lineNum">     388</span>              : </span>
+<span id="L389"><span class="lineNum">     389</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L390"><span class="lineNum">     390</span>              :     [[nodiscard]]</span>
+<span id="L391"><span class="lineNum">     391</span>              :     GLint64 get(const Context&amp; ctx, int64_names name) {</span>
+<span id="L392"><span class="lineNum">     392</span>              :         return impl::do_get&lt;GLint64&gt;(ctx, name);</span>
+<span id="L393"><span class="lineNum">     393</span>              :     }</span>
+<span id="L394"><span class="lineNum">     394</span>              : </span>
+<span id="L395"><span class="lineNum">     395</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L396"><span class="lineNum">     396</span>              :     [[nodiscard]]</span>
+<span id="L397"><span class="lineNum">     397</span> <span class="tlaGNC">          16 :     GLfloat get(const Context&amp; ctx, float_names name) {</span></span>
+<span id="L398"><span class="lineNum">     398</span> <span class="tlaGNC">          16 :         return impl::do_get&lt;GLfloat&gt;(ctx, name);</span></span>
+<span id="L399"><span class="lineNum">     399</span>              :     }</span>
+<span id="L400"><span class="lineNum">     400</span>              : </span>
+<span id="L401"><span class="lineNum">     401</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L402"><span class="lineNum">     402</span>              :     [[nodiscard]]</span>
+<span id="L403"><span class="lineNum">     403</span>              :     std::array&lt;GLint, 2&gt; get(const Context&amp; ctx, paired_int_names name) {</span>
+<span id="L404"><span class="lineNum">     404</span>              :         return impl::do_get&lt;std::array&lt;GLint, 2&gt;&gt;(ctx, name);</span>
+<span id="L405"><span class="lineNum">     405</span>              :     }</span>
+<span id="L406"><span class="lineNum">     406</span>              : </span>
+<span id="L407"><span class="lineNum">     407</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L408"><span class="lineNum">     408</span>              :     [[nodiscard]]</span>
+<span id="L409"><span class="lineNum">     409</span>              :     std::array&lt;GLfloat, 2&gt; get(const Context&amp; ctx, paired_float_names name) {</span>
+<span id="L410"><span class="lineNum">     410</span>              :         return impl::do_get&lt;std::array&lt;GLfloat, 2&gt;&gt;(ctx, name);</span>
+<span id="L411"><span class="lineNum">     411</span>              :     }</span>
+<span id="L412"><span class="lineNum">     412</span>              : </span>
+<span id="L413"><span class="lineNum">     413</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L414"><span class="lineNum">     414</span>              :     [[nodiscard]]</span>
+<span id="L415"><span class="lineNum">     415</span>              :     std::array&lt;GLboolean, 4&gt; get(const Context&amp; ctx, quadruple_bool_names name) {</span>
+<span id="L416"><span class="lineNum">     416</span>              :         return impl::do_get&lt;std::array&lt;GLboolean, 4&gt;&gt;(ctx, name);</span>
+<span id="L417"><span class="lineNum">     417</span>              :     }</span>
+<span id="L418"><span class="lineNum">     418</span>              : </span>
+<span id="L419"><span class="lineNum">     419</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L420"><span class="lineNum">     420</span>              :     [[nodiscard]]</span>
+<span id="L421"><span class="lineNum">     421</span>              :     std::array&lt;GLint, 4&gt; get(const Context&amp; ctx, quadruple_int_names name) {</span>
+<span id="L422"><span class="lineNum">     422</span>              :         return impl::do_get&lt;std::array&lt;GLint, 4&gt;&gt;(ctx, name);</span>
+<span id="L423"><span class="lineNum">     423</span>              :     }</span>
+<span id="L424"><span class="lineNum">     424</span>              : </span>
+<span id="L425"><span class="lineNum">     425</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L426"><span class="lineNum">     426</span>              :     [[nodiscard]]</span>
+<span id="L427"><span class="lineNum">     427</span> <span class="tlaGNC">           6 :     std::array&lt;GLfloat, 4&gt; get(const Context&amp; ctx, quadruple_float_names name) {</span></span>
+<span id="L428"><span class="lineNum">     428</span> <span class="tlaGNC">           6 :         return impl::do_get&lt;std::array&lt;GLfloat, 4&gt;&gt;(ctx, name);</span></span>
+<span id="L429"><span class="lineNum">     429</span>              :     }</span>
+<span id="L430"><span class="lineNum">     430</span>              : </span>
+<span id="L431"><span class="lineNum">     431</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
+<span id="L432"><span class="lineNum">     432</span>              :     [[nodiscard]]</span>
+<span id="L433"><span class="lineNum">     433</span> <span class="tlaGNC">         109 :     std::string get(const Context&amp; ctx, string_names name) {</span></span>
+<span id="L434"><span class="lineNum">     434</span> <span class="tlaGNC">         325 :         return {std::bit_cast&lt;const char*&gt;(gl_function{&amp;GladGLContext::GetString}(ctx, to_gl_underlying_value&lt;GLenum&gt;(name)))};</span></span>
+<span id="L435"><span class="lineNum">     435</span>              :     }</span>
+<span id="L436"><span class="lineNum">     436</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

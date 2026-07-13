@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -84,8 +84,8 @@
 <span id="L22"><span class="lineNum">      22</span>              :         clip_distance_2               = GL_CLIP_DISTANCE2,</span>
 <span id="L23"><span class="lineNum">      23</span>              :         colour_logic_op               = GL_COLOR_LOGIC_OP,</span>
 <span id="L24"><span class="lineNum">      24</span>              :         cull_face                     = GL_CULL_FACE,</span>
-<span id="L25"><span class="lineNum">      25</span>              :         debug_ouptut                  = GL_DEBUG_OUTPUT,</span>
-<span id="L26"><span class="lineNum">      26</span>              :         debug_ouptut_synchronous      = GL_DEBUG_OUTPUT_SYNCHRONOUS,</span>
+<span id="L25"><span class="lineNum">      25</span>              :         debug_output                  = GL_DEBUG_OUTPUT,</span>
+<span id="L26"><span class="lineNum">      26</span>              :         debug_output_synchronous      = GL_DEBUG_OUTPUT_SYNCHRONOUS,</span>
 <span id="L27"><span class="lineNum">      27</span>              :         depth_clamp                   = GL_DEPTH_CLAMP,</span>
 <span id="L28"><span class="lineNum">      28</span>              :         depth_test                    = GL_DEPTH_TEST,</span>
 <span id="L29"><span class="lineNum">      29</span>              :         dither                        = GL_DITHER,</span>
@@ -149,12 +149,12 @@
 <span id="L87"><span class="lineNum">      87</span>              :     public:</span>
 <span id="L88"><span class="lineNum">      88</span>              :         constexpr sample_coverage_value() = default;</span>
 <span id="L89"><span class="lineNum">      89</span>              : </span>
-<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          39 :         constexpr explicit sample_coverage_value(GLfloat val)</span></span>
-<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          39 :             : m_Value{val}</span></span>
+<span id="L90"><span class="lineNum">      90</span> <span class="tlaGNC">          60 :         constexpr explicit sample_coverage_value(GLfloat val)</span></span>
+<span id="L91"><span class="lineNum">      91</span> <span class="tlaGNC">          60 :             : m_Value{val}</span></span>
 <span id="L92"><span class="lineNum">      92</span>              :         {</span>
-<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          39 :             if((m_Value &lt; 0.0) || (m_Value &gt; 1.0))</span></span>
+<span id="L93"><span class="lineNum">      93</span> <span class="tlaGNC">          60 :             if((m_Value &lt; 0.0) || (m_Value &gt; 1.0))</span></span>
 <span id="L94"><span class="lineNum">      94</span> <span class="tlaGNC">           2 :                 throw std::domain_error{std::format(&quot;Coverage value of {} requested, but must be in the range [0,1]&quot;, m_Value)};</span></span>
-<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          37 :         }</span></span>
+<span id="L95"><span class="lineNum">      95</span> <span class="tlaGNC">          58 :         }</span></span>
 <span id="L96"><span class="lineNum">      96</span>              : </span>
 <span id="L97"><span class="lineNum">      97</span>              :         [[nodiscard]]</span>
 <span id="L98"><span class="lineNum">      98</span> <span class="tlaGNC">          10 :         constexpr GLfloat raw_value() const noexcept { return m_Value; }</span></span>
@@ -219,7 +219,7 @@
 <span id="L157"><span class="lineNum">     157</span>              :         /******************************* Blending *******************************/</span>
 <span id="L158"><span class="lineNum">     158</span>              :         struct gl_blend_modes {</span>
 <span id="L159"><span class="lineNum">     159</span> <span class="tlaGNC">          82 :             blend_mode      source{blend_mode::one},</span></span>
-<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">          64 :                 destination{blend_mode::zero};</span></span>
+<span id="L160"><span class="lineNum">     160</span> <span class="tlaGNC">          64 :                        destination{blend_mode::zero};</span></span>
 <span id="L161"><span class="lineNum">     161</span>              : </span>
 <span id="L162"><span class="lineNum">     162</span>              :             [[nodiscard]]</span>
 <span id="L163"><span class="lineNum">     163</span> <span class="tlaGNC">          82 :             friend constexpr bool operator==(const gl_blend_modes&amp;, const gl_blend_modes&amp;) noexcept = default;</span></span>

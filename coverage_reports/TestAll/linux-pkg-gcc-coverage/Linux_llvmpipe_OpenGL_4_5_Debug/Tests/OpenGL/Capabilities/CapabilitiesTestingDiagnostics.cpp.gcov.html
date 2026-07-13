@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -86,13 +86,13 @@
 <span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           1 :     void capabilities_false_negative_test::run_tests()</span></span>
 <span id="L25"><span class="lineNum">      25</span>              :     {</span>
 <span id="L26"><span class="lineNum">      26</span>              :         using namespace curlew;</span>
-<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">           3 :         auto w{ create_window({.hiding{curlew::window_hiding_mode::on}})};</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">           1 :         auto w{create_default_window({1, 1})};</span></span>
 <span id="L28"><span class="lineNum">      28</span>              : </span>
 <span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">           1 :         test_blending(w.context());</span></span>
 <span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           1 :         test_depth_test(w.context());</span></span>
 <span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">           1 :         test_sample_coverage(w.context());</span></span>
 <span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">           1 :         test_stencil_test(w.context());</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           5 :     }</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">           1 :     }</span></span>
 <span id="L34"><span class="lineNum">      34</span>              : </span>
 <span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           1 :     void capabilities_false_negative_test::test_blending(const opengl::capable_context&amp; ctx)</span></span>
 <span id="L36"><span class="lineNum">      36</span>              :     {</span>

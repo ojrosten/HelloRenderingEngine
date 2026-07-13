@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -81,10 +81,10 @@
 <span id="L19"><span class="lineNum">      19</span>              : </span>
 <span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">           1 :     void image_view_false_negative_test::run_tests()</span></span>
 <span id="L21"><span class="lineNum">      21</span>              :     {</span>
-<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           1 :         unique_image red{make_red(3, 2, colour_channels{4}, alignment{1}).data, 3, 2, colour_channels{4}, alignment{1}};</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">           1 :         unique_image red{make_red({3, 2}, colour_channels{4}, alignment{1}).data, {3, 2}, colour_channels{4}, alignment{1}};</span></span>
 <span id="L23"><span class="lineNum">      23</span>              : </span>
-<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;&quot;, image_view{red}, make_red(4, 3, colour_channels{2}, alignment{1}));</span></span>
-<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           1 :         check(equality,    &quot;&quot;, image_view{red}, image_view{to_unique_image(make_rgb_striped(3, 2, colour_channels{4}, alignment{1}))});</span></span>
+<span id="L24"><span class="lineNum">      24</span> <span class="tlaGNC">           1 :         check(equivalence, &quot;&quot;, image_view{red}, make_red({4, 3}, colour_channels{2}, alignment{1}));</span></span>
+<span id="L25"><span class="lineNum">      25</span> <span class="tlaGNC">           1 :         check(equality,    &quot;&quot;, image_view{red}, image_view{to_unique_image(make_rgb_striped({3, 2}, colour_channels{4}, alignment{1}))});</span></span>
 <span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">           1 :     }</span></span>
 <span id="L27"><span class="lineNum">      27</span>              : }</span>
         </pre>

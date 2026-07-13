@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-03-11 17:20:59</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -102,7 +102,7 @@
 <span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">           8 :                         [&amp;, i]() {</span></span>
 <span id="L41"><span class="lineNum">      41</span> <span class="tlaGNC">           8 :                             const auto flip{i % 2 ? flip_vertically::yes : flip_vertically::no};</span></span>
 <span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">           8 :                             holdYourHorses.arrive_and_wait();</span></span>
-<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           7 :                             return unique_image{imagePath, flip, all_channels_in_image};</span></span>
+<span id="L43"><span class="lineNum">      43</span> <span class="tlaGNC">           8 :                             return unique_image{imagePath, flip, all_channels_in_image};</span></span>
 <span id="L44"><span class="lineNum">      44</span>              :                         }</span>
 <span id="L45"><span class="lineNum">      45</span> <span class="tlaGNC">          16 :                     };</span></span>
 <span id="L46"><span class="lineNum">      46</span>              :                 }</span>
@@ -128,8 +128,8 @@
 <span id="L66"><span class="lineNum">      66</span>              :         const bool passed{</span>
 <span id="L67"><span class="lineNum">      67</span> <span class="tlaUNC">           0 :             [numThreads, &amp;imageFutures](){</span></span>
 <span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">           9 :                 for(auto i : std::views::iota(0uz, numThreads)) {</span></span>
-<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">           8 :                     const auto comparison{i % 2 ? make_rgb_striped(2, 3, colour_channels{3}, alignment{1})</span></span>
-<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">           8 :                                                 : make_bgr_striped(2, 3, colour_channels{3}, alignment{1})};</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">           8 :                     const auto comparison{i % 2 ? make_rgb_striped({2, 3}, colour_channels{3}, alignment{1})</span></span>
+<span id="L70"><span class="lineNum">      70</span> <span class="tlaGNC">           8 :                                                 : make_bgr_striped({2, 3}, colour_channels{3}, alignment{1})};</span></span>
 <span id="L71"><span class="lineNum">      71</span>              : </span>
 <span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">           8 :                     if(not std::ranges::equal(imageFutures[i].get().span(), comparison.data))</span></span>
 <span id="L73"><span class="lineNum">      73</span> <span class="tlaUNC">           0 :                         return false;</span></span>
