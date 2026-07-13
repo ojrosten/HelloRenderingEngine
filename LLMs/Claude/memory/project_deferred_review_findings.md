@@ -45,5 +45,6 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 - Capability-gated test suites reduce to zero checks on the Mac floor with no positive "skipped" assertion.
 - Untested pure surfaces: `Version.hpp` predicates, `to_gl_underlying_value`, `to_array`, N≥5 polygons.
 - shaderc/volk submodules unused (staged for Vulkan lectures?); README dependency list omits them; no CI anywhere; Windows builds `cxx_std_23` vs 26 elsewhere.
+- Era-stale expected-output files `ShaderProgramBrokenStagesFreeTest_Exceptions_Linux_Mesa_OpenGL_4_5.txt` (pre-restructure path `Graphics/OpenGL/`, old message format) and `..._Linux_NVIDIA_OpenGL_4_6.txt` (old message format, line 184): user said **leave for now** (2026-07-13) — neither retire nor regenerate; don't re-raise as stale.
 
 **How to apply:** when the user says "let's return to the review findings" (or similar), start here, re-verify line numbers against current code, and check the Resolved section before raising anything. Individual items may also resolve naturally via lectures (L50 unification, the zstring_view discussion) — prune as they do.
