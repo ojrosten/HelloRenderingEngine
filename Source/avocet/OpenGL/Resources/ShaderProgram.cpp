@@ -35,8 +35,19 @@ namespace avocet::opengl {
         }
 
         [[nodiscard]]
-        std::string make_program_label(const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
-            return std::format("{} / {}", sequoia::back(vertexShaderSource).string(), sequoia::back(fragmentShaderSource).string());
+        optional_label make_program_label(object_labelling_available labelling, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
+            if(labelling != object_labelling_available::no)
+                return std::format("{} / {}", sequoia::back(vertexShaderSource).string(), sequoia::back(fragmentShaderSource).string());
+
+            return std::nullopt;
+        }
+
+        [[nodiscard]]
+        optional_label make_stage_label(object_labelling_available labelling, const std::filesystem::path& source) {
+            if(labelling != object_labelling_available::no)
+                return std::format("{}", sequoia::back(source).string());
+
+            return std::nullopt;
         }
 
         template<class T>
@@ -178,7 +189,7 @@ namespace avocet::opengl {
             shader_stage(const resourceful_context& ctx, shader_species species, const fs::path& sourceFile)
                 : m_Resource{ctx, species}
             {
-                shader_stage_lifecycle_events{species}.configure(m_Resource.view(), {sourceFile, sequoia::back(sourceFile).generic_string()});
+                shader_stage_lifecycle_events{species}.configure(m_Resource.view(), {sourceFile, make_stage_label(ctx.fundamental_characteristics().object_labels_available(), sourceFile)});
             }
 
             [[nodiscard]]
@@ -224,7 +235,7 @@ namespace avocet::opengl {
     shader_program::shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
         : m_Resource{ctx}
     {
-        shader_program_lifecycle_events::configure(m_Resource.view(), {vertexShaderSource, fragmentShaderSource, make_program_label(vertexShaderSource, fragmentShaderSource)});
+        shader_program_lifecycle_events::configure(m_Resource.view(), {vertexShaderSource, fragmentShaderSource, make_program_label(ctx.fundamental_characteristics().object_labels_available(), vertexShaderSource, fragmentShaderSource)});
     }
 
     [[nodiscard]]

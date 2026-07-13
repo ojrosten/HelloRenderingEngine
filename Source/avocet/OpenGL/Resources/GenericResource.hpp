@@ -10,6 +10,8 @@
 #include "avocet/OpenGL/Resources/ContextualResource.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
+#include "sequoia/PlatformSpecific/Preprocessor.hpp"
+
 #include <algorithm>
 #include <cassert>
 #include <ranges>
