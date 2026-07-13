@@ -202,7 +202,7 @@ namespace sequoia::testing
             using namespace avocet::opengl::testing;
             using namespace avocet::opengl;
             check(equality, "Func"       , logger, get_as<comparison_mode>        (ctx, int_names::depth_func      ), predicted.func);
-            check(equality, "MasK"       , logger, get_as<depth_buffer_write_mode>(ctx, bool_names::depth_writemask), predicted.mask);
+            check(equality, "Mask"       , logger, get_as<depth_buffer_write_mode>(ctx, bool_names::depth_writemask), predicted.mask);
             check(weak_equivalence, "Poly Offset", logger, ctx, predicted.poly_offset);
         }
 

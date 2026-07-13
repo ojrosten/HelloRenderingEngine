@@ -310,7 +310,7 @@ Comparison performed using:
 Checking for weak equivalence with:
 [avocet::opengl::capabilities::gl_depth_test]
 
-  MasK
+  Mask
   [avocet::opengl::depth_buffer_write_mode]
   operator== returned false
   Obtained : enabled
