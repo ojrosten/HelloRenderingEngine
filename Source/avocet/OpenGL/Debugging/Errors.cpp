@@ -8,6 +8,7 @@
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/OpenGL/Utilities/Messages.hpp"
 
 #include "avocet/Core/Formatting/Formatting.hpp"
 
@@ -34,8 +35,7 @@ namespace avocet::opengl {
             GLsizei length{};
 
             const auto numFound{gl_function{&GladGLContext::GetDebugMessageLog}(ctx, 1, checked_conversion_to<GLsizei>(message.size()), &source, &type, &id, &severity, &length, message.data())};
-            const auto trimLen{((length > 0) && message[length - 1] == '\0') ? length - 1 : length};
-            message.resize(trimLen);
+            trim(message, length);
 
             if(numFound)
                 return {{id, debug_source{source}, debug_type{type}, debug_severity{severity}, message}};

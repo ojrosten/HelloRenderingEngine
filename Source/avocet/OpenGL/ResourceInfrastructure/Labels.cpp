@@ -6,9 +6,9 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
-
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/OpenGL/Utilities/Messages.hpp"
 
 namespace avocet::opengl {
     void add_label(object_identifier identifier, decorated_contextual_resource_view h, const optional_label& label) {
@@ -26,18 +26,16 @@ namespace avocet::opengl {
             return "";
 
         std::string label(optMaxLabelLen.value(), ' ');
-        GLsizei numChars{};
+        GLsizei length{};
         gl_function{&GladGLContext::GetObjectLabel}(
             ctx,
             to_gl_underlying_value<GLenum>(identifier),
             get_index(ccrv),
             checked_conversion_to<GLsizei>(label.size()),
-            &numChars,
+            &length,
             label.data()
-            );
+        );
 
-        label.erase(std::ranges::next(label.begin(), numChars, label.end()), label.end());
-
-        return label;
+        return trim(label, length);
     }
 }

@@ -9,6 +9,7 @@
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/OpenGL/Utilities/Messages.hpp"
 
 #include "avocet/Core/Formatting/Formatting.hpp"
 
@@ -74,7 +75,7 @@ namespace avocet::opengl {
                 requires has_checker_attributes_v<Self>
             void check(this const Self& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
-                    throw std::runtime_error{std::format("Error: {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
+                    throw std::runtime_error{std::format("Error: {} {} failed\n{}", self.name(), self.build_stage, self.get_info_log())};
                 }
             }
         protected:
@@ -95,8 +96,10 @@ namespace avocet::opengl {
             std::string get_info_log() const {
                 const GLint logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
                 std::string info(logLen, ' ');
-                m_InfoLogGetter(m_Handle.context(), get_index(m_Handle), logLen, nullptr, info.data());
-                return info;
+                GLsizei length{};
+                m_InfoLogGetter(m_Handle.context(), get_index(m_Handle), logLen, &length, info.data());
+
+                return trim(info, length);
             }
         };
 
