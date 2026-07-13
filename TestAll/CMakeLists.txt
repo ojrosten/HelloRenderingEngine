@@ -56,6 +56,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Resources/Texture2dTest.cpp
                ${TestDir}/OpenGL/Resources/Texture2dTestingDiagnostics.cpp
                ${TestDir}/OpenGL/StateAwareContext/ResourcefulContextFreeTest.cpp
+               ${TestDir}/OpenGL/Utilities/MessagesFreeTest.cpp
                ${TestDir}/TestFramework/OpenGL/LabellingTestDiagnostics.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})

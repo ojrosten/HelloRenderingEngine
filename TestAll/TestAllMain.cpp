@@ -47,6 +47,7 @@
 #include "OpenGL/Resources/Texture2dTest.hpp"
 #include "OpenGL/Resources/Texture2dTestingDiagnostics.hpp"
 #include "OpenGL/StateAwareContext/ResourcefulContextFreeTest.hpp"
+#include "OpenGL/Utilities/MessagesFreeTest.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -159,6 +160,11 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Arithmetic Casts",
             arithmetic_casts_free_test{"Arithmetic Casts Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Messages",
+            messages_free_test{"Messages Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
