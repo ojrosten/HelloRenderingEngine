@@ -9,9 +9,13 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 
 ## Resolved — do not re-raise
 
-- **Typos/labels fixed** (commits `55a9dd83`, `083ec2ec`, 2026-07-10): `"one_minus_const_alpha "` trailing space; `"Frambuffer incomplete"`; `generic_resource` double-space message; `load_gl_fuctions`; duplicated `"Blend equation GPU/CPU"` check labels. **Exception: `"MasK"` at `Tests/OpenGL/Capabilities/CapabilitiesTestingUtilities.hpp:205` was missed** — still open, flagged to the user.
-- **`string_view` → `glGetUniformLocation` NUL-termination hole** (`ShaderProgram.cpp:235`): deliberately kept — the user will make it *lecture content* later in the course, discussing the perennial question of whether C++ should support something like `zstring_view`. Don't propose a fix; it's planned material (same spirit as [[project-arithmetic-casts-cmp-migration]]).
+- **Typos/labels fixed** (commits `55a9dd83`, `083ec2ec`, 2026-07-10): `"one_minus_const_alpha "` trailing space; `"Frambuffer incomplete"`; `generic_resource` double-space message; `load_gl_fuctions`; duplicated `"Blend equation GPU/CPU"` check labels. The straggler `"MasK"` typo was fixed by the user 2026-07-13.
+- **`string_view` → `glGetUniformLocation` NUL-termination hole** (`ShaderProgram.cpp:246`): deliberately kept — the user will make it *lecture content* later in the course, discussing the perennial question of whether C++ should support something like `zstring_view`. Don't propose a fix; it's planned material (same spirit as [[project-arithmetic-casts-cmp-migration]]). The eager uniform-map plan ([[project-shader-program-dsa-uniforms]]) will also remove this site.
 - **`resourceful_context::do_utilize` discarding the LifeEvents instance** (static `LifeEvents::bind` call despite instance-detecting concepts, `ResourcefulContext.hpp:120-128`): will be sorted in lecture 50's unification. After L50 lands, verify and strike.
+- **`get(ctx, string_names)` null check** (`Context/GLGetters.hpp:433`): **rejected by the user 2026-07-13** — a null return coincides with a raised GL error, so with the standard throwing epilogue clients are protected before the string is constructed; clients running without error checking have made an active choice to accept UB. (Note: libstdc++ throws `std::logic_error` on null-`const char*` string construction as QoI, but that's not standard and not portable to MSVC STL/libc++.) Don't re-raise.
+- **curlew CMakeLists include-before-set** (`TestingUtilities/curlew/CMakeLists.txt:3`): reordered by the user 2026-07-13.
+- **`run_with_lsan_suppressions.sh` path**: **not an issue** — the script is designed to be run from `build/TestAll`, from which `../../` correctly reaches the repo root. The review's CWD assumption (preset binary dir) was wrong. Don't re-raise.
+- **`install_ubuntu_dependencies.sh` bootstrap**: fixed 2026-07-13 — `software-properties-common` now installed (guarded on `command -v add-apt-repository`) before the PPA step.
 
 ## Under consideration by the user
 
@@ -20,8 +24,7 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 ## Open — production code
 
 1. **`capable_context` is implicitly publicly movable** (`StateAwareContext/CapableContext.hpp`) while every other context layer protects its moves and all resources hold raw pointers to the context. Moving it with resources alive compiles, then terminates on resource destruction (throw through the hollowed glad context). curlew's immovable `window` shields this in practice. Question for the user: delete the leaf's moves, or document/enforce "context never relocates once resources exist"?
-2. **`get(ctx, string_names)` lacks a null check** (`Context/GLGetters.hpp:433`): constructs `std::string` from `glGetString`'s result; with debugging off, a failed query is UB rather than a diagnosable throw.
-3. **`attrib_ptr_info::advance` vs `set_attribute_ptr` disagreement** (`Resources/Buffers.hpp:148-170`): `advance` implements the general multi-slot rule (right for dvec3/dvec4 today *and* mat4-sized attributes), but `set_attribute_ptr` emits one `VertexAttribPointer` capped at 4 components — a >4-component non-double attribute would get `GL_INVALID_VALUE`. Possibly staged generality; ask.
+2. **`attrib_ptr_info::advance` vs `set_attribute_ptr` disagreement** (`Resources/Buffers.hpp:149-170`): `advance` implements the general multi-slot rule (right for dvec3/dvec4 today *and* mat4-sized attributes), but `set_attribute_ptr` emits one `VertexAttribPointer` capped at 4 components — a >4-component non-double attribute would get `GL_INVALID_VALUE`. Possibly staged generality; ask.
 
 ## Open — test infrastructure
 
@@ -31,11 +34,8 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 
 ## Open — build/infra
 
-7. **`scripts/run_with_lsan_suppressions.sh:4`**: `../../sanitizers/...` is one level short of the preset binary dir (`build/TestAll/<presetName>/`); may predate the `${presetName}` layer.
-8. **`TestingUtilities/curlew/CMakeLists.txt:3`**: includes `${BuildSystem}/Utilities.cmake` before setting `BuildSystem` (line 6); works via the parent's variable. One-line reorder.
-9. **`Demo/Examples/PonyPolygons.cpp:19` `get_dir`** throws on relative `std::source_location` paths, which the Ninja generator (Linux/Mac) produces — Demo effectively Windows-only. Fix options: `-fmacro-prefix-map`, or fallback via `fs::absolute`.
-10. **Mac toolchain pin drift**: presets compile with unversioned Homebrew `llvm`, `Source/avocet/CMakeLists.txt` links `llvm@21`'s libc++ — skews when the formula bumps past 21.
-11. **`scripts/install_ubuntu_dependencies.sh`**: `add-apt-repository` before `software-properties-common` is guaranteed — fails on minimal fresh images.
+7. **`Demo/Examples/PonyPolygons.cpp:19` `get_dir`** throws on relative `std::source_location` paths, which the Ninja generator (Linux/Mac) produces — Demo effectively Windows-only. Fix options: `-fmacro-prefix-map`, or fallback via `fs::absolute`.
+8. **Mac toolchain pin drift**: presets compile with unversioned Homebrew `llvm`, `Source/avocet/CMakeLists.txt` links `llvm@21`'s libc++ — skews when the formula bumps past 21.
 
 ## Observations (no action urged; context for future work)
 
