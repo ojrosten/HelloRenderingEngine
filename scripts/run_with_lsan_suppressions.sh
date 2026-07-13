@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Path to your suppression file
-SUPPRESS_FILE="../../sanitizers/ubuntu/lsan_suppressions.txt"
+SUPPRESS_FILE="../../../sanitizers/ubuntu/lsan_suppressions.txt"
 
 # Your executable
 EXECUTABLE="./TestAll"
