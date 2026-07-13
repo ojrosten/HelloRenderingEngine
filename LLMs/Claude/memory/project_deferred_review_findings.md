@@ -19,7 +19,7 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 
 ## Under consideration by the user
 
-- **`get_info_log` NUL trim: resolved 2026-07-13** (commit `d3646f8d`): the user harmonized all three trimming sites through a new `avocet::opengl::trim(std::string&, GLsizei)` in `Source/avocet/OpenGL/Utilities/Messages.hpp` — one conditional handles both GL length conventions (includes-NUL for `GetDebugMessageLog`, excludes-NUL for `GetObjectLabel`/`Get*InfoLog`). `shader_checker::check` also dropped the trailing `\n` from its message format. **Watch item:** the Win_NVIDIA and Apple BrokenStages expected files record checker-throw text under the *old* format (trailing `\n`); whether the next run on those platforms mismatches depends on sequoia's serialization (it historically stripped the embedded NULs). If they go red, regenerate — it's the format change, not a regression.
+- **`get_info_log` NUL trim: resolved 2026-07-13** (commits `d3646f8d`, `0488d270`): the user harmonized all three trimming sites through `avocet::opengl::trim(std::string&, GLsizei)` (`Source/avocet/OpenGL/Utilities/Messages.{hpp,cpp}`) — one conditional handles both GL length conventions; a `logic_error` tripwire guards length > buffer; `MessagesFreeTest` covers both conventions, boundaries, and both throws. Verified across the full platform matrix (Apple/NVIDIA runs only rippled the earlier typo/label fixes into the FN diagnostic files). The trailing-`\n` watch item **did not fire** — sequoia's exception-output comparison evidently normalizes trailing whitespace (useful to remember when predicting whether message-format changes will invalidate versioned outputs).
 
 ## Open — production code
 
