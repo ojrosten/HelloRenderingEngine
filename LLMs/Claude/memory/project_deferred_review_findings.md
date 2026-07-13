@@ -19,7 +19,7 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 
 ## Under consideration by the user
 
-- **`get_info_log` doesn't trim the embedded NUL** (`Source/avocet/OpenGL/Resources/ShaderProgram.cpp:84-89`): `GL_INFO_LOG_LENGTH` includes the terminator, so compile/link exception messages carry `'\0'`. Siblings `Labels.cpp:39` and `Errors.cpp:37` trim. User wants to think more before fixing — ask, don't just patch.
+- **`get_info_log` NUL trim: resolved 2026-07-13** (commit `d3646f8d`): the user harmonized all three trimming sites through a new `avocet::opengl::trim(std::string&, GLsizei)` in `Source/avocet/OpenGL/Utilities/Messages.hpp` — one conditional handles both GL length conventions (includes-NUL for `GetDebugMessageLog`, excludes-NUL for `GetObjectLabel`/`Get*InfoLog`). `shader_checker::check` also dropped the trailing `\n` from its message format. **Watch item:** the Win_NVIDIA and Apple BrokenStages expected files record checker-throw text under the *old* format (trailing `\n`); whether the next run on those platforms mismatches depends on sequoia's serialization (it historically stripped the embedded NULs). If they go red, regenerate — it's the format change, not a regression.
 
 ## Open — production code
 
