@@ -19,7 +19,8 @@ set(SourceList
     OpenGL/ResourceInfrastructure/Labels.cpp
     OpenGL/Resources/Framebuffer.cpp
     OpenGL/Resources/ShaderProgram.cpp
-    OpenGL/Resources/Textures.cpp)
+    OpenGL/Resources/Textures.cpp
+    OpenGL/Utilities/Messages.cpp)
 
 add_library(avocet STATIC ${SourceList})
 

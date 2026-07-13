@@ -7,10 +7,22 @@
 
 #pragma once
 
-#include <string>
+/*! \file */
 
-#include "glad/gl.h"
+#include "sequoia/TestFramework/FreeTestCore.hpp"
 
-namespace avocet::opengl {
-    std::string& trim(std::string& paddedMessage, GLsizei len);
+namespace avocet::testing
+{
+    using namespace sequoia::testing;
+
+    class messages_free_test final : public free_test
+    {
+    public:
+        using free_test::free_test;
+
+        [[nodiscard]]
+        std::filesystem::path source_file() const;
+
+        void run_tests();
+    };
 }
