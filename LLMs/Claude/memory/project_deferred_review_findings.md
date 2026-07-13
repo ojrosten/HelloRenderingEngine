@@ -14,7 +14,7 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 - **`resourceful_context::do_utilize` discarding the LifeEvents instance** (static `LifeEvents::bind` call despite instance-detecting concepts, `ResourcefulContext.hpp:120-128`): will be sorted in lecture 50's unification. After L50 lands, verify and strike.
 - **`get(ctx, string_names)` null check** (`Context/GLGetters.hpp:433`): **rejected by the user 2026-07-13** — a null return coincides with a raised GL error, so with the standard throwing epilogue clients are protected before the string is constructed; clients running without error checking have made an active choice to accept UB. (Note: libstdc++ throws `std::logic_error` on null-`const char*` string construction as QoI, but that's not standard and not portable to MSVC STL/libc++.) Don't re-raise.
 - **curlew CMakeLists include-before-set** (`TestingUtilities/curlew/CMakeLists.txt:3`): reordered by the user 2026-07-13.
-- **`run_with_lsan_suppressions.sh` path**: **not an issue** — the script is designed to be run from `build/TestAll`, from which `../../` correctly reaches the repo root. The review's CWD assumption (preset binary dir) was wrong. Don't re-raise.
+- **`run_with_lsan_suppressions.sh` path**: initially rejected ("designed to run from `build/TestAll`"), but on actually exercising it the user found the review was right — fixed to `../../../` (commit `6681a091`, 2026-07-13), matching the preset binary dir `build/TestAll/<presetName>/`.
 - **`install_ubuntu_dependencies.sh` bootstrap**: fixed 2026-07-13 — `software-properties-common` now installed (guarded on `command -v add-apt-repository`) before the PPA step.
 
 ## Under consideration by the user
@@ -35,7 +35,8 @@ On 2026-07-10 a full re-review of the codebase (Source, Tests, curlew, build sys
 ## Open — build/infra
 
 7. **`Demo/Examples/PonyPolygons.cpp:19` `get_dir`** throws on relative `std::source_location` paths, which the Ninja generator (Linux/Mac) produces — Demo effectively Windows-only. Fix options: `-fmacro-prefix-map`, or fallback via `fs::absolute`.
-8. **Mac toolchain pin drift**: presets compile with unversioned Homebrew `llvm`, `Source/avocet/CMakeLists.txt` links `llvm@21`'s libc++ — skews when the formula bumps past 21.
+8. ~~Mac toolchain pin drift~~ **Resolved 2026-07-13**: the `llvm@21` link workaround was verified obsolete on the Mac and removed entirely (commit `554acd68`), so there is no longer a compile/link version split to drift.
+9. **Walk the regenerated code-coverage report** (`coverage_reports/TestAll`, regenerated 2026-07-13, commit `b0581ae5`): the user explicitly asked to add this to the future list — review what the report says about untested regions (cross-reference the known uncovered pure surfaces in Observations below) when they're ready, not before.
 
 ## Observations (no action urged; context for future work)
 
