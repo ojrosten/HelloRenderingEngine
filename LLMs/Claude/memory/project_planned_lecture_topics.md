@@ -62,3 +62,7 @@ Confirmed intentions for the live-coded completion of `resource_lifecycle_base` 
 - The `sequoia/PlatformSpecific/Preprocessor.hpp` include added to GenericResource.hpp in commit `7d7be896` (with no other change to that file) is **live-coding prep** (confirmed 2026-07-13) — don't flag it as unused.
 
 **How to apply:** when rehearsing/reviewing L50 live coding, judge the code against this destination; don't flag the transitional states (unused base, dangling friendship, stub `destroy`) as defects.
+
+## shader_program label plans (stated 2026-07-13)
+
+The current label creation for programs and stages is essentially hard-coded (`make_program_label`/`make_stage_label` in ShaderProgram.cpp, restored in `7d7be896`). Planned rejig: **give the user control over label creation**. The two functions will likely **move to the curlew layer**, renamed to include 'default' (e.g. `make_default_program_label`). Their structure will also showcase **std::optional's monadic operations** — composing the default *program* label from the *stage* labels (`and_then`/`transform`/`or_else` family). Don't flag the current hard-coding as a design smell — it's the "before" state; and don't propose alternative label-customization designs unprompted, the direction is chosen. Related: the eager uniform-map plan in [[project-shader-program-dsa-uniforms]] — both are part of the same shader_program evolution.
