@@ -25,6 +25,7 @@
 #include "OpenGL/Capabilities/CapabilitiesTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
 #include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
+#include "OpenGL/Context/VersionFreeTest.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
@@ -165,6 +166,11 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Messages",
             messages_free_test{"Messages Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Version",
+            version_free_test{"Version Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

@@ -21,3 +21,4 @@
 - [User switched to Fable 5 (2026-07-10)](user_model_preference_fable.md) — tell them if a session runs on Opus 4.8 or another model instead
 - [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything
 - [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
+- [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure

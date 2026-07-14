@@ -33,6 +33,7 @@ target_sources(TestAll PRIVATE
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTest.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp
+               ${TestDir}/OpenGL/Context/VersionFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
