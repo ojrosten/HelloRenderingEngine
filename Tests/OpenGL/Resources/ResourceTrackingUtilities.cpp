@@ -182,12 +182,16 @@ namespace avocet::testing
         auto [handle0, sp0] {make_and_use_extended_life_resource(win0, scaffold)};
         data0.resource.active = std::move(handle0);
 
-        gpu_data data1{};
-        auto win1{create_window(make_window_config(data1.calls, expectedGPUCall))};
-        auto [handle1, sp1] {make_and_use_extended_life_resource(win1, scaffold)};
-        data1.resource.active = std::move(handle1);
+        {
+            gpu_data data1{};
+            auto win1{create_window(make_window_config(data1.calls, expectedGPUCall))};
+            auto [handle1, sp1] {make_and_use_extended_life_resource(win1, scaffold)};
+            data1.resource.active = std::move(handle1);
 
-        check_resource_data("Serial overlapping lifetimes", expectedGPUCall, data0, data1);
+            check_resource_data("Serial overlapping lifetimes", expectedGPUCall, data0, data1);
+        }
+
+        win0.make_context_current();
     }
 
     template<class Resource>
