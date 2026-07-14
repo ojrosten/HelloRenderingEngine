@@ -48,6 +48,7 @@
 #include "OpenGL/Resources/Texture2dTest.hpp"
 #include "OpenGL/Resources/Texture2dTestingDiagnostics.hpp"
 #include "OpenGL/StateAwareContext/ResourcefulContextFreeTest.hpp"
+#include "OpenGL/Utilities/CastsFreeTest.hpp"
 #include "OpenGL/Utilities/MessagesFreeTest.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
@@ -171,6 +172,11 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Version",
             version_free_test{"Version Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Casts",
+            casts_free_test{"Casts Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});
