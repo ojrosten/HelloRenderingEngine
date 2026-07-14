@@ -15,6 +15,8 @@
 
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
 
+#include <iostream>
+
 namespace curlew {
     using namespace sequoia::testing;
 
@@ -23,7 +25,17 @@ namespace curlew {
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
     class test_window_manager {
-        inline static curlew::glfw_manager st_Manager{};
+        inline static curlew::glfw_manager st_Manager{
+            []() -> curlew::glfw_manager {
+                try {
+                    return {};
+                }
+                catch(const std::exception& e) {
+                    std::println(std::cerr, "Failure during static initialization of GLFW: {}", e.what());
+                    std::terminate();
+                }
+            }()
+        };
     public:
         [[nodiscard]]
         static rendering_setup find_rendering_setup();
