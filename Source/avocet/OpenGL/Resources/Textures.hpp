@@ -234,12 +234,12 @@ namespace avocet::opengl {
     template<standard_lifecycle_for<num_resources{1}> LifeEvents>
     class generic_texture_2d : public generic_resource<num_resources{1}, LifeEvents> {
     public:
-        using base_type         = generic_resource<num_resources{1}, LifeEvents> ;
-        using configurator_type = base_type::configurator_type;
-        using value_type        = configurator_type::value_type;
+        using generic_resource_type = generic_resource<num_resources{1}, LifeEvents>;
+        using configurator_type     = generic_resource_type::configurator_type;
+        using value_type            = configurator_type::value_type;
 
         generic_texture_2d(const resourceful_context& ctx, const configurator_type& textureConfig)
-            : base_type{ctx, {textureConfig}}
+            : generic_resource_type{ctx, {textureConfig}}
         {}
 
         [[nodiscard]]
@@ -283,7 +283,7 @@ namespace avocet::opengl {
 
         [[nodiscard]]
         decorated_contextual_resource_view contextual_handle_view() const noexcept {
-            return base_type::contextual_handle_view(index<0>{});
+            return generic_resource_type::contextual_handle_view(index<0>{});
         }
     };
 
