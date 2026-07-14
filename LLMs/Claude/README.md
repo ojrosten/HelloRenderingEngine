@@ -6,11 +6,12 @@ Per-session memory and supporting material for working with Claude Code on this 
 
 ```
 LLMs/Claude/
-├── README.md       ← this file
-├── memory/         ← per-session memory files (source of truth, version-controlled)
-│   ├── MEMORY.md   ← index, auto-loaded by Claude Code's memory system
-│   └── *.md        ← individual memory entries (recalled selectively by description)
-└── sync.sh         ← copies memory/ into the per-machine auto-memory directory
+├── README.md        ← this file
+├── TESTIMONIAL.md   ← a testimonial about the maintainer, written by Claude (July 2026)
+├── memory/          ← per-session memory files (source of truth, version-controlled)
+│   ├── MEMORY.md    ← index, auto-loaded by Claude Code's memory system
+│   └── *.md         ← individual memory entries (recalled selectively by description)
+└── sync.sh          ← copies memory/ into the per-machine auto-memory directory
 ```
 
 ## How this relates to `CLAUDE.md` at the repo root
