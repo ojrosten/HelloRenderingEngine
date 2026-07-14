@@ -20,3 +20,4 @@
 - [In tests, OpenGL is the source of truth for handles](feedback_opengl_source_of_truth_in_tests.md) — query binding-point state, don't read handles off the object; don't suggest get_index as a simplification
 - [User switched to Fable 5 (2026-07-10)](user_model_preference_fable.md) — tell them if a session runs on Opus 4.8 or another model instead
 - [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything
+- [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
