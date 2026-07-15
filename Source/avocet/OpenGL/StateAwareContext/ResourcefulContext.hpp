@@ -94,8 +94,11 @@ namespace avocet::opengl {
                     self.utilize_and_cache(lifeEvents, h, cache);
                 }
             }
-            else {
+            else if constexpr (LifeEvents::caching_id == caching_identifier::opt_out) {
                 self.do_utilize(lifeEvents, h);
+            }
+            else {
+                static_assert(false, "The combination of a utilization event existing and caching_identifier::not_applicable is illegal");
             }
         }
 
@@ -106,6 +109,9 @@ namespace avocet::opengl {
                 if (auto& cache{self.get_cache(lifeEvents)}; cache.currently_active == h.index()) {
                     self.utilize_and_cache(lifeEvents, resource_handle{}, cache);
                 }
+            }
+            else if constexpr (LifeEvents::caching_id == caching_identifier::not_applicable) {
+                static_assert(false, "The combination of a utilization event existing and caching_identifier::not_applicable is illegal");
             }
         }
 
