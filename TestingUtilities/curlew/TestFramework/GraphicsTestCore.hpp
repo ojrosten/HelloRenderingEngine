@@ -15,6 +15,7 @@
 
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
 
+#include <exception>
 #include <iostream>
 
 namespace curlew {
