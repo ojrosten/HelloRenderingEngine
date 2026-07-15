@@ -93,13 +93,12 @@ namespace avocet::opengl {
         void destroy(this const Self& self, const contextual_resource_handles<N>& crhs) {
             if constexpr (has_utilization_event_v<LifeEvents>) {
                 for (resourceful_contextual_resource_view crv : crhs) {
-                    crv.context().reset(LifeEvents{}, crv.handle());
+                    crv.context().reset(self.life_events(), crv.handle());
                 }
             }
             else {
                 static_assert(LifeEvents::caching_id == caching_identifier::not_applicable);
             }
-
 
             self.do_destroy(crhs);
         }
