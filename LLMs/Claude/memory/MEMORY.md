@@ -6,7 +6,7 @@
 - [Defensive throws are intentional tripwires](feedback_defensive_throws.md) — don't flag "should never happen" throws as smells
 - [Teaching project with accompanying lectures](user_teaching_project.md) — weight pedagogical purpose alongside technical merit
 - [Read concept-constraint qualifiers carefully](feedback_read_constraint_qualifiers.md) — `invocable<From>` vs `invocable<From&>` is load-bearing
-- [Planned lecture topics overlap with my "deeper improvements"](project_planned_lecture_topics.md) — resource-hierarchy unification is the current 5-lecture sub-series
+- [Planned lecture topics overlap with my "deeper improvements"](project_planned_lecture_topics.md) — harmonization sub-series completed with L50 (2026-07-15); remaining topics still roadmap
 - [Tests are real customers of API generality](feedback_tests_are_customers.md) — grep Tests/ before claiming plumbing is unused
 - [Binding cache is opt-in by design, driven by FBO driver warning](project_binding_cache_rationale.md) — partial caching is intentional, `opt_out` is self-documentation
 - [Sub-optimal code isn't always intentional](feedback_suboptimal_not_always_intentional.md) — flag observations as questions, don't pre-decide either way
@@ -22,3 +22,4 @@
 - [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything
 - [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
 - [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
+- [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings

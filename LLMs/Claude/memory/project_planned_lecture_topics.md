@@ -14,7 +14,7 @@ When I delivered a "deeper improvements" review of the codebase on 2026-05-21, t
 - Render-graph / draw-queue abstraction (FBO push/pop, sortable draw queue, render passes)
 - UBO / shared-uniform abstraction
 - ~~Rationalising the partial binding cache in `resourceful_context`~~ — NOT planned; the partial cache is intentional opt-in design (see [[project-binding-cache-rationale]]). The DSA-uniforms switch ([[project-shader-program-dsa-uniforms]]) *is* coming and will narrow the program cache's role.
-- Unifying `generic_resource` and `generic_shader_resource` (this one specifically is the **endpoint of a current 5-lecture sub-series** — i.e. live, not future roadmap)
+- Unifying `generic_resource` and `generic_shader_resource` — **completed**: lecture 50 delivered 2026-07-15 (`e5cf4d32` "brings the harmonization topic to an end"); see the endgame section below
 - FBO depth/stencil attachment support
 - **Arithmetic promotions / `std::in_range` / `std::cmp_*`** — provisionally **lecture 51** (as of lecture 48, delivered ~2026-06; the user notes it may slip later, since topics often take more lectures than estimated). This is why `checked_conversion_to` (lecture 48) hand-rolls its bounds checks instead of using `std::in_range`: the standard facilities are being saved for this dedicated treatment. Do **not** suggest switching `checked_conversion_to` to `std::in_range`/`std::cmp_*` as an improvement — it's deliberate setup. See [[feedback-explicit-gl-underlying-type]] / the lecture-48 conversion utilities.
 
@@ -62,6 +62,8 @@ Confirmed intentions for the live-coded completion of `resource_lifecycle_base` 
 - The `sequoia/PlatformSpecific/Preprocessor.hpp` include added to GenericResource.hpp in commit `7d7be896` (with no other change to that file) is **live-coding prep** (confirmed 2026-07-13) — don't flag it as unused.
 
 **How to apply:** when rehearsing/reviewing L50 live coding, judge the code against this destination; don't flag the transitional states (unused base, dangling friendship, stub `destroy`) as defects.
+
+**Delivered 2026-07-15** (`e5cf4d32` on `end_lecture_50`): all of the above landed as planned — `generic_shader_resource`/`has_shader_lifecycle_events_v` gone, `shader_program`/`shader_stage` now inherit from `generic_resource`, hand-written `shader_program` dtor absorbed into the unified `destroy`, friendship consolidated on `resource_lifecycle_base`. New in the landing: `caching_identifier::not_applicable` (no binding exists to cache — distinct from `opt_out`'s "chose not to"), and `[[no_unique_address]]` lifecycle-first member layout in `resource_wrapper` (member order also load-bearing for init order: `m_Handles`'s initializer calls `m_LifeCycle.make`; user relies on gcc/clang `-Wreorder`-style warnings rather than a comment). Post-lecture polish: `b2b8f63e` + follow-ups per [[project-deferred-review-findings]]. The acknowledged wrinkle left behind: `shader_program` get/set uniform methods don't conform to the deducing-this convention — deliberately unfixed because the DSA `glProgramUniform*` migration ([[project-shader-program-dsa-uniforms]]) supersedes it "in due course".
 
 ## shader_program label plans (stated 2026-07-13)
 

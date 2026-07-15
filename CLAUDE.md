@@ -6,7 +6,7 @@ This file holds the durable project-knowledge — orientation, conventions, and 
 
 ## What this project is
 
-HelloRenderingEngine is a **teaching project** with accompanying ~1-hour lectures (49 delivered as of July 2026). Each lecture is roughly 40 minutes presentation + 20 minutes live coding, with some infrastructure prepared off-line. The course is on **practical software engineering**, taught against a modern-C++ + OpenGL backdrop — cross-platform compromise, fallback design, capability gating, driver-bug workarounds, dependency management, and test infrastructure are *content*, not obstacles.
+HelloRenderingEngine is a **teaching project** with accompanying ~1-hour lectures (50 delivered as of 2026-07-15). Each lecture is roughly 40 minutes presentation + 20 minutes live coding, with some infrastructure prepared off-line. The course is on **practical software engineering**, taught against a modern-C++ + OpenGL backdrop — cross-platform compromise, fallback design, capability gating, driver-bug workarounds, dependency management, and test infrastructure are *content*, not obstacles.
 
 Consequences worth keeping in mind:
 
@@ -96,3 +96,11 @@ The version-controlled `LLMs/Claude/memory/` (source of truth) and the per-machi
 - **auto-memory → repo:** copy the changed `*.md` back into `LLMs/Claude/memory/`, then it shows in `git diff` to review and commit.
 
 Keep the check lightweight and silent when the two are already in sync.
+
+### Session-start lecture-count check
+
+The delivered-lecture count N is recorded in **two places**: the "(N delivered as of ...)" parenthetical at the top of this file, and the "Lecture format & cadence" line in `LLMs/Claude/memory/user_teaching_project.md`. At the start of a session, check the current branch (it's in the session's git snapshot):
+
+- If it is **exactly** `end_lecture_X` (no suffix) and X > N: lecture X has been delivered (unsuffixed branches only land post-delivery). Update N to X in both places — use the branch tip's commit date as the "as of" date — mention it, and re-run the memory sync so the auto-memory copy follows.
+- If the branch carries a refinement suffix (`end_lecture_X-experimental`/`-preliminary`/`-expected`, or any `start_lecture_X` form): do **not** update — the lecture hasn't been delivered yet.
+- If X ≤ N or the branch isn't lecture-shaped: nothing to do; stay silent.
