@@ -19,44 +19,6 @@
 #include <span>
 
 namespace avocet::opengl {
-
-    template<class LifeEvents>
-    inline constexpr bool has_shader_lifecycle_events_v{
-           has_lifecycle_identifiers_v<LifeEvents>
-        && requires(LifeEvents& lifeEvents, resourceful_contextual_resource_view handle) {
-               { lifeEvents.create(handle.context()) } -> std::same_as<contextual_resource_handle>;
-               LifeEvents::destroy(handle);
-           }
-    };
-
-    template<class LifeEvents>
-        requires has_shader_lifecycle_events_v<LifeEvents>
-    class generic_shader_resource {
-        contextual_resource_handle m_Handle;
-    public:
-        template<class... Args>
-            requires std::is_constructible_v<LifeEvents, Args...>
-        explicit(sizeof...(Args) == 0) generic_shader_resource(const resourceful_context& ctx, const Args&... args)
-            : m_Handle{LifeEvents{args...}.create(ctx)}
-        {}
-
-        ~generic_shader_resource() { LifeEvents::destroy(view()); }
-
-        generic_shader_resource(generic_shader_resource&&) noexcept = default;
-
-        generic_shader_resource& operator=(generic_shader_resource&&) noexcept = default;
-
-        [[nodiscard]]
-        resourceful_contextual_resource_view view() const noexcept { return m_Handle.begin()[0]; }
-
-        [[nodiscard]]
-        friend bool operator==(const generic_shader_resource&, const generic_shader_resource&) noexcept = default;
-    };
-
-    template<class LifeEvents>
-    [[nodiscard]]
-    GLuint get_index(const generic_shader_resource<LifeEvents>& gsr) noexcept { return get_index(gsr.view()); }
-
     struct shader_program_lifecycle_events {
         constexpr static auto identifier{ object_identifier::program};
         constexpr static auto caching_id{caching_identifier::program};
@@ -85,8 +47,6 @@ namespace avocet::opengl {
         friend constexpr bool operator==(const shader_program_lifecycle_events&, const shader_program_lifecycle_events&) noexcept = default;
     };
 
-    using shader_program_resource = generic_shader_resource<shader_program_lifecycle_events>;
-
     struct string_hash {
         using is_transparent = void;
 
@@ -101,25 +61,22 @@ namespace avocet::opengl {
         }
     };
 
-    class shader_program {
+    class shader_program : public generic_resource<num_resources{1}, shader_program_lifecycle_events>
+    {
     public:
+        using generic_resource_type = generic_resource<num_resources{1}, shader_program_lifecycle_events>;
+
         shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource);
 
         shader_program(shader_program&&) noexcept = default;
 
         shader_program& operator=(shader_program&&) noexcept = default;
 
-        ~shader_program() {
-            auto crv{ m_Resource.view() };
-            crv.context().reset(shader_program_lifecycle_events{}, crv.handle());
-        }
-
         [[nodiscard]]
-        std::string extract_label() const { return get_object_label(object_identifier::program, m_Resource.view()); }
+        std::string extract_label() const { return get_object_label(object_identifier::program, contextual_handle_view()); }
 
         void use(this const shader_program& self) {
-            auto crv{ self.m_Resource.view() };
-            crv.context().utilize(shader_program_lifecycle_events{}, crv.handle());
+            self.do_utilize();
         }
 
         void set_uniform(std::string_view name, GLfloat val) {
@@ -192,7 +149,6 @@ namespace avocet::opengl {
         [[nodiscard]]
         friend bool operator==(const shader_program&, const shader_program&) noexcept = default;
     private:
-        shader_program_resource m_Resource;
         using map_t = std::unordered_map<std::string, GLint, string_hash, std::ranges::equal_to>;
         map_t m_Uniforms;
 
@@ -202,13 +158,13 @@ namespace avocet::opengl {
         template<class... Args>
         void do_set_uniform(std::string_view name, gl_function<void(GLint, Args...)> fn, Args... args) {
             use();
-            fn(m_Resource.view().context(), extract_uniform_location(name), args...);
+            fn(this->context(), extract_uniform_location(name), args...);
         }
 
         template<gl_arithmetic T>
         void do_get_uniform(std::string_view name, gl_function<void(GLuint, GLint, T*)> fn, T* val) {
             use();
-            fn(m_Resource.view().context(), get_index(m_Resource), extract_uniform_location(name), val);
+            fn(this->context(), get_index(contextual_handle_view()), extract_uniform_location(name), val);
         }
     };
 }

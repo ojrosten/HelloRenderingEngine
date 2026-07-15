@@ -57,6 +57,11 @@ namespace avocet::opengl {
                lifeEvents.destroy(crv);
            };
 
+    template<class LifeEvents, num_resources NumResources>
+    concept resource_lifecycle_for
+        =    ((NumResources  > num_resources{0}) && standard_lifecycle_for<LifeEvents, NumResources>)
+          || ((NumResources == num_resources{1}) && program_lifecycle<LifeEvents>);
+
     template<num_resources NumResources, class LifeEvents>
     class resource_lifecycle_base;
 
@@ -86,7 +91,17 @@ namespace avocet::opengl {
 
         template<class Self>
         void destroy(this const Self& self, const contextual_resource_handles<N>& crhs) {
+            if constexpr (has_utilization_event_v<LifeEvents>) {
+                for (resourceful_contextual_resource_view crv : crhs) {
+                    crv.context().reset(LifeEvents{}, crv.handle());
+                }
+            }
+            else {
+                static_assert(LifeEvents::caching_id == caching_identifier::not_applicable);
+            }
 
+
+            self.do_destroy(crhs);
         }
 
         [[nodiscard]]
@@ -105,46 +120,61 @@ namespace avocet::opengl {
     };
 
     template<num_resources NumResources, class LifeEvents>
-    struct resource_lifecycle;
+    class resource_lifecycle;
 
     template<num_resources NumResources, standard_lifecycle_for<NumResources> LifeEvents>
-    struct resource_lifecycle<NumResources, LifeEvents> {
-        using configurator_type = LifeEvents::configurator;
-
+    class resource_lifecycle<NumResources, LifeEvents> : public resource_lifecycle_base<NumResources, LifeEvents>
+    {
+    public:
         constexpr static std::size_t N{NumResources.value};
 
+        using resource_lifecycle_base<NumResources, LifeEvents>::resource_lifecycle_base;
+
         [[nodiscard]]
-        static contextual_resource_handles<N> generate(const resourceful_context& ctx) {
+        contextual_resource_handles<N> make(this const resource_lifecycle& self, const resourceful_context& ctx) {
             raw_indices<N> indices{};
-            LifeEvents::generate(ctx, indices);
+            self.life_events().generate(ctx, indices);
             return {ctx, indices};
         }
+    private:
+        friend resource_lifecycle_base<NumResources, LifeEvents>;
 
-        static void destroy(const contextual_resource_handles<N>& crhs) {
-            for (resourceful_contextual_resource_view crv : crhs) {
-                crv.context().reset(LifeEvents{}, crv.handle());
-            }
-            LifeEvents::destroy(crhs.context(), crhs.get_raw_indices());
-        }
-
-        static void bind(resourceful_contextual_resource_view crv) { 
-            crv.context().utilize(LifeEvents{}, crv.handle());
-        }
-
-        static void configure(decorated_contextual_resource_view crv, const configurator_type& config) {
-            LifeEvents{}.configure(crv, config);
+        void do_destroy(this const resource_lifecycle& self, const contextual_resource_handles<N>& crhs) {
+            self.life_events().destroy(crhs.context(), crhs.get_raw_indices());
         }
     };
 
-    template<num_resources NumResources, standard_lifecycle_for<NumResources> LifeEvents>
+    template<program_lifecycle LifeEvents>
+    class resource_lifecycle<num_resources{1}, LifeEvents> : public resource_lifecycle_base<num_resources{1}, LifeEvents>
+    {
+    public:
+        using resource_lifecycle_base<num_resources{1}, LifeEvents>::resource_lifecycle_base;
+
+        [[nodiscard]]
+        contextual_resource_handles<1> make(this const resource_lifecycle& self, const resourceful_context& ctx) {
+            return self.life_events().create(ctx);
+        }
+    private:
+        friend resource_lifecycle_base< num_resources{1}, LifeEvents>;
+
+        void do_destroy(this const resource_lifecycle& self, const contextual_resource_handles<1>& crhs) {
+            self.life_events().destroy(crhs.view());
+        }
+    };
+
+    template<num_resources NumResources, resource_lifecycle_for<NumResources> LifeEvents>
     class resource_wrapper{
     public:
         using lifecycle_type = resource_lifecycle<NumResources, LifeEvents>;
 
         constexpr static std::size_t N{NumResources.value};
 
-        explicit resource_wrapper(const resourceful_context& ctx) : m_Handles{lifecycle_type::generate(ctx)} {}
-        ~resource_wrapper() { lifecycle_type::destroy(m_Handles); }
+        explicit resource_wrapper(const resourceful_context& ctx, const LifeEvents& lifeEvents)
+            : m_LifeCycle{lifeEvents}
+            , m_Handles{m_LifeCycle.make(ctx)}
+        {}
+
+        ~resource_wrapper() { m_LifeCycle.destroy(m_Handles); }
 
         resource_wrapper(resource_wrapper&&)           noexcept = default;
         resource_wrapper& operator=(resource_wrapper&&) noexcept = default;
@@ -153,13 +183,16 @@ namespace avocet::opengl {
         const contextual_resource_handles<N>& contextual_handles() const noexcept { return m_Handles; }
 
         [[nodiscard]]
+        const lifecycle_type& lifecycle() const noexcept { return m_LifeCycle; }
+
+        [[nodiscard]]
         friend bool operator==(const resource_wrapper&, const resource_wrapper&) noexcept = default;
     private:
+        SEQUOIA_NO_UNIQUE_ADDRESS lifecycle_type m_LifeCycle;
         contextual_resource_handles<N> m_Handles;
     };
 
-    template<num_resources NumResources, standard_lifecycle_for<NumResources> LifeEvents>
-        requires (NumResources.value > 0)
+    template<num_resources NumResources, resource_lifecycle_for<NumResources> LifeEvents>
     class generic_resource {
         using resource_type = resource_wrapper<NumResources, LifeEvents>;
         using lifecycle_type = resource_type::lifecycle_type;
@@ -168,15 +201,18 @@ namespace avocet::opengl {
         using configurator_type = lifecycle_type::configurator_type;
         constexpr static std::size_t N{NumResources.value};
 
-        generic_resource(const resourceful_context& ctx, const std::array<configurator_type, N>& configs)
-            : m_Resource{ctx}
+        generic_resource(const resourceful_context& ctx, const LifeEvents& lifeEvents, const std::array<configurator_type, N>& configs)
+            : m_Resource{ctx, lifeEvents}
         {
             for(const auto& [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {
                 if(ctxRsrc.handle() == resource_handle{})
                     throw std::runtime_error{"generic_resource - null resource"};
 
-                do_utilize(ctxRsrc);
-                lifecycle_type::configure(ctxRsrc, config);
+                if constexpr (standard_lifecycle_for<LifeEvents, NumResources>) {
+                    do_utilize(ctxRsrc);
+                }
+
+                m_Resource.lifecycle().configure(ctxRsrc, config);
             }
         }
 
@@ -206,8 +242,8 @@ namespace avocet::opengl {
         generic_resource(generic_resource&&)            noexcept = default;
         generic_resource& operator=(generic_resource&&) noexcept = default;
 
-        void do_utilize(this const generic_resource&, resourceful_contextual_resource_view crv) {
-            lifecycle_type::bind(crv);
+        void do_utilize(this const generic_resource& self, resourceful_contextual_resource_view crv) {
+            self.m_Resource.lifecycle().utilize(crv);
         }
 
         template<std::size_t I>

@@ -146,8 +146,8 @@ namespace avocet::opengl {
         class shader_stage_lifecycle_events {
             shader_species m_Species;
         public:
-            constexpr static auto identifier{object_identifier::shader};
-            constexpr static auto caching_id{caching_identifier::opt_out};
+            constexpr static auto identifier{ object_identifier::shader};
+            constexpr static auto caching_id{caching_identifier::not_applicable};
 
             struct configurator {
                 std::filesystem::path source_file;
@@ -184,19 +184,17 @@ namespace avocet::opengl {
             friend constexpr bool operator==(const shader_stage_lifecycle_events&, const shader_stage_lifecycle_events&) noexcept = default;
         };
 
-        using shader_resource = generic_shader_resource<shader_stage_lifecycle_events>;
-
-        class shader_stage {
-            shader_resource m_Resource;
+        class shader_stage : public generic_resource<num_resources{1}, shader_stage_lifecycle_events>
+        {
         public:
+            using generic_resource_type = generic_resource<num_resources{1}, shader_stage_lifecycle_events>;
+
             shader_stage(const resourceful_context& ctx, shader_species species, const fs::path& sourceFile)
-                : m_Resource{ctx, species}
+                : generic_resource_type{ctx, shader_stage_lifecycle_events{species}, {sourceFile, make_stage_label(ctx.fundamental_characteristics().object_labels_available(), sourceFile)}}
             {
-                shader_stage_lifecycle_events{species}.configure(m_Resource.view(), {sourceFile, make_stage_label(ctx.fundamental_characteristics().object_labels_available(), sourceFile)});
             }
 
-            [[nodiscard]]
-            const shader_resource& resource() const noexcept { return m_Resource; }
+            using generic_resource_type::contextual_handle_view;
 
             [[nodiscard]]
             friend bool operator==(const shader_stage&, const shader_stage&) noexcept = default;
@@ -226,8 +224,8 @@ namespace avocet::opengl {
             fragmentShader{ctx, shader_species::fragment, config.fragment_shader};
 
         {
-            shader_attacher verteAttacher   {progView,   vertexShader.resource().view()},
-                            fragmentAttacher{progView, fragmentShader.resource().view()};
+            shader_attacher verteAttacher   {progView,   vertexShader.contextual_handle_view()},
+                            fragmentAttacher{progView, fragmentShader.contextual_handle_view()};
 
             gl_function{&GladGLContext::LinkProgram}(ctx, get_index(progView));
         }
@@ -236,9 +234,8 @@ namespace avocet::opengl {
     }
 
     shader_program::shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
-        : m_Resource{ctx}
+        : generic_resource_type{ctx, shader_program_lifecycle_events{}, {vertexShaderSource, fragmentShaderSource, make_program_label(ctx.fundamental_characteristics().object_labels_available(), vertexShaderSource, fragmentShaderSource)}}
     {
-        shader_program_lifecycle_events::configure(m_Resource.view(), {vertexShaderSource, fragmentShaderSource, make_program_label(ctx.fundamental_characteristics().object_labels_available(), vertexShaderSource, fragmentShaderSource)});
     }
 
     [[nodiscard]]
@@ -246,7 +243,7 @@ namespace avocet::opengl {
         if(auto found{m_Uniforms.find(name)}; found != m_Uniforms.end())
             return found->second;
 
-        const auto location{gl_function{&GladGLContext::GetUniformLocation}(m_Resource.view().context(), get_index(m_Resource), name.data())};
+        const auto location{gl_function{&GladGLContext::GetUniformLocation}(this->context(), get_index(contextual_handle_view()), name.data())};
         if(location == -1) {
             const std::string label{extract_label()};
             const std::string labelToUse{!label.empty() ? label : "[unlabelled]"};

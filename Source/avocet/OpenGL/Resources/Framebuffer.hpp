@@ -53,7 +53,7 @@ namespace avocet::opengl {
         using texture_configurator  = framebuffer_texture_2d_configurator;
 
         framebuffer_object(const resourceful_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
-            : generic_resource_type{ctx, {{fboConfig.label}}}
+            : generic_resource_type{ctx, framebuffer_lifecycle_events{}, {{fboConfig.label}}}
             , m_Texture{ctx, texConfig}
         {
             gl_function{&GladGLContext::FramebufferTexture}(
