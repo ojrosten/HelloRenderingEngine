@@ -72,9 +72,6 @@ namespace avocet::opengl {
 
         shader_program& operator=(shader_program&&) noexcept = default;
 
-        [[nodiscard]]
-        std::string extract_label() const { return get_object_label(object_identifier::program, contextual_handle_view()); }
-
         void use(this const shader_program& self) {
             self.do_utilize();
         }
