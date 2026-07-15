@@ -23,3 +23,4 @@
 - [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
 - [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
 - [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
+- [Include discipline is pragmatic, not strict IWYU](feedback_include_philosophy.md) — transitive via stable project headers is fine; only add includes with plausible breakage

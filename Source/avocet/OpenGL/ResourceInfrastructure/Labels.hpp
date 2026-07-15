@@ -11,6 +11,7 @@
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
 #include <optional>
+#include <string>
 
 namespace avocet::opengl {
     using optional_label = std::optional<std::string>;

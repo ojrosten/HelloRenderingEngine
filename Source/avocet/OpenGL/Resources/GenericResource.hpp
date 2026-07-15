@@ -8,6 +8,7 @@
 #pragma once
 
 #include "avocet/OpenGL/Resources/ContextualResource.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/Labels.hpp"
 #include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"

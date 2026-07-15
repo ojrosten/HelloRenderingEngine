@@ -14,7 +14,7 @@
 #include "avocet/OpenGL/Utilities/TypeTraits.hpp"
 
 #include <filesystem>
-#include <map>
+#include <functional>
 #include <unordered_map>
 #include <span>
 
