@@ -1,7 +1,8 @@
 - [OpenGL is frozen — don't flag GL entry-point tables as fragile](feedback_opengl_frozen_api.md) — calibration for code review in this repo
 - [Don't raise speculative compiler-warning concerns](feedback_verified_across_compilers.md) — user verifies across MSVC/gcc/clang
 - [shader_program uniform setters → DSA glProgramUniform*](project_shader_program_dsa_uniforms.md) — acknowledged improvement, not yet implemented
-- [checked_conversion_to sign-compare fix is deferred ~lecture 51](project_arithmetic_casts_cmp_migration.md) — hand-rolled mixed-sign compare in ArithmeticCasts.hpp is the intentional "before"
+- [checked_conversion_to std::in_range migration landed with lecture 51](project_arithmetic_casts_cmp_migration.md) — remaining constraint mismatch is deliberate homework
+- [Each lecture comes with homework](project_lecture_homework.md) — small deliberately-left tweaks for attendees; often unrecorded in commit messages; user supplies a fix later
 - [Check production sites of multi-valued types](feedback_check_production_sites.md) — don't judge enum value-set from consumers alone
 - [Defensive throws are intentional tripwires](feedback_defensive_throws.md) — don't flag "should never happen" throws as smells
 - [Teaching project with accompanying lectures](user_teaching_project.md) — weight pedagogical purpose alongside technical merit
