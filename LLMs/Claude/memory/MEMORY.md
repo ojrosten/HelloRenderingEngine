@@ -25,3 +25,11 @@
 - [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
 - [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
 - [Include discipline is pragmatic, not strict IWYU](feedback_include_philosophy.md) — transitive via stable project headers is fine; only add includes with plausible breakage
+- [Sequoia overview hub](sequoia/reference_overview.md) — user's own long-lived library; testing framework + utilities; production dependency too; links the detailed sequoia memories
+- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh; spaces/physics in flux
+- [Sequoia test-framework core](sequoia/reference_test_framework_core.md) — runner, suite trees, prune/dependency analysis, creation CLI, concurrency, output layout
+- [Sequoia checks & semantics](sequoia/reference_checks_semantics.md) — equality/equivalence tag dispatch, value_tester, check_semantics, allocation testing, test modes
+- [Sequoia core utilities](sequoia/reference_core_utilities.md) — object::factory + suite/granular_filter, Meta/TypeAlgorithms, partitioned data, concurrency models, bitmask enums
+- [Sequoia maths: graphs deep, spaces/physics high-level](sequoia/reference_maths_graphs_physics.md) — Graph is mature and load-bearing; Spaces/Physics churning, intent only
+- [How avocet consumes sequoia](project_sequoia_usage.md) — production dep, sequoia build system, curlew adaptation layer, value_tester specializations, committed output/
+- [Sequoia full review 2026-07-16](sequoia/project_review_2026_07.md) — report at LLMs/Claude/reviews/sequoia_review_2026-07-16.md; check before re-raising sequoia findings

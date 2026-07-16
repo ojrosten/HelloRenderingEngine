@@ -28,8 +28,11 @@ if [ ! -d "$src" ]; then
 fi
 
 mkdir -p "$target"
-cp -v "$src"/*.md "$target/"
+(cd "$src" && find . -name '*.md' -print0) | while IFS= read -r -d '' f; do
+    mkdir -p "$target/$(dirname "$f")"
+    cp -v "$src/$f" "$target/$f"
+done
 
-count=$(find "$src" -maxdepth 1 -name '*.md' | wc -l)
+count=$(find "$src" -name '*.md' | wc -l)
 echo
 echo "Synced $count memory file(s) to: $target"
