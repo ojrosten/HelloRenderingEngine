@@ -239,7 +239,7 @@ namespace avocet::opengl {
         using value_type            = configurator_type::value_type;
 
         generic_texture_2d(const resourceful_context& ctx, const configurator_type& textureConfig)
-            : generic_resource_type{ctx, {textureConfig}}
+            : generic_resource_type{ctx, LifeEvents{}, {textureConfig}}
         {}
 
         [[nodiscard]]

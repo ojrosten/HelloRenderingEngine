@@ -61,10 +61,8 @@ namespace avocet::opengl {
 
         resourceful_context& operator=(resourceful_context&&) noexcept = default;
     private:
-        friend class shader_program;
-
         template<num_resources NumResources, class LifeEvents>
-        friend struct resource_lifecycle;
+        friend class resource_lifecycle_base;
 
         template<caching_identifier id>
         struct index_cache {
@@ -77,7 +75,10 @@ namespace avocet::opengl {
 
         template<class LifeEvents>
             requires has_lifecycle_identifiers_v<LifeEvents>
-        constexpr static bool opts_in_to_cache_v{LifeEvents::caching_id != caching_identifier::opt_out};
+        constexpr static bool opts_in_to_cache_v{
+               (LifeEvents::caching_id != caching_identifier::not_applicable)
+            && (LifeEvents::caching_id != caching_identifier::opt_out)
+        };
 
         template<class LifeEvents>
             requires has_lifecycle_identifiers_v<LifeEvents>
@@ -117,13 +118,13 @@ namespace avocet::opengl {
 
         template<class LifeEvents>
             requires has_utilization_event_v<LifeEvents>
-        void do_utilize(this const resourceful_context& self, const LifeEvents&, const resource_handle& h) {
+        void do_utilize(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
             decorated_contextual_resource_view crv{self, h};
             if constexpr (has_bind_event_v<LifeEvents>) {
-                LifeEvents::bind(crv);
+                lifeEvents.bind(crv);
             }
             else {
-                LifeEvents::use(crv);
+                lifeEvents.use(crv);
             }
         }
 

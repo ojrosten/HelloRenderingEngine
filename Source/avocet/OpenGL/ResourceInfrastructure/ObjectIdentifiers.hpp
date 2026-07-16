@@ -25,6 +25,7 @@ namespace avocet::opengl {
     };
 
     enum class caching_identifier {
+        not_applicable,
         opt_out,
         program,
         framebuffer
