@@ -17,6 +17,8 @@ The user's stated evolution plans for sequoia (told to me 2026-07-16), with code
 
 **3. Refresh the test-creation command-line options** — the user regularly uses patterns the current options don't support well. Grounding: fixed six-species `create` matrix; wiring by textual pattern-matching edits of main cpp / common-includes / CMakeLists (`FileEditors.cpp`, breaks on reformatting); `?`-placeholder templates in `aux_files/`; ad-hoc string parsing of templated qualified names; no test removal/renaming. (Which specific unsupported patterns the user hits most is worth asking when this comes up.)
 
-**4. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
+**4. `sort_nodes` has horrendous asymptotic behaviour** — acknowledged by the user (2026-07-17), on their TO-DO list to fix. Don't re-flag the complexity as a discovery; performance-sensitive suggestions built on node sorting should note the pending fix. (Related but distinct: the 2026-07-16 review's Tier 3 question about tree `prune` assuming `add_node`-built index ordering, which `sort_nodes` can violate.)
+
+**5. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
 
 General calibration from the user: sequoia is older than their newer codebases and less polished ("I knew a lot less — and the standard was less evolved — when I first started"), but very well tested and proven robust in deployment. Register for review feedback: modernization suggestions are welcome but should acknowledge the roadmap above; robustness complaints need strong evidence.
