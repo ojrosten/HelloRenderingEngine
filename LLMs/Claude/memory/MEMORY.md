@@ -1,4 +1,5 @@
 - [OpenGL is frozen — don't flag GL entry-point tables as fragile](feedback_opengl_frozen_api.md) — calibration for code review in this repo
+- [Merging lecture branches into vulkan-experiment](project_vulkan_branch_merges.md) — propagate opengl_* renames; Demo run is the acceptance test; Windows run/build gotchas
 - [Don't raise speculative compiler-warning concerns](feedback_verified_across_compilers.md) — user verifies across MSVC/gcc/clang
 - [shader_program uniform setters → DSA glProgramUniform*](project_shader_program_dsa_uniforms.md) — acknowledged improvement, not yet implemented
 - [checked_conversion_to std::in_range migration landed with lecture 51](project_arithmetic_casts_cmp_migration.md) — remaining constraint mismatch is deliberate homework
