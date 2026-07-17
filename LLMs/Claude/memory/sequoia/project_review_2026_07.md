@@ -5,7 +5,7 @@ metadata:
   type: project
 ---
 
-A full strengths/weaknesses/gaps review of sequoia was performed 2026-07-16 (six parallel review agents, several findings verified by compiled repros). The complete report is version-controlled at `LLMs/Claude/reviews/sequoia_review_2026-07-16.md` in the HelloRenderingEngine repo.
+A full strengths/weaknesses/gaps review of sequoia was performed 2026-07-16 (six parallel review agents, several findings verified by compiled repros). The complete report is version-controlled at `LLMs/Claude/reviews/sequoia_review_2026-07-16.md` in the HelloRenderingEngine repo. A 2026-07-17 addendum in the same file covers graph-based testing (`StateTransitionUtilities.hpp` — slated for rename to something like graph-based-testing): findings A1–A7 plus avocet-side observations on `CapabilityManagerFreeTest`.
 
 **Why:** avoids re-deriving or re-raising known findings; the report is the reference for "was this already flagged?".
 
