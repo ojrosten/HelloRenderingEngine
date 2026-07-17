@@ -29,22 +29,22 @@ int main()
 {
     try
     {
-        avocet::vulkan::instance_info vulkankInstanceInfo{
+        avocet::vulkan::instance_info vulkanInstanceInfo{
             .app_info{.app{.name{"Hello Vulkan Rendering Engine Project"}}},
             .validation_layers{{"VK_LAYER_KHRONOS_validation"}},
             .extensions{VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME, VK_KHR_GET_SURFACE_CAPABILITIES_2_EXTENSION_NAME}
         };
 
-        curlew::glfw_manager manager{vulkankInstanceInfo};
+        curlew::glfw_manager manager{vulkanInstanceInfo};
         const auto renderingSetup{manager.get_rendering_setup()};
         std::cout << curlew::rendering_setup_summary(renderingSetup);
 
-        std::println("Extension Properites");
+        std::println("Extension Properties");
         for(const auto& p : manager.vulkan_extension_properties()) {
             std::println("{:45}, version {}", p.extensionName.data(), p.specVersion);
         }
 
-        std::println("Layer Properites");
+        std::println("Layer Properties");
         for(const auto& p : manager.vulkan_layer_properties()) {
             std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
         }

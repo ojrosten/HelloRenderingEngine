@@ -15,7 +15,6 @@
 
 #include <iostream>
 #include <format>
-#include <ranges>
 
 namespace curlew {
     namespace {
