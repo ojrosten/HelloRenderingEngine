@@ -33,3 +33,4 @@
 - [Sequoia maths: graphs deep, spaces/physics high-level](sequoia/reference_maths_graphs_physics.md) — Graph is mature and load-bearing; Spaces/Physics churning, intent only
 - [How avocet consumes sequoia](project_sequoia_usage.md) — production dep, sequoia build system, curlew adaptation layer, value_tester specializations, committed output/
 - [Sequoia full review 2026-07-16](sequoia/project_review_2026_07.md) — report at LLMs/Claude/reviews/sequoia_review_2026-07-16.md; check before re-raising sequoia findings
+- [Graph-based testing is the user's load-bearing technique](sequoia/user_graph_based_testing_conviction.md) — personal conviction, held with humility; engage critically, don't flatter
