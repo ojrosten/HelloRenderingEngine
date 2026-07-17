@@ -15,13 +15,13 @@ namespace avocet::opengl {
         std::source_location loc;
     };
 
-    class context_characteristics {
-        std::size_t m_MaxDebugMessageLength{};
+    class context_debug_characteristics {
+        std::optional<std::size_t> m_MaxDebugMessageLength{};
     public:
-        explicit context_characteristics(const context_base& ctx);
+        explicit context_debug_characteristics(const context_base& ctx);
 
         [[nodiscard]]
-        std::size_t max_debug_message_length() const noexcept { return m_MaxDebugMessageLength; }
+        std::optional<std::size_t> max_debug_message_length() const noexcept { return m_MaxDebugMessageLength; }
     };
 
     class context : public context_base {
@@ -34,7 +34,7 @@ namespace avocet::opengl {
         {}
 
         [[nodiscard]]
-        const context_characteristics& characteristics() const noexcept { return m_Characteristics; }
+        const context_debug_characteristics& debug_characteristics() const noexcept { return m_Characteristics; }
     protected:
         ~context() = default;
 
@@ -42,6 +42,6 @@ namespace avocet::opengl {
 
         context& operator=(context&&) noexcept = default;
     private:
-        context_characteristics m_Characteristics;
+        context_debug_characteristics m_Characteristics;
     };
 }

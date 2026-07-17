@@ -1,0 +1,16 @@
+Tests/OpenGL/Capabilities/CapabilitiesTest.cpp, Line 23
+
+Expected Exception Type:
+[std::domain_error]
+Coverage value of -0.5 requested, but must be in the range [0,1]
+
+=======================================
+
+Tests/OpenGL/Capabilities/CapabilitiesTest.cpp, Line 28
+
+Expected Exception Type:
+[std::domain_error]
+Coverage value of 1.5 requested, but must be in the range [0,1]
+
+=======================================
+

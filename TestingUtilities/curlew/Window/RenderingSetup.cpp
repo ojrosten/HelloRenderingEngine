@@ -7,6 +7,8 @@
 
 #include "curlew/Window/RenderingSetup.hpp"
 
+#include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+
 #include <format>
 
 namespace curlew {

@@ -23,12 +23,12 @@ namespace avocet::opengl {
     using function_pointer_type = R(*)(Args...);
 
     template<class R, class... Args>
-    using glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
+    using glad_ctx_ptr_to_mem_fn_ptr_type = function_pointer_type<R, Args...> GladGLContext::*;
 
     template<class R, class... Args>
     class [[nodiscard]] gl_function<R(Args...)> {
     public:
-        using pointer_to_member_type = glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>;
+        using pointer_to_member_type = glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>;
 
         gl_function(pointer_to_member_type ptrToMem)
             : m_PtrToMem{ptrToMem}
@@ -83,5 +83,5 @@ namespace avocet::opengl {
     };
 
     template<class R, class... Args>
-    gl_function(glad_ctx_ptr_to_mem_ptr_to_mem_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
+    gl_function(glad_ctx_ptr_to_mem_fn_ptr_type<R, Args...>) -> gl_function<R(Args...)>;
 }

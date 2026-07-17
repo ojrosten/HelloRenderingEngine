@@ -19,6 +19,6 @@ namespace avocet::testing
 
     void colour_channels_test::run_tests()
     {
-        check_semantics("", colour_channels{}, colour_channels{4}, 0uz, 4uz, std::strong_ordering::less);
+        check_semantics("", colour_channels{}, colour_channels{4}, 0, 4, std::strong_ordering::less);
     }
 }

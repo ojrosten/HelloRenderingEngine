@@ -11,16 +11,19 @@ sequoia_init()
 set(SourceList
     Core/AssetManagement/Image.cpp
     Core/Formatting/Formatting.cpp
+    Core/Geometry/Viewport.cpp
     Core/ShaderCompilation/ShaderCompiler.cpp
-    Core/RenderArea/Viewport.cpp
     OpenGL/Capabilities/Capabilities.cpp
     OpenGL/Capabilities/CapabilitiesConfiguration.cpp
+    OpenGL/Context/CharacteristicContext.cpp
     OpenGL/Context/Context.cpp
     OpenGL/Context/ContextBase.cpp
-    OpenGL/Context/Version.cpp
     OpenGL/Debugging/Errors.cpp
+    OpenGL/ResourceInfrastructure/Labels.cpp
+    OpenGL/Resources/Framebuffer.cpp
     OpenGL/Resources/ShaderProgram.cpp
     OpenGL/Resources/Textures.cpp
+    OpenGL/Utilities/Messages.cpp
     Vulkan/Presentation/Presentation.cpp
     Vulkan/Common/Conversions.cpp
     Vulkan/Common/VulkanConfig.cpp

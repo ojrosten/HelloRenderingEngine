@@ -9,10 +9,9 @@
 
 #include "RenderingSetup.hpp"
 
-#include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
-#include "avocet/Core/RenderArea/Viewport.hpp"
+#include "avocet/Core/Geometry/Viewport.hpp"
 #include "avocet/OpenGL/Debugging/Errors.hpp"
-#include "avocet/OpenGL/EnrichedContext/CapableContext.hpp"
+#include "avocet/OpenGL/StateAwareContext/CapableContext.hpp"
 #include "avocet/Vulkan/Rendering/RenderingSystem.hpp"
 
 #include <functional>
@@ -44,10 +43,16 @@ namespace curlew {
         friend constexpr auto operator<=>(const num_samples&, const num_samples&) noexcept = default;
     };
 
+    [[nodiscard]]
+    std::vector<agl::message_id> printed_then_ignored_warnings(const opengl_rendering_setup& setup);
+
+    [[nodiscard]]
+    std::vector<agl::message_id> ignored_warnings(const opengl_rendering_setup& setup);
+
     struct opengl_window_config {
         using decorator_type = std::function<void(const agl::context&, const agl::decorator_data)>;
 
-        avocet::discrete_extent dimensions{.width{800}, .height{600}};
+        avocet::discrete_extent extent{.width{800}, .height{600}};
         std::string name{};
         window_hiding_mode hiding{window_hiding_mode::off};
         agl::debugging_mode debug_mode{agl::debugging_mode::dynamic};
@@ -109,6 +114,8 @@ namespace curlew {
 
         [[nodiscard]]
         std::span<const vk::LayerProperties> vulkan_layer_properties() const noexcept { return m_VulkanInstance.layer_properties(); }
+
+        void detach_current_context();
     };
 
     class [[nodiscard]] window_resource {
@@ -159,6 +166,8 @@ namespace curlew {
         avocet::discrete_extent get_framebuffer_extent() const {
             return m_Window.get_framebuffer_extent();
         }
+
+        void make_context_current();
     };
 
     class [[nodiscard]] vulkan_window {

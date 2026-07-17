@@ -1,0 +1,38 @@
+- [OpenGL is frozen — don't flag GL entry-point tables as fragile](feedback_opengl_frozen_api.md) — calibration for code review in this repo
+- [Don't raise speculative compiler-warning concerns](feedback_verified_across_compilers.md) — user verifies across MSVC/gcc/clang
+- [shader_program uniform setters → DSA glProgramUniform*](project_shader_program_dsa_uniforms.md) — acknowledged improvement, not yet implemented
+- [checked_conversion_to std::in_range migration landed with lecture 51](project_arithmetic_casts_cmp_migration.md) — remaining constraint mismatch is deliberate homework
+- [Each lecture comes with homework](project_lecture_homework.md) — small deliberately-left tweaks for attendees; often unrecorded in commit messages; user supplies a fix later
+- [Check production sites of multi-valued types](feedback_check_production_sites.md) — don't judge enum value-set from consumers alone
+- [Defensive throws are intentional tripwires](feedback_defensive_throws.md) — don't flag "should never happen" throws as smells
+- [Teaching project with accompanying lectures](user_teaching_project.md) — weight pedagogical purpose alongside technical merit
+- [Read concept-constraint qualifiers carefully](feedback_read_constraint_qualifiers.md) — `invocable<From>` vs `invocable<From&>` is load-bearing
+- [Planned lecture topics overlap with my "deeper improvements"](project_planned_lecture_topics.md) — harmonization sub-series completed with L50 (2026-07-15); remaining topics still roadmap
+- [Tests are real customers of API generality](feedback_tests_are_customers.md) — grep Tests/ before claiming plumbing is unused
+- [Binding cache is opt-in by design, driven by FBO driver warning](project_binding_cache_rationale.md) — partial caching is intentional, `opt_out` is self-documentation
+- [Sub-optimal code isn't always intentional](feedback_suboptimal_not_always_intentional.md) — flag observations as questions, don't pre-decide either way
+- [Lecture branch naming: -experimental → -preliminary → -expected](reference_lecture_branch_naming.md) — refinement stage; start_lecture_X = offline-prepared, mutable until delivery; informs diff base and review register
+- [Cross-platform targets: Win/Linux/Mac × MSVC/gcc/clang × GL 4.1–4.6](reference_cross_platform_targets.md) — 4.1 is the floor, libc++ has no std::generator
+- [Non-templated deducing-this marks "object-const but GPU/cache side-effecting"](feedback_deducing_this_convention.md) — convention, not stylistic preference
+- [User uses me as rehearsal partner for live-coding portion of lectures](feedback_live_coding_rehearsal.md) — iterative, lecture-sized, fine-tune loop welcome
+- [Explicit underlying type in to_gl_underlying_value<T> is deliberate](feedback_explicit_gl_underlying_type.md) — redundancy lets you check the GL boundary against the spec; don't deduce it away
+- [Testing-philosophy hub](feedback_testing_vs_dependencies_tradeoff.md) — coverage-vs-deps trade-off, versioned outputs as outer layer, test taxonomy, STATIC_CHECK, FN-mode semantics, specialization-last-resort
+- [A lecture branch's diff is a superset of the lecture](feedback_lecture_diff_is_superset.md) — incidental prep-time fixes and toolchain churn ride along; don't attribute everything to the lecture
+- [In tests, OpenGL is the source of truth for handles](feedback_opengl_source_of_truth_in_tests.md) — query binding-point state, don't read handles off the object; don't suggest get_index as a simplification
+- [User switched to Fable 5 (2026-07-10)](user_model_preference_fable.md) — tell them if a session runs on Opus 4.8 or another model instead
+- [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything
+- [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
+- [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
+- [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
+- [Include discipline is pragmatic, not strict IWYU](feedback_include_philosophy.md) — transitive via stable project headers is fine; only add includes with plausible breakage
+- [Sequoia overview hub](sequoia/reference_overview.md) — user's own long-lived library; testing framework + utilities; production dependency too; links the detailed sequoia memories
+- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh; spaces/physics in flux
+- [Sequoia test-framework core](sequoia/reference_test_framework_core.md) — runner, suite trees, prune/dependency analysis, creation CLI, concurrency, output layout
+- [Sequoia checks & semantics](sequoia/reference_checks_semantics.md) — equality/equivalence tag dispatch, value_tester, check_semantics, allocation testing, test modes
+- [Sequoia core utilities](sequoia/reference_core_utilities.md) — object::factory + suite/granular_filter, Meta/TypeAlgorithms, partitioned data, concurrency models, bitmask enums
+- [Sequoia maths: graphs deep, spaces/physics high-level](sequoia/reference_maths_graphs_physics.md) — Graph is mature and load-bearing; Spaces/Physics churning, intent only
+- [How avocet consumes sequoia](project_sequoia_usage.md) — production dep, sequoia build system, curlew adaptation layer, value_tester specializations, committed output/
+- [Sequoia full review 2026-07-16](sequoia/project_review_2026_07.md) — report at LLMs/Claude/reviews/sequoia_review_2026-07-16.md; check before re-raising sequoia findings
+- [Graph-based testing is the user's load-bearing technique](sequoia/user_graph_based_testing_conviction.md) — personal conviction, held with humility; engage critically, don't flatter
+- [Graph-based-testing recipe — be fluent in writing these](feedback_graph_based_testing.md) — transition_checker construction, CheckFn menu, gotchas, standalone-compile trick
+- [Look for graph-based-testing opportunities in avocet](project_graph_based_testing_opportunities.md) — one current site; candidates: uniform state (pre-DSA pin), binding-cache×lifetime, buffers/textures

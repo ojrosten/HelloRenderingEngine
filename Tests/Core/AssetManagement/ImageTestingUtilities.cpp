@@ -13,19 +13,21 @@
 
 namespace avocet::testing {
     namespace {
-        template<class Fn>
-            requires std::is_invocable_r_v<typename image_data::value_type, Fn, std::size_t, std::size_t>
-        [[nodiscard]]
-        image_data make_image(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, Fn fn) {
-            constexpr auto bytesPerChannel{sizeof(image_data::value_type)};
+        using image_value_type = image_data::value_type;
 
-            const std::size_t paddedRowSize {padded_row_size(w, channels, bytesPerChannel, rowAlignment)},
-                              nominalRowSize{padded_row_size(w, channels, bytesPerChannel, alignment{1})};
+        template<class Fn>
+            requires std::is_invocable_r_v<image_value_type, Fn, std::size_t, std::size_t>
+        [[nodiscard]]
+        image_data make_image(discrete_extent extent, colour_channels channels, alignment rowAlignment, Fn fn) {
+            constexpr auto bytesPerChannel{sizeof(image_value_type)};
+
+            const std::uint32_t paddedRowSize {padded_row_size(extent.width, channels, bytesPerChannel, rowAlignment)},
+                                nominalRowSize{padded_row_size(extent.width, channels, bytesPerChannel, alignment{1})};
             return {
                 .data{
-                      std::views::iota(0u, safe_image_size(paddedRowSize, h))
+                      std::views::iota(0u, discrete_extent{paddedRowSize, extent.height}.area())
                     | std::views::transform(
-                        [=](auto i) -> unsigned char {
+                        [=](auto i) -> image_value_type {
                             if(const bool paddingByte{i % paddedRowSize >= nominalRowSize}; paddingByte)
                                 return 0;
 
@@ -36,8 +38,7 @@ namespace avocet::testing {
                       )
                     | std::ranges::to<std::vector>()
                 },
-                .width{w},
-                .height{h},
+                .extent{extent},
                 .num_channels{channels},
                 .row_alignment{rowAlignment}
             };
@@ -45,38 +46,38 @@ namespace avocet::testing {
     }
 
     [[nodiscard]]
-    image_data make_red(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment, monochrome_intensity intensity) {
+    image_data make_red(discrete_extent extent, colour_channels channels, alignment rowAlignment, monochrome_intensity intensity) {
         auto fn{
             [channels, intensity](std::size_t, std::size_t channelIndex){
                 if((channelIndex == 3) || ((channels == colour_channels{2}) && (channelIndex == 1)))
                      return intensity.alpha;
 
-                return static_cast<unsigned char>(channelIndex ? 0 : intensity.red);
+                return channelIndex ? image_value_type{} : intensity.red;
             }
         };
 
-        return make_image(w, h, channels, rowAlignment, fn);
+        return make_image(extent, channels, rowAlignment, fn);
     }
 
     [[nodiscard]]
-    image_data make_rgb_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment) {
+    image_data make_rgb_striped(discrete_extent extent, colour_channels channels, alignment rowAlignment) {
         auto fn{
             [channels](std::size_t row, std::size_t channelIndex) {
-                return static_cast<unsigned char>((row % channels.raw_value()) == channelIndex ? 255 : 0);
+                return (row % channels.raw_value()) == channelIndex ? image_value_type{255} : image_value_type{};
             }
         };
 
-        return make_image(w, h, channels, rowAlignment, fn);
+        return make_image(extent, channels, rowAlignment, fn);
     }
 
     [[nodiscard]]
-    image_data make_bgr_striped(std::size_t w, std::size_t h, colour_channels channels, alignment rowAlignment) {
+    image_data make_bgr_striped(discrete_extent extent, colour_channels channels, alignment rowAlignment) {
         auto fn{
             [channels](std::size_t row, std::size_t channelIndex) {
-                return static_cast<unsigned char>((channels.raw_value() - 1 - row % channels.raw_value()) == channelIndex ? 255 : 0);
+                return (channels.raw_value() - 1 - row % channels.raw_value()) == channelIndex ? image_value_type{255} : image_value_type{};
             }
         };
 
-        return make_image(w, h, channels, rowAlignment, fn);
+        return make_image(extent, channels, rowAlignment, fn);
     }
 }

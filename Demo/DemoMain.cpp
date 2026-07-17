@@ -12,6 +12,7 @@
 #include "curlew/Window/RenderingSetup.hpp"
 #include "curlew/Window/VulkanInitialization.hpp"
 
+#include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 #include "avocet/OpenGL/Geometry/Polygon.hpp"
 
@@ -48,17 +49,6 @@ int main()
             std::println("{:45}, Spec version {}, Impl version {}, {}", p.layerName.data(), p.specVersion, p.implementationVersion, p.description.data());
         }
 
-        const std::vector<agl::message_id> acceptableWarnings{
-            [&renderingSetup]() -> std::vector<agl::message_id> {
-                if(curlew::is_intel(renderingSetup.renderer))
-                    return {agl::message_id{2}};
-                else if(curlew::is_nvidia(renderingSetup.renderer))
-                    return {agl::message_id{131204}, agl::message_id{131218}};
-
-                return {};
-            }()
-        };
-
         auto make_device_extensions{
             []() {
                 std::vector<std::string> extensions{VK_KHR_SWAPCHAIN_EXTENSION_NAME};
@@ -94,14 +84,20 @@ int main()
 
         auto w{
             manager.create_window(
-                {.dimensions{nominalWindowSize},
-                 .name{"Hello Rendering Engine"},
-                 .hiding{curlew::window_hiding_mode::off},
-                 .debug_mode{agl::debugging_mode::dynamic},
-                 .prologue{},
-                 .epilogue{agl::standard_error_checker{agl::num_messages{10}, agl::default_debug_info_processor{acceptableWarnings}}},
-                 .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
-                 .samples{4}
+                {
+                    .extent{nominalWindowSize},
+                    .name{"Hello Rendering Engine"},
+                    .hiding{curlew::window_hiding_mode::off},
+                    .debug_mode{agl::debugging_mode::dynamic},
+                    .prologue{},
+                    .epilogue{
+                         agl::standard_error_checker{
+                             agl::num_messages{10},
+                             agl::default_debug_info_processor{curlew::printed_then_ignored_warnings(renderingSetup), curlew::ignored_warnings(renderingSetup)}
+                         }
+                     },
+                    .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
+                    .samples{4}
                 }
             )
         };

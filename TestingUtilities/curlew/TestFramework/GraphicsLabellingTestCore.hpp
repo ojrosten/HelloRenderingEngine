@@ -11,7 +11,7 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 
 #include "avocet/OpenGL/Debugging/Errors.hpp"
-#include "avocet/OpenGL/Utilities/ObjectIdentifiers.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
 
 namespace curlew {
     template<class T>
@@ -33,8 +33,8 @@ namespace curlew {
             requires has_labelling_tests_v<Self>
         void run_tests(this Self& self) {
             using namespace curlew;
-            auto w{self.create_window({.hiding{window_hiding_mode::on}})};
-            if(avocet::opengl::object_labels_activated(w.context())) {
+            auto w{self.create_default_window({1, 1})};
+            if(w.context().fundamental_characteristics().object_labels_available() == avocet::opengl::object_labelling_available::yes) {
                 self.labelling_tests(w);
             }
         }

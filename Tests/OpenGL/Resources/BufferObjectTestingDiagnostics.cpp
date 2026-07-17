@@ -23,7 +23,7 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        auto w{create_window({.hiding{window_hiding_mode::on}})};
+        auto w{create_default_window({1, 1})};
 
         execute<agl::vertex_buffer_object<GLfloat>>(w);
         execute<agl::vertex_buffer_object<GLubyte>>(w);

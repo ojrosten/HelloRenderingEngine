@@ -22,8 +22,8 @@ namespace avocet::opengl {
         clip_distance_2               = GL_CLIP_DISTANCE2,
         colour_logic_op               = GL_COLOR_LOGIC_OP,
         cull_face                     = GL_CULL_FACE,
-        debug_ouptut                  = GL_DEBUG_OUTPUT,
-        debug_ouptut_synchronous      = GL_DEBUG_OUTPUT_SYNCHRONOUS,
+        debug_output                  = GL_DEBUG_OUTPUT,
+        debug_output_synchronous      = GL_DEBUG_OUTPUT_SYNCHRONOUS,
         depth_clamp                   = GL_DEPTH_CLAMP,
         depth_test                    = GL_DEPTH_TEST,
         dither                        = GL_DITHER,
@@ -137,15 +137,6 @@ namespace avocet::opengl {
     [[nodiscard]]
     std::string to_string(comparison_mode mode);
 
-    enum class face_selection_mode : GLenum {
-        front          = GL_FRONT,
-        back           = GL_BACK,
-        front_and_back = GL_FRONT_AND_BACK
-    };
-
-    [[nodiscard]]
-    std::string to_string(face_selection_mode mode);
-
     enum class depth_buffer_write_mode : GLboolean {
         disabled = GL_FALSE,
         enabled  = GL_TRUE
@@ -166,7 +157,7 @@ namespace avocet::opengl {
         /******************************* Blending *******************************/
         struct gl_blend_modes {
             blend_mode      source{blend_mode::one},
-                destination{blend_mode::zero};
+                       destination{blend_mode::zero};
 
             [[nodiscard]]
             friend constexpr bool operator==(const gl_blend_modes&, const gl_blend_modes&) noexcept = default;

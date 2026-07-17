@@ -20,8 +20,8 @@ namespace avocet::opengl {
         case clip_distance_2:               return "clip_distance_2";
         case colour_logic_op:               return "colour_logic_op";
         case cull_face:                     return "cull_face";
-        case debug_ouptut:                  return "debug_ouptut";
-        case debug_ouptut_synchronous:      return "debug_ouptut_synchronous";
+        case debug_output:                  return "debug_output";
+        case debug_output_synchronous:      return "debug_output_synchronous";
         case depth_clamp:                   return "depth_clamp";
         case depth_test:                    return "depth_test";
         case dither:                        return "dither";
@@ -66,7 +66,7 @@ namespace avocet::opengl {
         case const_colour:           return "const_colour";
         case one_minus_const_colour: return "one_minus_const_colour";
         case const_alpha:            return "const_alpha";
-        case one_minus_const_alpha:  return "one_minus_const_alpha ";
+        case one_minus_const_alpha:  return "one_minus_const_alpha";
         }
 
         throw std::runtime_error{error_message("blend_mode", mode)};
@@ -129,18 +129,6 @@ namespace avocet::opengl {
         };
 
         throw std::runtime_error{error_message("comparison_mode", mode)};
-    }
-
-    [[nodiscard]]
-    std::string to_string(face_selection_mode mode) {
-        using enum face_selection_mode;
-        switch(mode) {
-        case front         : return "front";
-        case back          : return "back";
-        case front_and_back: return "front_and_back";
-        }
-
-        throw std::runtime_error{error_message("face_selection_mode", mode)};
     }
 
     [[nodiscard]]

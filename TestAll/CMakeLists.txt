@@ -25,26 +25,40 @@ target_sources(TestAll PRIVATE
                ${TestDir}/Core/AssetManagement/UniqueImageTest.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageTestingDiagnostics.cpp
                ${TestDir}/Core/AssetManagement/UniqueImageThreadingFreeTest.cpp
-               ${TestDir}/Core/RenderArea/ViewportTest.cpp
-               ${TestDir}/Core/RenderArea/ViewportTestingDiagnostics.cpp
-               ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp
+               ${TestDir}/Core/Formatting/FormattingFreeTest.cpp
+               ${TestDir}/Core/Geometry/PolygonCoordinatesFreeTest.cpp
+               ${TestDir}/Core/Geometry/ViewportTest.cpp
+               ${TestDir}/Core/Geometry/ViewportTestingDiagnostics.cpp
+               ${TestDir}/Core/Utilities/ArithmeticCastsFreeTest.cpp
+               ${TestDir}/OpenGL/Capabilities/CapabilitiesTest.cpp
                ${TestDir}/OpenGL/Capabilities/CapabilitiesTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/Capabilities/CapabilityManagerFreeTest.cpp
+               ${TestDir}/OpenGL/Context/VersionFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.cpp
                ${TestDir}/OpenGL/Debugging/NullFunctionPointerFreeTest.cpp
+               ${TestDir}/OpenGL/Geometry/PolygonFreeTest.cpp
+               ${TestDir}/OpenGL/ResourceInfrastructure/ResourceHandleTest.cpp
+               ${TestDir}/OpenGL/ResourceInfrastructure/ResourceHandleTestingDiagnostics.cpp
                ${TestDir}/OpenGL/Resources/BufferMetaFreeTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectLabellingTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTest.cpp
                ${TestDir}/OpenGL/Resources/BufferObjectTestingDiagnostics.cpp
-               ${TestDir}/OpenGL/Resources/ResourceHandleTest.cpp
-               ${TestDir}/OpenGL/Resources/ResourceHandleTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/Resources/FramebufferFreeTest.cpp
+               ${TestDir}/OpenGL/Resources/FramebufferTrackingFreeTest.cpp
+               ${TestDir}/OpenGL/Resources/ResourceTrackingUtilities.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.cpp
+               ${TestDir}/OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramFileExistenceFreeTest.cpp
+               ${TestDir}/OpenGL/Resources/ShaderProgramFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramLabellingFreeTest.cpp
                ${TestDir}/OpenGL/Resources/ShaderProgramTrackingFreeTest.cpp
                ${TestDir}/OpenGL/Resources/Texture2dLabellingTest.cpp
                ${TestDir}/OpenGL/Resources/Texture2dTest.cpp
                ${TestDir}/OpenGL/Resources/Texture2dTestingDiagnostics.cpp
+               ${TestDir}/OpenGL/StateAwareContext/ResourcefulContextFreeTest.cpp
+               ${TestDir}/OpenGL/Utilities/CastsFreeTest.cpp
+               ${TestDir}/OpenGL/Utilities/MessagesFreeTest.cpp
                ${TestDir}/TestFramework/OpenGL/LabellingTestDiagnostics.cpp)
 
 target_include_directories(TestAll PRIVATE ${TestDir})

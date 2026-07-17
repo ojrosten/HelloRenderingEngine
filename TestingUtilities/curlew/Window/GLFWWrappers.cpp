@@ -7,23 +7,26 @@
 
 #include "curlew/Window/GLFWWrappers.hpp"
 
-#include "avocet/OpenGL/EnrichedContext/DecoratedContext.hpp"
+#include "avocet/Core/Preprocessor/PreprocessorDefs.hpp"
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
 #include "curlew/Window/VulkanInitialization.hpp"
+
+#include "GLFW/glfw3.h"
 
 #include <iostream>
 #include <format>
 #include <ranges>
 
-#include "GLFW/glfw3.h"
-
 namespace curlew {
     namespace {
+        using avocet::checked_conversion_to;
+
         void errorCallback(int error, const char* description) {
             std::cerr << std::format("Error - {}: {}\n", error, description);
         }
 
         void set_debug_context(const agl::debugging_mode mode, const agl::opengl_version& version) {
-            const bool advancedDebugging{(mode != agl::debugging_mode::off) && agl::debug_output_supported(version)};
+            const bool advancedDebugging{(mode == agl::debugging_mode::dynamic) && agl::debug_output_supported(version)};
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, advancedDebugging);
         }
 
@@ -31,21 +34,18 @@ namespace curlew {
         constexpr int to_int(window_hiding_mode mode) noexcept { return mode == window_hiding_mode::off; }
 
         [[nodiscard]]
-        constexpr int to_int(num_samples samples) { return static_cast<int>(samples.value()); }
-
-        [[nodiscard]]
         GLFWwindow& make_window(const opengl_window_config& config, const agl::opengl_version& version) {
             glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, static_cast<int>(version.major));
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, static_cast<int>(version.minor));
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, checked_conversion_to<int>(version.major));
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, checked_conversion_to<int>(version.minor));
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
             glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
             glfwWindowHint(GLFW_VISIBLE, to_int(config.hiding));
-            glfwWindowHint(GLFW_SAMPLES, to_int(config.samples));
+            glfwWindowHint(GLFW_SAMPLES, checked_conversion_to<int>(config.samples.value()));
 
             set_debug_context(config.debug_mode, version);
 
-            auto win{glfwCreateWindow(static_cast<int>(config.dimensions.width), static_cast<int>(config.dimensions.height), config.name.data(), nullptr, nullptr)};
+            auto win{glfwCreateWindow(checked_conversion_to<int>(config.extent.width), checked_conversion_to<int>(config.extent.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW OpenGL window"};
         }
 
@@ -56,25 +56,16 @@ namespace curlew {
 
             auto win{glfwCreateWindow(static_cast<int>(config.width), static_cast<int>(config.height), config.name.data(), nullptr, nullptr)};
             return win ? *win : throw std::runtime_error{"Failed to create GLFW window suitable for Vulkan"};
-
         }
 
         [[nodiscard]]
-        GladGLContext load_gl_fuctions(window_resource& win, GladGLContext ctx) {
+        GladGLContext load_gl_functions(window_resource& win, GladGLContext ctx) {
             glfwMakeContextCurrent(&win.get());
 
             if(!gladLoadGLContext(&ctx, glfwGetProcAddress))
                 throw std::runtime_error{"Failed to initialize GLAD"};
 
             return ctx;
-        }
-
-        [[nodiscard]]
-        std::uint32_t validate(std::string_view tag, int i) {
-            if(i < 0)
-                throw std::runtime_error{std::format("Negative framebuffer {}: {}", tag, i)};
-
-            return static_cast<std::uint32_t>(i);
         }
 
         [[nodiscard]]
@@ -122,9 +113,34 @@ namespace curlew {
     }
 
     [[nodiscard]]
+    std::vector<agl::message_id> printed_then_ignored_warnings(const opengl_rendering_setup& setup) {
+        if (is_intel(setup.renderer))
+            return {
+                agl::message_id{2} // shader recompiled due to state change
+            };
+        else if (is_nvidia(setup.renderer))
+            return {
+                agl::message_id{131218} // shader in program X is being recompiled based on GL state
+            };
+
+        return {};
+    }
+
+    [[nodiscard]]
+    std::vector<agl::message_id> ignored_warnings(const opengl_rendering_setup& setup) {
+        if (is_nvidia(setup.renderer))
+            return {
+                agl::message_id{131185} // will use VIDEO memory as the source for buffer object operations
+            };
+
+        return {};
+    }
+
+    [[nodiscard]]
     opengl_rendering_setup glfw_manager::attempt_to_find_rendering_setup(const agl::opengl_version referenceVersion) const {
         auto w{opengl_window({.hiding{window_hiding_mode::on}, .debug_mode{agl::debugging_mode::off}}, referenceVersion)};
-        return {agl::get_opengl_version(w.context()), agl::get_vendor(w.context()), agl::get_renderer(w.context())};
+        const auto& characteristics{w.context().characteristics()};
+        return {w.context().fundamental_characteristics().version(), characteristics.vendor(), characteristics.renderer()};
     }
 
     [[nodiscard]]
@@ -152,6 +168,10 @@ namespace curlew {
 
     vulkan_window glfw_manager::create_window(const vulkan_window_config& config) { return vulkan_window{config, m_VulkanInstance}; }
 
+    void glfw_manager::detach_current_context() {
+        glfwMakeContextCurrent(nullptr);
+    }
+
     window_resource::window_resource(const opengl_window_config& config, const agl::opengl_version& version) : m_Window{make_window(config, version)} {}
 
     window_resource::window_resource(const vulkan_window_config& config) : m_Window{make_window(config)} {}
@@ -164,7 +184,7 @@ namespace curlew {
 
         glfwGetFramebufferSize(&m_Window, &width, &height);
 
-        return avocet::discrete_extent{validate("width", width), validate("height", height)};
+        return avocet::discrete_extent{checked_conversion_to<std::uint32_t>(width), checked_conversion_to<std::uint32_t>(height)};
     }
 
 
@@ -172,7 +192,7 @@ namespace curlew {
         : m_Window{config, version}
         , m_Context{
             config.debug_mode,
-            [&win = m_Window](GladGLContext ctx) { return load_gl_fuctions(win, ctx); },
+            [&win = m_Window](GladGLContext ctx) { return load_gl_functions(win, ctx); },
             config.prologue,
             config.epilogue,
             config.compensate
@@ -212,5 +232,9 @@ namespace curlew {
 
     void opengl_window::update_viewport(const avocet::viewport& vp) {
         agl::gl_function{&GladGLContext::Viewport}(m_Context, vp.offset.x, vp.offset.y, vp.extent.width, vp.extent.height);
+    }
+
+    void opengl_window::make_context_current() {
+        glfwMakeContextCurrent(&get());
     }
 }

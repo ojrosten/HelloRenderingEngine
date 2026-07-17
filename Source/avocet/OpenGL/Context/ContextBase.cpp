@@ -6,30 +6,70 @@
 ////////////////////////////////////////////////////////////////////
 
 #include "avocet/OpenGL/Context/ContextBase.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
 #include "avocet/OpenGL/Context/Version.hpp"
 #include "avocet/Core/Formatting/Formatting.hpp"
 
 namespace avocet::opengl {
     namespace fs = std::filesystem;
 
+    namespace {
+        [[nodiscard]]
+        object_labelling_available labelling_available(const opengl_version& version, const bool debugEnabled) {
+            return   !object_labels_supported(version) ? object_labelling_available::no
+                   : debugEnabled                      ? object_labelling_available::yes
+                                                       : object_labelling_available::driver_dependent;
+        }
+    }
+
     [[nodiscard]]
     std::string to_string(debugging_mode mode) {
         using enum debugging_mode;
         switch(mode) {
         case off:     return "off";
+        case basic:   return "basic";
         case dynamic: return "dynamic";
         }
 
         throw std::runtime_error{error_message("debugging_mode", mode)};
     }
 
+    context_fundamental_characteristics::context_fundamental_characteristics(opengl_version version, debugging_mode mode)
+        : m_Version{version}
+        , m_DebugOutputEnabled{opengl::debug_output_supported(version) && (mode == debugging_mode::dynamic)}
+        , m_ObjectLabelsAvailable{labelling_available(version, m_DebugOutputEnabled)}
+    {
+    }
+
+    [[nodiscard]]
+    opengl_version context_base::get_opengl_version() const noexcept {
+        if(glad_context().VERSION_4_6) return {4, 6};
+        if(glad_context().VERSION_4_5) return {4, 5};
+        if(glad_context().VERSION_4_4) return {4, 4};
+        if(glad_context().VERSION_4_3) return {4, 3};
+        if(glad_context().VERSION_4_2) return {4, 2};
+        if(glad_context().VERSION_4_1) return {4, 1};
+        if(glad_context().VERSION_4_0) return {4, 0};
+        if(glad_context().VERSION_3_3) return {3, 3};
+        if(glad_context().VERSION_3_2) return {3, 2};
+        if(glad_context().VERSION_3_1) return {3, 1};
+        if(glad_context().VERSION_3_0) return {3, 0};
+        if(glad_context().VERSION_2_1) return {2, 1};
+        if(glad_context().VERSION_2_0) return {2, 0};
+        if(glad_context().VERSION_1_5) return {1, 5};
+        if(glad_context().VERSION_1_4) return {1, 4};
+        if(glad_context().VERSION_1_3) return {1, 3};
+        if(glad_context().VERSION_1_2) return {1, 2};
+        if(glad_context().VERSION_1_1) return {1, 1};
+
+        return {1, 0};
+    }
+
     void context_base::init_debug() {
-        if((debug_mode() == debugging_mode::off) or !debug_output_supported(*this))
+        if(!fundamental_characteristics().debug_output_enabled())
             return;
 
-        GLint flags{};
-        gl_function{&GladGLContext::GetIntegerv}(*this, GL_CONTEXT_FLAGS, &flags);
+        const GLint flags{get(*this, int_names::context_flags)};
         if(flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
             gl_function{&GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT);
             gl_function{&GladGLContext::Enable}(*this, GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -43,7 +83,7 @@ namespace avocet::opengl {
                 GL_TRUE);
         }
         else {
-            throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and debug mode {} / OpengGL version {}", flags, debug_mode(), get_opengl_version(*this))};
+            throw std::runtime_error{std::format("init_debug: inconsistency between context flags {} and debug mode {} / OpengGL version {}", flags, debug_mode(), fundamental_characteristics().version())};
         }
     }
 }

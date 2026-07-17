@@ -10,7 +10,13 @@
 #include "curlew/Window/GLFWWrappers.hpp"
 #include "curlew/Window/RenderingSetup.hpp"
 
+#include "avocet/OpenGL/Context/DecoratedContext.hpp"
+#include "avocet/OpenGL/Context/GLFunction.hpp"
+
 #include "sequoia/TestFramework/MoveOnlyTestCore.hpp"
+
+#include <exception>
+#include <iostream>
 
 namespace curlew {
     using namespace sequoia::testing;
@@ -20,7 +26,17 @@ namespace curlew {
     constexpr inline specificity_flavour os_and_renderer_specific{curlew::specificity_flavour::os | curlew::specificity_flavour::renderer};
 
     class test_window_manager {
-        inline static curlew::glfw_manager st_Manager{avocet::vulkan::instance_info{}};
+        inline static curlew::glfw_manager st_Manager{
+            []() -> curlew::glfw_manager {
+                try {
+                    return {avocet::vulkan::instance_info{}};
+                }
+                catch(const std::exception& e) {
+                    std::println(std::cerr, "Failure during static initialization of GLFW: {}", e.what());
+                    std::terminate();
+                }
+            }()
+        };
     public:
         [[nodiscard]]
         static opengl_rendering_setup find_rendering_setup();
@@ -28,6 +44,10 @@ namespace curlew {
         [[nodiscard]]
         static curlew::opengl_window create_window(const curlew::opengl_window_config& config) {
             return st_Manager.create_window(config);
+        }
+
+        static void detach_current_context() {
+            st_Manager.detach_current_context();
         }
     };
 
@@ -60,7 +80,42 @@ namespace curlew {
         basic_graphics_test& operator=(basic_graphics_test&&) noexcept = default;
 
         [[nodiscard]]
-        curlew::opengl_window create_window(const curlew::opengl_window_config& config) { return test_window_manager::create_window(config); }
+        curlew::opengl_window_config make_default_config(avocet::discrete_extent extent) const {
+            return {
+                .extent{extent},
+                .name{""},
+                .hiding{curlew::window_hiding_mode::on},
+                .debug_mode{agl::debugging_mode::dynamic},
+                .prologue{},
+                .epilogue{
+                     agl::standard_error_checker{
+                         agl::num_messages{10},
+                         agl::default_debug_info_processor{{}, curlew::ignored_warnings(test_window_manager::find_rendering_setup())}
+                     }
+                 },
+                .compensate{agl::attempt_to_compensate_for_driver_bugs::yes},
+                .samples{1}
+            };
+        }
+
+        [[nodiscard]]
+        curlew::opengl_window create_window(const curlew::opengl_window_config& config) const { return test_window_manager::create_window(config); }
+
+        [[nodiscard]]
+        curlew::opengl_window create_default_window(avocet::discrete_extent extent) const {
+            return create_window(make_default_config(extent));
+        }
+
+        void check_gpu_cleanup(const avocet::opengl::decorated_context& ctx,
+                               avocet::opengl::glad_ctx_ptr_to_mem_fn_ptr_type<GLboolean, GLuint> ptrToGLFn,
+                               const avocet::opengl::resource_handle& handle,
+                               std::source_location loc=std::source_location::current())
+        {
+            namespace agl = avocet::opengl;
+            if (this->check(this->report({"Index needs to be non-null for next check to be meaningful", loc}), handle != agl::resource_handle{})) {
+                this->check(this->report({"Destruction has cleaned up the resource", loc}), not agl::gl_function{ptrToGLFn}(ctx, handle.index()));
+            }
+        }
     };
 
     template<selectivity_flavour Selectivity, specificity_flavour Specificity>

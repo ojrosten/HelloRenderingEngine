@@ -44,7 +44,7 @@ namespace avocet::opengl::testing {
             cutoutCentre{-0.5f, -0.5f};
 
         [[nodiscard]]
-        triangle<GLfloat, dimensionality{2}> make_cutout(const decorated_context& ctx) {
+        triangle<GLfloat, dimensionality{2}> make_cutout(const resourceful_context& ctx) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -60,7 +60,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        triangle<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_disc(const decorated_context& ctx, image_view fluttershy) {
+        triangle<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_disc(const resourceful_context& ctx, image_view fluttershy) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -73,17 +73,19 @@ namespace avocet::opengl::testing {
                     return verts;
                 },
                 texture_2d_configurator{
+                    .common_config{
+                        .decoding{sampling_decoding::srgb},
+                        .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                        .label{"Fluttershy"}
+                     },
                     .data_view{fluttershy},
-                    .decoding{sampling_decoding::srgb},
-                    .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
-                    .label{"Fluttershy"}
                 },
                 make_label("Disc")
             };
         }
 
         [[nodiscard]]
-        quad<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_lower_hearts(const decorated_context& ctx, image_view hearty){
+        quad<GLfloat, dimensionality{2}, texture_coordinates<GLfloat>> make_lower_hearts(const resourceful_context& ctx, image_view hearty){
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -94,17 +96,19 @@ namespace avocet::opengl::testing {
                     return verts;
                 },
                 texture_2d_configurator{
+                    .common_config{
+                        .decoding{sampling_decoding::srgb},
+                        .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                        .label{"Hearts"}
+                    },
                     .data_view{hearty},
-                    .decoding{sampling_decoding::srgb},
-                    .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
-                    .label{"Hearts"}
                 },
                 make_label("Wall of Hearts")
             };
         }
 
         [[nodiscard]]
-        quad<GLfloat, dimensionality{3}, texture_coordinates<GLfloat>> make_upper_hearts(const decorated_context& ctx, image_view hearty) {
+        quad<GLfloat, dimensionality{3}, texture_coordinates<GLfloat>> make_upper_hearts(const resourceful_context& ctx, image_view hearty) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -115,17 +119,19 @@ namespace avocet::opengl::testing {
                     return verts;
                 },
                 texture_2d_configurator{
+                    .common_config{
+                        .decoding{sampling_decoding::srgb},
+                        .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                        .label{"Hearts"}
+                    },
                     .data_view{hearty},
-                    .decoding{sampling_decoding::srgb},
-                    .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
-                    .label{"Hearts"}
                 },
                 make_label("Upper Wall of Hearts")
             };
         }
 
         [[nodiscard]]
-        quad<GLdouble, dimensionality{3}> make_upper_quad(const decorated_context& ctx) {
+        quad<GLdouble, dimensionality{3}> make_upper_quad(const resourceful_context& ctx) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -140,7 +146,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        quad<GLdouble, dimensionality{3}> make_lower_quad(const decorated_context& ctx){
+        quad<GLdouble, dimensionality{3}> make_lower_quad(const resourceful_context& ctx){
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -155,7 +161,7 @@ namespace avocet::opengl::testing {
         }
 
         [[nodiscard]]
-        polygon<GLfloat, 6, dimensionality{2}, texture_coordinates<GLfloat>> make_hexagon(const decorated_context& ctx, image_view twilight) {
+        polygon<GLfloat, 6, dimensionality{2}, texture_coordinates<GLfloat>> make_hexagon(const resourceful_context& ctx, image_view twilight) {
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -166,17 +172,19 @@ namespace avocet::opengl::testing {
                     return verts;
                 },
                 texture_2d_configurator{
+                    .common_config{
+                        .decoding{sampling_decoding::srgb},
+                        .parameter_setter{ [&ctx](){ gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                        .label{"Princess TS"}
+                    },
                     .data_view{twilight},
-                    .decoding{sampling_decoding::srgb},
-                    .parameter_setter{ [&ctx](){ gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
-                    .label{"Princess TS"}
                 },
                 make_label("Hexagon")
             };
         }
 
         [[nodiscard]]
-        polygon<GLfloat, 7, dimensionality{2}, texture_coordinates<GLfloat>, texture_coordinates<GLfloat>> make_septagon(const decorated_context& ctx, image_view twilight, image_view fluttershy){
+        polygon<GLfloat, 7, dimensionality{2}, texture_coordinates<GLfloat>, texture_coordinates<GLfloat>> make_septagon(const resourceful_context& ctx, image_view twilight, image_view fluttershy){
             return {
                 ctx,
                 [](std::ranges::random_access_range auto verts) {
@@ -188,16 +196,20 @@ namespace avocet::opengl::testing {
                 },
                 std::array{
                     texture_2d_configurator{
+                        .common_config{
+                            .decoding{sampling_decoding::srgb},
+                            .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                            .label{"Twilight"}
+                        },
                         .data_view{twilight},
-                        .decoding{sampling_decoding::srgb},
-                        .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
-                        .label{"Twilight"}
                     },
                     texture_2d_configurator{
+                        .common_config{
+                            .decoding{sampling_decoding::srgb},
+                            .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
+                            .label{"Fluttershy"} 
+                        },
                         .data_view{fluttershy},
-                        .decoding{sampling_decoding::srgb},
-                        .parameter_setter{ [&ctx]() { gl_function{&GladGLContext::TexParameteri}(ctx, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR); }},
-                        .label{"Fluttershy"}
                     }
                 },
                 make_label("Septagon")

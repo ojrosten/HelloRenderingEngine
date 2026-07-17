@@ -17,26 +17,39 @@
 #include "Core/AssetManagement/UniqueImageTest.hpp"
 #include "Core/AssetManagement/UniqueImageTestingDiagnostics.hpp"
 #include "Core/AssetManagement/UniqueImageThreadingFreeTest.hpp"
-#include "Core/RenderArea/ViewportTest.hpp"
-#include "Core/RenderArea/ViewportTestingDiagnostics.hpp"
-#include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
+#include "Core/Formatting/FormattingFreeTest.hpp"
+#include "Core/Geometry/PolygonCoordinatesFreeTest.hpp"
+#include "Core/Geometry/ViewportTest.hpp"
+#include "Core/Geometry/ViewportTestingDiagnostics.hpp"
+#include "Core/Utilities/ArithmeticCastsFreeTest.hpp"
+#include "OpenGL/Capabilities/CapabilitiesTest.hpp"
 #include "OpenGL/Capabilities/CapabilitiesTestingDiagnostics.hpp"
+#include "OpenGL/Capabilities/CapabilityManagerFreeTest.hpp"
+#include "OpenGL/Context/VersionFreeTest.hpp"
 #include "OpenGL/Debugging/IllegalGPUCallFreeTest.hpp"
 #include "OpenGL/Debugging/MultipleIllegalGPUCallsFreeTest.hpp"
 #include "OpenGL/Debugging/NullFunctionPointerFreeTest.hpp"
+#include "OpenGL/Geometry/PolygonFreeTest.hpp"
+#include "OpenGL/ResourceInfrastructure/ResourceHandleTest.hpp"
+#include "OpenGL/ResourceInfrastructure/ResourceHandleTestingDiagnostics.hpp"
 #include "OpenGL/Resources/BufferMetaFreeTest.hpp"
 #include "OpenGL/Resources/BufferObjectLabellingTest.hpp"
 #include "OpenGL/Resources/BufferObjectTest.hpp"
 #include "OpenGL/Resources/BufferObjectTestingDiagnostics.hpp"
-#include "OpenGL/Resources/ResourceHandleTest.hpp"
-#include "OpenGL/Resources/ResourceHandleTestingDiagnostics.hpp"
+#include "OpenGL/Resources/FramebufferFreeTest.hpp"
+#include "OpenGL/Resources/FramebufferTrackingFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramBrokenStagesFreeTest.hpp"
+#include "OpenGL/Resources/ShaderProgramBrokenUniformsFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramFileExistenceFreeTest.hpp"
+#include "OpenGL/Resources/ShaderProgramFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramLabellingFreeTest.hpp"
 #include "OpenGL/Resources/ShaderProgramTrackingFreeTest.hpp"
 #include "OpenGL/Resources/Texture2dLabellingTest.hpp"
 #include "OpenGL/Resources/Texture2dTest.hpp"
 #include "OpenGL/Resources/Texture2dTestingDiagnostics.hpp"
+#include "OpenGL/StateAwareContext/ResourcefulContextFreeTest.hpp"
+#include "OpenGL/Utilities/CastsFreeTest.hpp"
+#include "OpenGL/Utilities/MessagesFreeTest.hpp"
 #include "TestFramework/OpenGL/LabellingTestDiagnostics.hpp"
 #include "sequoia/TestFramework/TestRunner.hpp"
 #include <iostream>
@@ -74,9 +87,11 @@ int main(int argc, char** argv)
 
         runner.add_test_suite(
             "Shader Program",
+            shader_program_free_test{"Shader Program Free Test"},
             shader_program_file_existence_free_test{"Shader Program File Existence Free Test"},
             shader_program_broken_stages_free_test{"Shader Program Broken Stages Free Test"},
             shader_program_labelling_free_test{"Shader Program Labelling Free Test"},
+            shader_program_broken_uniforms_free_test{"Shader Program Broken Uniforms Free Test"},
             shader_program_tracking_free_test{"Shader Program Tracking Free Test"}
         );
 
@@ -112,6 +127,7 @@ int main(int argc, char** argv)
         runner.add_test_suite(
             "Capability Manager",
             capabilities_false_negative_test{"False Negative Test"},
+            capabilities_test{"Unit Test"},
             capability_manager_free_test{"Capability Manager Free Test"}
         );
 
@@ -119,6 +135,48 @@ int main(int argc, char** argv)
             "Viewport",
             viewport_false_negative_test{"False Negative Test"},
             viewport_test{"Unit Test"}
+        );
+
+        runner.add_test_suite(
+            "Framebuffer",
+            framebuffer_free_test{"Framebuffer Free Test"},
+            framebuffer_tracking_free_test{"Framebuffer Tracking Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Formatting",
+            formatting_free_test{"Formatting Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Polygon",
+            polygon_coordinates_free_test{"Polygon Coordinates Free Test"},
+            polygon_free_test{"Polygon Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Resourceful Context",
+            resourceful_context_free_test{"Resourceful Context Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Arithmetic Casts",
+            arithmetic_casts_free_test{"Arithmetic Casts Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Messages",
+            messages_free_test{"Messages Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Version",
+            version_free_test{"Version Free Test"}
+        );
+
+        runner.add_test_suite(
+            "Casts",
+            casts_free_test{"Casts Free Test"}
         );
 
         runner.execute(sequoia::timer_resolution{1ms});

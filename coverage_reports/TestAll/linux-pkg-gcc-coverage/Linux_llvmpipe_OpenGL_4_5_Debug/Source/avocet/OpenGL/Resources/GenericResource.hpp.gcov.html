@@ -1,0 +1,310 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info - Source/avocet/OpenGL/Resources/GenericResource.hpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../../gcov.css">
+</head>
+
+<body>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="title">LCOV - code coverage report</td></tr>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+            <tr>
+              <td width="100%">
+                <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="10%" class="headerValue"><a href="../../../../index.html" title="Click to go to top-level">top level</a> - <a href="index.html" title="Click to go to directory Source/avocet/OpenGL/Resources">Source/avocet/OpenGL/Resources</a> - GenericResource.hpp<span style="font-size: 80%;"> (source / <a href="GenericResource.hpp.func-c.html" title="Click to go to function table">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="5%"></td>
+            <td width="5%" class="headerCovTableHead">Coverage</td>
+            <td width="5%" class="headerCovTableHead" title="Covered + Uncovered code">Total</td>
+            <td width="5%" class="headerCovTableHead" title="Exercised code only">Hit</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntryHi">98.0&nbsp;%</td>
+            <td class="headerCovTableEntry">49</td>
+            <td class="headerCovTableEntry">48</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test Date:</td>
+            <td class="headerValue">2026-07-13 20:52:56</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
+            <td class="headerCovTableEntry">365</td>
+            <td class="headerCovTableEntry">365</td>
+          </tr>
+                  <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+                </table>
+              </td>
+            </tr>
+
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+          </table>
+
+          <table cellpadding=0 cellspacing=0 border=0>
+            <tr>
+              <td><br></td>
+            </tr>
+            <tr>
+              <td>
+<pre class="sourceHeading">            Line data    Source code</pre>
+<pre class="source">
+<span id="L1"><span class="lineNum">       1</span>              : ////////////////////////////////////////////////////////////////////</span>
+<span id="L2"><span class="lineNum">       2</span>              : //                Copyright Oliver J. Rosten 2024.                //</span>
+<span id="L3"><span class="lineNum">       3</span>              : // Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //</span>
+<span id="L4"><span class="lineNum">       4</span>              : //    (See accompanying file LICENSE.md or copy at                //</span>
+<span id="L5"><span class="lineNum">       5</span>              : //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //</span>
+<span id="L6"><span class="lineNum">       6</span>              : ////////////////////////////////////////////////////////////////////</span>
+<span id="L7"><span class="lineNum">       7</span>              : </span>
+<span id="L8"><span class="lineNum">       8</span>              : #pragma once</span>
+<span id="L9"><span class="lineNum">       9</span>              : </span>
+<span id="L10"><span class="lineNum">      10</span>              : #include &quot;avocet/OpenGL/Resources/ContextualResource.hpp&quot;</span>
+<span id="L11"><span class="lineNum">      11</span>              : #include &quot;avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp&quot;</span>
+<span id="L12"><span class="lineNum">      12</span>              : </span>
+<span id="L13"><span class="lineNum">      13</span>              : #include &quot;sequoia/PlatformSpecific/Preprocessor.hpp&quot;</span>
+<span id="L14"><span class="lineNum">      14</span>              : </span>
+<span id="L15"><span class="lineNum">      15</span>              : #include &lt;algorithm&gt;</span>
+<span id="L16"><span class="lineNum">      16</span>              : #include &lt;cassert&gt;</span>
+<span id="L17"><span class="lineNum">      17</span>              : #include &lt;ranges&gt;</span>
+<span id="L18"><span class="lineNum">      18</span>              : </span>
+<span id="L19"><span class="lineNum">      19</span>              : namespace avocet::opengl {</span>
+<span id="L20"><span class="lineNum">      20</span>              :     template&lt;std::size_t I&gt;</span>
+<span id="L21"><span class="lineNum">      21</span>              :     struct index { constexpr static std::size_t value{I}; };</span>
+<span id="L22"><span class="lineNum">      22</span>              : </span>
+<span id="L23"><span class="lineNum">      23</span>              :     template&lt;class T&gt;</span>
+<span id="L24"><span class="lineNum">      24</span>              :     inline constexpr bool has_configurator_type_v{</span>
+<span id="L25"><span class="lineNum">      25</span>              :         requires { typename T::configurator; }</span>
+<span id="L26"><span class="lineNum">      26</span>              :     };</span>
+<span id="L27"><span class="lineNum">      27</span>              : </span>
+<span id="L28"><span class="lineNum">      28</span>              :     template&lt;class LifeEvents&gt;</span>
+<span id="L29"><span class="lineNum">      29</span>              :     inline constexpr bool has_configure_event_v{</span>
+<span id="L30"><span class="lineNum">      30</span>              :            has_configurator_type_v&lt;LifeEvents&gt;</span>
+<span id="L31"><span class="lineNum">      31</span>              :         &amp;&amp; requires(const LifeEvents&amp; lifeEvents, resourceful_contextual_resource_view crv, const LifeEvents::configurator&amp; configurator) {</span>
+<span id="L32"><span class="lineNum">      32</span>              :                lifeEvents.configure(crv, configurator);</span>
+<span id="L33"><span class="lineNum">      33</span>              :            }</span>
+<span id="L34"><span class="lineNum">      34</span>              :     };</span>
+<span id="L35"><span class="lineNum">      35</span>              : </span>
+<span id="L36"><span class="lineNum">      36</span>              :     template&lt;class LifeEvents&gt;</span>
+<span id="L37"><span class="lineNum">      37</span>              :     inline constexpr bool has_common_lifecycle_v{</span>
+<span id="L38"><span class="lineNum">      38</span>              :            sequoia::pseudoregular&lt;LifeEvents&gt;</span>
+<span id="L39"><span class="lineNum">      39</span>              :         &amp;&amp; has_lifecycle_identifiers_v&lt;LifeEvents&gt;</span>
+<span id="L40"><span class="lineNum">      40</span>              :         &amp;&amp; has_configure_event_v&lt;LifeEvents&gt;</span>
+<span id="L41"><span class="lineNum">      41</span>              :     };</span>
+<span id="L42"><span class="lineNum">      42</span>              : </span>
+<span id="L43"><span class="lineNum">      43</span>              :     template&lt;class LifeEvents, num_resources NumResources&gt;</span>
+<span id="L44"><span class="lineNum">      44</span>              :     concept standard_lifecycle_for =</span>
+<span id="L45"><span class="lineNum">      45</span>              :            has_common_lifecycle_v&lt;LifeEvents&gt;</span>
+<span id="L46"><span class="lineNum">      46</span>              :         &amp;&amp; has_bind_event_v&lt;LifeEvents&gt;</span>
+<span id="L47"><span class="lineNum">      47</span>              :         &amp;&amp; requires(const LifeEvents&amp; lifeEvents, raw_indices&lt;NumResources.value&gt;&amp;indices, decorated_contextual_resource_view crv) {</span>
+<span id="L48"><span class="lineNum">      48</span>              :                lifeEvents.generate(crv.context(), indices);</span>
+<span id="L49"><span class="lineNum">      49</span>              :                lifeEvents.destroy(crv.context(), indices);</span>
+<span id="L50"><span class="lineNum">      50</span>              :            };</span>
+<span id="L51"><span class="lineNum">      51</span>              : </span>
+<span id="L52"><span class="lineNum">      52</span>              :     template&lt;class LifeEvents&gt;</span>
+<span id="L53"><span class="lineNum">      53</span>              :     concept program_lifecycle =</span>
+<span id="L54"><span class="lineNum">      54</span>              :            has_common_lifecycle_v&lt;LifeEvents&gt;</span>
+<span id="L55"><span class="lineNum">      55</span>              :         &amp;&amp; requires(const LifeEvents&amp; lifeEvents, resourceful_contextual_resource_view crv) {</span>
+<span id="L56"><span class="lineNum">      56</span>              :                { lifeEvents.create(crv.context()) } -&gt; std::same_as&lt;contextual_resource_handle&gt;;</span>
+<span id="L57"><span class="lineNum">      57</span>              :                lifeEvents.destroy(crv);</span>
+<span id="L58"><span class="lineNum">      58</span>              :            };</span>
+<span id="L59"><span class="lineNum">      59</span>              : </span>
+<span id="L60"><span class="lineNum">      60</span>              :     template&lt;num_resources NumResources, class LifeEvents&gt;</span>
+<span id="L61"><span class="lineNum">      61</span>              :     class resource_lifecycle_base;</span>
+<span id="L62"><span class="lineNum">      62</span>              : </span>
+<span id="L63"><span class="lineNum">      63</span>              :     template&lt;num_resources NumResources, class LifeEvents&gt;</span>
+<span id="L64"><span class="lineNum">      64</span>              :         requires has_common_lifecycle_v&lt;LifeEvents&gt;</span>
+<span id="L65"><span class="lineNum">      65</span>              :     class resource_lifecycle_base&lt;NumResources, LifeEvents&gt; {</span>
+<span id="L66"><span class="lineNum">      66</span>              :         LifeEvents m_LifeEvents;</span>
+<span id="L67"><span class="lineNum">      67</span>              :     public:</span>
+<span id="L68"><span class="lineNum">      68</span>              :         using configurator_type = LifeEvents::configurator;</span>
+<span id="L69"><span class="lineNum">      69</span>              : </span>
+<span id="L70"><span class="lineNum">      70</span>              :         constexpr static std::size_t N{NumResources.value};</span>
+<span id="L71"><span class="lineNum">      71</span>              : </span>
+<span id="L72"><span class="lineNum">      72</span>              :         explicit resource_lifecycle_base(const LifeEvents&amp; lifeEvents)</span>
+<span id="L73"><span class="lineNum">      73</span>              :             : m_LifeEvents{lifeEvents}</span>
+<span id="L74"><span class="lineNum">      74</span>              :         {</span>
+<span id="L75"><span class="lineNum">      75</span>              :         }</span>
+<span id="L76"><span class="lineNum">      76</span>              : </span>
+<span id="L77"><span class="lineNum">      77</span>              :         void utilize(this const resource_lifecycle_base&amp; self, resourceful_contextual_resource_view crv)</span>
+<span id="L78"><span class="lineNum">      78</span>              :             requires has_utilization_event_v&lt;LifeEvents&gt;</span>
+<span id="L79"><span class="lineNum">      79</span>              :         {</span>
+<span id="L80"><span class="lineNum">      80</span>              :             crv.context().utilize(self.life_events(), crv.handle());</span>
+<span id="L81"><span class="lineNum">      81</span>              :         }</span>
+<span id="L82"><span class="lineNum">      82</span>              : </span>
+<span id="L83"><span class="lineNum">      83</span>              :         void configure(this const resource_lifecycle_base&amp; self, resourceful_contextual_resource_view crv, const configurator_type&amp; config) {</span>
+<span id="L84"><span class="lineNum">      84</span>              :             self.life_events().configure(crv, config);</span>
+<span id="L85"><span class="lineNum">      85</span>              :         }</span>
+<span id="L86"><span class="lineNum">      86</span>              : </span>
+<span id="L87"><span class="lineNum">      87</span>              :         template&lt;class Self&gt;</span>
+<span id="L88"><span class="lineNum">      88</span>              :         void destroy(this const Self&amp; self, const contextual_resource_handles&lt;N&gt;&amp; crhs) {</span>
+<span id="L89"><span class="lineNum">      89</span>              : </span>
+<span id="L90"><span class="lineNum">      90</span>              :         }</span>
+<span id="L91"><span class="lineNum">      91</span>              : </span>
+<span id="L92"><span class="lineNum">      92</span>              :         [[nodiscard]]</span>
+<span id="L93"><span class="lineNum">      93</span>              :         friend bool operator==(const resource_lifecycle_base&amp;, const resource_lifecycle_base&amp;) noexcept = default;</span>
+<span id="L94"><span class="lineNum">      94</span>              :     protected:</span>
+<span id="L95"><span class="lineNum">      95</span>              :         resource_lifecycle_base(const resource_lifecycle_base&amp;)     = default;</span>
+<span id="L96"><span class="lineNum">      96</span>              :         resource_lifecycle_base(resource_lifecycle_base&amp;&amp;) noexcept = default;</span>
+<span id="L97"><span class="lineNum">      97</span>              : </span>
+<span id="L98"><span class="lineNum">      98</span>              :         resource_lifecycle_base&amp; operator=(const resource_lifecycle_base&amp;)     = default;</span>
+<span id="L99"><span class="lineNum">      99</span>              :         resource_lifecycle_base&amp; operator=(resource_lifecycle_base&amp;&amp;) noexcept = default;</span>
+<span id="L100"><span class="lineNum">     100</span>              : </span>
+<span id="L101"><span class="lineNum">     101</span>              :         ~resource_lifecycle_base() = default;</span>
+<span id="L102"><span class="lineNum">     102</span>              : </span>
+<span id="L103"><span class="lineNum">     103</span>              :         [[nodiscard]]</span>
+<span id="L104"><span class="lineNum">     104</span>              :         const LifeEvents&amp; life_events() const noexcept { return m_LifeEvents; }</span>
+<span id="L105"><span class="lineNum">     105</span>              :     };</span>
+<span id="L106"><span class="lineNum">     106</span>              : </span>
+<span id="L107"><span class="lineNum">     107</span>              :     template&lt;num_resources NumResources, class LifeEvents&gt;</span>
+<span id="L108"><span class="lineNum">     108</span>              :     struct resource_lifecycle;</span>
+<span id="L109"><span class="lineNum">     109</span>              : </span>
+<span id="L110"><span class="lineNum">     110</span>              :     template&lt;num_resources NumResources, standard_lifecycle_for&lt;NumResources&gt; LifeEvents&gt;</span>
+<span id="L111"><span class="lineNum">     111</span>              :     struct resource_lifecycle&lt;NumResources, LifeEvents&gt; {</span>
+<span id="L112"><span class="lineNum">     112</span>              :         using configurator_type = LifeEvents::configurator;</span>
+<span id="L113"><span class="lineNum">     113</span>              : </span>
+<span id="L114"><span class="lineNum">     114</span>              :         constexpr static std::size_t N{NumResources.value};</span>
+<span id="L115"><span class="lineNum">     115</span>              : </span>
+<span id="L116"><span class="lineNum">     116</span>              :         [[nodiscard]]</span>
+<span id="L117"><span class="lineNum">     117</span> <span class="tlaGNC">         202 :         static contextual_resource_handles&lt;N&gt; generate(const resourceful_context&amp; ctx) {</span></span>
+<span id="L118"><span class="lineNum">     118</span> <span class="tlaGNC">         202 :             raw_indices&lt;N&gt; indices{};</span></span>
+<span id="L119"><span class="lineNum">     119</span> <span class="tlaGNC">         202 :             LifeEvents::generate(ctx, indices);</span></span>
+<span id="L120"><span class="lineNum">     120</span> <span class="tlaGNC">         404 :             return {ctx, indices};</span></span>
+<span id="L121"><span class="lineNum">     121</span>              :         }</span>
+<span id="L122"><span class="lineNum">     122</span>              : </span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaGNC">         250 :         static void destroy(const contextual_resource_handles&lt;N&gt;&amp; crhs) {</span></span>
+<span id="L124"><span class="lineNum">     124</span> <span class="tlaGNC">         499 :             for (resourceful_contextual_resource_view crv : crhs) {</span></span>
+<span id="L125"><span class="lineNum">     125</span> <span class="tlaGNC">         250 :                 crv.context().reset(LifeEvents{}, crv.handle());</span></span>
+<span id="L126"><span class="lineNum">     126</span>              :             }</span>
+<span id="L127"><span class="lineNum">     127</span> <span class="tlaGNC">         249 :             LifeEvents::destroy(crhs.context(), crhs.get_raw_indices());</span></span>
+<span id="L128"><span class="lineNum">     128</span> <span class="tlaGNC">         249 :         }</span></span>
+<span id="L129"><span class="lineNum">     129</span>              : </span>
+<span id="L130"><span class="lineNum">     130</span> <span class="tlaGNC">         537 :         static void bind(resourceful_contextual_resource_view crv) { </span></span>
+<span id="L131"><span class="lineNum">     131</span> <span class="tlaGNC">         537 :             crv.context().utilize(LifeEvents{}, crv.handle());</span></span>
+<span id="L132"><span class="lineNum">     132</span> <span class="tlaGNC">         537 :         }</span></span>
+<span id="L133"><span class="lineNum">     133</span>              : </span>
+<span id="L134"><span class="lineNum">     134</span> <span class="tlaGNC">         202 :         static void configure(decorated_contextual_resource_view crv, const configurator_type&amp; config) {</span></span>
+<span id="L135"><span class="lineNum">     135</span> <span class="tlaGNC">         202 :             LifeEvents{}.configure(crv, config);</span></span>
+<span id="L136"><span class="lineNum">     136</span> <span class="tlaGNC">         202 :         }</span></span>
+<span id="L137"><span class="lineNum">     137</span>              :     };</span>
+<span id="L138"><span class="lineNum">     138</span>              : </span>
+<span id="L139"><span class="lineNum">     139</span>              :     template&lt;num_resources NumResources, standard_lifecycle_for&lt;NumResources&gt; LifeEvents&gt;</span>
+<span id="L140"><span class="lineNum">     140</span>              :     class resource_wrapper{</span>
+<span id="L141"><span class="lineNum">     141</span>              :     public:</span>
+<span id="L142"><span class="lineNum">     142</span>              :         using lifecycle_type = resource_lifecycle&lt;NumResources, LifeEvents&gt;;</span>
+<span id="L143"><span class="lineNum">     143</span>              : </span>
+<span id="L144"><span class="lineNum">     144</span>              :         constexpr static std::size_t N{NumResources.value};</span>
+<span id="L145"><span class="lineNum">     145</span>              : </span>
+<span id="L146"><span class="lineNum">     146</span> <span class="tlaGNC">         202 :         explicit resource_wrapper(const resourceful_context&amp; ctx) : m_Handles{lifecycle_type::generate(ctx)} {}</span></span>
+<span id="L147"><span class="lineNum">     147</span> <span class="tlaGNC">         250 :         ~resource_wrapper() { lifecycle_type::destroy(m_Handles); }</span></span>
+<span id="L148"><span class="lineNum">     148</span>              : </span>
+<span id="L149"><span class="lineNum">     149</span> <span class="tlaGNC">          48 :         resource_wrapper(resource_wrapper&amp;&amp;)           noexcept = default;</span></span>
+<span id="L150"><span class="lineNum">     150</span> <span class="tlaGNC">          50 :         resource_wrapper&amp; operator=(resource_wrapper&amp;&amp;) noexcept = default;</span></span>
+<span id="L151"><span class="lineNum">     151</span>              : </span>
+<span id="L152"><span class="lineNum">     152</span>              :         [[nodiscard]]</span>
+<span id="L153"><span class="lineNum">     153</span> <span class="tlaGNC">        1005 :         const contextual_resource_handles&lt;N&gt;&amp; contextual_handles() const noexcept { return m_Handles; }</span></span>
+<span id="L154"><span class="lineNum">     154</span>              : </span>
+<span id="L155"><span class="lineNum">     155</span>              :         [[nodiscard]]</span>
+<span id="L156"><span class="lineNum">     156</span> <span class="tlaGNC">          50 :         friend bool operator==(const resource_wrapper&amp;, const resource_wrapper&amp;) noexcept = default;</span></span>
+<span id="L157"><span class="lineNum">     157</span>              :     private:</span>
+<span id="L158"><span class="lineNum">     158</span> <span class="tlaGNC">          50 :         contextual_resource_handles&lt;N&gt; m_Handles;</span></span>
+<span id="L159"><span class="lineNum">     159</span>              :     };</span>
+<span id="L160"><span class="lineNum">     160</span>              : </span>
+<span id="L161"><span class="lineNum">     161</span>              :     template&lt;num_resources NumResources, standard_lifecycle_for&lt;NumResources&gt; LifeEvents&gt;</span>
+<span id="L162"><span class="lineNum">     162</span>              :         requires (NumResources.value &gt; 0)</span>
+<span id="L163"><span class="lineNum">     163</span>              :     class generic_resource {</span>
+<span id="L164"><span class="lineNum">     164</span>              :         using resource_type = resource_wrapper&lt;NumResources, LifeEvents&gt;;</span>
+<span id="L165"><span class="lineNum">     165</span>              :         using lifecycle_type = resource_type::lifecycle_type;</span>
+<span id="L166"><span class="lineNum">     166</span> <span class="tlaGNC">          50 :         resource_type m_Resource;</span></span>
+<span id="L167"><span class="lineNum">     167</span>              :     public:</span>
+<span id="L168"><span class="lineNum">     168</span>              :         using configurator_type = lifecycle_type::configurator_type;</span>
+<span id="L169"><span class="lineNum">     169</span>              :         constexpr static std::size_t N{NumResources.value};</span>
+<span id="L170"><span class="lineNum">     170</span>              : </span>
+<span id="L171"><span class="lineNum">     171</span> <span class="tlaGNC">         202 :         generic_resource(const resourceful_context&amp; ctx, const std::array&lt;configurator_type, N&gt;&amp; configs)</span></span>
+<span id="L172"><span class="lineNum">     172</span> <span class="tlaGNC">         202 :             : m_Resource{ctx}</span></span>
+<span id="L173"><span class="lineNum">     173</span>              :         {</span>
+<span id="L174"><span class="lineNum">     174</span> <span class="tlaGNC">         808 :             for(const auto&amp; [ctxRsrc, config] : std::views::zip(contextual_handles(), configs)) {</span></span>
+<span id="L175"><span class="lineNum">     175</span> <span class="tlaGNC">         202 :                 if(ctxRsrc.handle() == resource_handle{})</span></span>
+<span id="L176"><span class="lineNum">     176</span> <span class="tlaUNC">           0 :                     throw std::runtime_error{&quot;generic_resource - null resource&quot;};</span></span>
+<span id="L177"><span class="lineNum">     177</span>              : </span>
+<span id="L178"><span class="lineNum">     178</span> <span class="tlaGNC">         202 :                 do_utilize(ctxRsrc);</span></span>
+<span id="L179"><span class="lineNum">     179</span> <span class="tlaGNC">         202 :                 lifecycle_type::configure(ctxRsrc, config);</span></span>
+<span id="L180"><span class="lineNum">     180</span>              :             }</span>
+<span id="L181"><span class="lineNum">     181</span> <span class="tlaGNC">         202 :         }</span></span>
+<span id="L182"><span class="lineNum">     182</span>              : </span>
+<span id="L183"><span class="lineNum">     183</span>              :         [[nodiscard]]</span>
+<span id="L184"><span class="lineNum">     184</span> <span class="tlaGNC">          13 :         bool is_null() const noexcept {</span></span>
+<span id="L185"><span class="lineNum">     185</span> <span class="tlaGNC">          29 :             auto isNull{[](decorated_contextual_resource_view crv) { return crv.handle() == resource_handle{}; }};</span></span>
+<span id="L186"><span class="lineNum">     186</span> <span class="tlaGNC">          13 :             assert(std::ranges::all_of(contextual_handles(), isNull) or std::ranges::none_of(contextual_handles(), isNull));</span></span>
+<span id="L187"><span class="lineNum">     187</span> <span class="tlaGNC">          13 :             return isNull(contextual_handle_view(index&lt;0&gt;{}));</span></span>
+<span id="L188"><span class="lineNum">     188</span>              :         }</span>
+<span id="L189"><span class="lineNum">     189</span>              : </span>
+<span id="L190"><span class="lineNum">     190</span>              :         template&lt;std::size_t I&gt;</span>
+<span id="L191"><span class="lineNum">     191</span>              :             requires (I &lt; N)</span>
+<span id="L192"><span class="lineNum">     192</span>              :         [[nodiscard]]</span>
+<span id="L193"><span class="lineNum">     193</span> <span class="tlaGNC">           3 :         std::string extract_label(index&lt;I&gt; i) const { return get_object_label(LifeEvents::identifier, contextual_handle_view(i)); }</span></span>
+<span id="L194"><span class="lineNum">     194</span>              : </span>
+<span id="L195"><span class="lineNum">     195</span>              :         [[nodiscard]]</span>
+<span id="L196"><span class="lineNum">     196</span> <span class="tlaGNC">           3 :         std::string extract_label() const requires (N == 1) { return extract_label(index&lt;0&gt;{}); }</span></span>
+<span id="L197"><span class="lineNum">     197</span>              : </span>
+<span id="L198"><span class="lineNum">     198</span>              :         [[nodiscard]]</span>
+<span id="L199"><span class="lineNum">     199</span> <span class="tlaGNC">         415 :         const resourceful_context&amp; context() const noexcept { return contextual_handles().context(); }</span></span>
+<span id="L200"><span class="lineNum">     200</span>              : </span>
+<span id="L201"><span class="lineNum">     201</span>              :         [[nodiscard]]</span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          50 :         friend bool operator==(const generic_resource&amp;, const generic_resource&amp;) noexcept = default;</span></span>
+<span id="L203"><span class="lineNum">     203</span>              :     protected:</span>
+<span id="L204"><span class="lineNum">     204</span> <span class="tlaGNC">         250 :         ~generic_resource() = default;</span></span>
+<span id="L205"><span class="lineNum">     205</span>              : </span>
+<span id="L206"><span class="lineNum">     206</span> <span class="tlaGNC">          48 :         generic_resource(generic_resource&amp;&amp;)            noexcept = default;</span></span>
+<span id="L207"><span class="lineNum">     207</span> <span class="tlaGNC">          50 :         generic_resource&amp; operator=(generic_resource&amp;&amp;) noexcept = default;</span></span>
+<span id="L208"><span class="lineNum">     208</span>              : </span>
+<span id="L209"><span class="lineNum">     209</span> <span class="tlaGNC">         537 :         void do_utilize(this const generic_resource&amp;, resourceful_contextual_resource_view crv) {</span></span>
+<span id="L210"><span class="lineNum">     210</span> <span class="tlaGNC">         537 :             lifecycle_type::bind(crv);</span></span>
+<span id="L211"><span class="lineNum">     211</span> <span class="tlaGNC">         537 :         }</span></span>
+<span id="L212"><span class="lineNum">     212</span>              : </span>
+<span id="L213"><span class="lineNum">     213</span>              :         template&lt;std::size_t I&gt;</span>
+<span id="L214"><span class="lineNum">     214</span>              :             requires (I &lt; N)</span>
+<span id="L215"><span class="lineNum">     215</span> <span class="tlaGNC">         335 :         void do_utilize(this const generic_resource&amp; self, index&lt;I&gt; i) { self.do_utilize(self.contextual_handle_view(i)); }</span></span>
+<span id="L216"><span class="lineNum">     216</span>              : </span>
+<span id="L217"><span class="lineNum">     217</span> <span class="tlaGNC">         335 :         void do_utilize(this const generic_resource&amp; self) requires (N == 1) { self.do_utilize(index&lt;0&gt;{}); }</span></span>
+<span id="L218"><span class="lineNum">     218</span>              : </span>
+<span id="L219"><span class="lineNum">     219</span>              :         [[nodiscard]]</span>
+<span id="L220"><span class="lineNum">     220</span> <span class="tlaGNC">        1006 :         const contextual_resource_handles&lt;N&gt;&amp; contextual_handles() const noexcept { return m_Resource.contextual_handles(); }</span></span>
+<span id="L221"><span class="lineNum">     221</span>              : </span>
+<span id="L222"><span class="lineNum">     222</span>              :         template&lt;std::size_t I&gt;</span>
+<span id="L223"><span class="lineNum">     223</span>              :             requires (I &lt; N)</span>
+<span id="L224"><span class="lineNum">     224</span>              :         [[nodiscard]]</span>
+<span id="L225"><span class="lineNum">     225</span> <span class="tlaGNC">         373 :         resourceful_contextual_resource_view contextual_handle_view(index&lt;I&gt;) const noexcept { return contextual_handles().begin()[I]; }</span></span>
+<span id="L226"><span class="lineNum">     226</span>              : </span>
+<span id="L227"><span class="lineNum">     227</span>              :         [[nodiscard]]</span>
+<span id="L228"><span class="lineNum">     228</span>              :         resourceful_contextual_resource_view contextual_handle_view() const noexcept</span>
+<span id="L229"><span class="lineNum">     229</span>              :             requires (N == 1)</span>
+<span id="L230"><span class="lineNum">     230</span>              :         {</span>
+<span id="L231"><span class="lineNum">     231</span>              :             return contextual_handle_view(index&lt;0&gt;{});</span>
+<span id="L232"><span class="lineNum">     232</span>              :         }</span>
+<span id="L233"><span class="lineNum">     233</span>              :     };</span>
+<span id="L234"><span class="lineNum">     234</span>              : }</span>
+        </pre>
+              </td>
+            </tr>
+          </table>
+          <br>
+
+          <table width="100%" border=0 cellspacing=0 cellpadding=0>
+            <tr><td class="ruler"><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
+            <tr><td class="versionInfo">Generated by: <a href="https://github.com//linux-test-project/lcov" target="_parent">LCOV version 2.0-1</a></td></tr>
+          </table>
+          <br>
+
+</body>
+</html>

@@ -8,6 +8,7 @@
 #include "avocet/OpenGL/Debugging/Errors.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/OpenGL/Utilities/Messages.hpp"
 
 #include "avocet/Core/Formatting/Formatting.hpp"
 
@@ -24,15 +25,17 @@ namespace avocet::opengl {
     namespace {
         [[nodiscard]]
         std::optional<debug_info> get_next_message(const context& ctx) {
-            const std::size_t maxLen{ctx.characteristics().max_debug_message_length()};
-            std::string message(maxLen, ' ');
+            const auto optMaxLen{ctx.debug_characteristics().max_debug_message_length()};
+            if(!optMaxLen)
+                return std::nullopt;
+
+            std::string message(optMaxLen.value(), ' ');
             GLenum source{}, type{}, severity{};
             GLuint id{};
             GLsizei length{};
 
-            const auto numFound{gl_function{&GladGLContext::GetDebugMessageLog}(ctx, 1, to_gl_sizei(message.size()), &source, &type, &id, &severity, &length, message.data())};
-            const auto trimLen{((length > 0) && message[length - 1] == '\0') ? length - 1 : length};
-            message.resize(trimLen);
+            const auto numFound{gl_function{&GladGLContext::GetDebugMessageLog}(ctx, 1, checked_conversion_to<GLsizei>(message.size()), &source, &type, &id, &severity, &length, message.data())};
+            trim(message, length);
 
             if(numFound)
                 return {{id, debug_source{source}, debug_type{type}, debug_severity{severity}, message}};
@@ -185,7 +188,7 @@ namespace avocet::opengl {
 
 #ifdef __cpp_lib_generator
     [[nodiscard]]
-        STD_GENERATOR<error_code> get_errors(const context& ctx, num_messages maxNum) {
+    std::generator<error_code> get_errors(const context& ctx, num_messages maxNum) {
         for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
             const error_code e{get_error(ctx)};
             if(e == error_code::none) co_return;
@@ -195,7 +198,7 @@ namespace avocet::opengl {
     }
 
     [[nodiscard]]
-    STD_GENERATOR<debug_info> get_messages(const context& ctx, num_messages maxNum) {
+    std::generator<debug_info> get_messages(const context& ctx, num_messages maxNum) {
         for([[maybe_unused]] auto _ : std::views::iota(0u, maxNum.value)) {
             const std::optional<debug_info> message{get_next_message(ctx)};
             if(!message) co_return;

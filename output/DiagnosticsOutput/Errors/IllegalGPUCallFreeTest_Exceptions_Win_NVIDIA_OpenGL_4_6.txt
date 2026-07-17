@@ -1,22 +1,32 @@
-Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 40
-Illegal call to glBindBuffer
+Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 39
+Illegal call to glBindBuffer (void return)
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 41:
-Source: API; Type: Error; Severity: High
+OpenGL error detected following invocation of BindBuffer originating from Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 40:
+Id: 1280; Source: API; Type: Error; Severity: High
 GL_INVALID_ENUM error generated. Invalid buffer target enum.
 
 =======================================
 
-Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 45
-Illegal call to glBindBuffer with glBindBuffer set to nullptr, but after it's copied into gl_function
+Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 44
+Illegal call to glCreateShader (non-void return)
 
 Expected Exception Type:
 [std::runtime_error]
-OpenGL error detected in Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 49:
-Source: API; Type: Error; Severity: High
-GL_INVALID_ENUM error generated. Invalid buffer target enum.
+OpenGL error detected following invocation of CreateShader originating from Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 45:
+Id: 1280; Source: API; Type: Error; Severity: High
+GL_INVALID_ENUM error generated. <shaderType> enum is invalid; expected GL_VERTEX_SHADER_ARB, GL_CG_VERTEX_SHADER_EXT, GL_FRAGMENT_SHADER_ARB, GL_CG_FRAGMENT_SHADER_EXT, GL_GEOMETRY_SHADER_EXT, GL_TESS_CONTROL_SHADER or GL_TESS_EVALUATION_SHADER.
+
+=======================================
+
+Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, Line 55
+Illegal call to glBindVertexArray
+
+Expected Exception Type:
+[std::runtime_error]
+OpenGL error detected following invocation of BindVertexArray originating from Tests/OpenGL/Debugging/IllegalGPUCallFreeTest.cpp, line 56:
+Invalid operation
 
 =======================================
 

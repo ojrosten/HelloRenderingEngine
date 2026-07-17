@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.20)
 
+set(BuildSystem ${Dependencies}/sequoia/build_system)
 include(${BuildSystem}/Utilities.cmake)
 
 set(Dependencies ${CMAKE_CURRENT_LIST_DIR}/../../dependencies)
-set(BuildSystem ${Dependencies}/sequoia/build_system)
 set(Source ${CMAKE_CURRENT_LIST_DIR}/../../Source)
 
 FUNCTION(curlew_glfw_compile_options target)

@@ -1,0 +1,144 @@
+////////////////////////////////////////////////////////////////////
+//                Copyright Oliver J. Rosten 2026.                //
+// Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //
+//    (See accompanying file LICENSE.md or copy at                //
+//          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
+////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "avocet/OpenGL/Context/CharacteristicContext.hpp"
+
+#include "avocet/OpenGL/ResourceInfrastructure/ObjectIdentifiers.hpp"
+#include "avocet/OpenGL/ResourceInfrastructure/ContextualResourceView.hpp"
+
+#include "sequoia/Core/Meta/TypeAlgorithms.hpp"
+
+namespace avocet::opengl {
+    struct num_resources {
+        std::size_t value{};
+
+        [[nodiscard]]
+        friend constexpr auto operator<=>(const num_resources&, const num_resources&) noexcept = default;
+    };
+
+    template<class LifeEvents>
+    inline constexpr bool has_bind_event_v{
+        requires(const LifeEvents& lifeEvents, decorated_contextual_resource_view crv) {
+            lifeEvents.bind(crv);
+        }
+    };
+
+    template<class LifeEvents>
+    inline constexpr bool has_use_event_v{
+        requires(const LifeEvents& lifeEvents, decorated_contextual_resource_view crv) {
+            lifeEvents.use(crv);
+        }
+    };
+
+    template<class LifeEvents>
+    inline constexpr bool has_utilization_event_v{
+        has_bind_event_v<LifeEvents> || has_use_event_v<LifeEvents>
+    };
+
+
+    template<class LifeEvents>
+    inline constexpr bool has_lifecycle_identifiers_v{
+           requires {
+               { LifeEvents::identifier } -> std::convertible_to<object_identifier>;
+               { LifeEvents::caching_id } -> std::convertible_to<caching_identifier>;
+           }
+    };
+
+    class resourceful_context : public characteristic_context {
+    public:
+        using characteristic_context::characteristic_context;
+
+    protected:
+        ~resourceful_context() = default;
+
+        resourceful_context(resourceful_context&&) noexcept = default;
+
+        resourceful_context& operator=(resourceful_context&&) noexcept = default;
+    private:
+        template<num_resources NumResources, class LifeEvents>
+        friend class resource_lifecycle_base;
+
+        template<caching_identifier id>
+        struct index_cache {
+            GLuint currently_active{};
+        };
+
+        using tuple_t = std::tuple<index_cache<caching_identifier::framebuffer>, index_cache<caching_identifier::program>>;
+
+        mutable tuple_t m_Cache{};
+
+        template<class LifeEvents>
+            requires has_lifecycle_identifiers_v<LifeEvents>
+        constexpr static bool opts_in_to_cache_v{
+               (LifeEvents::caching_id != caching_identifier::not_applicable)
+            && (LifeEvents::caching_id != caching_identifier::opt_out)
+        };
+
+        template<class LifeEvents>
+            requires has_lifecycle_identifiers_v<LifeEvents>
+        constexpr static bool has_cache_v{
+            sequoia::meta::contains_v<tuple_t, index_cache<LifeEvents::caching_id>>
+        };
+
+        template<class LifeEvents>
+            requires has_utilization_event_v<LifeEvents> && has_lifecycle_identifiers_v<LifeEvents>
+        void utilize(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
+            if constexpr (opts_in_to_cache_v<LifeEvents>) {
+                if (auto& cache{self.get_cache(lifeEvents)}; cache.currently_active != h.index()) {
+                    self.utilize_and_cache(lifeEvents, h, cache);
+                }
+            }
+            else if constexpr (LifeEvents::caching_id == caching_identifier::opt_out) {
+                self.do_utilize(lifeEvents, h);
+            }
+            else {
+                static_assert(false, "The combination of a utilization event existing and caching_identifier::not_applicable is illegal");
+            }
+        }
+
+        template<class LifeEvents>
+            requires has_utilization_event_v<LifeEvents> && has_lifecycle_identifiers_v<LifeEvents>
+        void reset(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
+            if constexpr (opts_in_to_cache_v<LifeEvents>) {
+                if (auto& cache{self.get_cache(lifeEvents)}; cache.currently_active == h.index()) {
+                    self.utilize_and_cache(lifeEvents, resource_handle{}, cache);
+                }
+            }
+            else if constexpr (LifeEvents::caching_id == caching_identifier::not_applicable) {
+                static_assert(false, "The combination of a utilization event existing and caching_identifier::not_applicable is illegal");
+            }
+        }
+
+        template<class LifeEvents>
+            requires has_utilization_event_v<LifeEvents>
+        void utilize_and_cache(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h, index_cache<LifeEvents::caching_id>& cache) {
+            self.do_utilize(lifeEvents, h);
+            cache.currently_active = h.index();
+        }
+
+        template<class LifeEvents>
+            requires has_utilization_event_v<LifeEvents>
+        void do_utilize(this const resourceful_context& self, const LifeEvents& lifeEvents, const resource_handle& h) {
+            decorated_contextual_resource_view crv{self, h};
+            if constexpr (has_bind_event_v<LifeEvents>) {
+                lifeEvents.bind(crv);
+            }
+            else {
+                lifeEvents.use(crv);
+            }
+        }
+
+        template<class LifeEvents>
+        index_cache<LifeEvents::caching_id>& get_cache(this const resourceful_context& self, const LifeEvents&) {
+            static_assert(has_cache_v<LifeEvents>, "tuple_t does not contain the required caching_id");
+
+            return std::get<index_cache<LifeEvents::caching_id>>(self.m_Cache);
+        }
+    };
+}

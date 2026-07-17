@@ -1,4 +1,4 @@
-Tests/Core/RenderArea/ViewportTestingDiagnostics.cpp, Line 23
+Tests/Core/Geometry/ViewportTestingDiagnostics.cpp, Line 23
 
 [avocet::viewport]
 operator== returned false

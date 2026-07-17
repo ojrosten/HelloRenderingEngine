@@ -1,48 +1,51 @@
 #!/bin/bash
 
+# Exit immediately if a command fails
+set -e
+
 dependencies=(
-	gcc
-	g++
-	g++-15
-	libtbb-dev
-	cmake
-	ninja-build
-	lcov
-	libwayland-dev
-	pkg-config
-	libxkbcommon-dev
-	libx11-dev
-	libxrandr-dev
-	libxinerama-dev
-	libxcursor-dev
-	libxi-dev
-	vulkan-tools
-	libvulkan-dev
-	vulkan-validationlayers
-	spirv-tools
-	glslang-tools
-	glslc
-	)
+    build-essential
+    g++-15
+    libtbb-dev
+    cmake
+    ninja-build
+    lcov
+    libwayland-dev
+    pkg-config
+    libxkbcommon-dev
+    libx11-dev
+    libxrandr-dev
+    libxinerama-dev
+    libxcursor-dev
+    libxi-dev
+    libdecor-0-dev
+    libgl1-mesa-dev
+    vulkan-tools
+    libvulkan-dev
+    vulkan-validationlayers
+    spirv-tools
+    glslang-tools
+    glslc
+)
 
-sudo apt install ppa-purge
-sudo ppa-purge ppa:kisak/kisak-mesa
-sudo add-apt-repository ppa:kisak/kisak-mesa
+echo "--- Ensuring Graphics PPA is present ---"
+# Only add the PPA if it's not already in your sources
+if ! grep -q "kisak/kisak-mesa" /etc/apt/sources.list.d/* 2>/dev/null; then
+    # add-apt-repository lives in software-properties-common, which minimal images may lack
+    if ! command -v add-apt-repository >/dev/null; then
+        sudo apt update
+        sudo apt install -y software-properties-common
+    fi
+    sudo add-apt-repository -y ppa:kisak/kisak-mesa
+fi
 
-# Update and upgrade the package lists
+echo "--- Updating Package Lists ---"
 sudo apt update
-sudo apt upgrade
 
-# Install the dependencies
-sudo apt install "${dependencies[@]}"
+echo "--- Installing Dependencies ---"
+# -y for non-interactive, build-essential covers gcc/g++
+sudo apt install -y "${dependencies[@]}"
 
-# Check if all dependencies are installed
-for dependency in "${dependencies[@]}"; do
-	if ! dpkg-query -W -f='${Status}\n' "$dependency" | grep -q "ok installed"; then
-       		echo "Error: $dependency is not installed."
-       		exit 1
-  	fi
-        done
-
+echo "--- Verification ---"
+# If the script reached this point thanks to 'set -e', it's successful.
 echo "All dependencies installed successfully!"
-
-exit 0

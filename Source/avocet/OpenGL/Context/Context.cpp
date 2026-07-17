@@ -5,28 +5,24 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
-#include "avocet/OpenGL/Context/ContextBase.hpp"
-#include "avocet/OpenGL/Context/GLFunction.hpp"
-#include "avocet/OpenGL/Context/Version.hpp"
+#include "avocet/OpenGL/Context/Context.hpp"
+#include "avocet/OpenGL/Context/GLGetters.hpp"
+
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
 
 namespace avocet::opengl {
     namespace {
         [[nodiscard]]
-        std::size_t get_max_debug_message_length(const context_base& ctx) {
-            if(!debug_output_supported(ctx))
-                return 0;
+        std::optional<std::size_t> get_max_debug_message_length(const context_base& ctx, const bool debugEnabled) {
+            if(!debugEnabled)
+                return std::nullopt;
 
-            GLint maxLen{};
-            gl_function{&GladGLContext::GetIntegerv}(ctx, GL_MAX_DEBUG_MESSAGE_LENGTH, &maxLen);
-            if(maxLen < 0)
-                throw std::runtime_error{std::format("Max Debug Length is Negative: {}", maxLen)};
-
-            return static_cast<std::size_t>(maxLen);
+            return checked_conversion_to<std::size_t>(get(ctx, int_names::max_debug_message_length));
         }
     }
 
-    context_characteristics::context_characteristics(const context_base& ctx)
-        : m_MaxDebugMessageLength{get_max_debug_message_length(ctx)}
+    context_debug_characteristics::context_debug_characteristics(const context_base& ctx)
+        : m_MaxDebugMessageLength{get_max_debug_message_length(ctx, ctx.fundamental_characteristics().debug_output_enabled())}
     {
     }
 }

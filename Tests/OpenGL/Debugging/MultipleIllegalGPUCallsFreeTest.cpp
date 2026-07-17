@@ -26,10 +26,10 @@ namespace avocet::testing
     {
         using namespace curlew;
 
-        auto w{create_window({.hiding{window_hiding_mode::on}})};
+        auto w{create_default_window({1, 1})};
         const auto& ctx{w.context()};
 
-        if(agl::debug_output_supported(ctx)) {
+        if(ctx.fundamental_characteristics().debug_output_enabled()) {
             check_exception_thrown<std::runtime_error>(
                 "At least two errors",
                 [&ctx](){

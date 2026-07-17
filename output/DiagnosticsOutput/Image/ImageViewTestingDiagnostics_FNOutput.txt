@@ -5,24 +5,28 @@ Comparison performed using:
 Checking for equivalence with:
 [avocet::testing::image_data]
 
-  Width
-  [unsigned long long]
+  Extent
+  [avocet::discrete_extent]
   operator== returned false
-  Obtained : 3
-  Predicted: 4
 
-  Height
-  [unsigned long long]
-  operator== returned false
-  Obtained : 2
-  Predicted: 3
+    Width
+    [unsigned int]
+    operator== returned false
+    Obtained : 3
+    Predicted: 4
+
+    Height
+    [unsigned int]
+    operator== returned false
+    Obtained : 2
+    Predicted: 3
 
   Channels
   [avocet::colour_channels]
   operator== returned false
 
     Raw value
-    [unsigned long long]
+    [unsigned int]
     operator== returned false
     Obtained : 4
     Predicted: 2

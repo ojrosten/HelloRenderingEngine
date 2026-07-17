@@ -1,0 +1,16 @@
+Tests/OpenGL/Utilities/MessagesFreeTest.cpp, Line 26
+
+Expected Exception Type:
+[std::domain_error]
+Value -1 lower than lowest value 0 of target type
+
+=======================================
+
+Tests/OpenGL/Utilities/MessagesFreeTest.cpp, Line 34
+
+Expected Exception Type:
+[std::logic_error]
+Length of message 1 cannot exceed padded length 0
+
+=======================================
+

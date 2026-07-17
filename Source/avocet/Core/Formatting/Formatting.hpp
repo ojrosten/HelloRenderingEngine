@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "avocet/Core/Utilities/ArithmeticCasts.hpp"
+
 #include <format>
 #include <type_traits>
 #include <source_location>
@@ -21,14 +23,14 @@ namespace avocet {
 
     template<std::integral T>
     std::string make_error_message(std::string_view enumName, T val) {
-        return std::format("Unrecognized option {}::{} while stringifying", enumName, val);
+        return std::format("Unrecognized option {}::{} encountered while stringifying", enumName, val);
     }
 
     template<class Enum>
         requires std::is_scoped_enum_v<Enum>
     [[nodiscard]]
     std::string error_message(std::string_view enumName, Enum val) {
-        return make_error_message(enumName, static_cast<std::underlying_type_t<Enum>>(val));
+        return make_error_message(enumName, std::to_underlying(val));
     }
 
     [[nodiscard]]

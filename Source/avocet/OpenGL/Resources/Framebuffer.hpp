@@ -1,0 +1,80 @@
+////////////////////////////////////////////////////////////////////
+//                Copyright Oliver J. Rosten 2026.                //
+// Distributed under the GNU GENERAL PUBLIC LICENSE, Version 3.0. //
+//    (See accompanying file LICENSE.md or copy at                //
+//          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
+////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+#include "avocet/OpenGL/Context/GLFunction.hpp"
+#include "avocet/OpenGL/Resources/Textures.hpp"
+
+namespace avocet::opengl {
+
+    struct framebuffer_lifecycle_events {
+        struct configurator {
+            optional_label label;
+        };
+
+        constexpr static auto identifier{ object_identifier::framebuffer};
+        constexpr static auto caching_id{caching_identifier::framebuffer};
+
+        template<std::size_t N>
+        static void generate(const decorated_context& ctx, raw_indices<N>& indices) {
+            gl_function{&GladGLContext::GenFramebuffers}(ctx, N, indices.data());
+        }
+
+        template<std::size_t N>
+        static void destroy(const decorated_context& ctx, const raw_indices<N>& indices) {
+            gl_function{&GladGLContext::DeleteFramebuffers}(ctx, N, indices.data());
+        }
+
+        static void bind(decorated_contextual_resource_view h) {
+            gl_function{&GladGLContext::BindFramebuffer}(h.context(), GL_FRAMEBUFFER, get_index(h));
+        }
+
+        static void configure(decorated_contextual_resource_view h, const configurator& config) {
+            add_label(identifier, h, config.label);
+        }
+
+        [[nodiscard]]
+        friend constexpr bool operator==(const framebuffer_lifecycle_events&, const framebuffer_lifecycle_events&) noexcept = default;
+    };
+
+    using fbo_configurator = framebuffer_lifecycle_events::configurator;
+
+    class framebuffer_object : public generic_resource<num_resources{1}, framebuffer_lifecycle_events> {
+        framebuffer_texture_2d m_Texture;
+
+        void check_framebuffer_status();
+    public:
+        using generic_resource_type = generic_resource<num_resources{1}, framebuffer_lifecycle_events>;
+        using texture_configurator  = framebuffer_texture_2d_configurator;
+
+        framebuffer_object(const resourceful_context& ctx, const fbo_configurator& fboConfig, const texture_configurator& texConfig)
+            : generic_resource_type{ctx, framebuffer_lifecycle_events{}, {{fboConfig.label}}}
+            , m_Texture{ctx, texConfig}
+        {
+            gl_function{&GladGLContext::FramebufferTexture}(
+                ctx,
+                GL_FRAMEBUFFER,
+                GL_COLOR_ATTACHMENT0,
+                get_index(m_Texture.contextual_handle_view()),
+                0
+            );
+
+            check_framebuffer_status();
+        }
+
+        [[nodiscard]]
+        unique_image extract_data(this const framebuffer_object& self, texture_format format, alignment rowAlignment) {
+            return self.m_Texture.extract_data(format, rowAlignment);
+        }
+
+        void bind(this const framebuffer_object& self, texture_unit unit) {
+            self.do_utilize();
+            self.m_Texture.bind(unit);
+        }
+    };
+}

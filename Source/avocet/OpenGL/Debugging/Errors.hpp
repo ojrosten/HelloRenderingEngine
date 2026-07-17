@@ -8,7 +8,6 @@
 #pragma once
 
 #include "avocet/OpenGL/Context/Context.hpp"
-#include "avocet/OpenGL/Context/Version.hpp"
 
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"
 
@@ -18,13 +17,8 @@
 #include <string>
 #include <vector>
 
-#if defined(_MSC_VER)
-    #include <experimental/generator>
-    #define STD_GENERATOR std::experimental::generator
-#elif defined (__clang__)
-#elif defined(__GNUG__)
+#ifdef __cpp_lib_generator
     #include <generator>
-    #define STD_GENERATOR std::generator
 #endif
 
 namespace avocet::opengl {
@@ -108,26 +102,30 @@ namespace avocet::opengl {
     };
 
     class default_debug_info_processor {
-        std::vector<message_id> m_PrintThenIgnore{};
+        std::vector<message_id> m_PrintThenIgnore{}, m_Ignore{};
     public:
         default_debug_info_processor() = default;
 
-        explicit default_debug_info_processor(std::initializer_list<message_id> printThenIgnore)
+        default_debug_info_processor(std::initializer_list<message_id> printThenIgnore, std::initializer_list<message_id> ignore)
             : m_PrintThenIgnore{printThenIgnore}
+            , m_Ignore{ignore}
         {}
 
-        explicit default_debug_info_processor(std::vector<message_id> printThenIgnore)
+        default_debug_info_processor(std::vector<message_id> printThenIgnore, std::vector<message_id> ignore)
             : m_PrintThenIgnore{std::move(printThenIgnore)}
+            , m_Ignore{ignore}
         {}
 
         [[nodiscard]]
         std::string operator()(std::string message, const debug_info& info) const {
-            if((info.severity == debug_severity::notification) || std::ranges::find(m_PrintThenIgnore, info.id) != m_PrintThenIgnore.end()) {
-                std::println("{}", to_detailed_message(info));
-            }
-            else {
-                const auto separator{message.empty() ? "" : "\n\n"};
-                (message += separator) += to_detailed_message(info);
+            if (!std::ranges::contains(m_Ignore, info.id)) {
+                if ((info.severity == debug_severity::notification) || std::ranges::contains(m_PrintThenIgnore, info.id)) {
+                    std::println("{}", to_detailed_message(info));
+                }
+                else {
+                    const auto separator{message.empty() ? "" : "\n\n"};
+                    (message += separator) += to_detailed_message(info);
+                }
             }
 
             return message;
@@ -136,10 +134,10 @@ namespace avocet::opengl {
 
 #ifdef __cpp_lib_generator
     [[nodiscard]]
-    STD_GENERATOR<error_code> get_errors(const context& ctx, num_messages maxNum);
+    std::generator<error_code> get_errors(const context& ctx, num_messages maxNum);
 
     [[nodiscard]]
-    STD_GENERATOR<debug_info> get_messages(const context& ctx, num_messages maxNum);
+    std::generator<debug_info> get_messages(const context& ctx, num_messages maxNum);
 #else
     [[nodiscard]]
     std::vector<error_code> get_errors(const context& ctx, num_messages maxNum);
@@ -188,7 +186,7 @@ namespace avocet::opengl {
         requires is_error_code_processor_v<ErrorCodeProcessor>&& is_debug_info_processor_v<DebugInfoProcessor>
     void check_for_errors(const context& ctx, debugging_mode mode, const error_message_info& info, ErrorCodeProcessor errorCodeProcessor, DebugInfoProcessor&& debugInfoProcessor) {
         if(mode != debugging_mode::off) {
-            if(debug_output_supported(ctx))
+            if(ctx.fundamental_characteristics().debug_output_enabled())
                 check_for_advanced_errors(ctx, info, std::move(debugInfoProcessor));
             else
                 check_for_basic_errors(ctx, info, std::move(errorCodeProcessor));

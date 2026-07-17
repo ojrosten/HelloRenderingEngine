@@ -7,73 +7,19 @@
 
 #pragma once
 
+#include "avocet/Core/Geometry/PolygonCoordinates.hpp"
+
 #include "avocet/OpenGL/Resources/Buffers.hpp"
 #include "avocet/OpenGL/Resources/Textures.hpp"
-#include "sequoia/Core/ContainerUtilities/ArrayUtilities.hpp"
-#include "sequoia/Maths/Geometry/Spaces.hpp"
 #include "sequoia/PlatformSpecific/Preprocessor.hpp"
 
-#include <cmath>
 #include <limits>
-#include <numbers>
 
 namespace avocet::opengl {
-    struct dimensionality{
-        std::size_t value{};
-
-        [[nodiscard]]
-        constexpr friend auto operator<=>(const dimensionality&, const dimensionality&) noexcept = default;
-    };
-
-    struct local_geometry_arena {};
-
-    struct texture_arena {};
-
-    template<std::floating_point T, dimensionality D>
-    using local_coordinates   = sequoia::maths::vec_coords<T, D.value, local_geometry_arena>;
-
-    template<std::floating_point T>
-    using texture_coordinates = sequoia::maths::vec_coords<T, 2, texture_arena>;
-
     template<std::floating_point T, std::size_t D, class Arena>
     struct is_legal_gl_buffer_value_type<sequoia::maths::vec_coords<T, D, Arena>>
         : std::bool_constant<sizeof(sequoia::maths::vec_coords<T, D, Arena>) == D * sizeof(T)>
-    {};
-
-    template<std::floating_point T, dimensionality D>
-    [[nodiscard]]
-    constexpr local_coordinates<T, D> make_polygon_coordinates(std::size_t i, std::size_t N) {
-        constexpr T pi{std::numbers::pi_v<T>};
-        const auto offset{N % 2 ? 0 : pi / N};
-
-        const auto theta_n{offset + 2 * pi * i / N};
-
-        return {-T{0.5}*std::sin(theta_n), T{0.5}*std::cos(theta_n)};
-    }
-
-    template<std::floating_point T>
-    [[nodiscard]]
-    constexpr texture_coordinates<T> make_polygon_tex_coordinates(std::size_t i, std::size_t N) {
-        return texture_coordinates<T>{T{0.5}, T{0.5}} + texture_coordinates<T>{make_polygon_coordinates<T, dimensionality{2}>(i, N).values()};
-    }
-
-    template<class T>
-    struct make_polygon_attribute;
-
-    template<std::floating_point T, std::size_t D>
-    struct make_polygon_attribute<sequoia::maths::vec_coords<T, D, local_geometry_arena>>{
-        [[nodiscard]]
-        constexpr local_coordinates<T, dimensionality{D}> operator()(std::size_t i, std::size_t N) const {
-            return make_polygon_coordinates< T, dimensionality{D}>(i, N);
-        }
-    };
-
-    template<std::floating_point T>
-    struct make_polygon_attribute<texture_coordinates<T>> {
-        [[nodiscard]]
-        constexpr texture_coordinates<T> operator()(std::size_t i, std::size_t N) const {
-            return make_polygon_tex_coordinates<T>(i, N);
-        }
+    {
     };
 
     template<gl_floating_point T, std::size_t N, dimensionality ArenaDimension, class... Attributes>
@@ -85,11 +31,11 @@ namespace avocet::opengl {
         using vertices_type         = std::array<vertex_attribute_type, N>;
         constexpr static auto num_vertices{N};
         constexpr static auto arena_dimension{ArenaDimension};
-        constexpr static std::size_t num_textures{(std::same_as<Attributes, texture_coordinates<T>> + ... + 0)};
+        constexpr static std::size_t num_textures{(std::same_as<Attributes, texture_coordinates<gl_arithmetic_type_of_t<Attributes>>> + ... + 0)};
 
         template<class Fn>
           requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 0)
-        polygon_base(const decorated_context& ctx, Fn transformer, const std::optional<std::string>& label)
+        polygon_base(const resourceful_context& ctx, Fn transformer, const std::optional<std::string>& label)
             : m_VBO{ctx, transformer(st_Vertices), label}
             , m_VAO{ctx, label, m_VBO}
         {
@@ -97,7 +43,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 1)
-        polygon_base(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+        polygon_base(const resourceful_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             :      m_VBO{ctx, transformer(st_Vertices), label}
             ,      m_VAO{ctx, label, m_VBO}
             , m_Textures{texture_2d{ctx, texConfig}}
@@ -106,7 +52,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        polygon_base(const decorated_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
+        polygon_base(const resourceful_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
             : m_VBO{ctx, transformer(st_Vertices), label}
             , m_VAO{ctx, label, m_VBO}
             , m_Textures{to_array(texConfigs, [&ctx](const texture_2d_configurator& config) { return texture_2d{ctx, config}; })}
@@ -142,16 +88,7 @@ namespace avocet::opengl {
         polygon_base(polygon_base&&)            noexcept = default;
         polygon_base& operator=(polygon_base&&) noexcept = default;
     private:
-        [[nodiscard]]
-        constexpr static vertices_type vertices() {
-            return sequoia::utilities::make_array<vertex_attribute_type, N>(
-                [](std::size_t i) -> vertex_attribute_type {
-                    return {make_polygon_attribute<local_coordinates<T, ArenaDimension>>{}(i, N), make_polygon_attribute<Attributes>{}(i, N)...};
-                }
-            );
-        }
-
-        const inline static vertices_type st_Vertices{vertices()};
+        const inline static vertices_type st_Vertices{make_polygon<T, N, ArenaDimension, Attributes...>{}()};
 
         vertex_buffer_object<vertex_attribute_type> m_VBO;
         vertex_attribute_object m_VAO;
@@ -174,7 +111,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 0)
-        polygon(const decorated_context& ctx, Fn transformer, const std::optional<std::string>& label)
+        polygon(const resourceful_context& ctx, Fn transformer, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, label}
             ,             m_EBO{ctx, st_Indices, label}
         {
@@ -182,7 +119,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type> && (num_textures == 1)
-        polygon(const decorated_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
+        polygon(const resourceful_context& ctx, Fn transformer, const texture_2d_configurator& texConfig, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, texConfig, label}
             ,             m_EBO{ctx, st_Indices, label}
         {
@@ -190,7 +127,7 @@ namespace avocet::opengl {
 
         template<class Fn>
             requires std::is_invocable_r_v<vertices_type, Fn, vertices_type>
-        polygon(const decorated_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
+        polygon(const resourceful_context& ctx, Fn transformer, std::span<const texture_2d_configurator, num_textures> texConfigs, const std::optional<std::string>& label)
             : polygon_base_type{ctx, transformer, texConfigs, label}
             , m_EBO{ctx, st_Indices, label}
         {
@@ -210,7 +147,7 @@ namespace avocet::opengl {
             if(!remainder)
                 return 0;
 
-            return static_cast<element_index_type>(i / 3 + remainder);
+            return checked_conversion_to<element_index_type>(i / 3 + remainder);
         }
 
         constexpr static element_array_type st_Indices{
@@ -218,7 +155,7 @@ namespace avocet::opengl {
         };
 
         static void do_draw(const decorated_context& ctx) {
-            gl_function{&GladGLContext::DrawElements}(ctx, GL_TRIANGLES, num_elements, to_gl_enum(to_gl_type_specifier_v<element_index_type>), nullptr);
+            gl_function{&GladGLContext::DrawElements}(ctx, GL_TRIANGLES, num_elements, to_gl_underlying_value<GLenum>(to_gl_type_specifier_v<element_index_type>), nullptr);
         }
 
         element_buffer_object<element_index_type> m_EBO;

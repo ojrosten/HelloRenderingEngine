@@ -5,9 +5,11 @@
 //          https://www.gnu.org/licenses/gpl-3.0.en.html)         //
 ////////////////////////////////////////////////////////////////////
 
+#include "avocet/OpenGL/Resources/ContextualResource.hpp"
 #include "avocet/OpenGL/Resources/ShaderProgram.hpp"
 #include "avocet/OpenGL/Context/GLFunction.hpp"
 #include "avocet/OpenGL/Utilities/Casts.hpp"
+#include "avocet/OpenGL/Utilities/Messages.hpp"
 
 #include "avocet/Core/Formatting/Formatting.hpp"
 
@@ -33,6 +35,22 @@ namespace avocet::opengl {
             throw std::runtime_error{error_message("shader_species", species)};
         }
 
+        [[nodiscard]]
+        optional_label make_program_label(object_labelling_available labelling, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource) {
+            if(labelling != object_labelling_available::no)
+                return std::format("{} / {}", sequoia::back(vertexShaderSource).string(), sequoia::back(fragmentShaderSource).string());
+
+            return std::nullopt;
+        }
+
+        [[nodiscard]]
+        optional_label make_stage_label(object_labelling_available labelling, const std::filesystem::path& source) {
+            if(labelling != object_labelling_available::no)
+                return std::format("{}", sequoia::back(source).string());
+
+            return std::nullopt;
+        }
+
         template<class T>
         inline constexpr bool has_checker_attributes_v{
             requires(const T & t) {
@@ -47,8 +65,8 @@ namespace avocet::opengl {
             using gl_param_getter    = gl_function<void(GLuint, GLenum, GLint*)>;
             using gl_info_log_getter = gl_function<void(GLuint, GLsizei, GLsizei*, GLchar*)>;
 
-            shader_checker(contextual_resource_view h, gl_param_getter paramGetter, gl_info_log_getter logGetter)
-                : m_Handle{h}
+            shader_checker(decorated_contextual_resource_view crv, gl_param_getter paramGetter, gl_info_log_getter logGetter)
+                : m_Handle{crv}
                 , m_ParamGetter{paramGetter}
                 , m_InfoLogGetter{logGetter}
             {}
@@ -57,13 +75,13 @@ namespace avocet::opengl {
                 requires has_checker_attributes_v<Self>
             void check(this const Self& self) {
                 if(!self.get_parameter_value(self.status_flag)) {
-                    throw std::runtime_error{std::format("Error: {} {} failed\n{}\n", self.name(), self.build_stage, self.get_info_log())};
+                    throw std::runtime_error{std::format("Error: {} {} failed\n{}", self.name(), self.build_stage, self.get_info_log())};
                 }
             }
         protected:
             ~shader_checker() = default;
         private:
-            contextual_resource_view m_Handle;
+            decorated_contextual_resource_view m_Handle;
             gl_param_getter    m_ParamGetter;
             gl_info_log_getter m_InfoLogGetter;
 
@@ -78,34 +96,21 @@ namespace avocet::opengl {
             std::string get_info_log() const {
                 const GLint logLen{get_parameter_value(GL_INFO_LOG_LENGTH)};
                 std::string info(logLen, ' ');
-                m_InfoLogGetter(m_Handle.context(), get_index(m_Handle), logLen, nullptr, info.data());
-                return info;
+                GLsizei length{};
+                m_InfoLogGetter(m_Handle.context(), get_index(m_Handle), logLen, &length, info.data());
+
+                return trim(info, length);
             }
         };
 
-        class shader_resource_lifecycle {
-            shader_species m_Species;
-        public:
-            explicit shader_resource_lifecycle(shader_species species) : m_Species{species} {}
-
-            [[nodiscard]]
-            contextual_resource_handle create(const decorated_context& ctx) {
-                return contextual_resource_handle{ctx, std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_enum(m_Species))}};
-            }
-
-            static void destroy(contextual_resource_view handle) { gl_function{&GladGLContext::DeleteShader}(handle.context(), get_index(handle)); }
-        };
-
-        using shader_resource = generic_shader_resource<shader_resource_lifecycle>;
-
-        class shader_compiler_checker : public shader_checker {
+        class shader_stage_checker : public shader_checker {
             shader_species m_Species;
         public:
             constexpr static std::string_view build_stage{"compilation"};
             constexpr static GLenum status_flag{GL_COMPILE_STATUS};
 
-            shader_compiler_checker(const shader_resource& r, shader_species species)
-                : shader_checker{r.view(), gl_function{&GladGLContext::GetShaderiv}, gl_function{&GladGLContext::GetShaderInfoLog}}
+            shader_stage_checker(decorated_contextual_resource_view stageView, shader_species species)
+                : shader_checker{stageView, gl_function{&GladGLContext::GetShaderiv}, gl_function{&GladGLContext::GetShaderInfoLog}}
                 , m_Species{species}
             {}
 
@@ -118,8 +123,8 @@ namespace avocet::opengl {
             constexpr static std::string_view build_stage{"linking"};
             constexpr static GLenum status_flag{GL_LINK_STATUS};
 
-            explicit shader_program_checker(const shader_program_resource& r)
-                : shader_checker{r.view(), gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
+            explicit shader_program_checker(decorated_contextual_resource_view progView)
+                : shader_checker{progView, gl_function{&GladGLContext::GetProgramiv}, gl_function{&GladGLContext::GetProgramInfoLog}}
             {}
 
             [[nodiscard]]
@@ -138,70 +143,99 @@ namespace avocet::opengl {
             throw std::runtime_error{std::format("Unable to open file {}", file.generic_string())};
         }
 
-        class shader_compiler {
-            shader_resource m_Resource;
+        class shader_stage_lifecycle_events {
+            shader_species m_Species;
         public:
-            shader_compiler(const decorated_context& ctx, shader_species species, const fs::path& sourceFile)
-                : m_Resource{ctx, species}
-            {
-                const auto index{get_index(m_Resource)};
-                const auto source{read_to_string(sourceFile)};
+            constexpr static auto identifier{ object_identifier::shader};
+            constexpr static auto caching_id{caching_identifier::not_applicable};
+
+            struct configurator {
+                std::filesystem::path source_file;
+                optional_label label;
+            };
+
+            explicit shader_stage_lifecycle_events(shader_species species) : m_Species{species} {}
+
+            [[nodiscard]]
+            contextual_resource_handle create(this const shader_stage_lifecycle_events& self, const resourceful_context& ctx) {
+                return {
+                    ctx,
+                    std::array{gl_function{&GladGLContext::CreateShader}(ctx, to_gl_underlying_value<GLenum>(self.m_Species))}
+                };
+            }
+
+            static void destroy(decorated_contextual_resource_view stageView) {
+                gl_function{&GladGLContext::DeleteShader}(stageView.context(), get_index(stageView));
+            }
+
+            void configure(this const shader_stage_lifecycle_events& self, decorated_contextual_resource_view stageView, const configurator& config) {
+                add_label(identifier, stageView, config.label);
+
+                const auto index{get_index(stageView)};
+                const auto source{read_to_string(config.source_file)};
                 const auto data{source.data()};
-                gl_function{&GladGLContext::ShaderSource}(ctx, index, 1, &data, nullptr);
+                const auto& ctx{stageView.context()};
+                gl_function{&GladGLContext::ShaderSource }(ctx, index, 1, &data, nullptr);
                 gl_function{&GladGLContext::CompileShader}(ctx, index);
-                shader_compiler_checker{m_Resource, species}.check();
+                shader_stage_checker{stageView, self.m_Species}.check();
             }
 
             [[nodiscard]]
-            const shader_resource& resource() const noexcept { return m_Resource; }
+            friend constexpr bool operator==(const shader_stage_lifecycle_events&, const shader_stage_lifecycle_events&) noexcept = default;
+        };
+
+        class shader_stage : public generic_resource<num_resources{1}, shader_stage_lifecycle_events>
+        {
+        public:
+            using generic_resource_type = generic_resource<num_resources{1}, shader_stage_lifecycle_events>;
+
+            shader_stage(const resourceful_context& ctx, shader_species species, const fs::path& sourceFile)
+                : generic_resource_type{ctx, shader_stage_lifecycle_events{species}, {sourceFile, make_stage_label(ctx.fundamental_characteristics().object_labels_available(), sourceFile)}}
+            {
+            }
+
+            using generic_resource_type::contextual_handle_view;
 
             [[nodiscard]]
-            friend bool operator==(const shader_compiler&, const shader_compiler&) noexcept = default;
+            friend bool operator==(const shader_stage&, const shader_stage&) noexcept = default;
         };
 
         class [[nodiscard]] shader_attacher {
-            const decorated_context& m_Context;
-            GLuint m_ProgIndex{}, m_ShaderIndex{};
+            decorated_contextual_resource_view m_ProgView, m_StageView;
         public:
-            shader_attacher(const shader_program_resource& progResource, const shader_compiler& shader)
-                : m_Context{progResource.view().context()}
-                , m_ProgIndex{get_index(progResource)}
-                , m_ShaderIndex{get_index(shader.resource())}
+            shader_attacher(decorated_contextual_resource_view progView, decorated_contextual_resource_view stageView)
+                : m_ProgView{progView}
+                , m_StageView{stageView}
             {
-                gl_function{&GladGLContext::AttachShader}(m_Context, m_ProgIndex, m_ShaderIndex);
+                gl_function{&GladGLContext::AttachShader}(m_ProgView.context(), get_index(m_ProgView), get_index(m_StageView));
             }
 
-            ~shader_attacher() { gl_function{&GladGLContext::DetachShader}(m_Context, m_ProgIndex, m_ShaderIndex); }
+            ~shader_attacher() { gl_function{&GladGLContext::DetachShader}(m_ProgView.context(), get_index(m_ProgView), get_index(m_StageView)); }
         };
-
-        static_assert(has_shader_lifecycle_events_v<shader_resource_lifecycle>);
-        static_assert(has_shader_lifecycle_events_v<shader_program_resource_lifecycle>);
     }
 
-    shader_program::shader_program(const decorated_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
-        : m_Resource{ctx}
-    {
-        shader_compiler
-            vertexShader  {ctx, shader_species::vertex,   vertexShaderSource},
-            fragmentShader{ctx, shader_species::fragment, fragmentShaderSource};
+    void shader_program_lifecycle_events::configure(resourceful_contextual_resource_view progView, const configurator& config) {
+        add_label(identifier, progView, config.label);
 
-        const auto progIndex{get_index(m_Resource)};
+        const auto& ctx{progView.context()};
+
+        shader_stage
+            vertexShader  {ctx, shader_species::vertex,   config.vertex_shader},
+            fragmentShader{ctx, shader_species::fragment, config.fragment_shader};
 
         {
-            shader_attacher verteAttacher{m_Resource, vertexShader}, fragmentAttacher{m_Resource, fragmentShader};
-            gl_function{&GladGLContext::LinkProgram}(ctx, progIndex);
+            shader_attacher verteAttacher   {progView,   vertexShader.contextual_handle_view()},
+                            fragmentAttacher{progView, fragmentShader.contextual_handle_view()};
 
-            if(object_labels_activated(m_Resource.view().context())) {
-                const std::string label{
-                    std::format("{} / {}",
-                                sequoia::back(vertexShaderSource).string(),
-                                sequoia::back(fragmentShaderSource).string())};
-
-                gl_function{&GladGLContext::ObjectLabel}(ctx, GL_PROGRAM, progIndex, to_gl_sizei(label.size()), label.data());
-            }
+            gl_function{&GladGLContext::LinkProgram}(ctx, get_index(progView));
         }
 
-        shader_program_checker{m_Resource}.check();
+        shader_program_checker{progView}.check();
+    }
+
+    shader_program::shader_program(const resourceful_context& ctx, const std::filesystem::path& vertexShaderSource, const std::filesystem::path& fragmentShaderSource)
+        : generic_resource_type{ctx, shader_program_lifecycle_events{}, {vertexShaderSource, fragmentShaderSource, make_program_label(ctx.fundamental_characteristics().object_labels_available(), vertexShaderSource, fragmentShaderSource)}}
+    {
     }
 
     [[nodiscard]]
@@ -209,9 +243,13 @@ namespace avocet::opengl {
         if(auto found{m_Uniforms.find(name)}; found != m_Uniforms.end())
             return found->second;
 
-        const auto location{gl_function{&GladGLContext::GetUniformLocation}(m_Resource.view().context(), get_index(m_Resource), name.data())};
-        if(location == -1)
-            throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", extract_label(), name)};
+        const auto location{gl_function{&GladGLContext::GetUniformLocation}(this->context(), get_index(contextual_handle_view()), name.data())};
+        if(location == -1) {
+            const std::string label{extract_label()};
+            const std::string labelToUse{!label.empty() ? label : "[unlabelled]"};
+
+            throw std::runtime_error{std::format("shader_program {}: uniform \"{}\" not found", labelToUse, name)};
+        }
 
         m_Uniforms.emplace(name, location);
         return location;
