@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-18 18:21:47</td>
+            <td class="headerValue">2026-07-18 18:47:54</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -92,8 +92,8 @@
 <span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">          26 :             gl_function{&amp;GladGLContext::DeleteFramebuffers}(ctx, N, indices.data());</span></span>
 <span id="L31"><span class="lineNum">      31</span> <span class="tlaGNC">          26 :         }</span></span>
 <span id="L32"><span class="lineNum">      32</span>              : </span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          42 :         static void bind(decorated_contextual_resource_view h) {</span></span>
-<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          42 :             gl_function{&amp;GladGLContext::BindFramebuffer}(h.context(), GL_FRAMEBUFFER, get_index(h));</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">          44 :         static void bind(decorated_contextual_resource_view h) {</span></span>
+<span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">          44 :             gl_function{&amp;GladGLContext::BindFramebuffer}(h.context(), GL_FRAMEBUFFER, get_index(h));</span></span>
 <span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">          44 :         }</span></span>
 <span id="L36"><span class="lineNum">      36</span>              : </span>
 <span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          22 :         static void configure(decorated_contextual_resource_view h, const configurator&amp; config) {</span></span>
@@ -127,7 +127,7 @@
 <span id="L65"><span class="lineNum">      65</span>              :             );</span>
 <span id="L66"><span class="lineNum">      66</span>              : </span>
 <span id="L67"><span class="lineNum">      67</span> <span class="tlaGNC">          22 :             check_framebuffer_status();</span></span>
-<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">          43 :         }</span></span>
+<span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">          44 :         }</span></span>
 <span id="L69"><span class="lineNum">      69</span>              : </span>
 <span id="L70"><span class="lineNum">      70</span>              :         [[nodiscard]]</span>
 <span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">          37 :         unique_image extract_data(this const framebuffer_object&amp; self, texture_format format, alignment rowAlignment) {</span></span>
@@ -137,7 +137,7 @@
 <span id="L75"><span class="lineNum">      75</span> <span class="tlaGNC">          40 :         void bind(this const framebuffer_object&amp; self, texture_unit unit) {</span></span>
 <span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">          40 :             self.do_utilize();</span></span>
 <span id="L77"><span class="lineNum">      77</span> <span class="tlaGNC">          40 :             self.m_Texture.bind(unit);</span></span>
-<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">          39 :         }</span></span>
+<span id="L78"><span class="lineNum">      78</span> <span class="tlaGNC">          40 :         }</span></span>
 <span id="L79"><span class="lineNum">      79</span>              :     };</span>
 <span id="L80"><span class="lineNum">      80</span>              : }</span>
         </pre>

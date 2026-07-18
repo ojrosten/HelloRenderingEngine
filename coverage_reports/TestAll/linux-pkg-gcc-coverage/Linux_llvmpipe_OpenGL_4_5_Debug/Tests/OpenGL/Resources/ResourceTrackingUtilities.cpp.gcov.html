@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-18 18:21:47</td>
+            <td class="headerValue">2026-07-18 18:47:54</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -92,12 +92,12 @@
 <span id="L30"><span class="lineNum">      30</span>              :     namespace {</span>
 <span id="L31"><span class="lineNum">      31</span>              :         [[nodiscard]]</span>
 <span id="L32"><span class="lineNum">      32</span> <span class="tlaGNC">          30 :         curlew::window_config make_window_config(std::vector&lt;std::string&gt;&amp; calls, std::string_view expectedGPUCall) {</span></span>
-<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">         717 :             return curlew::make_call_logging_window_config({.width{1}, .height{1}}, calls, [expectedGPUCall](const agl::decorator_data&amp; data) { return data.fn_name == expectedGPUCall; });</span></span>
+<span id="L33"><span class="lineNum">      33</span> <span class="tlaGNC">         724 :             return curlew::make_call_logging_window_config({.width{1}, .height{1}}, calls, [expectedGPUCall](const agl::decorator_data&amp; data) { return data.fn_name == expectedGPUCall; });</span></span>
 <span id="L34"><span class="lineNum">      34</span>              :         }</span>
 <span id="L35"><span class="lineNum">      35</span>              : </span>
 <span id="L36"><span class="lineNum">      36</span>              :         [[nodiscard]]</span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          53 :         agl::resource_handle get_current_resource_index(const agl::decorated_context&amp; ctx, agl::int_names name) {</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          53 :             return agl::resource_handle{checked_conversion_to&lt;GLuint&gt;(get(ctx, name))};</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          54 :         agl::resource_handle get_current_resource_index(const agl::decorated_context&amp; ctx, agl::int_names name) {</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          54 :             return agl::resource_handle{checked_conversion_to&lt;GLuint&gt;(get(ctx, name))};</span></span>
 <span id="L39"><span class="lineNum">      39</span>              :         }</span>
 <span id="L40"><span class="lineNum">      40</span>              : </span>
 <span id="L41"><span class="lineNum">      41</span>              :         using opt_latch_ref = std::optional&lt;std::reference_wrapper&lt;std::latch&gt;&gt;;</span>
@@ -128,12 +128,12 @@
 <span id="L66"><span class="lineNum">      66</span> <span class="tlaGNC">          30 :             const auto&amp; ctx{w.context()};</span></span>
 <span id="L67"><span class="lineNum">      67</span>              : </span>
 <span id="L68"><span class="lineNum">      68</span> <span class="tlaGNC">          30 :             auto resource{scaffold.creator(ctx)};</span></span>
-<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">          29 :             if(entryLatch) entryLatch-&gt;get().arrive_and_wait();</span></span>
+<span id="L69"><span class="lineNum">      69</span> <span class="tlaGNC">          30 :             if(entryLatch) entryLatch-&gt;get().arrive_and_wait();</span></span>
 <span id="L70"><span class="lineNum">      70</span>              : </span>
 <span id="L71"><span class="lineNum">      71</span> <span class="tlaGNC">          30 :             scaffold.utilizer(resource);</span></span>
 <span id="L72"><span class="lineNum">      72</span> <span class="tlaGNC">          30 :             scaffold.utilizer(resource);</span></span>
 <span id="L73"><span class="lineNum">      73</span>              : </span>
-<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">          29 :             auto handle{get_current_resource_index(ctx, scaffold.utilization_name)};</span></span>
+<span id="L74"><span class="lineNum">      74</span> <span class="tlaGNC">          30 :             auto handle{get_current_resource_index(ctx, scaffold.utilization_name)};</span></span>
 <span id="L75"><span class="lineNum">      75</span>              : </span>
 <span id="L76"><span class="lineNum">      76</span> <span class="tlaGNC">          30 :             if(exitLatch) exitLatch-&gt;get().arrive_and_wait();</span></span>
 <span id="L77"><span class="lineNum">      77</span>              : </span>
