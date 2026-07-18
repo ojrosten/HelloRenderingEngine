@@ -31,18 +31,18 @@
             <td class="headerValue">coverage.info</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntryHi">95.3&nbsp;%</td>
-            <td class="headerCovTableEntry">86</td>
-            <td class="headerCovTableEntry">82</td>
+            <td class="headerCovTableEntryHi">95.5&nbsp;%</td>
+            <td class="headerCovTableEntry">88</td>
+            <td class="headerCovTableEntry">84</td>
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-13 20:52:56</td>
+            <td class="headerValue">2026-07-18 18:21:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
-            <td class="headerCovTableEntry">26</td>
-            <td class="headerCovTableEntry">26</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntry">28</td>
           </tr>
                   <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -182,11 +182,11 @@
 <span id="L120"><span class="lineNum">     120</span>              :         template&lt;std::size_t N&gt;</span>
 <span id="L121"><span class="lineNum">     121</span> <span class="tlaGNC">         112 :         static void destroy(const decorated_context&amp; ctx, const raw_indices&lt;N&gt;&amp; indices) {</span></span>
 <span id="L122"><span class="lineNum">     122</span> <span class="tlaGNC">         112 :             gl_function{&amp;GladGLContext::DeleteTextures}(ctx, N, indices.data());</span></span>
-<span id="L123"><span class="lineNum">     123</span> <span class="tlaGNC">         112 :         }</span></span>
+<span id="L123"><span class="lineNum">     123</span> <span class="tlaGNC">         111 :         }</span></span>
 <span id="L124"><span class="lineNum">     124</span>              : </span>
 <span id="L125"><span class="lineNum">     125</span> <span class="tlaGNC">         273 :         static void bind(decorated_contextual_resource_view crv) {</span></span>
 <span id="L126"><span class="lineNum">     126</span> <span class="tlaGNC">         273 :             gl_function{&amp;GladGLContext::BindTexture}(crv.context(), GL_TEXTURE_2D, get_index(crv));</span></span>
-<span id="L127"><span class="lineNum">     127</span> <span class="tlaGNC">         273 :         }</span></span>
+<span id="L127"><span class="lineNum">     127</span> <span class="tlaGNC">         272 :         }</span></span>
 <span id="L128"><span class="lineNum">     128</span>              : </span>
 <span id="L129"><span class="lineNum">     129</span>              :         template&lt;class Self&gt;</span>
 <span id="L130"><span class="lineNum">     130</span>              :             requires defines_texture_configuration_v&lt;Self&gt;</span>
@@ -216,7 +216,7 @@
 <span id="L154"><span class="lineNum">     154</span> <span class="tlaGNC">          76 :         }</span></span>
 <span id="L155"><span class="lineNum">     155</span>              : </span>
 <span id="L156"><span class="lineNum">     156</span>              :         [[nodiscard]]</span>
-<span id="L157"><span class="lineNum">     157</span>              :         friend constexpr bool operator==(const common_texture_2d_lifecycle_events&amp;, const common_texture_2d_lifecycle_events&amp;) noexcept = default;</span>
+<span id="L157"><span class="lineNum">     157</span> <span class="tlaGNC">          40 :         friend constexpr bool operator==(const common_texture_2d_lifecycle_events&amp;, const common_texture_2d_lifecycle_events&amp;) noexcept = default;</span></span>
 <span id="L158"><span class="lineNum">     158</span>              :     };</span>
 <span id="L159"><span class="lineNum">     159</span>              : </span>
 <span id="L160"><span class="lineNum">     160</span>              : </span>
@@ -261,7 +261,7 @@
 <span id="L199"><span class="lineNum">     199</span>              :         }</span>
 <span id="L200"><span class="lineNum">     200</span>              : </span>
 <span id="L201"><span class="lineNum">     201</span>              :         [[nodiscard]]</span>
-<span id="L202"><span class="lineNum">     202</span>              :         friend constexpr bool operator==(const texture_2d_lifecycle_events&amp;, const texture_2d_lifecycle_events&amp;) noexcept = default;</span>
+<span id="L202"><span class="lineNum">     202</span> <span class="tlaGNC">          40 :         friend constexpr bool operator==(const texture_2d_lifecycle_events&amp;, const texture_2d_lifecycle_events&amp;) noexcept = default;</span></span>
 <span id="L203"><span class="lineNum">     203</span>              :     };</span>
 <span id="L204"><span class="lineNum">     204</span>              : </span>
 <span id="L205"><span class="lineNum">     205</span>              :     struct framebuffer_texture_2d_lifecycle_events : common_texture_2d_lifecycle_events {</span>
@@ -296,12 +296,12 @@
 <span id="L234"><span class="lineNum">     234</span>              :     template&lt;standard_lifecycle_for&lt;num_resources{1}&gt; LifeEvents&gt;</span>
 <span id="L235"><span class="lineNum">     235</span>              :     class generic_texture_2d : public generic_resource&lt;num_resources{1}, LifeEvents&gt; {</span>
 <span id="L236"><span class="lineNum">     236</span>              :     public:</span>
-<span id="L237"><span class="lineNum">     237</span>              :         using base_type         = generic_resource&lt;num_resources{1}, LifeEvents&gt; ;</span>
-<span id="L238"><span class="lineNum">     238</span>              :         using configurator_type = base_type::configurator_type;</span>
-<span id="L239"><span class="lineNum">     239</span>              :         using value_type        = configurator_type::value_type;</span>
+<span id="L237"><span class="lineNum">     237</span>              :         using generic_resource_type = generic_resource&lt;num_resources{1}, LifeEvents&gt;;</span>
+<span id="L238"><span class="lineNum">     238</span>              :         using configurator_type     = generic_resource_type::configurator_type;</span>
+<span id="L239"><span class="lineNum">     239</span>              :         using value_type            = configurator_type::value_type;</span>
 <span id="L240"><span class="lineNum">     240</span>              : </span>
 <span id="L241"><span class="lineNum">     241</span> <span class="tlaGNC">          76 :         generic_texture_2d(const resourceful_context&amp; ctx, const configurator_type&amp; textureConfig)</span></span>
-<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          76 :             : base_type{ctx, {textureConfig}}</span></span>
+<span id="L242"><span class="lineNum">     242</span> <span class="tlaGNC">          76 :             : generic_resource_type{ctx, LifeEvents{}, {textureConfig}}</span></span>
 <span id="L243"><span class="lineNum">     243</span> <span class="tlaGNC">         152 :         {}</span></span>
 <span id="L244"><span class="lineNum">     244</span>              : </span>
 <span id="L245"><span class="lineNum">     245</span>              :         [[nodiscard]]</span>
@@ -333,8 +333,8 @@
 <span id="L271"><span class="lineNum">     271</span>              : </span>
 <span id="L272"><span class="lineNum">     272</span> <span class="tlaGNC">          76 :         void bind(this const generic_texture_2d&amp; self, texture_unit unit) {</span></span>
 <span id="L273"><span class="lineNum">     273</span> <span class="tlaGNC">          76 :             gl_function{&amp;GladGLContext::ActiveTexture}(self.context(), unit.gl_texture_unit());</span></span>
-<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">          76 :             self.do_utilize();</span></span>
-<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          76 :         }</span></span>
+<span id="L274"><span class="lineNum">     274</span> <span class="tlaGNC">          75 :             self.do_utilize();</span></span>
+<span id="L275"><span class="lineNum">     275</span> <span class="tlaGNC">          75 :         }</span></span>
 <span id="L276"><span class="lineNum">     276</span>              :     protected:</span>
 <span id="L277"><span class="lineNum">     277</span> <span class="tlaGNC">         112 :         ~generic_texture_2d() = default;</span></span>
 <span id="L278"><span class="lineNum">     278</span>              : </span>
@@ -345,7 +345,7 @@
 <span id="L283"><span class="lineNum">     283</span>              : </span>
 <span id="L284"><span class="lineNum">     284</span>              :         [[nodiscard]]</span>
 <span id="L285"><span class="lineNum">     285</span> <span class="tlaGNC">          22 :         decorated_contextual_resource_view contextual_handle_view() const noexcept {</span></span>
-<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">          22 :             return base_type::contextual_handle_view(index&lt;0&gt;{});</span></span>
+<span id="L286"><span class="lineNum">     286</span> <span class="tlaGNC">          22 :             return generic_resource_type::contextual_handle_view(index&lt;0&gt;{});</span></span>
 <span id="L287"><span class="lineNum">     287</span>              :         }</span>
 <span id="L288"><span class="lineNum">     288</span>              :     };</span>
 <span id="L289"><span class="lineNum">     289</span>              : </span>

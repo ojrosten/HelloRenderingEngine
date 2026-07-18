@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-13 20:52:56</td>
+            <td class="headerValue">2026-07-18 18:21:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -76,17 +76,17 @@
 <span id="L14"><span class="lineNum">      14</span>              : namespace avocet {</span>
 <span id="L15"><span class="lineNum">      15</span>              :     template&lt;class From, std::size_t N, std::invocable&lt;From&gt; Fn, class To = std::invoke_result_t&lt;Fn, From&gt;&gt;</span>
 <span id="L16"><span class="lineNum">      16</span>              :     [[nodiscard]]</span>
-<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">         705 :     std::array&lt;To, N&gt; to_array(std::span&lt;const From, N&gt; from, Fn fn) {</span></span>
+<span id="L17"><span class="lineNum">      17</span> <span class="tlaGNC">         706 :     std::array&lt;To, N&gt; to_array(std::span&lt;const From, N&gt; from, Fn fn) {</span></span>
 <span id="L18"><span class="lineNum">      18</span>              :         return</span>
-<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">        1459 :             [&amp;] &lt;std::size_t... Is&gt; (std::index_sequence&lt;Is...&gt;) {</span></span>
-<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">         777 :                 return std::array&lt;To, N&gt;{fn(from[Is])...};</span></span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         729 :             }(std::make_index_sequence&lt;N&gt;{});</span></span>
+<span id="L19"><span class="lineNum">      19</span> <span class="tlaGNC">        1460 :             [&amp;] &lt;std::size_t... Is&gt; (std::index_sequence&lt;Is...&gt;) {</span></span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">         778 :                 return std::array&lt;To, N&gt;{fn(from[Is])...};</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">         730 :             }(std::make_index_sequence&lt;N&gt;{});</span></span>
 <span id="L22"><span class="lineNum">      22</span>              :     }</span>
 <span id="L23"><span class="lineNum">      23</span>              : </span>
 <span id="L24"><span class="lineNum">      24</span>              :     template&lt;class From, std::size_t N, std::invocable&lt;From&gt; Fn, class To = std::invoke_result_t&lt;Fn, From&gt;&gt;</span>
 <span id="L25"><span class="lineNum">      25</span>              :     [[nodiscard]]</span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">         669 :     std::array&lt;To, N&gt; to_array(const std::array&lt;From, N&gt;&amp; from, Fn fn) {</span></span>
-<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">         669 :         return to_array(std::span(from), std::move(fn));</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">         670 :     std::array&lt;To, N&gt; to_array(const std::array&lt;From, N&gt;&amp; from, Fn fn) {</span></span>
+<span id="L27"><span class="lineNum">      27</span> <span class="tlaGNC">         670 :         return to_array(std::span(from), std::move(fn));</span></span>
 <span id="L28"><span class="lineNum">      28</span>              :     }</span>
 <span id="L29"><span class="lineNum">      29</span>              : </span>
 <span id="L30"><span class="lineNum">      30</span>              :     template&lt;class From, std::size_t N, std::invocable&lt;From&amp;&gt; Fn, class To = std::invoke_result_t&lt;Fn, From&amp;&gt;&gt;</span>

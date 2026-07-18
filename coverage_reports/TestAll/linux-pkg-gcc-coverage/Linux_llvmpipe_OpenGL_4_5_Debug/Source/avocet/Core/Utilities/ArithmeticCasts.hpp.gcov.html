@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-13 20:52:56</td>
+            <td class="headerValue">2026-07-18 18:21:47</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -85,10 +85,10 @@
 <span id="L23"><span class="lineNum">      23</span>              :     /// static_cast; else throw a std::domain_error</span>
 <span id="L24"><span class="lineNum">      24</span>              :     template&lt;std::integral To, std::integral From&gt;</span>
 <span id="L25"><span class="lineNum">      25</span>              :     [[nodiscard]]</span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">       10700 :     constexpr To checked_conversion_to(From val) noexcept(has_lossless_conversion_v&lt;To, From&gt;)</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">       10705 :     constexpr To checked_conversion_to(From val) noexcept(has_lossless_conversion_v&lt;To, From&gt;)</span></span>
 <span id="L27"><span class="lineNum">      27</span>              :     {</span>
 <span id="L28"><span class="lineNum">      28</span>              :         if constexpr(not has_lossless_conversion_v&lt;To, From&gt;) {</span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">       10697 :             if(constexpr auto maxVal{std::numeric_limits&lt;To&gt;::max()}; val &gt; maxVal)</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">       10702 :             if(constexpr auto maxVal{std::numeric_limits&lt;To&gt;::max()}; val &gt; maxVal)</span></span>
 <span id="L30"><span class="lineNum">      30</span> <span class="tlaGNC">           3 :                 throw std::domain_error{std::format(&quot;Value {} exceeds max value {} of target type&quot;, val, maxVal)};</span></span>
 <span id="L31"><span class="lineNum">      31</span>              : </span>
 <span id="L32"><span class="lineNum">      32</span>              :             if constexpr(std::is_signed_v&lt;From&gt;) {</span>
@@ -96,12 +96,12 @@
 <span id="L34"><span class="lineNum">      34</span> <span class="tlaGNC">           3 :                     if(constexpr auto lowestVal{std::numeric_limits&lt;To&gt;::lowest()}; val &lt; lowestVal)</span></span>
 <span id="L35"><span class="lineNum">      35</span> <span class="tlaGNC">           1 :                         throw std::domain_error{std::format(&quot;Value {} lower than lowest value {} of target type&quot;, val, lowestVal)};</span></span>
 <span id="L36"><span class="lineNum">      36</span>              :                 }</span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">        5060 :                 else if(val &lt; 0)</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           1 :                     throw std::domain_error{std::format(&quot;Value {} lower than lowest value {} of target type&quot;, val, 0)};</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">        5068 :                 else if(val &lt; 0)</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">           2 :                     throw std::domain_error{std::format(&quot;Value {} lower than lowest value {} of target type&quot;, val, 0)};</span></span>
 <span id="L39"><span class="lineNum">      39</span>              :             }</span>
 <span id="L40"><span class="lineNum">      40</span>              :         }</span>
 <span id="L41"><span class="lineNum">      41</span>              : </span>
-<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">       10695 :         return static_cast&lt;To&gt;(val);</span></span>
+<span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">       10699 :         return static_cast&lt;To&gt;(val);</span></span>
 <span id="L43"><span class="lineNum">      43</span>              :     }</span>
 <span id="L44"><span class="lineNum">      44</span>              : }</span>
         </pre>
