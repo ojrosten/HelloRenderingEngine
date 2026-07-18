@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-18 18:21:47</td>
+            <td class="headerValue">2026-07-18 18:47:54</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -410,19 +410,19 @@
 <span id="L348"><span class="lineNum">     348</span>              :         template&lt;class T, std::derived_from&lt;context_base&gt; Context, class Enum&gt;</span>
 <span id="L349"><span class="lineNum">     349</span>              :             requires storage_for_gl_get_v&lt;T&gt; &amp;&amp; std::is_scoped_enum_v&lt;Enum&gt;</span>
 <span id="L350"><span class="lineNum">     350</span>              :         [[nodiscard]]</span>
-<span id="L351"><span class="lineNum">     351</span> <span class="tlaGNC">         363 :         T do_get(const Context&amp; ctx, Enum name) {</span></span>
-<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC">         363 :             T vals{};</span></span>
+<span id="L351"><span class="lineNum">     351</span> <span class="tlaGNC">         364 :         T do_get(const Context&amp; ctx, Enum name) {</span></span>
+<span id="L352"><span class="lineNum">     352</span> <span class="tlaGNC">         364 :             T vals{};</span></span>
 <span id="L353"><span class="lineNum">     353</span>              : </span>
 <span id="L354"><span class="lineNum">     354</span>              :             auto getPtr{</span>
-<span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">         363 :                 [](T&amp; t) {</span></span>
+<span id="L355"><span class="lineNum">     355</span> <span class="tlaGNC">         364 :                 [](T&amp; t) {</span></span>
 <span id="L356"><span class="lineNum">     356</span>              :                     if constexpr (gl_arithmetic&lt;T&gt;)</span>
-<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">         357 :                         return &amp;t;</span></span>
+<span id="L357"><span class="lineNum">     357</span> <span class="tlaGNC">         358 :                         return &amp;t;</span></span>
 <span id="L358"><span class="lineNum">     358</span>              :                     else</span>
 <span id="L359"><span class="lineNum">     359</span> <span class="tlaGNC">           6 :                         return t.data();</span></span>
 <span id="L360"><span class="lineNum">     360</span>              :                 }</span>
 <span id="L361"><span class="lineNum">     361</span>              :             };</span>
 <span id="L362"><span class="lineNum">     362</span>              : </span>
-<span id="L363"><span class="lineNum">     363</span> <span class="tlaGNC">         363 :             gl_function{to_context_mem_fn_ptr_v&lt;T&gt;}(ctx, to_gl_underlying_value&lt;GLenum&gt;(name), getPtr(vals));</span></span>
+<span id="L363"><span class="lineNum">     363</span> <span class="tlaGNC">         364 :             gl_function{to_context_mem_fn_ptr_v&lt;T&gt;}(ctx, to_gl_underlying_value&lt;GLenum&gt;(name), getPtr(vals));</span></span>
 <span id="L364"><span class="lineNum">     364</span>              : </span>
 <span id="L365"><span class="lineNum">     365</span> <span class="tlaGNC">         364 :             return vals;</span></span>
 <span id="L366"><span class="lineNum">     366</span>              :         }</span>
@@ -436,8 +436,8 @@
 <span id="L374"><span class="lineNum">     374</span>              : </span>
 <span id="L375"><span class="lineNum">     375</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
 <span id="L376"><span class="lineNum">     376</span>              :     [[nodiscard]]</span>
-<span id="L377"><span class="lineNum">     377</span> <span class="tlaGNC">         311 :     GLint get(const Context&amp; ctx, int_names name) {</span></span>
-<span id="L378"><span class="lineNum">     378</span> <span class="tlaGNC">         311 :         return impl::do_get&lt;GLint&gt;(ctx, name);</span></span>
+<span id="L377"><span class="lineNum">     377</span> <span class="tlaGNC">         312 :     GLint get(const Context&amp; ctx, int_names name) {</span></span>
+<span id="L378"><span class="lineNum">     378</span> <span class="tlaGNC">         312 :         return impl::do_get&lt;GLint&gt;(ctx, name);</span></span>
 <span id="L379"><span class="lineNum">     379</span>              :     }</span>
 <span id="L380"><span class="lineNum">     380</span>              : </span>
 <span id="L381"><span class="lineNum">     381</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>

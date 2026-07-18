@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-18 18:21:47</td>
+            <td class="headerValue">2026-07-18 18:47:54</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">98.0&nbsp;%</td>
@@ -99,22 +99,22 @@
 <span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">         739 :         std::invoke_result_t&lt;Fn, Args...&gt; invoke(this const decorated_context&amp; self, const decorator_data&amp; data, Fn fn, Args... args) {</span></span>
 <span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">         739 :             if(self.m_Prologue) self.m_Prologue(self, data);</span></span>
 <span id="L39"><span class="lineNum">      39</span>              :         </span>
-<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         738 :             const auto res{fn(args...)};</span></span>
+<span id="L40"><span class="lineNum">      40</span> <span class="tlaGNC">         739 :             const auto res{fn(args...)};</span></span>
 <span id="L41"><span class="lineNum">      41</span>              :         </span>
 <span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">         739 :             if(self.m_Epilogue) self.m_Epilogue(self, data);</span></span>
 <span id="L43"><span class="lineNum">      43</span>              :         </span>
-<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">         737 :             return res;</span></span>
+<span id="L44"><span class="lineNum">      44</span> <span class="tlaGNC">         738 :             return res;</span></span>
 <span id="L45"><span class="lineNum">      45</span>              :         }</span>
 <span id="L46"><span class="lineNum">      46</span>              :         </span>
 <span id="L47"><span class="lineNum">      47</span>              :         template&lt;class Fn, class... Args&gt;</span>
 <span id="L48"><span class="lineNum">      48</span>              :             requires std::is_void_v&lt;std::invoke_result_t&lt;Fn, Args...&gt;&gt;</span>
-<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">        3982 :         void invoke(this const decorated_context&amp; self, const decorator_data&amp; data, Fn fn, Args... args) {</span></span>
-<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">        3982 :             if(self.m_Prologue) self.m_Prologue(self, data);</span></span>
+<span id="L49"><span class="lineNum">      49</span> <span class="tlaGNC">        3987 :         void invoke(this const decorated_context&amp; self, const decorator_data&amp; data, Fn fn, Args... args) {</span></span>
+<span id="L50"><span class="lineNum">      50</span> <span class="tlaGNC">        3987 :             if(self.m_Prologue) self.m_Prologue(self, data);</span></span>
 <span id="L51"><span class="lineNum">      51</span>              :         </span>
-<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">        3983 :             fn(args...);</span></span>
+<span id="L52"><span class="lineNum">      52</span> <span class="tlaGNC">        3987 :             fn(args...);</span></span>
 <span id="L53"><span class="lineNum">      53</span>              :         </span>
 <span id="L54"><span class="lineNum">      54</span> <span class="tlaGNC">        3987 :             if(self.m_Epilogue) self.m_Epilogue(self, data);</span></span>
-<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">        3977 :         }</span></span>
+<span id="L55"><span class="lineNum">      55</span> <span class="tlaGNC">        3983 :         }</span></span>
 <span id="L56"><span class="lineNum">      56</span>              :     protected:</span>
 <span id="L57"><span class="lineNum">      57</span> <span class="tlaGNC">          55 :         ~decorated_context() = default;</span></span>
 <span id="L58"><span class="lineNum">      58</span>              : </span>

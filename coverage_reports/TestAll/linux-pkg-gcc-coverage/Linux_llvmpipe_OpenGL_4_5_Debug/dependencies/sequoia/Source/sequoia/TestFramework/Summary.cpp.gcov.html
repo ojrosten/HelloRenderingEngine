@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-18 18:21:47</td>
+            <td class="headerValue">2026-07-18 18:47:54</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntryMed">88.9&nbsp;%</td>
+            <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
             <td class="headerCovTableEntry">9</td>
-            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">9</td>
           </tr>
                   <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
                 </table>
@@ -96,9 +96,9 @@
 <span id="L34"><span class="lineNum">      34</span>              :   {</span>
 <span id="L35"><span class="lineNum">      35</span>              :     using namespace std::chrono;</span>
 <span id="L36"><span class="lineNum">      36</span> <span class="tlaGNC">          19 :     const auto count{duration_cast&lt;nanoseconds&gt;(d).count()};</span></span>
-<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          19 :     if(count &gt;= 1'000'000'000) return {to_string&lt;std::ratio&lt;1&gt;&gt;(d), &quot;s&quot;};</span></span>
-<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          31 :     if(count &gt;= 1'000'000)     return {to_string&lt;std::milli&gt;(d),   &quot;ms&quot;};</span></span>
-<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          14 :     if(count &gt;= 1'000)         return {to_string&lt;std::micro&gt;(d),   &quot;us&quot;};</span></span>
+<span id="L37"><span class="lineNum">      37</span> <span class="tlaGNC">          21 :     if(count &gt;= 1'000'000'000) return {to_string&lt;std::ratio&lt;1&gt;&gt;(d), &quot;s&quot;};</span></span>
+<span id="L38"><span class="lineNum">      38</span> <span class="tlaGNC">          28 :     if(count &gt;= 1'000'000)     return {to_string&lt;std::milli&gt;(d),   &quot;ms&quot;};</span></span>
+<span id="L39"><span class="lineNum">      39</span> <span class="tlaGNC">          12 :     if(count &gt;= 1'000)         return {to_string&lt;std::micro&gt;(d),   &quot;us&quot;};</span></span>
 <span id="L40"><span class="lineNum">      40</span>              : </span>
 <span id="L41"><span class="lineNum">      41</span> <span class="tlaUNC">           0 :     return {std::to_string(count), &quot;ns&quot;};</span></span>
 <span id="L42"><span class="lineNum">      42</span> <span class="tlaGNC">          57 :   }</span></span>
