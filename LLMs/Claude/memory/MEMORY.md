@@ -37,3 +37,4 @@
 - [Graph-based testing is the user's load-bearing technique](sequoia/user_graph_based_testing_conviction.md) — personal conviction, held with humility; engage critically, don't flatter
 - [Graph-based-testing recipe — be fluent in writing these](feedback_graph_based_testing.md) — transition_checker construction, CheckFn menu, gotchas, standalone-compile trick
 - [Look for graph-based-testing opportunities in avocet](project_graph_based_testing_opportunities.md) — one current site; candidates: uniform state (pre-DSA pin), binding-cache×lifetime, buffers/textures
+- [Coverage report generation recipe](project_coverage_report_generation.md) — WSL clone, linux-pkg-gcc-coverage workflow, sequoia script; atomic-counter fix 2026-07-18; expected residual warnings; fresh start rarely needed
