@@ -38,3 +38,4 @@
 - [Graph-based-testing recipe — be fluent in writing these](feedback_graph_based_testing.md) — transition_checker construction, CheckFn menu, gotchas, standalone-compile trick
 - [Look for graph-based-testing opportunities in avocet](project_graph_based_testing_opportunities.md) — one current site; candidates: uniform state (pre-DSA pin), binding-cache×lifetime, buffers/textures
 - [Coverage report generation recipe](project_coverage_report_generation.md) — WSL clone, linux-pkg-gcc-coverage workflow, sequoia script; atomic-counter fix 2026-07-18; expected residual warnings; fresh start rarely needed
+- [Coverage analysis 2026-07-18](project_coverage_analysis_2026_07.md) — avocet 90.5%/curlew 83.8% real; five-way FN taxonomy, FP cautions, actionable shortlist; report at LLMs/Claude/reviews/coverage_analysis_2026-07-18.md
