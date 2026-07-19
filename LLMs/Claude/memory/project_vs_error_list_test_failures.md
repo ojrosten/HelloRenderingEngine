@@ -43,7 +43,9 @@ Xcode's Issue Navigator scrapes **Run Script build phase** output for the **GCC/
 
 (Own `generator` field overrides the inherited Ninja; flag composition + clang `WARNING_SUPPRESSIONS` carry over.) Caveats: **(1) configure-vs-build compiler split** — CMake's detection under the Xcode generator still runs Apple clang, so `CMAKE_CXX_COMPILER_ID=AppleClang` while builds use Homebrew's; the code's capability gating is preprocessor-based so adapts correctly, and sequoia's suppressions are preset-fed not detection-fed, but future compiler-ID-keyed CMake logic would see AppleClang. The override is load-bearing: the project historically outruns AppleClang, so an unmodified Xcode preset may not compile at all. **(2)** Xcode's indexing/editor squiggles use Apple clang regardless (hence disabling the index store). **(3)** Xcode is a multi-config generator — `CMAKE_BUILD_TYPE` doesn't apply; build presets select `--config` (same pattern as `msvc`). Heavyweight fallback if attributes misbehave: custom `.xctoolchain` via `TOOLCHAINS`.
 
-## CLion counterpart (added same day) — no third dialect needed
+## CLion counterpart (added same day) — no third dialect needed, **and no CMake-side additions either**
+
+Unlike Xcode, CLion needs no carrier preset: it consumes `CMakePresets.json` natively (configure presets appear as CMake profiles; `--workflow` presets simply aren't its entry point), invokes whatever `CMAKE_C(XX)_COMPILER` a preset sets under Ninja (no attribute hack), and its clangd follows the real compiler's flags (no Apple-vs-Homebrew editor split-brain). The custom target and `add_test` registration it needs already exist / are shared with the VS plan.
 
 Three tiers, all served by the `gnu` dialect:
 - **Zero-effort (once `gnu` emitter exists):** JetBrains consoles auto-hyperlink `path:line` patterns **anywhere in a line** (unlike MSBuild/Xcode's line-anchored parsers) — so failures in any Run-configuration console are clickable with no setup, and ctest's `N: ` prefixes *don't* break it. CLion's native **CTest integration** already gives a coarse pass/fail node for `TestAll` plus that clickable console for free.
