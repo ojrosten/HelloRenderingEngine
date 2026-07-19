@@ -21,7 +21,7 @@
 - [A lecture branch's diff is a superset of the lecture](feedback_lecture_diff_is_superset.md) — incidental prep-time fixes and toolchain churn ride along; don't attribute everything to the lecture
 - [In tests, OpenGL is the source of truth for handles](feedback_opengl_source_of_truth_in_tests.md) — query binding-point state, don't read handles off the object; don't suggest get_index as a simplification
 - [User switched to Fable 5 (2026-07-10)](user_model_preference_fable.md) — tell them if a session runs on Opus 4.8 or another model instead
-- [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything
+- [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything; consolidated cross-source index at LLMs/Claude/OPEN_ITEMS.md (keep it in sync)
 - [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
 - [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
 - [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
@@ -38,4 +38,4 @@
 - [Graph-based-testing recipe — be fluent in writing these](feedback_graph_based_testing.md) — transition_checker construction, CheckFn menu, gotchas, standalone-compile trick
 - [Look for graph-based-testing opportunities in avocet](project_graph_based_testing_opportunities.md) — one current site; candidates: uniform state (pre-DSA pin), binding-cache×lifetime, buffers/textures
 - [Coverage report generation recipe](project_coverage_report_generation.md) — WSL clone, linux-pkg-gcc-coverage workflow, sequoia script; atomic-counter fix 2026-07-18; expected residual warnings; fresh start rarely needed
-- [Coverage analysis 2026-07-18](project_coverage_analysis_2026_07.md) — avocet 90.5%/curlew 83.8% real; five-way FN taxonomy, FP cautions, actionable shortlist; report at LLMs/Claude/reviews/coverage_analysis_2026-07-18.md
+- [Coverage analysis 2026-07](project_coverage_analysis_2026_07.md) — avocet 90.5%/curlew 83.8% real; positive = flagged gap; FP taxonomy, FN classes (uninstantiated templates invisible — Polygon.hpp), agreed dispositions; report at LLMs/Claude/reviews/coverage_analysis_2026-07-18.md
