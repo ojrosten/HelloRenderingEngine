@@ -5,7 +5,7 @@ metadata:
   type: feedback
 ---
 
-Standing practice agreed with the user (2026-07-20): some memories are procedural in spirit — recipes like [[graph-based-testing-recipe]] or [[coverage-report-generation]] — and do the *job* of a skill while being memories *mechanically*. Whenever I create or substantially extend such a memory, I should pause and judge whether it has outgrown memory-hood and deserves conversion to a proper skill (a `SKILL.md` under `.claude/skills/`, invoked by name).
+Standing practice agreed with the user (2026-07-20): some memories are procedural in spirit — recipes like [[graph-based-testing-recipe]] or [[project-coverage-report-generation]] — and do the *job* of a skill while being memories *mechanically*. Whenever I create or substantially extend such a memory, I should pause and judge whether it has outgrown memory-hood and deserves conversion to a proper skill (a `SKILL.md` under `.claude/skills/`, invoked by name).
 
 **Why:** the two mechanisms load differently — memories are recalled by relevance (ambient, sometimes missed), skills are loaded whole on invocation (deliberate, complete). A long recipe wants to arrive complete and on demand; a calibration wants to surface unbidden. The user asked for this judgement to be made periodically; the event-driven trigger (touching the file) is the reliable form of "periodically" for me.
 

@@ -43,7 +43,7 @@ The `<project-slug>` is derived from the absolute path of this repository on tha
    ```bash
    ./LLMs/Claude/sync.sh "<absolute-path-from-step-2>"
    ```
-   This copies every `*.md` from `LLMs/Claude/memory/` into the target directory.
+   This copies every `*.md` from `LLMs/Claude/memory/` into the target directory. With `--delete` it also removes target files that no longer exist in the repo — useful after renaming, moving, or deleting memory files repo-side, but **destroys any session-written memories not yet copied back**, so only use it when the repo is the up-to-date side.
 4. Future Claude Code sessions on this machine will recall memory files selectively. The auto-loaded index (`MEMORY.md`) confirms the setup worked.
 
 ## Updating memory

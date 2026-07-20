@@ -1,5 +1,5 @@
 ---
-name: project-vs-error-list-test-failures
+name: sequoia-ide-clickable-failures
 description: Assessed plan (2026-07-19) for clickable sequoia test failures in IDEs — VS Error List (MSVC dialect), Xcode Issue Navigator and CLion (GNU dialect), emitter + run-as-build-step; includes the Xcode+Homebrew-clang carrier preset
 metadata:
   type: project
@@ -54,4 +54,4 @@ Three tiers, all served by the `gnu` dialect:
 
 **Summary across IDEs: two dialects cover everything** — `msvc` for the VS Error List; `gnu` for Xcode Issue Navigator, CLion (console + build window), VS Code problem matchers, vim/emacs, CI logs.
 
-Emitter belongs in **sequoia** (same upstream vehicle as the coverage fixes and toolchain plans); the custom targets/post-build hooks and the Xcode carrier preset are the only avocet/build-system-side pieces. Related: [[project-windows-clang-toolchain]], [[project-coverage-report-generation]], [[feedback-testing-vs-dependencies-tradeoff]] (FN-mode semantics).
+Emitter belongs in **sequoia** (same upstream vehicle as the coverage fixes and toolchain plans); the custom targets/post-build hooks and the Xcode carrier preset are the only avocet/build-system-side pieces. Related: [[sequoia-windows-clang-toolchain]], [[sequoia-coverage-tooling]], [[feedback-testing-vs-dependencies-tradeoff]] (FN-mode semantics). Programme summary: `LLMs/Claude/SEQUOIA_TOOLING.md`.

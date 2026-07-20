@@ -1,5 +1,5 @@
 ---
-name: project-windows-clang-toolchain
+name: sequoia-windows-clang-toolchain
 description: Assessed plan (2026-07-19) for a Windows + clang-front-end preset column — Route A (VS generator + ClangCL toolset) vs Route B (Ninja + standalone LLVM, GNU driver); Route B carries the coverage leg
 metadata:
   type: project
@@ -37,11 +37,11 @@ Operationally identical to `msvc` (multi-config, no developer shell). Subtlety: 
 
 plus `windows-llvm{,-release,-asan,-coverage}` workflow trios mirroring the Mac set. Naming wrinkle: `base-llvm` inherits `base-unix`, a misnomer here not an obstacle (Ninja + env-composed flags work on Windows); consider renaming to e.g. `base-ninja-flags`.
 
-**Why Route B pays rent — the coverage tie-in:** `clang++ -fprofile-instr-generate -fcoverage-mapping` works on the MSVC target, the driver links `clang_rt.profile` itself, and `llvm-cov export -format=lcov` emits union-pipeline-format tracefiles ([[project-coverage-report-generation]], clang/Mac union plan). The Windows box is the **Intel Arc** machine, so a `windows-llvm-coverage` leg brings the "permanent hardware-gated residue" (`CapabilitiesConfiguration.cpp` Arc compensation, Intel `message_id{2}`) into the union properly — **superseding the OpenCppCoverage one-off idea** in the MSVC assessment (that remains the only option for measuring *cl-compiled* code, immaterial for coverage purposes).
+**Why Route B pays rent — the coverage tie-in:** `clang++ -fprofile-instr-generate -fcoverage-mapping` works on the MSVC target, the driver links `clang_rt.profile` itself, and `llvm-cov export -format=lcov` emits union-pipeline-format tracefiles ([[sequoia-coverage-tooling]], clang/Mac union plan). The Windows box is the **Intel Arc** machine, so a `windows-llvm-coverage` leg brings the "permanent hardware-gated residue" (`CapabilitiesConfiguration.cpp` Arc compensation, Intel `message_id{2}`) into the union properly — **superseding the OpenCppCoverage one-off idea** in the MSVC assessment (that remains the only option for measuring *cl-compiled* code, immaterial for coverage purposes).
 
 **Decision points before building either:**
 - Audit where sequoia's build system keys flags off `MSVC`/compiler ID: Route A lands `MSVC==TRUE`, Route B `MSVC==FALSE` + `Clang` (same branch as Mac clang — least-surprise fit).
 - The deliberate `cxx_std_23` Windows split: if keyed on `MSVC`, Route A stays 23, Route B gets 26 — decide intent (B at 26 matches the other platforms).
 - ASan under Route B uses the `base-asan-unix` spelling as-is; the `clang_rt.asan_dynamic-x86_64.dll`-on-PATH gotcha ([[project-vulkan-branch-merges]]) applies to the standalone-LLVM runtime too.
 
-**Recommendation as assessed:** Route A as a cheap "does clang's front end like our code against MSVC STL" check; Route B as the real column and the carrier of the Windows coverage leg. All pieces land in sequoia's build system — same upstream vehicle as the coverage fixes.
+**Recommendation as assessed:** Route A as a cheap "does clang's front end like our code against MSVC STL" check; Route B as the real column and the carrier of the Windows coverage leg. All pieces land in sequoia's build system — same upstream vehicle as the coverage fixes ([[sequoia-coverage-tooling]]). Programme summary: `LLMs/Claude/SEQUOIA_TOOLING.md`.
