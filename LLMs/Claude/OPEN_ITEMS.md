@@ -1,6 +1,6 @@
 # Open items — consolidated index
 
-**Last updated:** 2026-07-19 (post coverage analysis).
+**Last updated:** 2026-07-20 (test-materials review addendum).
 **What this is:** the single, version-controlled index of every open actionable item for the project, consolidated across the review documents and memory files. Detail lives in the linked sources; this file is the map. **Maintenance contract:** any session that resolves, re-scopes, or adds an item should update this file (and the linked source) in the same breath.
 
 Detailed sources:
@@ -49,6 +49,7 @@ Detailed sources:
 - **`to_array` migration to sequoia** — gains tests there; don't test/flag it here meanwhile.
 - **Vulkan**: periodic lecture-branch merges into `vulkan-experiment` (recipe in `memory/project_vulkan_branch_merges.md`); Demo run is the acceptance test.
 - **Windows ASan DLL workflow fix** — sequoia build system, handled offline by the user.
+- **Test-materials findings M1–M4** (2026-07-20 addendum in `reviews/sequoia_review_2026-07-16.md`): blank-line-truncated `.seqpat` parsing, silent skip of unreadable files in `soft_update`, CRLF regex nit, vestigial `predRelDir`; plus the still-present `MaterialsUpdater.cpp:146` deref. Sequoia-side, handled offline by the user.
 
 ## 5. Explicitly closed by decision (don't re-raise)
 

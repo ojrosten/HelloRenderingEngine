@@ -152,3 +152,24 @@ Odds and ends: `obtainedIsNull`/`predictionIsNull` are inverted misnomers (`Conc
 ## For the planned rename
 
 `graph-based-testing` describes the *technique*; the header's contents (`transition_checker` + supporting types) are one facility implementing it. If the refresh grows node-naming (above) or per-edge exception capture (A2), the rename is the natural moment. A1/A3/A4 are each small, contained fixes that could ride along.
+
+---
+
+# Addendum (2026-07-20): test-materials machinery
+
+**Scope:** the materials subsystem — `IndividualTestPaths.*`, `MaterialsUpdater.*`, `value_tester<std::filesystem::path>` (`ConcreteTypeCheckers.hpp`), `get_reduced_file_content` (`FileEditors.cpp`), runner staging (`set_materials`, `test_tracker`) — plus the `TestMaterials/` examples. Findings traced by reading. Mechanics recorded in `LLMs/Claude/memory/sequoia/reference_test_materials.md`.
+
+## Correction to an earlier finding
+
+- The 2026-07-16 nit "`copy_special_files_back` iterates non-recursively … `.seqpat`/`.keep` in prediction subdirectories are never copied back" **overstates the problem**: the public `soft_update` re-runs `copy_special_files_back` for every *matched* directory pair during the merge recursion, so nested seqpats are preserved whenever their parent directory exists on both sides (the `RetainedSeqpat` fixtures exercise this). What remains true: `predRelDir` (`MaterialsUpdater.cpp:34`) is always `"."` under the non-recursive iterator — vestige of an apparently earlier recursive design; a simplification, not a bug.
+
+## New findings — for Oliver to look at
+
+- **M1. Blank line mid-`.seqpat` silently truncates the pattern list** (`FileEditors.cpp:246`): the parsing loop `break`s on a zero-length line, so regexes after an accidental blank line are ignored and the comparison is quietly weakened. If blank-line-as-end-marker is intended, it deserves a comment (or a loud failure); otherwise `continue` instead of `break`.
+- **M2. Unreadable files silently skipped during `soft_update`** (`MaterialsUpdater.cpp:108-116`): in the merge's regular-file case, if either read fails the file is neither updated nor reported — an `update-materials` run can silently leave a prediction stale. A throw here would match the tripwire philosophy.
+- **M3. CRLF nit, completeness only** (`FileEditors.cpp:239`): `.seqpat` regexes are split on `\n` from a text-mode read; a CRLF-checked-out repo on Linux would leave a trailing `\r` inside each compiled regex. Git normalization makes this near-impossible in practice.
+- **M4. Vestigial relative-dir computation in `copy_special_files_back`** (`MaterialsUpdater.cpp:34-35`): see correction above — `predRelDir`/`workingSubdir` can collapse to `from` directly.
+
+## Status note
+
+- The past-the-end dereference in the merge (finding 5 of the main review, `MaterialsUpdater.cpp:146`) is **still present** in the copy vendored here as of 2026-07-20.
