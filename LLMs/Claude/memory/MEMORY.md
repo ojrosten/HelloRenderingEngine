@@ -26,6 +26,7 @@
 - [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
 - [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
 - [Include discipline is pragmatic, not strict IWYU](feedback_include_philosophy.md) — transitive via stable project headers is fine; only add includes with plausible breakage
+- [Memory→skill promotion check](feedback_memory_skill_promotion.md) — when writing/extending a recipe-like memory, judge whether it should become a skill; propose, don't convert unilaterally
 - [Sequoia overview hub](sequoia/reference_overview.md) — user's own long-lived library; testing framework + utilities; production dependency too; links the detailed sequoia memories
 - [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths (resolves T7); spaces/physics in flux
 - [Sequoia test-framework core](sequoia/reference_test_framework_core.md) — runner, suite trees, prune/dependency analysis, creation CLI, concurrency, output layout
