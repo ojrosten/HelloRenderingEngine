@@ -27,7 +27,7 @@
 - [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
 - [Include discipline is pragmatic, not strict IWYU](feedback_include_philosophy.md) — transitive via stable project headers is fine; only add includes with plausible breakage
 - [Sequoia overview hub](sequoia/reference_overview.md) — user's own long-lived library; testing framework + utilities; production dependency too; links the detailed sequoia memories
-- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh; spaces/physics in flux
+- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths (resolves T7); spaces/physics in flux
 - [Sequoia test-framework core](sequoia/reference_test_framework_core.md) — runner, suite trees, prune/dependency analysis, creation CLI, concurrency, output layout
 - [Sequoia checks & semantics](sequoia/reference_checks_semantics.md) — equality/equivalence tag dispatch, value_tester, check_semantics, allocation testing, test modes
 - [Sequoia core utilities](sequoia/reference_core_utilities.md) — object::factory + suite/granular_filter, Meta/TypeAlgorithms, partitioned data, concurrency models, bitmask enums

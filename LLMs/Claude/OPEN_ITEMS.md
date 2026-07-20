@@ -50,6 +50,7 @@ Detailed sources:
 - **Vulkan**: periodic lecture-branch merges into `vulkan-experiment` (recipe in `memory/project_vulkan_branch_merges.md`); Demo run is the acceptance test.
 - **Windows ASan DLL workflow fix** — sequoia build system, handled offline by the user.
 - **Test-materials findings M1–M4** (2026-07-20 addendum in `reviews/sequoia_review_2026-07-16.md`): blank-line-truncated `.seqpat` parsing, silent skip of unreadable files in `soft_update`, CRLF regex nit, vestigial `predRelDir`; plus the still-present `MaterialsUpdater.cpp:146` deref. Sequoia-side, handled offline by the user.
+- **Test-materials critical review T1–T14** (2026-07-20 part-II addendum, same file; three-agent consolidation, several probe-confirmed): headline — update pass inside `noexcept` → `std::terminate` (T1), file→dir change breaks `soft_update` (T2), text-mode reads false-pass binary materials (T3); the T5/T6/T14 tree-walker-divergence cluster resolves as one reconciliation-engine refactor; T11/T12 are cheap seqpat/doc wins. T7 dispositioned 2026-07-20: subsumed by planned per-class materials/diagnostics paths (sequoia roadmap item 4). Sequoia-side, handled offline by the user.
 
 ## 5. Explicitly closed by decision (don't re-raise)
 
