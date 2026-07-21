@@ -1,15 +1,18 @@
 ---
 name: user-teaching-project
 description: HelloRenderingEngine is a teaching project with accompanying lectures — code may be deliberately pedagogical rather than production-optimal.
-metadata:
+metadata: 
+  node_type: memory
   type: user
+  originSessionId: f8c77888-49bb-4bf6-9e2e-1e845a43d0b6
+  modified: 2026-07-21T10:10:33.428Z
 ---
 
 The user maintains HelloRenderingEngine as a teaching project (see README.md line 3) with accompanying lectures — branch names like `end_lecture_46` reflect the lecture cadence. The goal is to explore modern C++ techniques (C++23, soon C++26 reflection) and OpenGL together.
 
 **The course is specifically on *practical software engineering*, not language features in the abstract.** This colors what counts as in-scope: cross-platform compromise, fallback design, capability gating, driver-bug workarounds, dependency management, test infrastructure, and similar real-world considerations are *teaching content*, not obstacles. See [[reference-cross-platform-targets]] for how this shapes suggestions involving newer OpenGL features.
 
-**Lecture format & cadence:** 50 lectures delivered as of 2026-07-15, each ~1 hour: ~40 min presentation + ~20 min live coding. Some infrastructure is prepared off-line, but the amount of code added per lecture is necessarily small. This means:
+**Lecture format & cadence:** 51 lectures delivered as of 2026-07-21, each ~1 hour: ~40 min presentation + ~20 min live coding. Some infrastructure is prepared off-line, but the amount of code added per lecture is necessarily small. This means:
 - The codebase grows incrementally over many small steps.
 - The right register for improvement suggestions is "next-lecture-sized," not "sweeping refactor across the engine."
 - Branch names like `end_lecture_NN` mark the per-lecture commit boundary and are reliable anchors for "what was the state at lecture N."
