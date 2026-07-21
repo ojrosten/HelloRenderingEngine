@@ -36,6 +36,7 @@
 - [Sequoia test materials](sequoia/reference_test_materials.md) — TestMaterials layout, WorkingCopy/Prediction/Auxiliary, .seqpat regex preprocessing, update-materials/soft_update mechanics
 - [How avocet consumes sequoia](project_sequoia_usage.md) — production dep, sequoia build system, curlew adaptation layer, value_tester specializations, committed output/
 - [Exception-message stability in versioned files](project_exception_message_stability.md) — throw-site generic paths + sequoia default postprocessor root-strip + platform forks; no custom postprocessor in repo
+- [summary_discriminator vs output_discriminator](project_discriminator_axes.md) — independent axes: which checks run (selectivity→summary) vs what laid-down text says (specificity→output)
 - [Avocet's test-materials usage](project_test_materials_usage.md) — flat consumption-only mode so far; no Prediction/.seqpat yet; headroom for generate-compare tests
 - [Sequoia full review 2026-07-16](sequoia/project_review_2026_07.md) — report at LLMs/Claude/reviews/sequoia_review_2026-07-16.md; check before re-raising sequoia findings
 - [Graph-based testing is the user's load-bearing technique](sequoia/user_graph_based_testing_conviction.md) — personal conviction, held with humility; engage critically, don't flatter
