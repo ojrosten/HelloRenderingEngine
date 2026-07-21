@@ -1,6 +1,6 @@
 # Open items — consolidated index
 
-**Last updated:** 2026-07-20 (sequoia-tooling memory reorganization: pure-sequoia plans moved to `memory/sequoia/`; programme summary at `SEQUOIA_TOOLING.md`).
+**Last updated:** 2026-07-21 (added `check_exception_thrown` postprocessor findings E1–E3, logged in the sequoia review addendum).
 **What this is:** the single, version-controlled index of every open actionable item for the project, consolidated across the review documents and memory files. Detail lives in the linked sources; this file is the map. **Maintenance contract:** any session that resolves, re-scopes, or adds an item should update this file (and the linked source) in the same breath.
 
 Detailed sources:
@@ -51,6 +51,7 @@ Detailed sources:
 - **Vulkan**: periodic lecture-branch merges into `vulkan-experiment` (recipe in `memory/project_vulkan_branch_merges.md`); Demo run is the acceptance test.
 - **Windows ASan DLL workflow fix** — sequoia build system, handled offline by the user.
 - **Test-materials findings M1–M4** (2026-07-20 addendum in `reviews/sequoia_review_2026-07-16.md`): blank-line-truncated `.seqpat` parsing, silent skip of unreadable files in `soft_update`, CRLF regex nit, vestigial `predRelDir`; plus the still-present `MaterialsUpdater.cpp:146` deref. Sequoia-side, handled offline by the user.
+- **`check_exception_thrown` postprocessor findings E1–E3** (2026-07-21 addendum in `reviews/sequoia_review_2026-07-16.md`): E1 first-occurrence-only project-root stripping in `default_exception_message_postprocessor` (already on the user's own TODO list); E2 the undocumented generic-format contract — native-separator paths (e.g. `fs::filesystem_error::what()`) escape the root-strip on Windows only; E3 nits (`pos < npos`, `erase(pos, len + 1)` separator assumption, the reads-as-dangling IIFE in `check_exception_thrown`). Sequoia-side, handled offline by the user.
 - **Test-materials critical review T1–T14** (2026-07-20 part-II addendum, same file; three-agent consolidation, several probe-confirmed): headline — update pass inside `noexcept` → `std::terminate` (T1), file→dir change breaks `soft_update` (T2), text-mode reads false-pass binary materials (T3); the T5/T6/T14 tree-walker-divergence cluster resolves as one reconciliation-engine refactor; T11/T12 are cheap seqpat/doc wins. T7 dispositioned 2026-07-20: subsumed by planned per-class materials/diagnostics paths (sequoia roadmap item 4). Sequoia-side, handled offline by the user.
 
 ## 5. Explicitly closed by decision (don't re-raise)

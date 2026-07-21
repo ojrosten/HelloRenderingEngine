@@ -1,8 +1,11 @@
 ---
 name: avocet-sequoia-usage
-description: How HelloRenderingEngine/avocet consumes sequoia — production dependency, build system, curlew adaptation layer, value_tester specializations, committed output/
-metadata:
+description: "How HelloRenderingEngine/avocet consumes sequoia — production dependency, build system, curlew adaptation layer, value_tester specializations, committed output/"
+metadata: 
+  node_type: memory
   type: project
+  originSessionId: f58cc83f-8059-4d66-a2ba-ed07ba4821c1
+  modified: 2026-07-21T10:49:23.134Z
 ---
 
 How this repo consumes sequoia (surveyed 2026-07). This is project-layer knowledge — sequoia's own memories ([[sequoia-overview]] and siblings) deliberately know nothing of avocet/curlew, mirroring the dependency structure.
@@ -14,7 +17,7 @@ How this repo consumes sequoia (surveyed 2026-07). This is project-layer knowled
 **Registration** (`TestAll/TestAllMain.cpp` — in `TestAll/`, not repo root): ~44 test-header includes + 17 `add_test_suite` calls; each test appears ~3× (include, type, display string). Customizer: `{.source_folder{"avocet"}, .additional_dependency_analysis_paths{"TestingUtilities", "dependencies/sequoia/Source"}}` — so prune correctly invalidates tests when curlew *or sequoia itself* changes. `main` first queries `curlew::test_window_manager::find_rendering_setup()` and writes `Setup.txt` (full discriminator) beside the executable. The scaffolding CLI (`./TestAll create free ...`) machine-appends the boilerplate today. This mechanism is slated for retirement — [[sequoia-roadmap]].
 
 **curlew is the adaptation layer** marrying sequoia's framework to GL realities (`TestingUtilities/curlew/`):
-- `basic_graphics_test<Mode, Selectivity, Specificity, Extender>` derives from sequoia's `basic_test`; sets `parallelizable_type = std::false_type` (GL tests run serially) and implements `summary_discriminator()`/`output_discriminator()` from `rendering_setup_discriminator` so expected-output files fork per OS/renderer/GL-version/build only where needed (specialization is a last resort — baseline file plus suffixed variants like `..._Exceptions_Win_AMD_OpenGL_4_6.txt`).
+- `basic_graphics_test<Mode, Selectivity, Specificity, Extender>` derives from sequoia's `basic_test`; sets `parallelizable_type = std::false_type` (GL tests run serially) and implements `summary_discriminator()`/`output_discriminator()` from `rendering_setup_discriminator` so expected-output files fork per OS/renderer/GL-version/build only where needed (specialization is a last resort — baseline file plus suffixed variants like `..._Exceptions_Win_AMD_OpenGL_4_6.txt`). Forking is one of three layers keeping versioned exception files diff-stable — [[avocet-exception-message-stability]].
 - `basic_graphics_labelling_test` capability-gates via deducing-this `run_tests(this Self& self)` — only calls `self.labelling_tests(w)` when `object_labels_available() == yes`.
 - `selectivity_flavour`/`specificity_flavour` bitmask enums use sequoia's `as_bitmask` + `EXPOSE_SEQUOIA_BITMASK` (compile definition on curlew).
 - Per-driver warning filters (`ignored_warnings`/`printed_then_ignored_warnings`) injected into default window config.
