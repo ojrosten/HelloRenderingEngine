@@ -1,8 +1,11 @@
 ---
 name: sequoia-roadmap
-description: The user's stated plans for sequoia — reflection-based test registration via the factory, modules migration (forcing prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths
-metadata:
+description: "The user's stated plans for sequoia — reflection-based test registration via the factory, modules migration (forcing prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths"
+metadata: 
+  node_type: memory
   type: project
+  originSessionId: 4063fb5f-9f73-474e-943f-1680bec10281
+  modified: 2026-07-21T13:29:00.147Z
 ---
 
 The user's stated evolution plans for sequoia (told to me 2026-07-16), with code-level grounding. Sequoia is the user's own long-lived library — suggestions in these areas should align with, not fight, these plans.
@@ -22,6 +25,8 @@ The user's stated evolution plans for sequoia (told to me 2026-07-16), with code
 
 **5. `sort_nodes` has horrendous asymptotic behaviour** — acknowledged by the user (2026-07-17), on their TO-DO list to fix. Don't re-flag the complexity as a discovery; performance-sensitive suggestions built on node sorting should note the pending fix. (Related but distinct: the 2026-07-16 review's Tier 3 question about tree `prune` assuming `add_node`-built index ordering, which `sort_nodes` can violate.)
 
-**6. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
+**6. [Tentative, 2026-07-21] Abstract the latch-based race-amplification pattern into sequoia.** The user "might actually try" to generalize what avocet's `Tests/OpenGL/Resources/ResourceTrackingUtilities.cpp` does with a pair of `std::latch`es (entry latch after resource creation + exit latch after utilization ⇒ guaranteed N-way overlap of the critical phase across threads; the `opt_latch_ref`/`no_latch` optional-participation pattern lets the same task body run latched and free-running). Demonstrated live in a lecture: greatly increased data-race sensitivity, "at least with MSVC" (plausible mechanism: MSVC debug/IDL bookkeeping both enlarges the racy surface and asserts loudly — same machinery the allocation checkers accommodate). Design observations recorded 2026-07-21: general shape is *phases* ⇒ `std::barrier` over latch pairs; preserve the no-op-synchronizer degeneracy; belongs in TestFramework (test choreography, not a concurrency model); FN-mode evidence for the amplifier probably requires a TSan CI leg (deliberately-racy fixtures produce nondeterministic text that versioned outputs can't pin) — ties to the TSan/CI process gap from the 2026-07-16 review. Composes multiplicatively with `-locate` (each rep becomes a high-probability race trial). The user values `-locate` highly and deployed it in lectures — note the Tier-1 finding #4 (sandbox pass aggregation always empty under `locate N`) sits directly on that workflow.
+
+**7. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
 
 General calibration from the user: sequoia is older than their newer codebases and less polished ("I knew a lot less — and the standard was less evolved — when I first started"), but very well tested and proven robust in deployment. Register for review feedback: modernization suggestions are welcome but should acknowledge the roadmap above; robustness complaints need strong evidence.

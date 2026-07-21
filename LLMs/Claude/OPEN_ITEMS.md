@@ -1,6 +1,6 @@
 # Open items — consolidated index
 
-**Last updated:** 2026-07-21 (added performance-testing PS/P findings + replacement design; earlier same day: allocator-machinery AS/AT findings, stringy-test re-enablement R1, `check_exception_thrown` postprocessor findings E1–E3).
+**Last updated:** 2026-07-21 (added latch-based race-amplification side-project + `-locate` workflow note elevating Tier-1 finding #4; performance-testing PS/P findings + replacement design; earlier same day: allocator-machinery AS/AT findings, stringy-test re-enablement R1, `check_exception_thrown` postprocessor findings E1–E3).
 **What this is:** the single, version-controlled index of every open actionable item for the project, consolidated across the review documents and memory files. Detail lives in the linked sources; this file is the map. **Maintenance contract:** any session that resolves, re-scopes, or adds an item should update this file (and the linked source) in the same breath.
 
 Detailed sources (navigational index: `reviews/README.md`):
@@ -50,6 +50,7 @@ Detailed sources (navigational index: `reviews/README.md`):
 ## 4. Standing asks & side-projects
 
 - **Graph-based-testing opportunities** (user's standing request, 2026-07-17): shader-program uniform state (most valuable *before* the DSA migration), binding-cache × resource-lifetime serial scenarios, buffer/texture state (weaker). (`memory/project_graph_based_testing_opportunities.md`)
+- **Latch-based race-amplification → sequoia abstraction** (tentative, user 2026-07-21): generalize avocet's `Tests/OpenGL/Resources/ResourceTrackingUtilities.cpp` entry/exit-latch pattern (forces N-way overlap of the critical phase; lecture-demoed — greatly increased data-race sensitivity, at least with MSVC, plausibly via IDL debug bookkeeping enlarging the racy surface and asserting loudly). Design notes recorded (roadmap memory item 6): phases ⇒ `std::barrier` over latch pairs; preserve the `no_latch` same-body degeneracy; home = TestFramework; FN-mode evidence for the amplifier needs a TSan CI leg (racy fixtures defeat versioned-output pinning) — ties to the TSan gap + parked CI roadmap. Composes multiplicatively with `-locate`, which the user values and lecture-deploys — **raises the priority of 2026-07-16 Tier-1 finding #4** (sandbox pass aggregation always empty under `locate N`: stably-passing tests never leave `.failures`), which sits directly on that workflow.
 - **`to_array` migration to sequoia** — gains tests there; don't test/flag it here meanwhile.
 - **Vulkan**: periodic lecture-branch merges into `vulkan-experiment` (recipe in `memory/project_vulkan_branch_merges.md`); Demo run is the acceptance test.
 - **Windows ASan DLL workflow fix** — sequoia build system, handled offline by the user.

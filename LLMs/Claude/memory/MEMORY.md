@@ -7,6 +7,7 @@
 - [Check production sites of multi-valued types](feedback_check_production_sites.md) — don't judge enum value-set from consumers alone
 - [Defensive throws are intentional tripwires](feedback_defensive_throws.md) — don't flag "should never happen" throws as smells
 - [Teaching project with accompanying lectures](user_teaching_project.md) — weight pedagogical purpose alongside technical merit
+- [User's former field: theoretical physics — Exact Renormalization Group](user_physics_background.md) — physics framings are load-bearing; RG analogies are shared vocabulary; direct statistical critique welcome
 - [Read concept-constraint qualifiers carefully](feedback_read_constraint_qualifiers.md) — `invocable<From>` vs `invocable<From&>` is load-bearing
 - [Planned lecture topics overlap with my "deeper improvements"](project_planned_lecture_topics.md) — harmonization sub-series completed with L50 (2026-07-15); remaining topics still roadmap
 - [Tests are real customers of API generality](feedback_tests_are_customers.md) — grep Tests/ before claiming plumbing is unused
@@ -25,10 +26,11 @@
 - [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
 - [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
 - [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
+- [Docs are written as final QA before a big release](feedback_docs_as_final_qa.md) — doc gaps are scheduled work; raise and record them as documentation-phase input, not defects
 - [Include discipline is pragmatic, not strict IWYU](feedback_include_philosophy.md) — transitive via stable project headers is fine; only add includes with plausible breakage
 - [Memory→skill promotion check](feedback_memory_skill_promotion.md) — when writing/extending a recipe-like memory, judge whether it should become a skill; propose, don't convert unilaterally
 - [Sequoia overview hub](sequoia/reference_overview.md) — user's own long-lived library; testing framework + utilities; production dependency too; links the detailed sequoia memories
-- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths (resolves T7); spaces/physics in flux
+- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths (resolves T7); tentative: latch/barrier race-amplification harness for TestFramework; spaces/physics in flux
 - [Sequoia test-framework core](sequoia/reference_test_framework_core.md) — runner, suite trees, prune/dependency analysis, creation CLI, concurrency, output layout
 - [Sequoia checks & semantics](sequoia/reference_checks_semantics.md) — equality/equivalence tag dispatch, value_tester, check_semantics, allocation testing, test modes
 - [Sequoia core utilities](sequoia/reference_core_utilities.md) — object::factory + suite/granular_filter, Meta/TypeAlgorithms, partitioned data, concurrency models, bitmask enums
@@ -38,7 +40,8 @@
 - [Exception-message stability in versioned files](project_exception_message_stability.md) — throw-site generic paths + sequoia default postprocessor root-strip + platform forks; no custom postprocessor in repo
 - [summary_discriminator vs output_discriminator](project_discriminator_axes.md) — independent axes: which checks run (selectivity→summary) vs what laid-down text says (specificity→output)
 - [Avocet's test-materials usage](project_test_materials_usage.md) — flat consumption-only mode so far; no Prediction/.seqpat yet; headroom for generate-compare tests
-- [Sequoia full review 2026-07-16](sequoia/project_review_2026_07.md) — report at LLMs/Claude/reviews/sequoia_review_2026-07-16.md; check before re-raising sequoia findings
+- [Sequoia full review 2026-07-16](sequoia/project_review_2026_07.md) — report at LLMs/Claude/reviews/sequoia_review_2026-07-16.md; also links the 2026-07-21 allocators review (AS/AT findings); check before re-raising sequoia findings
+- [Sequoia allocation testing found libstdc++ PR 116641](sequoia/reference_allocation_bug_pr116641.md) — std::string move assignment wrongly consulted POCCA; fidelity benchmark for the allocation checkers
 - [Graph-based testing is the user's load-bearing technique](sequoia/user_graph_based_testing_conviction.md) — personal conviction, held with humility; engage critically, don't flatter
 - [Graph-based-testing recipe — be fluent in writing these](sequoia/feedback_graph_based_testing.md) — transition_checker construction, CheckFn menu, gotchas, standalone-compile trick
 - [Look for graph-based-testing opportunities in avocet](project_graph_based_testing_opportunities.md) — one current site; candidates: uniform state (pre-DSA pin), binding-cache×lifetime, buffers/textures
