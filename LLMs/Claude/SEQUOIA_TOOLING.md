@@ -1,6 +1,6 @@
 # Sequoia tooling programme — consolidated summary
 
-**Last updated:** 2026-07-21 (added §5, CI output-drift detection).
+**Last updated:** 2026-07-21 (added §6, sanitizer axis + prune workflow + dependency-analyser contract; earlier same day: §5, CI output-drift detection).
 **What this is:** the single document summarizing all sequoia-side *build/test tooling* work discussed to date — everything here lands in the sequoia repo (`build_system/CMakePresetsCommon.json`, `scripts/generate_coverage_report.sh`, or the test framework itself), with only thin hooks on the avocet side. Detail lives in the linked memory files (`memory/sequoia/`); actionable status is tracked in `OPEN_ITEMS.md`. Framework-evolution plans (reflection-based registration, modules/prune, test-creation CLI, per-class materials paths) are deliberately out of scope here — see `memory/sequoia/project_roadmap.md`.
 
 ## 1. Coverage-pipeline fixes — done locally, awaiting upstream
@@ -56,10 +56,20 @@ Mechanism ladder: `git diff --exit-code -- output/` (blunt baseline) → workflo
 
 Detail: `memory/sequoia/project_ci_output_drift.md`.
 
-## 6. Smaller / adjacent
+## 6. Sanitizer axis + prune workflow + dependency-analyser contract — designed 2026-07-21, not started
+
+Organizing principle: **each axis lives at the latest pipeline stage it affects** — sanitizers at configure (codegen), prune at the build-target stage (same binary). Only configure-stage axes multiply build trees; the feared combinatorial explosion mostly dissolves under this rule.
+
+- **Sanitizers**: generalize the existing env-slot pattern (`base-unix` already splices `$env{CXX_ASAN_FLAGS}`...) with `CXX_UBSAN_FLAGS`/`CXX_TSAN_FLAGS` slots + per-sanitizer environment-only mixins. One slot per sanitizer is load-bearing: preset multiple inheritance unions disjoint env maps, so mixins compose (`inherits: [toolchain, base-asan-unix, base-ubsan-unix]`). Compatibility matrix kills the space: ASan⊥TSan (compiler-enforced), MSVC = ASan only, UBSan composes with all ⇒ blessed legs are **asan+ubsan** and **tsan(+ubsan)**, Linux/Mac only. UBSan must carry `-fno-sanitize-recover=undefined` (default report-and-continue is silent here — stderr isn't versioned); TSan is already loud (non-zero exit fails the `run` target). Ad-hoc combos via `$env{}` process-environment fallback, no preset needed (caveat: lands in the plain preset's tree). The TSan leg supplies the FN-mode evidence channel the race-amplification harness needs.
+- **Prune**: workflows have no test step — tests run via the `run` custom target. A configure-level `EXEC_ARGS=prune` preset is doubly self-defeating (presetName-keyed binaryDir → fresh tree → full rebuild *and* empty ledger, since the prune ledger is per-build-dir). Right shape: a second custom target `prune` beside `run` in `sequoia_set_run_target`, plus per-toolchain build presets + workflows reusing existing configure presets. Composes freely with the sanitizer axis (per-tree ledgers). Cautions: the 2026-07-16 **prune quartet** (silent under-selection) is elevated by blessing this workflow — fix before trusting it; confirm fresh-tree = run-everything; `${EXEC_ARGS}` needs semicolon-separated args (or `separate_arguments()`); `exectuable` typo at `Utilities.cmake:70`.
+- **Dependency-analyser contract** (user TODOs): (1) warn when a cpp is not dependent on its associated same-stem hpp — turns the association heuristic into a checked contract (a non-including cpp signals spurious pairing or a layout the analyser can't reason about); (2) document the hitherto-unwritten client precondition: *definitions for declarations in an hpp live in that hpp or the same-stem cpp* (this licenses the furnishing step). Extension families already `{.h,.hpp,.hxx} × {.cpp,.cc,.cxx}` (`DependencyAnalyzer.cpp:77,84`); generalizes under the modules migration (roadmap item 2).
+
+Detail: `memory/sequoia/project_sanitizer_prune_workflows.md`.
+
+## 7. Smaller / adjacent
 
 - **Windows ASan DLL workflow fix** — sequoia build system; handled offline by the user.
 
 ## Sequencing
 
-Items 1–3 share files (`CMakePresetsCommon.json`, `generate_coverage_report.sh`): natural order is upstream the pipeline fixes first, then the Mac coverage trio, then the Windows column. Item 4 is independent of the coverage work but shares the upstream vehicle. Item 5's runner-side piece is independent code but its Windows leg sequences after the E4 binary-write fix; its Actions leg belongs to the parked CI-roadmap item.
+Items 1–3 share files (`CMakePresetsCommon.json`, `generate_coverage_report.sh`): natural order is upstream the pipeline fixes first, then the Mac coverage trio, then the Windows column. Item 4 is independent of the coverage work but shares the upstream vehicle. Item 5's runner-side piece is independent code but its Windows leg sequences after the E4 binary-write fix; its Actions leg belongs to the parked CI-roadmap item. Item 6's sanitizer half shares `CMakePresetsCommon.json` with items 1–3 (same upstream vehicle); its prune half wants the prune quartet fixed first, and the analyser warning naturally rides along with that fix (same code region as Tier-1 #2).
