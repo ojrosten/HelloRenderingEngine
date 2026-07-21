@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: f58cc83f-8059-4d66-a2ba-ed07ba4821c1
-  modified: 2026-07-21T11:01:36.852Z
+  modified: 2026-07-21T11:09:45.476Z
 ---
 
 Verified against source 2026-07-21. The two per-test discriminator hooks solve *different* platform-variation problems; conflating them is the natural mistake.
@@ -25,4 +25,4 @@ Verified against source 2026-07-21. The two per-test discriminator hooks solve *
 
 **Rule of thumb when adding a graphics test**: ask separately (a) does the *set of checks that execute* depend on OS/renderer/GL-version? → selectivity bits; (b) does any *laid-down text* (FP/FN output, caught exceptions) depend on them? → specificity bits. Default both to `none`; widen on demonstrated need (same philosophy as [[feedback-minimal-warning-suppression]] — specialization is a last resort).
 
-**Gap noticed 2026-07-21**: nothing garbage-collects versioned output when a test is deleted. Automatic GC is on the user's sequoia TODO list (finding E4 in the 2026-07-21 review addendum). The 15 orphans then present (`InfiniteLoopFreeTest`, `VertexBufferObject*`) were manually removed the same day; a re-sweep (map each committed `output/TestSummaries` + `output/DiagnosticsOutput` filename back to a `Tests/**` source stem) is worth repeating after test deletions/renames.
+**Gap noticed 2026-07-21**: nothing garbage-collects versioned output when a test is deleted. Automatic GC is on the user's sequoia TODO list (finding E3 in the 2026-07-21 review addendum). The 15 orphans then present (`InfiniteLoopFreeTest`, `VertexBufferObject*`) were manually removed the same day; a re-sweep (map each committed `output/TestSummaries` + `output/DiagnosticsOutput` filename back to a `Tests/**` source stem) is worth repeating after test deletions/renames.
