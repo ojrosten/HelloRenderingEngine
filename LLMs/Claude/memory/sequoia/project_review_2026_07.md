@@ -1,11 +1,18 @@
 ---
 name: sequoia-review-2026-07
 description: Full sequoia review (2026-07-16) — findings live in LLMs/Claude/reviews/sequoia_review_2026-07-16.md; check it before re-raising sequoia issues
-metadata:
+metadata: 
+  node_type: memory
   type: project
+  originSessionId: 4063fb5f-9f73-474e-943f-1680bec10281
+  modified: 2026-07-21T13:20:40.545Z
 ---
 
-A full strengths/weaknesses/gaps review of sequoia was performed 2026-07-16 (six parallel review agents, several findings verified by compiled repros). The complete report is version-controlled at `LLMs/Claude/reviews/sequoia_review_2026-07-16.md` in the HelloRenderingEngine repo. A 2026-07-17 addendum in the same file covers graph-based testing (`StateTransitionUtilities.hpp` — slated for rename to something like graph-based-testing): findings A1–A7 plus avocet-side observations on `CapabilityManagerFreeTest`.
+A full strengths/weaknesses/gaps review of sequoia was performed 2026-07-16 (six parallel review agents, several findings verified by compiled repros). The complete report is version-controlled at `LLMs/Claude/reviews/sequoia_review_2026-07-16.md` in the HelloRenderingEngine repo. A 2026-07-17 addendum in the same file covers graph-based testing (`StateTransitionUtilities.hpp` — slated for rename to something like graph-based-testing): findings A1–A7 plus avocet-side observations on `CapabilityManagerFreeTest`. A 2026-07-20 addendum covers the test-materials machinery ([[sequoia-test-materials]]): findings M1–M4, a correction to the earlier `copy_special_files_back` nit (nested seqpats *are* preserved via the merge recursion), and confirmation the `MaterialsUpdater.cpp:146` past-the-end deref is still present in the vendored copy. A same-day part-II addendum (three-agent critical review: DX/architecture/code-scrutiny, probe-verified) adds T1–T14 — headline: `noexcept` update pass → `std::terminate` (T1), file→dir `soft_update` throw (T2), text-mode `read_to_string` false-passing binary materials (T3), tester/updater tree-walk divergence + comparer/updater policy asymmetry (T5/T6, one engine-refactor cluster with T14), shared-staging parallel race (T7), seqpat deletion-vs-placeholder & multiline gaps (T11), stale §sec_malleable doc (T12).
+
+A separate dedicated review (2026-07-21, two agents, key claims orchestrator-verified) covers the allocator machinery — `assignment_helper` (AS1–AS7) and the allocation-testing framework (AT1–AT7) — at `LLMs/Claude/reviews/sequoia_allocators_review_2026-07-21.md`. Headline: AS1 dead `constexpr` on `assign` (plumbing not constexpr; blocks compile-time static-graph copy assignment; **user-prioritized fix**), AT1 dead dealloc ledger, AT2 implicit rebinding-container boundary, AT3 IFNDR off-MSVC `iterator_debug_level()`. Both halves' core mechanisms verified correct; see also [[sequoia-allocation-testing-found-pr116641]]. User intends to act on many/all; indexed in `LLMs/Claude/OPEN_ITEMS.md` §4.
+
+A second same-day dedicated review (coder + mathematician agents) covers the **performance-testing support** — `LLMs/Claude/reviews/sequoia_performance_review_2026-07-21.md` (PS1–PS6 statistical, P1–P7 code). Context: user considering replacing the physics-inspired acceptance heuristic with hypothesis testing. Headline: heuristic is "one plug-in quantity short of a real test"; recommendation = paired log-ratios + calibrated SE band + keep the retry loop (it's already an uncalibrated group-sequential design); **do not import TOST** (would invert the burden of proof). A navigational `reviews/README.md` now indexes all review files and finding-ID series.
 
 **Why:** avoids re-deriving or re-raising known findings; the report is the reference for "was this already flagged?".
 

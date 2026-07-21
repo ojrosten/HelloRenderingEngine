@@ -6,7 +6,7 @@ This file holds the durable project-knowledge — orientation, conventions, and 
 
 ## What this project is
 
-HelloRenderingEngine is a **teaching project** with accompanying ~1-hour lectures (50 delivered as of 2026-07-15). Each lecture is roughly 40 minutes presentation + 20 minutes live coding, with some infrastructure prepared off-line. The course is on **practical software engineering**, taught against a modern-C++ + OpenGL backdrop — cross-platform compromise, fallback design, capability gating, driver-bug workarounds, dependency management, and test infrastructure are *content*, not obstacles.
+HelloRenderingEngine is a **teaching project** with accompanying ~1-hour lectures (51 delivered as of 2026-07-21). Each lecture is roughly 40 minutes presentation + 20 minutes live coding, with some infrastructure prepared off-line. The course is on **practical software engineering**, taught against a modern-C++ + OpenGL backdrop — cross-platform compromise, fallback design, capability gating, driver-bug workarounds, dependency management, and test infrastructure are *content*, not obstacles.
 
 Consequences worth keeping in mind:
 

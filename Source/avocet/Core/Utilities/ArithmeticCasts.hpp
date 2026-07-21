@@ -12,6 +12,7 @@
 #include <format>
 #include <limits>
 #include <stdexcept>
+#include <utility>
 
 namespace avocet {
     template<std::integral To, std::integral From>
@@ -19,23 +20,17 @@ namespace avocet {
         sequoia::initializable_from<To, From>
     };
 
-    /// If val is in the the range of the return type perform a
+    /// If val is in the range of the return type perform a
     /// static_cast; else throw a std::domain_error
     template<std::integral To, std::integral From>
     [[nodiscard]]
     constexpr To checked_conversion_to(From val) noexcept(has_lossless_conversion_v<To, From>)
     {
         if constexpr(not has_lossless_conversion_v<To, From>) {
-            if(constexpr auto maxVal{std::numeric_limits<To>::max()}; val > maxVal)
-                throw std::domain_error{std::format("Value {} exceeds max value {} of target type", val, maxVal)};
-
-            if constexpr(std::is_signed_v<From>) {
-                if constexpr(std::is_signed_v<To>) {
-                    if(constexpr auto lowestVal{std::numeric_limits<To>::lowest()}; val < lowestVal)
-                        throw std::domain_error{std::format("Value {} lower than lowest value {} of target type", val, lowestVal)};
-                }
-                else if(val < 0)
-                    throw std::domain_error{std::format("Value {} lower than lowest value {} of target type", val, 0)};
+            if(not std::in_range<To>(val)) {
+                constexpr auto lowestVal{std::numeric_limits<To>::lowest()};
+                constexpr auto maxVal{std::numeric_limits<To>::max()};
+                throw std::domain_error{std::format("Value {} is outside the range [{}, {}] of the target type", val, lowestVal, maxVal)};
             }
         }
 

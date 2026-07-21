@@ -1,8 +1,11 @@
 ---
 name: sequoia-roadmap
-description: The user's stated plans for sequoia — reflection-based test registration via the factory, modules migration (forcing prune overhaul), test-creation CLI refresh
-metadata:
+description: "The user's stated plans for sequoia — reflection-based test registration via the factory, modules migration (forcing prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths"
+metadata: 
+  node_type: memory
   type: project
+  originSessionId: 4063fb5f-9f73-474e-943f-1680bec10281
+  modified: 2026-07-21T13:29:00.147Z
 ---
 
 The user's stated evolution plans for sequoia (told to me 2026-07-16), with code-level grounding. Sequoia is the user's own long-lived library — suggestions in these areas should align with, not fight, these plans.
@@ -17,8 +20,13 @@ The user's stated evolution plans for sequoia (told to me 2026-07-16), with code
 
 **3. Refresh the test-creation command-line options** — the user regularly uses patterns the current options don't support well. Grounding: fixed six-species `create` matrix; wiring by textual pattern-matching edits of main cpp / common-includes / CMakeLists (`FileEditors.cpp`, breaks on reformatting); `?`-placeholder templates in `aux_files/`; ad-hoc string parsing of templated qualified names; no test removal/renaming. (Which specific unsupported patterns the user hits most is worth asking when this comes up.)
 
-**4. `sort_nodes` has horrendous asymptotic behaviour** — acknowledged by the user (2026-07-17), on their TO-DO list to fix. Don't re-flag the complexity as a discovery; performance-sensitive suggestions built on node sorting should note the pending fix. (Related but distinct: the 2026-07-16 review's Tier 3 question about tree `prune` assuming `add_node`-built index ordering, which `sort_nodes` can violate.)
+**4. Materials and diagnostics paths to become truly test-specific** (told to me 2026-07-20): the materials directory will gain the actual test **class name** as a subdirectory, keying materials per-test rather than per-source-file; `DiagnosticsOutput` filenames get the same treatment since two test classes in one source file can in principle clash there too (today both derive from the source filename — `IndividualTestPaths.cpp`). Likely to ride the reflection-based improvements of item 1 (reflection supplies the class name), though it doesn't strictly require them.
+**How to apply:** this is the user's intended resolution of review finding T7 (shared staged WorkingCopy × parallel-by-default race) — per-class staging removes the sharing at the root; don't propose serialization workarounds as the long-term fix. When it lands, the path-mirroring convention in [[sequoia-test-materials]] and [[avocet-test-materials-usage]] changes (extra class-name level) — update those memories then. Open design question flagged 2026-07-20: strictly per-class materials means deliberately-shared read-only inputs across classes in one file need either duplication or an explicit shared location.
 
-**5. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
+**5. `sort_nodes` has horrendous asymptotic behaviour** — acknowledged by the user (2026-07-17), on their TO-DO list to fix. Don't re-flag the complexity as a discovery; performance-sensitive suggestions built on node sorting should note the pending fix. (Related but distinct: the 2026-07-16 review's Tier 3 question about tree `prune` assuming `add_node`-built index ordering, which `sort_nodes` can violate.)
+
+**6. [Tentative, 2026-07-21] Abstract the latch-based race-amplification pattern into sequoia.** The user "might actually try" to generalize what avocet's `Tests/OpenGL/Resources/ResourceTrackingUtilities.cpp` does with a pair of `std::latch`es (entry latch after resource creation + exit latch after utilization ⇒ guaranteed N-way overlap of the critical phase across threads; the `opt_latch_ref`/`no_latch` optional-participation pattern lets the same task body run latched and free-running). Demonstrated live in a lecture: greatly increased data-race sensitivity, "at least with MSVC" (plausible mechanism: MSVC debug/IDL bookkeeping both enlarges the racy surface and asserts loudly — same machinery the allocation checkers accommodate). Design observations recorded 2026-07-21: general shape is *phases* ⇒ `std::barrier` over latch pairs; preserve the no-op-synchronizer degeneracy; belongs in TestFramework (test choreography, not a concurrency model); FN-mode evidence for the amplifier probably requires a TSan CI leg (deliberately-racy fixtures produce nondeterministic text that versioned outputs can't pin) — ties to the TSan/CI process gap from the 2026-07-16 review. Composes multiplicatively with `-locate` (each rep becomes a high-probability race trial). The user values `-locate` highly and deployed it in lectures — note the Tier-1 finding #4 (sandbox pass aggregation always empty under `locate N`) sits directly on that workflow.
+
+**7. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
 
 General calibration from the user: sequoia is older than their newer codebases and less polished ("I knew a lot less — and the standard was less evolved — when I first started"), but very well tested and proven robust in deployment. Register for review feedback: modernization suggestions are welcome but should acknowledge the roadmap above; robustness complaints need strong evidence.

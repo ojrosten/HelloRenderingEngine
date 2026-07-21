@@ -7,10 +7,12 @@ Per-session memory and supporting material for working with Claude Code on this 
 ```
 LLMs/Claude/
 ├── README.md        ← this file
+├── OPEN_ITEMS.md    ← consolidated index of every open actionable item (living document)
 ├── TESTIMONIAL.md   ← a testimonial about the maintainer, written by Claude (July 2026)
 ├── memory/          ← per-session memory files (source of truth, version-controlled)
 │   ├── MEMORY.md    ← index, auto-loaded by Claude Code's memory system
 │   └── *.md         ← individual memory entries (recalled selectively by description)
+├── reviews/         ← durable review artifacts (full-codebase, sequoia, coverage analyses)
 └── sync.sh          ← copies memory/ into the per-machine auto-memory directory
 ```
 
@@ -41,7 +43,7 @@ The `<project-slug>` is derived from the absolute path of this repository on tha
    ```bash
    ./LLMs/Claude/sync.sh "<absolute-path-from-step-2>"
    ```
-   This copies every `*.md` from `LLMs/Claude/memory/` into the target directory.
+   This copies every `*.md` from `LLMs/Claude/memory/` into the target directory. With `--delete` it also removes target files that no longer exist in the repo — useful after renaming, moving, or deleting memory files repo-side, but **destroys any session-written memories not yet copied back**, so only use it when the repo is the up-to-date side.
 4. Future Claude Code sessions on this machine will recall memory files selectively. The auto-loaded index (`MEMORY.md`) confirms the setup worked.
 
 ## Updating memory
