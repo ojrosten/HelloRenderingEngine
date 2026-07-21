@@ -2,7 +2,7 @@ Tests/OpenGL/Utilities/MessagesFreeTest.cpp, Line 26
 
 Expected Exception Type:
 [std::domain_error]
-Value -1 lower than lowest value 0 of target type
+Value -1 is outside the range [0, 18446744073709551615] of the target type
 
 =======================================
 
