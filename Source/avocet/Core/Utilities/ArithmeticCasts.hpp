@@ -20,7 +20,7 @@ namespace avocet {
         sequoia::initializable_from<To, From>
     };
 
-    /// If val is in the the range of the return type perform a
+    /// If val is in the range of the return type perform a
     /// static_cast; else throw a std::domain_error
     template<std::integral To, std::integral From>
     [[nodiscard]]
@@ -31,7 +31,7 @@ namespace avocet {
                 constexpr auto lowestVal{std::numeric_limits<To>::lowest()};
                 constexpr auto maxVal{std::numeric_limits<To>::max()};
                 throw std::domain_error{std::format("Value {} is outside the range [{}, {}] of the target type", val, lowestVal, maxVal)};
-	    }
+            }
         }
 
         return static_cast<To>(val);
