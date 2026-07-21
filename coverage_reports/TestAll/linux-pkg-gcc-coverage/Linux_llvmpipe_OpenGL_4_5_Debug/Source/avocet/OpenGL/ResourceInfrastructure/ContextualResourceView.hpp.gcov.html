@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-13 20:52:56</td>
+            <td class="headerValue">2026-07-18 18:47:54</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryHi">100.0&nbsp;%</td>
@@ -79,16 +79,16 @@
 <span id="L17"><span class="lineNum">      17</span>              :         const Context* m_Context{};</span>
 <span id="L18"><span class="lineNum">      18</span>              :         const resource_handle* m_Handle{};</span>
 <span id="L19"><span class="lineNum">      19</span>              :     public:</span>
-<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">        3409 :         generic_contextual_resource_view(const Context&amp; ctx, const resource_handle&amp; crv)</span></span>
-<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">        3409 :             : m_Context{&amp;ctx}</span></span>
-<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">        3409 :             , m_Handle{&amp;crv}</span></span>
-<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">        3409 :         {}</span></span>
+<span id="L20"><span class="lineNum">      20</span> <span class="tlaGNC">        3239 :         generic_contextual_resource_view(const Context&amp; ctx, const resource_handle&amp; crv)</span></span>
+<span id="L21"><span class="lineNum">      21</span> <span class="tlaGNC">        3239 :             : m_Context{&amp;ctx}</span></span>
+<span id="L22"><span class="lineNum">      22</span> <span class="tlaGNC">        3239 :             , m_Handle{&amp;crv}</span></span>
+<span id="L23"><span class="lineNum">      23</span> <span class="tlaGNC">        3239 :         {}</span></span>
 <span id="L24"><span class="lineNum">      24</span>              : </span>
 <span id="L25"><span class="lineNum">      25</span>              :         [[nodiscard]]</span>
-<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">        4250 :         const Context&amp; context() const noexcept { return *m_Context; }</span></span>
+<span id="L26"><span class="lineNum">      26</span> <span class="tlaGNC">        4080 :         const Context&amp; context() const noexcept { return *m_Context; }</span></span>
 <span id="L27"><span class="lineNum">      27</span>              : </span>
 <span id="L28"><span class="lineNum">      28</span>              :         [[nodiscard]]</span>
-<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">        4197 :         const resource_handle&amp; handle() const noexcept { return *m_Handle; }</span></span>
+<span id="L29"><span class="lineNum">      29</span> <span class="tlaGNC">        4390 :         const resource_handle&amp; handle() const noexcept { return *m_Handle; }</span></span>
 <span id="L30"><span class="lineNum">      30</span>              : </span>
 <span id="L31"><span class="lineNum">      31</span>              :         template&lt;class OtherContext&gt;</span>
 <span id="L32"><span class="lineNum">      32</span>              :             requires std::derived_from&lt;Context, OtherContext&gt;</span>
@@ -106,7 +106,7 @@
 <span id="L44"><span class="lineNum">      44</span>              : </span>
 <span id="L45"><span class="lineNum">      45</span>              :     template&lt;std::derived_from&lt;context_base&gt; Context&gt;</span>
 <span id="L46"><span class="lineNum">      46</span>              :     [[nodiscard]]</span>
-<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">        2057 :     GLuint get_index(generic_contextual_resource_view&lt;Context&gt; crv) { return crv.handle().index(); }</span></span>
+<span id="L47"><span class="lineNum">      47</span> <span class="tlaGNC">        2058 :     GLuint get_index(generic_contextual_resource_view&lt;Context&gt; crv) { return crv.handle().index(); }</span></span>
 <span id="L48"><span class="lineNum">      48</span>              : }</span>
         </pre>
               </td>

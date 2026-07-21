@@ -1,6 +1,6 @@
 ---
 name: sequoia-roadmap
-description: The user's stated plans for sequoia — reflection-based test registration via the factory, modules migration (forcing prune overhaul), test-creation CLI refresh
+description: The user's stated plans for sequoia — reflection-based test registration via the factory, modules migration (forcing prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths
 metadata:
   type: project
 ---
@@ -17,8 +17,11 @@ The user's stated evolution plans for sequoia (told to me 2026-07-16), with code
 
 **3. Refresh the test-creation command-line options** — the user regularly uses patterns the current options don't support well. Grounding: fixed six-species `create` matrix; wiring by textual pattern-matching edits of main cpp / common-includes / CMakeLists (`FileEditors.cpp`, breaks on reformatting); `?`-placeholder templates in `aux_files/`; ad-hoc string parsing of templated qualified names; no test removal/renaming. (Which specific unsupported patterns the user hits most is worth asking when this comes up.)
 
-**4. `sort_nodes` has horrendous asymptotic behaviour** — acknowledged by the user (2026-07-17), on their TO-DO list to fix. Don't re-flag the complexity as a discovery; performance-sensitive suggestions built on node sorting should note the pending fix. (Related but distinct: the 2026-07-16 review's Tier 3 question about tree `prune` assuming `add_node`-built index ordering, which `sort_nodes` can violate.)
+**4. Materials and diagnostics paths to become truly test-specific** (told to me 2026-07-20): the materials directory will gain the actual test **class name** as a subdirectory, keying materials per-test rather than per-source-file; `DiagnosticsOutput` filenames get the same treatment since two test classes in one source file can in principle clash there too (today both derive from the source filename — `IndividualTestPaths.cpp`). Likely to ride the reflection-based improvements of item 1 (reflection supplies the class name), though it doesn't strictly require them.
+**How to apply:** this is the user's intended resolution of review finding T7 (shared staged WorkingCopy × parallel-by-default race) — per-class staging removes the sharing at the root; don't propose serialization workarounds as the long-term fix. When it lands, the path-mirroring convention in [[sequoia-test-materials]] and [[avocet-test-materials-usage]] changes (extra class-name level) — update those memories then. Open design question flagged 2026-07-20: strictly per-class materials means deliberately-shared read-only inputs across classes in one file need either duplication or an explicit shared location.
 
-**5. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
+**5. `sort_nodes` has horrendous asymptotic behaviour** — acknowledged by the user (2026-07-17), on their TO-DO list to fix. Don't re-flag the complexity as a discovery; performance-sensitive suggestions built on node sorting should note the pending fix. (Related but distinct: the 2026-07-16 review's Tier 3 question about tree `prune` assuming `add_node`-built index ordering, which `sort_nodes` can violate.)
+
+**6. Maths/spaces and Physics are in very considerable flux** — capture intent, not signatures; don't build on fine details of `Spaces.hpp`/`PhysicalValues.hpp`. See [[sequoia-maths-graphs-physics]].
 
 General calibration from the user: sequoia is older than their newer codebases and less polished ("I knew a lot less — and the standard was less evolved — when I first started"), but very well tested and proven robust in deployment. Register for review feedback: modernization suggestions are welcome but should acknowledge the roadmap above; robustness complaints need strong evidence.

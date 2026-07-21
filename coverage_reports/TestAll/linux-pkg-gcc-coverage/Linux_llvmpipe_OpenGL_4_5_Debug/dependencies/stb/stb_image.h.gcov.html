@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Test Date:</td>
-            <td class="headerValue">2026-07-13 20:52:56</td>
+            <td class="headerValue">2026-07-18 18:47:54</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntryLo">30.9&nbsp;%</td>
@@ -1281,19 +1281,19 @@
 <span id="L1219"><span class="lineNum">    1219</span> <span class="tlaUNC">           0 :    return enlarged;</span></span>
 <span id="L1220"><span class="lineNum">    1220</span>              : }</span>
 <span id="L1221"><span class="lineNum">    1221</span>              : </span>
-<span id="L1222"><span class="lineNum">    1222</span> <span class="tlaGNC">           4 : static void stbi__vertical_flip(void *image, int w, int h, int bytes_per_pixel)</span></span>
+<span id="L1222"><span class="lineNum">    1222</span> <span class="tlaGNC">           5 : static void stbi__vertical_flip(void *image, int w, int h, int bytes_per_pixel)</span></span>
 <span id="L1223"><span class="lineNum">    1223</span>              : {</span>
 <span id="L1224"><span class="lineNum">    1224</span>              :    int row;</span>
-<span id="L1225"><span class="lineNum">    1225</span> <span class="tlaGNC">           4 :    size_t bytes_per_row = (size_t)w * bytes_per_pixel;</span></span>
+<span id="L1225"><span class="lineNum">    1225</span> <span class="tlaGNC">           5 :    size_t bytes_per_row = (size_t)w * bytes_per_pixel;</span></span>
 <span id="L1226"><span class="lineNum">    1226</span>              :    stbi_uc temp[2048];</span>
-<span id="L1227"><span class="lineNum">    1227</span> <span class="tlaGNC">           4 :    stbi_uc *bytes = (stbi_uc *)image;</span></span>
+<span id="L1227"><span class="lineNum">    1227</span> <span class="tlaGNC">           5 :    stbi_uc *bytes = (stbi_uc *)image;</span></span>
 <span id="L1228"><span class="lineNum">    1228</span>              : </span>
-<span id="L1229"><span class="lineNum">    1229</span> <span class="tlaGNC">           8 :    for (row = 0; row &lt; (h&gt;&gt;1); row++) {</span></span>
-<span id="L1230"><span class="lineNum">    1230</span> <span class="tlaGNC">           4 :       stbi_uc *row0 = bytes + row*bytes_per_row;</span></span>
-<span id="L1231"><span class="lineNum">    1231</span> <span class="tlaGNC">           4 :       stbi_uc *row1 = bytes + (h - row - 1)*bytes_per_row;</span></span>
+<span id="L1229"><span class="lineNum">    1229</span> <span class="tlaGNC">          10 :    for (row = 0; row &lt; (h&gt;&gt;1); row++) {</span></span>
+<span id="L1230"><span class="lineNum">    1230</span> <span class="tlaGNC">           5 :       stbi_uc *row0 = bytes + row*bytes_per_row;</span></span>
+<span id="L1231"><span class="lineNum">    1231</span> <span class="tlaGNC">           5 :       stbi_uc *row1 = bytes + (h - row - 1)*bytes_per_row;</span></span>
 <span id="L1232"><span class="lineNum">    1232</span>              :       // swap row0 with row1</span>
-<span id="L1233"><span class="lineNum">    1233</span> <span class="tlaGNC">           4 :       size_t bytes_left = bytes_per_row;</span></span>
-<span id="L1234"><span class="lineNum">    1234</span> <span class="tlaGNC">           9 :       while (bytes_left) {</span></span>
+<span id="L1233"><span class="lineNum">    1233</span> <span class="tlaGNC">           5 :       size_t bytes_left = bytes_per_row;</span></span>
+<span id="L1234"><span class="lineNum">    1234</span> <span class="tlaGNC">          10 :       while (bytes_left) {</span></span>
 <span id="L1235"><span class="lineNum">    1235</span> <span class="tlaGNC">           5 :          size_t bytes_copy = (bytes_left &lt; sizeof(temp)) ? bytes_left : sizeof(temp);</span></span>
 <span id="L1236"><span class="lineNum">    1236</span> <span class="tlaGNC">           5 :          memcpy(temp, row0, bytes_copy);</span></span>
 <span id="L1237"><span class="lineNum">    1237</span> <span class="tlaGNC">           5 :          memcpy(row0, row1, bytes_copy);</span></span>
@@ -1303,7 +1303,7 @@
 <span id="L1241"><span class="lineNum">    1241</span> <span class="tlaGNC">           5 :          bytes_left -= bytes_copy;</span></span>
 <span id="L1242"><span class="lineNum">    1242</span>              :       }</span>
 <span id="L1243"><span class="lineNum">    1243</span>              :    }</span>
-<span id="L1244"><span class="lineNum">    1244</span> <span class="tlaGNC">           4 : }</span></span>
+<span id="L1244"><span class="lineNum">    1244</span> <span class="tlaGNC">           5 : }</span></span>
 <span id="L1245"><span class="lineNum">    1245</span>              : </span>
 <span id="L1246"><span class="lineNum">    1246</span>              : #ifndef STBI_NO_GIF</span>
 <span id="L1247"><span class="lineNum">    1247</span> <span class="tlaUNC">           0 : static void stbi__vertical_flip_slices(void *image, int w, int h, int z, int bytes_per_pixel)</span></span>
@@ -1324,22 +1324,22 @@
 <span id="L1262"><span class="lineNum">    1262</span>              :    stbi__result_info ri;</span>
 <span id="L1263"><span class="lineNum">    1263</span> <span class="tlaGNC">          17 :    void *result = stbi__load_main(s, x, y, comp, req_comp, &amp;ri, 8);</span></span>
 <span id="L1264"><span class="lineNum">    1264</span>              : </span>
-<span id="L1265"><span class="lineNum">    1265</span> <span class="tlaGNC">          16 :    if (result == NULL)</span></span>
+<span id="L1265"><span class="lineNum">    1265</span> <span class="tlaGNC">          17 :    if (result == NULL)</span></span>
 <span id="L1266"><span class="lineNum">    1266</span> <span class="tlaGNC">           1 :       return NULL;</span></span>
 <span id="L1267"><span class="lineNum">    1267</span>              : </span>
 <span id="L1268"><span class="lineNum">    1268</span>              :    // it is the responsibility of the loaders to make sure we get either 8 or 16 bit.</span>
-<span id="L1269"><span class="lineNum">    1269</span> <span class="tlaGNC">          15 :    STBI_ASSERT(ri.bits_per_channel == 8 || ri.bits_per_channel == 16);</span></span>
+<span id="L1269"><span class="lineNum">    1269</span> <span class="tlaGNC">          16 :    STBI_ASSERT(ri.bits_per_channel == 8 || ri.bits_per_channel == 16);</span></span>
 <span id="L1270"><span class="lineNum">    1270</span>              : </span>
-<span id="L1271"><span class="lineNum">    1271</span> <span class="tlaGNC">          15 :    if (ri.bits_per_channel != 8) {</span></span>
+<span id="L1271"><span class="lineNum">    1271</span> <span class="tlaGNC">          16 :    if (ri.bits_per_channel != 8) {</span></span>
 <span id="L1272"><span class="lineNum">    1272</span> <span class="tlaUNC">           0 :       result = stbi__convert_16_to_8((stbi__uint16 *) result, *x, *y, req_comp == 0 ? *comp : req_comp);</span></span>
 <span id="L1273"><span class="lineNum">    1273</span> <span class="tlaUNC">           0 :       ri.bits_per_channel = 8;</span></span>
 <span id="L1274"><span class="lineNum">    1274</span>              :    }</span>
 <span id="L1275"><span class="lineNum">    1275</span>              : </span>
 <span id="L1276"><span class="lineNum">    1276</span>              :    // @TODO: move stbi__convert_format to here</span>
 <span id="L1277"><span class="lineNum">    1277</span>              : </span>
-<span id="L1278"><span class="lineNum">    1278</span> <span class="tlaGNC">          15 :    if (stbi__vertically_flip_on_load) {</span></span>
-<span id="L1279"><span class="lineNum">    1279</span> <span class="tlaGNC">           4 :       int channels = req_comp ? req_comp : *comp;</span></span>
-<span id="L1280"><span class="lineNum">    1280</span> <span class="tlaGNC">           4 :       stbi__vertical_flip(result, *x, *y, channels * sizeof(stbi_uc));</span></span>
+<span id="L1278"><span class="lineNum">    1278</span> <span class="tlaGNC">          16 :    if (stbi__vertically_flip_on_load) {</span></span>
+<span id="L1279"><span class="lineNum">    1279</span> <span class="tlaGNC">           5 :       int channels = req_comp ? req_comp : *comp;</span></span>
+<span id="L1280"><span class="lineNum">    1280</span> <span class="tlaGNC">           5 :       stbi__vertical_flip(result, *x, *y, channels * sizeof(stbi_uc));</span></span>
 <span id="L1281"><span class="lineNum">    1281</span>              :    }</span>
 <span id="L1282"><span class="lineNum">    1282</span>              : </span>
 <span id="L1283"><span class="lineNum">    1283</span> <span class="tlaGNC">          16 :    return (unsigned char *) result;</span></span>
@@ -1659,8 +1659,8 @@
 <span id="L1597"><span class="lineNum">    1597</span> <span class="tlaGNC">          26 : static void stbi__refill_buffer(stbi__context *s)</span></span>
 <span id="L1598"><span class="lineNum">    1598</span>              : {</span>
 <span id="L1599"><span class="lineNum">    1599</span> <span class="tlaGNC">          26 :    int n = (s-&gt;io.read)(s-&gt;io_user_data,(char*)s-&gt;buffer_start,s-&gt;buflen);</span></span>
-<span id="L1600"><span class="lineNum">    1600</span> <span class="tlaGNC">          25 :    s-&gt;callback_already_read += (int) (s-&gt;img_buffer - s-&gt;img_buffer_original);</span></span>
-<span id="L1601"><span class="lineNum">    1601</span> <span class="tlaGNC">          25 :    if (n == 0) {</span></span>
+<span id="L1600"><span class="lineNum">    1600</span> <span class="tlaGNC">          26 :    s-&gt;callback_already_read += (int) (s-&gt;img_buffer - s-&gt;img_buffer_original);</span></span>
+<span id="L1601"><span class="lineNum">    1601</span> <span class="tlaGNC">          26 :    if (n == 0) {</span></span>
 <span id="L1602"><span class="lineNum">    1602</span>              :       // at end of file, treat same as if from memory, but need to handle case</span>
 <span id="L1603"><span class="lineNum">    1603</span>              :       // where s-&gt;img_buffer isn't pointing to safe memory, e.g. 0-byte file</span>
 <span id="L1604"><span class="lineNum">    1604</span> <span class="tlaGNC">           1 :       s-&gt;read_from_callbacks = 0;</span></span>
@@ -1668,18 +1668,18 @@
 <span id="L1606"><span class="lineNum">    1606</span> <span class="tlaGNC">           1 :       s-&gt;img_buffer_end = s-&gt;buffer_start+1;</span></span>
 <span id="L1607"><span class="lineNum">    1607</span> <span class="tlaGNC">           1 :       *s-&gt;img_buffer = 0;</span></span>
 <span id="L1608"><span class="lineNum">    1608</span>              :    } else {</span>
-<span id="L1609"><span class="lineNum">    1609</span> <span class="tlaGNC">          24 :       s-&gt;img_buffer = s-&gt;buffer_start;</span></span>
-<span id="L1610"><span class="lineNum">    1610</span> <span class="tlaGNC">          24 :       s-&gt;img_buffer_end = s-&gt;buffer_start + n;</span></span>
+<span id="L1609"><span class="lineNum">    1609</span> <span class="tlaGNC">          25 :       s-&gt;img_buffer = s-&gt;buffer_start;</span></span>
+<span id="L1610"><span class="lineNum">    1610</span> <span class="tlaGNC">          25 :       s-&gt;img_buffer_end = s-&gt;buffer_start + n;</span></span>
 <span id="L1611"><span class="lineNum">    1611</span>              :    }</span>
-<span id="L1612"><span class="lineNum">    1612</span> <span class="tlaGNC">          25 : }</span></span>
+<span id="L1612"><span class="lineNum">    1612</span> <span class="tlaGNC">          26 : }</span></span>
 <span id="L1613"><span class="lineNum">    1613</span>              : </span>
-<span id="L1614"><span class="lineNum">    1614</span> <span class="tlaGNC">        1379 : stbi_inline static stbi_uc stbi__get8(stbi__context *s)</span></span>
+<span id="L1614"><span class="lineNum">    1614</span> <span class="tlaGNC">        1380 : stbi_inline static stbi_uc stbi__get8(stbi__context *s)</span></span>
 <span id="L1615"><span class="lineNum">    1615</span>              : {</span>
-<span id="L1616"><span class="lineNum">    1616</span> <span class="tlaGNC">        1379 :    if (s-&gt;img_buffer &lt; s-&gt;img_buffer_end)</span></span>
-<span id="L1617"><span class="lineNum">    1617</span> <span class="tlaGNC">        1364 :       return *s-&gt;img_buffer++;</span></span>
+<span id="L1616"><span class="lineNum">    1616</span> <span class="tlaGNC">        1380 :    if (s-&gt;img_buffer &lt; s-&gt;img_buffer_end)</span></span>
+<span id="L1617"><span class="lineNum">    1617</span> <span class="tlaGNC">        1365 :       return *s-&gt;img_buffer++;</span></span>
 <span id="L1618"><span class="lineNum">    1618</span> <span class="tlaGNC">          15 :    if (s-&gt;read_from_callbacks) {</span></span>
 <span id="L1619"><span class="lineNum">    1619</span> <span class="tlaGNC">           9 :       stbi__refill_buffer(s);</span></span>
-<span id="L1620"><span class="lineNum">    1620</span> <span class="tlaGNC">           8 :       return *s-&gt;img_buffer++;</span></span>
+<span id="L1620"><span class="lineNum">    1620</span> <span class="tlaGNC">           9 :       return *s-&gt;img_buffer++;</span></span>
 <span id="L1621"><span class="lineNum">    1621</span>              :    }</span>
 <span id="L1622"><span class="lineNum">    1622</span> <span class="tlaGNC">           6 :    return 0;</span></span>
 <span id="L1623"><span class="lineNum">    1623</span>              : }</span>
@@ -1756,7 +1756,7 @@
 <span id="L1694"><span class="lineNum">    1694</span> <span class="tlaGNC">         516 : static int stbi__get16be(stbi__context *s)</span></span>
 <span id="L1695"><span class="lineNum">    1695</span>              : {</span>
 <span id="L1696"><span class="lineNum">    1696</span> <span class="tlaGNC">         516 :    int z = stbi__get8(s);</span></span>
-<span id="L1697"><span class="lineNum">    1697</span> <span class="tlaGNC">         515 :    return (z &lt;&lt; 8) + stbi__get8(s);</span></span>
+<span id="L1697"><span class="lineNum">    1697</span> <span class="tlaGNC">         516 :    return (z &lt;&lt; 8) + stbi__get8(s);</span></span>
 <span id="L1698"><span class="lineNum">    1698</span>              : }</span>
 <span id="L1699"><span class="lineNum">    1699</span>              : #endif</span>
 <span id="L1700"><span class="lineNum">    1700</span>              : </span>
@@ -4166,21 +4166,21 @@
 <span id="L4104"><span class="lineNum">    4104</span>              :    stbi__uint16 value[STBI__ZNSYMS];</span>
 <span id="L4105"><span class="lineNum">    4105</span>              : } stbi__zhuffman;</span>
 <span id="L4106"><span class="lineNum">    4106</span>              : </span>
-<span id="L4107"><span class="lineNum">    4107</span> <span class="tlaGNC">        4818 : stbi_inline static int stbi__bitreverse16(int n)</span></span>
+<span id="L4107"><span class="lineNum">    4107</span> <span class="tlaGNC">        5120 : stbi_inline static int stbi__bitreverse16(int n)</span></span>
 <span id="L4108"><span class="lineNum">    4108</span>              : {</span>
-<span id="L4109"><span class="lineNum">    4109</span> <span class="tlaGNC">        4818 :   n = ((n &amp; 0xAAAA) &gt;&gt;  1) | ((n &amp; 0x5555) &lt;&lt; 1);</span></span>
-<span id="L4110"><span class="lineNum">    4110</span> <span class="tlaGNC">        4818 :   n = ((n &amp; 0xCCCC) &gt;&gt;  2) | ((n &amp; 0x3333) &lt;&lt; 2);</span></span>
-<span id="L4111"><span class="lineNum">    4111</span> <span class="tlaGNC">        4818 :   n = ((n &amp; 0xF0F0) &gt;&gt;  4) | ((n &amp; 0x0F0F) &lt;&lt; 4);</span></span>
-<span id="L4112"><span class="lineNum">    4112</span> <span class="tlaGNC">        4818 :   n = ((n &amp; 0xFF00) &gt;&gt;  8) | ((n &amp; 0x00FF) &lt;&lt; 8);</span></span>
-<span id="L4113"><span class="lineNum">    4113</span> <span class="tlaGNC">        4818 :   return n;</span></span>
+<span id="L4109"><span class="lineNum">    4109</span> <span class="tlaGNC">        5120 :   n = ((n &amp; 0xAAAA) &gt;&gt;  1) | ((n &amp; 0x5555) &lt;&lt; 1);</span></span>
+<span id="L4110"><span class="lineNum">    4110</span> <span class="tlaGNC">        5120 :   n = ((n &amp; 0xCCCC) &gt;&gt;  2) | ((n &amp; 0x3333) &lt;&lt; 2);</span></span>
+<span id="L4111"><span class="lineNum">    4111</span> <span class="tlaGNC">        5120 :   n = ((n &amp; 0xF0F0) &gt;&gt;  4) | ((n &amp; 0x0F0F) &lt;&lt; 4);</span></span>
+<span id="L4112"><span class="lineNum">    4112</span> <span class="tlaGNC">        5120 :   n = ((n &amp; 0xFF00) &gt;&gt;  8) | ((n &amp; 0x00FF) &lt;&lt; 8);</span></span>
+<span id="L4113"><span class="lineNum">    4113</span> <span class="tlaGNC">        5120 :   return n;</span></span>
 <span id="L4114"><span class="lineNum">    4114</span>              : }</span>
 <span id="L4115"><span class="lineNum">    4115</span>              : </span>
-<span id="L4116"><span class="lineNum">    4116</span> <span class="tlaGNC">        4819 : stbi_inline static int stbi__bit_reverse(int v, int bits)</span></span>
+<span id="L4116"><span class="lineNum">    4116</span> <span class="tlaGNC">        5120 : stbi_inline static int stbi__bit_reverse(int v, int bits)</span></span>
 <span id="L4117"><span class="lineNum">    4117</span>              : {</span>
-<span id="L4118"><span class="lineNum">    4118</span> <span class="tlaGNC">        4819 :    STBI_ASSERT(bits &lt;= 16);</span></span>
+<span id="L4118"><span class="lineNum">    4118</span> <span class="tlaGNC">        5120 :    STBI_ASSERT(bits &lt;= 16);</span></span>
 <span id="L4119"><span class="lineNum">    4119</span>              :    // to bit reverse n bits, reverse 16 and shift</span>
 <span id="L4120"><span class="lineNum">    4120</span>              :    // e.g. 11 bits, bit reverse and shift away 5</span>
-<span id="L4121"><span class="lineNum">    4121</span> <span class="tlaGNC">        4819 :    return stbi__bitreverse16(v) &gt;&gt; (16-bits);</span></span>
+<span id="L4121"><span class="lineNum">    4121</span> <span class="tlaGNC">        5120 :    return stbi__bitreverse16(v) &gt;&gt; (16-bits);</span></span>
 <span id="L4122"><span class="lineNum">    4122</span>              : }</span>
 <span id="L4123"><span class="lineNum">    4123</span>              : </span>
 <span id="L4124"><span class="lineNum">    4124</span> <span class="tlaGNC">          32 : static int stbi__zbuild_huffman(stbi__zhuffman *z, const stbi_uc *sizelist, int num)</span></span>
@@ -4191,8 +4191,8 @@
 <span id="L4129"><span class="lineNum">    4129</span>              :    // DEFLATE spec for generating codes</span>
 <span id="L4130"><span class="lineNum">    4130</span> <span class="tlaGNC">          32 :    memset(sizes, 0, sizeof(sizes));</span></span>
 <span id="L4131"><span class="lineNum">    4131</span> <span class="tlaGNC">          32 :    memset(z-&gt;fast, 0, sizeof(z-&gt;fast));</span></span>
-<span id="L4132"><span class="lineNum">    4132</span> <span class="tlaGNC">        5070 :    for (i=0; i &lt; num; ++i)</span></span>
-<span id="L4133"><span class="lineNum">    4133</span> <span class="tlaGNC">        5038 :       ++sizes[sizelist[i]];</span></span>
+<span id="L4132"><span class="lineNum">    4132</span> <span class="tlaGNC">        5152 :    for (i=0; i &lt; num; ++i)</span></span>
+<span id="L4133"><span class="lineNum">    4133</span> <span class="tlaGNC">        5120 :       ++sizes[sizelist[i]];</span></span>
 <span id="L4134"><span class="lineNum">    4134</span> <span class="tlaGNC">          32 :    sizes[0] = 0;</span></span>
 <span id="L4135"><span class="lineNum">    4135</span> <span class="tlaGNC">         512 :    for (i=1; i &lt; 16; ++i)</span></span>
 <span id="L4136"><span class="lineNum">    4136</span> <span class="tlaGNC">         480 :       if (sizes[i] &gt; (1 &lt;&lt; i))</span></span>
@@ -4210,24 +4210,24 @@
 <span id="L4148"><span class="lineNum">    4148</span> <span class="tlaGNC">         480 :       k += sizes[i];</span></span>
 <span id="L4149"><span class="lineNum">    4149</span>              :    }</span>
 <span id="L4150"><span class="lineNum">    4150</span> <span class="tlaGNC">          32 :    z-&gt;maxcode[16] = 0x10000; // sentinel</span></span>
-<span id="L4151"><span class="lineNum">    4151</span> <span class="tlaGNC">        4850 :    for (i=0; i &lt; num; ++i) {</span></span>
-<span id="L4152"><span class="lineNum">    4152</span> <span class="tlaGNC">        4819 :       int s = sizelist[i];</span></span>
-<span id="L4153"><span class="lineNum">    4153</span> <span class="tlaGNC">        4819 :       if (s) {</span></span>
-<span id="L4154"><span class="lineNum">    4154</span> <span class="tlaGNC">        4820 :          int c = next_code[s] - z-&gt;firstcode[s] + z-&gt;firstsymbol[s];</span></span>
-<span id="L4155"><span class="lineNum">    4155</span> <span class="tlaGNC">        4820 :          stbi__uint16 fastv = (stbi__uint16) ((s &lt;&lt; 9) | i);</span></span>
-<span id="L4156"><span class="lineNum">    4156</span> <span class="tlaGNC">        4820 :          z-&gt;size [c] = (stbi_uc     ) s;</span></span>
-<span id="L4157"><span class="lineNum">    4157</span> <span class="tlaGNC">        4820 :          z-&gt;value[c] = (stbi__uint16) i;</span></span>
-<span id="L4158"><span class="lineNum">    4158</span> <span class="tlaGNC">        4820 :          if (s &lt;= STBI__ZFAST_BITS) {</span></span>
-<span id="L4159"><span class="lineNum">    4159</span> <span class="tlaGNC">        4819 :             int j = stbi__bit_reverse(next_code[s],s);</span></span>
-<span id="L4160"><span class="lineNum">    4160</span> <span class="tlaGNC">       20530 :             while (j &lt; (1 &lt;&lt; STBI__ZFAST_BITS)) {</span></span>
-<span id="L4161"><span class="lineNum">    4161</span> <span class="tlaGNC">       15712 :                z-&gt;fast[j] = fastv;</span></span>
-<span id="L4162"><span class="lineNum">    4162</span> <span class="tlaGNC">       15712 :                j += (1 &lt;&lt; s);</span></span>
+<span id="L4151"><span class="lineNum">    4151</span> <span class="tlaGNC">        5152 :    for (i=0; i &lt; num; ++i) {</span></span>
+<span id="L4152"><span class="lineNum">    4152</span> <span class="tlaGNC">        5120 :       int s = sizelist[i];</span></span>
+<span id="L4153"><span class="lineNum">    4153</span> <span class="tlaGNC">        5120 :       if (s) {</span></span>
+<span id="L4154"><span class="lineNum">    4154</span> <span class="tlaGNC">        5120 :          int c = next_code[s] - z-&gt;firstcode[s] + z-&gt;firstsymbol[s];</span></span>
+<span id="L4155"><span class="lineNum">    4155</span> <span class="tlaGNC">        5120 :          stbi__uint16 fastv = (stbi__uint16) ((s &lt;&lt; 9) | i);</span></span>
+<span id="L4156"><span class="lineNum">    4156</span> <span class="tlaGNC">        5120 :          z-&gt;size [c] = (stbi_uc     ) s;</span></span>
+<span id="L4157"><span class="lineNum">    4157</span> <span class="tlaGNC">        5120 :          z-&gt;value[c] = (stbi__uint16) i;</span></span>
+<span id="L4158"><span class="lineNum">    4158</span> <span class="tlaGNC">        5120 :          if (s &lt;= STBI__ZFAST_BITS) {</span></span>
+<span id="L4159"><span class="lineNum">    4159</span> <span class="tlaGNC">        5120 :             int j = stbi__bit_reverse(next_code[s],s);</span></span>
+<span id="L4160"><span class="lineNum">    4160</span> <span class="tlaGNC">       21504 :             while (j &lt; (1 &lt;&lt; STBI__ZFAST_BITS)) {</span></span>
+<span id="L4161"><span class="lineNum">    4161</span> <span class="tlaGNC">       16384 :                z-&gt;fast[j] = fastv;</span></span>
+<span id="L4162"><span class="lineNum">    4162</span> <span class="tlaGNC">       16384 :                j += (1 &lt;&lt; s);</span></span>
 <span id="L4163"><span class="lineNum">    4163</span>              :             }</span>
 <span id="L4164"><span class="lineNum">    4164</span>              :          }</span>
-<span id="L4165"><span class="lineNum">    4165</span> <span class="tlaGNC">        4819 :          ++next_code[s];</span></span>
+<span id="L4165"><span class="lineNum">    4165</span> <span class="tlaGNC">        5120 :          ++next_code[s];</span></span>
 <span id="L4166"><span class="lineNum">    4166</span>              :       }</span>
 <span id="L4167"><span class="lineNum">    4167</span>              :    }</span>
-<span id="L4168"><span class="lineNum">    4168</span> <span class="tlaGNC">          31 :    return 1;</span></span>
+<span id="L4168"><span class="lineNum">    4168</span> <span class="tlaGNC">          32 :    return 1;</span></span>
 <span id="L4169"><span class="lineNum">    4169</span>              : }</span>
 <span id="L4170"><span class="lineNum">    4170</span>              : </span>
 <span id="L4171"><span class="lineNum">    4171</span>              : // zlib-from-memory implementation for PNG reading</span>
@@ -5327,15 +5327,15 @@
 <span id="L5265"><span class="lineNum">    5265</span> <span class="tlaGNC">          16 :    void *result=NULL;</span></span>
 <span id="L5266"><span class="lineNum">    5266</span> <span class="tlaGNC">          16 :    if (req_comp &lt; 0 || req_comp &gt; 4) return stbi__errpuc(&quot;bad req_comp&quot;, &quot;Internal error&quot;);</span></span>
 <span id="L5267"><span class="lineNum">    5267</span> <span class="tlaGNC">          16 :    if (stbi__parse_png_file(p, STBI__SCAN_load, req_comp)) {</span></span>
-<span id="L5268"><span class="lineNum">    5268</span> <span class="tlaGNC">          15 :       if (p-&gt;depth &lt;= 8)</span></span>
-<span id="L5269"><span class="lineNum">    5269</span> <span class="tlaGNC">          15 :          ri-&gt;bits_per_channel = 8;</span></span>
+<span id="L5268"><span class="lineNum">    5268</span> <span class="tlaGNC">          16 :       if (p-&gt;depth &lt;= 8)</span></span>
+<span id="L5269"><span class="lineNum">    5269</span> <span class="tlaGNC">          16 :          ri-&gt;bits_per_channel = 8;</span></span>
 <span id="L5270"><span class="lineNum">    5270</span> <span class="tlaUNC">           0 :       else if (p-&gt;depth == 16)</span></span>
 <span id="L5271"><span class="lineNum">    5271</span> <span class="tlaUNC">           0 :          ri-&gt;bits_per_channel = 16;</span></span>
 <span id="L5272"><span class="lineNum">    5272</span>              :       else</span>
 <span id="L5273"><span class="lineNum">    5273</span> <span class="tlaUNC">           0 :          return stbi__errpuc(&quot;bad bits_per_channel&quot;, &quot;PNG not supported: unsupported color depth&quot;);</span></span>
-<span id="L5274"><span class="lineNum">    5274</span> <span class="tlaGNC">          15 :       result = p-&gt;out;</span></span>
-<span id="L5275"><span class="lineNum">    5275</span> <span class="tlaGNC">          15 :       p-&gt;out = NULL;</span></span>
-<span id="L5276"><span class="lineNum">    5276</span> <span class="tlaGNC">          15 :       if (req_comp &amp;&amp; req_comp != p-&gt;s-&gt;img_out_n) {</span></span>
+<span id="L5274"><span class="lineNum">    5274</span> <span class="tlaGNC">          16 :       result = p-&gt;out;</span></span>
+<span id="L5275"><span class="lineNum">    5275</span> <span class="tlaGNC">          16 :       p-&gt;out = NULL;</span></span>
+<span id="L5276"><span class="lineNum">    5276</span> <span class="tlaGNC">          16 :       if (req_comp &amp;&amp; req_comp != p-&gt;s-&gt;img_out_n) {</span></span>
 <span id="L5277"><span class="lineNum">    5277</span> <span class="tlaGNC">           2 :          if (ri-&gt;bits_per_channel == 8)</span></span>
 <span id="L5278"><span class="lineNum">    5278</span> <span class="tlaGNC">           2 :             result = stbi__convert_format((unsigned char *) result, p-&gt;s-&gt;img_out_n, req_comp, p-&gt;s-&gt;img_x, p-&gt;s-&gt;img_y);</span></span>
 <span id="L5279"><span class="lineNum">    5279</span>              :          else</span>
@@ -5343,22 +5343,22 @@
 <span id="L5281"><span class="lineNum">    5281</span> <span class="tlaGNC">           2 :          p-&gt;s-&gt;img_out_n = req_comp;</span></span>
 <span id="L5282"><span class="lineNum">    5282</span> <span class="tlaGNC">           2 :          if (result == NULL) return result;</span></span>
 <span id="L5283"><span class="lineNum">    5283</span>              :       }</span>
-<span id="L5284"><span class="lineNum">    5284</span> <span class="tlaGNC">          15 :       *x = p-&gt;s-&gt;img_x;</span></span>
-<span id="L5285"><span class="lineNum">    5285</span> <span class="tlaGNC">          15 :       *y = p-&gt;s-&gt;img_y;</span></span>
-<span id="L5286"><span class="lineNum">    5286</span> <span class="tlaGNC">          15 :       if (n) *n = p-&gt;s-&gt;img_n;</span></span>
+<span id="L5284"><span class="lineNum">    5284</span> <span class="tlaGNC">          16 :       *x = p-&gt;s-&gt;img_x;</span></span>
+<span id="L5285"><span class="lineNum">    5285</span> <span class="tlaGNC">          16 :       *y = p-&gt;s-&gt;img_y;</span></span>
+<span id="L5286"><span class="lineNum">    5286</span> <span class="tlaGNC">          16 :       if (n) *n = p-&gt;s-&gt;img_n;</span></span>
 <span id="L5287"><span class="lineNum">    5287</span>              :    }</span>
-<span id="L5288"><span class="lineNum">    5288</span> <span class="tlaGNC">          15 :    STBI_FREE(p-&gt;out);      p-&gt;out      = NULL;</span></span>
-<span id="L5289"><span class="lineNum">    5289</span> <span class="tlaGNC">          15 :    STBI_FREE(p-&gt;expanded); p-&gt;expanded = NULL;</span></span>
-<span id="L5290"><span class="lineNum">    5290</span> <span class="tlaGNC">          15 :    STBI_FREE(p-&gt;idata);    p-&gt;idata    = NULL;</span></span>
+<span id="L5288"><span class="lineNum">    5288</span> <span class="tlaGNC">          16 :    STBI_FREE(p-&gt;out);      p-&gt;out      = NULL;</span></span>
+<span id="L5289"><span class="lineNum">    5289</span> <span class="tlaGNC">          16 :    STBI_FREE(p-&gt;expanded); p-&gt;expanded = NULL;</span></span>
+<span id="L5290"><span class="lineNum">    5290</span> <span class="tlaGNC">          16 :    STBI_FREE(p-&gt;idata);    p-&gt;idata    = NULL;</span></span>
 <span id="L5291"><span class="lineNum">    5291</span>              : </span>
-<span id="L5292"><span class="lineNum">    5292</span> <span class="tlaGNC">          15 :    return result;</span></span>
+<span id="L5292"><span class="lineNum">    5292</span> <span class="tlaGNC">          16 :    return result;</span></span>
 <span id="L5293"><span class="lineNum">    5293</span>              : }</span>
 <span id="L5294"><span class="lineNum">    5294</span>              : </span>
 <span id="L5295"><span class="lineNum">    5295</span> <span class="tlaGNC">          16 : static void *stbi__png_load(stbi__context *s, int *x, int *y, int *comp, int req_comp, stbi__result_info *ri)</span></span>
 <span id="L5296"><span class="lineNum">    5296</span>              : {</span>
 <span id="L5297"><span class="lineNum">    5297</span>              :    stbi__png p;</span>
 <span id="L5298"><span class="lineNum">    5298</span> <span class="tlaGNC">          16 :    p.s = s;</span></span>
-<span id="L5299"><span class="lineNum">    5299</span> <span class="tlaGNC">          31 :    return stbi__do_png(&amp;p, x,y,comp,req_comp, ri);</span></span>
+<span id="L5299"><span class="lineNum">    5299</span> <span class="tlaGNC">          32 :    return stbi__do_png(&amp;p, x,y,comp,req_comp, ri);</span></span>
 <span id="L5300"><span class="lineNum">    5300</span>              : }</span>
 <span id="L5301"><span class="lineNum">    5301</span>              : </span>
 <span id="L5302"><span class="lineNum">    5302</span> <span class="tlaGNC">          17 : static int stbi__png_test(stbi__context *s)</span></span>

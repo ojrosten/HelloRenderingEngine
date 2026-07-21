@@ -1,4 +1,5 @@
 - [OpenGL is frozen — don't flag GL entry-point tables as fragile](feedback_opengl_frozen_api.md) — calibration for code review in this repo
+- [Merging lecture branches into vulkan-experiment](project_vulkan_branch_merges.md) — propagate opengl_* renames; Demo run is the acceptance test; Windows run/build gotchas
 - [Don't raise speculative compiler-warning concerns](feedback_verified_across_compilers.md) — user verifies across MSVC/gcc/clang
 - [shader_program uniform setters → DSA glProgramUniform*](project_shader_program_dsa_uniforms.md) — acknowledged improvement, not yet implemented
 - [checked_conversion_to std::in_range migration landed with lecture 51](project_arithmetic_casts_cmp_migration.md) — remaining constraint mismatch is deliberate homework
@@ -20,16 +21,28 @@
 - [A lecture branch's diff is a superset of the lecture](feedback_lecture_diff_is_superset.md) — incidental prep-time fixes and toolchain churn ride along; don't attribute everything to the lecture
 - [In tests, OpenGL is the source of truth for handles](feedback_opengl_source_of_truth_in_tests.md) — query binding-point state, don't read handles off the object; don't suggest get_index as a simplification
 - [User switched to Fable 5 (2026-07-10)](user_model_preference_fable.md) — tell them if a session runs on Opus 4.8 or another model instead
-- [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything
+- [Deferred findings from 2026-07-10 full review](project_deferred_review_findings.md) — open items to return to; check Resolved section before re-raising anything; consolidated cross-source index at LLMs/Claude/OPEN_ITEMS.md (keep it in sync)
 - [Suppress warnings only on demonstrated need](feedback_minimal_warning_suppression.md) — unexpected warnings should be loud; don't propose pre-emptive/unified suppression
 - [Verbose names + vertical alignment when writing code](feedback_naming_and_alignment_style.md) — bool-underlying enum classes over bool params; align repeated structure
 - [Always raise nits — user strives for perfection](feedback_always_raise_nits.md) — cosmetics, typos, idiom slips all welcome; rank below substantive findings
 - [Include discipline is pragmatic, not strict IWYU](feedback_include_philosophy.md) — transitive via stable project headers is fine; only add includes with plausible breakage
+- [Memory→skill promotion check](feedback_memory_skill_promotion.md) — when writing/extending a recipe-like memory, judge whether it should become a skill; propose, don't convert unilaterally
 - [Sequoia overview hub](sequoia/reference_overview.md) — user's own long-lived library; testing framework + utilities; production dependency too; links the detailed sequoia memories
-- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh; spaces/physics in flux
+- [Sequoia roadmap](sequoia/project_roadmap.md) — reflection-based registration via object::factory, modules migration (forces prune overhaul), test-creation CLI refresh, per-class materials/diagnostics paths (resolves T7); spaces/physics in flux
 - [Sequoia test-framework core](sequoia/reference_test_framework_core.md) — runner, suite trees, prune/dependency analysis, creation CLI, concurrency, output layout
 - [Sequoia checks & semantics](sequoia/reference_checks_semantics.md) — equality/equivalence tag dispatch, value_tester, check_semantics, allocation testing, test modes
 - [Sequoia core utilities](sequoia/reference_core_utilities.md) — object::factory + suite/granular_filter, Meta/TypeAlgorithms, partitioned data, concurrency models, bitmask enums
 - [Sequoia maths: graphs deep, spaces/physics high-level](sequoia/reference_maths_graphs_physics.md) — Graph is mature and load-bearing; Spaces/Physics churning, intent only
+- [Sequoia test materials](sequoia/reference_test_materials.md) — TestMaterials layout, WorkingCopy/Prediction/Auxiliary, .seqpat regex preprocessing, update-materials/soft_update mechanics
 - [How avocet consumes sequoia](project_sequoia_usage.md) — production dep, sequoia build system, curlew adaptation layer, value_tester specializations, committed output/
+- [Avocet's test-materials usage](project_test_materials_usage.md) — flat consumption-only mode so far; no Prediction/.seqpat yet; headroom for generate-compare tests
 - [Sequoia full review 2026-07-16](sequoia/project_review_2026_07.md) — report at LLMs/Claude/reviews/sequoia_review_2026-07-16.md; check before re-raising sequoia findings
+- [Graph-based testing is the user's load-bearing technique](sequoia/user_graph_based_testing_conviction.md) — personal conviction, held with humility; engage critically, don't flatter
+- [Graph-based-testing recipe — be fluent in writing these](sequoia/feedback_graph_based_testing.md) — transition_checker construction, CheckFn menu, gotchas, standalone-compile trick
+- [Look for graph-based-testing opportunities in avocet](project_graph_based_testing_opportunities.md) — one current site; candidates: uniform state (pre-DSA pin), binding-cache×lifetime, buffers/textures
+- [Coverage report generation recipe](project_coverage_report_generation.md) — WSL clone, linux-pkg-gcc-coverage workflow, sequoia script; expected residual warnings; fresh start rarely needed; uncommitted fixes in WSL submodule
+- [Sequoia coverage tooling](sequoia/project_coverage_tooling.md) — 2026-07-18 pipeline fixes awaiting upstream; planned clang/Mac coverage preset + Linux∪Mac union; MSVC/Windows assessment; programme summary at LLMs/Claude/SEQUOIA_TOOLING.md
+- [Coverage analysis 2026-07](project_coverage_analysis_2026_07.md) — avocet 90.5%/curlew 83.8% real; positive = flagged gap; FP taxonomy, FN classes (uninstantiated templates invisible — Polygon.hpp), agreed dispositions; report at LLMs/Claude/reviews/coverage_analysis_2026-07-18.md
+- [Windows + clang front end toolchain plan](sequoia/project_windows_clang_toolchain.md) — Route A (VS ClangCL toolset) vs Route B (Ninja + standalone LLVM, GNU driver); Route B carries the Windows coverage-union leg (Intel Arc residue)
+- [Clickable test failures in IDEs plan (VS/Xcode/CLion)](sequoia/project_ide_clickable_failures.md) — two-dialect diagnostics emitter in sequoia (msvc + gnu) + run-as-build-step hooks; FN-mode safety; Xcode+Homebrew-clang carrier preset; prototype via post-build regex
+- [Presentation-review workflow via Google Drive connector](project_presentation_review_workflow.md) — text export scrambles bullet order (false-positive risk); PDF export for links (/URI regex) + pdftoppm (poppler, installed 2026-07-20) for rendered slides

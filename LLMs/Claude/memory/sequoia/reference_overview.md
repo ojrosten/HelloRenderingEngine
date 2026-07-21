@@ -13,6 +13,6 @@ metadata:
 
 **Signature ideas**: false-positive/false-negative test modes (the framework tests itself, with version-controlled diagnostic output as an outer regression layer); equality vs equivalence vs weak-equivalence checking with structural fallback chains; semantics checking (`check_semantics`) incl. allocation predictions across all propagation combinations; dogfooding — suites, CLI parsing, and dependency analysis all run on sequoia's own graph/tree machinery.
 
-**Active plans** ([[sequoia-roadmap]]): retire manual test registration (reflection + `object::factory`); migrate to modules (forces prune/dependency-analysis overhaul); refresh the test-creation CLI. **Flux zones**: Maths/spaces and Physics — capture intent, not signatures.
+**Active plans** ([[sequoia-roadmap]]): retire manual test registration (reflection + `object::factory`); migrate to modules (forces prune/dependency-analysis overhaul); refresh the test-creation CLI. **Build/test tooling programme** (summary doc: `LLMs/Claude/SEQUOIA_TOOLING.md`): coverage-pipeline fixes + clang/Mac + Linux∪Mac union [[sequoia-coverage-tooling]]; Windows clang preset column [[sequoia-windows-clang-toolchain]]; two-dialect IDE diagnostics emitter [[sequoia-ide-clickable-failures]]. **Flux zones**: Maths/spaces and Physics — capture intent, not signatures.
 
 When something needs sequoia context beyond these memories, the source is in-tree — go read it.
