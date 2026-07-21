@@ -5,7 +5,7 @@ metadata:
   node_type: memory
   type: project
   originSessionId: f58cc83f-8059-4d66-a2ba-ed07ba4821c1
-  modified: 2026-07-21T10:49:23.134Z
+  modified: 2026-07-21T11:31:16.754Z
 ---
 
 How this repo consumes sequoia (surveyed 2026-07). This is project-layer knowledge — sequoia's own memories ([[sequoia-overview]] and siblings) deliberately know nothing of avocet/curlew, mirroring the dependency structure.
@@ -26,6 +26,6 @@ How this repo consumes sequoia (surveyed 2026-07). This is project-layer knowled
 
 **value_tester specializations** (all in `Tests/**/​*TestingUtilities.hpp`): alignment, colour_channels, unique_image/image_view (shared `image_value_tester` base — the repo's canonical equality-vs-equivalence example: equality = spec + data-handle identity; equivalence = spec + content vs `image_data`), viewport family, a constrained template for empty capability types plus ~13 concrete capability testers, resource_handle, buffer objects (shared `generic_buffer_object_tester`), texture_2d.
 
-**TestMaterials/ and output/**: `TestMaterials/` mirrors `Tests/` one dir per test class (PNGs, shaders, deliberately-broken files); sequoia copies to `output/TestsTemporaryData` working copies at runtime. `output/` is **committed** (~128 files): `DiagnosticsOutput/` (versioned FN/exception expected text with discriminator variants), `TestSummaries/`, `Prune/TestAll/<preset>/<config>/` (including `.external` listing out-of-tree includes like glad/stb).
+**TestMaterials/ and output/**: `TestMaterials/` mirrors `Tests/` one dir per test class (PNGs, shaders, deliberately-broken files); sequoia copies to `output/TestsTemporaryData` working copies at runtime. The **committed** parts of `output/` are exactly `DiagnosticsOutput/` (versioned FN/exception expected text with discriminator variants) and `TestSummaries/` — `output/Prune` is **gitignored** (`.gitignore:17`; verified 2026-07-21), like `TestsTemporaryData`.
 
 **Friction is handled by policy, not wrappers**: no code-level workarounds for sequoia limitations exist in this repo; sequoia-side improvements are routed to the sequoia project offline (see [[sequoia-roadmap]] and the deferred-review-findings memory). Observed reliance: sequoia's exception-output comparison normalizes trailing whitespace. Cross-project parallel worth remembering: the reflection plans for test registration ([[sequoia-roadmap]]) and for avocet's `glad_ctx_member_info` table are the same C++26 bet.

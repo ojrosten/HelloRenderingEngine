@@ -1,6 +1,6 @@
 # Sequoia tooling programme — consolidated summary
 
-**Last updated:** 2026-07-20.
+**Last updated:** 2026-07-21 (added §5, CI output-drift detection).
 **What this is:** the single document summarizing all sequoia-side *build/test tooling* work discussed to date — everything here lands in the sequoia repo (`build_system/CMakePresetsCommon.json`, `scripts/generate_coverage_report.sh`, or the test framework itself), with only thin hooks on the avocet side. Detail lives in the linked memory files (`memory/sequoia/`); actionable status is tracked in `OPEN_ITEMS.md`. Framework-evolution plans (reflection-based registration, modules/prune, test-creation CLI, per-class materials paths) are deliberately out of scope here — see `memory/sequoia/project_roadmap.md`.
 
 ## 1. Coverage-pipeline fixes — done locally, awaiting upstream
@@ -44,10 +44,22 @@ A sequoia diagnostics emitter with **two dialects covering everything**:
 
 Detail: `memory/sequoia/project_ide_clickable_failures.md`.
 
-## 5. Smaller / adjacent
+## 5. CI output-drift detection — designed 2026-07-21, not started
+
+Platform-dependence defects in versioned output (`DiagnosticsOutput`, `TestSummaries`; `Prune` is gitignored) manifest as **git diffs, not test failures** — locally a human referees desired diffs (intended changes, reviewed and committed) from undesired ones (platform leaks); CI has no referee. The desired/undesired distinction is already encoded twice: *temporally* (desired diffs are pre-push; a post-clone CI run should end byte-clean) and *spatially* (the discriminator system declares which files may vary by platform). Classification of post-run dirt:
+
+- **shared (undiscriminated) file changed** → platform-dependence leak → hard fail;
+- **discriminated file for the runner's own platform changed** → stale fork the pusher couldn't have regenerated → harvest (artifact upload / bot PR — elevates CI to *fork maintainer* for CI-covered platforms);
+- **new discriminated file** → uncovered platform combination → harvest.
+
+Mechanism ladder: `git diff --exit-code -- output/` (blunt baseline) → workflow-side suffix parsing (runner's discriminator from `Setup.txt`) → **sequoia-native drift report** (recommended: runner byte-compares before each versioned write, classifies via its own discriminator knowledge, opt-in CI flag exits nonzero on shared drift). Prerequisite for Windows runners: the E4 binary-write fix, else CRLF rewrites drown the signal; Linux runners usable immediately. Complements the F-strategy parity battery (in-lab, type names, sequoia's suite) as the field-wide net (client repos, everything).
+
+Detail: `memory/sequoia/project_ci_output_drift.md`.
+
+## 6. Smaller / adjacent
 
 - **Windows ASan DLL workflow fix** — sequoia build system; handled offline by the user.
 
 ## Sequencing
 
-Items 1–3 share files (`CMakePresetsCommon.json`, `generate_coverage_report.sh`): natural order is upstream the pipeline fixes first, then the Mac coverage trio, then the Windows column. Item 4 is independent of the coverage work but shares the upstream vehicle.
+Items 1–3 share files (`CMakePresetsCommon.json`, `generate_coverage_report.sh`): natural order is upstream the pipeline fixes first, then the Mac coverage trio, then the Windows column. Item 4 is independent of the coverage work but shares the upstream vehicle. Item 5's runner-side piece is independent code but its Windows leg sequences after the E4 binary-write fix; its Actions leg belongs to the parked CI-roadmap item.

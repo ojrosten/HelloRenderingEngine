@@ -41,6 +41,7 @@ plus `windows-llvm{,-release,-asan,-coverage}` workflow trios mirroring the Mac 
 
 **Decision points before building either:**
 - Audit where sequoia's build system keys flags off `MSVC`/compiler ID: Route A lands `MSVC==TRUE`, Route B `MSVC==FALSE` + `Clang` (same branch as Mac clang — least-surprise fit).
+- **Type-name tidying will misfire on both routes** (finding F1, 2026-07-21 part-II addendum in `LLMs/Claude/reviews/sequoia_review_2026-07-16.md`): `Output.cpp`'s tidy dispatch keys on compiler, but under the MS ABI clang produces MSVC-format `typeid` names → clang massaging applied to MSVC text, and `demangle()`'s inner `#ifndef _MSC_VER` silently no-ops. Fix (union tidy pass, demangle keyed on ABI) should land before or with this column.
 - The deliberate `cxx_std_23` Windows split: if keyed on `MSVC`, Route A stays 23, Route B gets 26 — decide intent (B at 26 matches the other platforms).
 - ASan under Route B uses the `base-asan-unix` spelling as-is; the `clang_rt.asan_dynamic-x86_64.dll`-on-PATH gotcha ([[project-vulkan-branch-merges]]) applies to the standalone-LLVM runtime too.
 
